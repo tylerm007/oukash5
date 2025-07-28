@@ -1,0 +1,148 @@
+<o-form-layout-manager attr="COMPANYTB" mode="tab" title="COMPANYTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="COMPANYTBTable" 
+            service="COMPANYTB" 
+            entity="COMPANYTB" 
+            title="COMPANYTB"
+            keys="COMPANY_ID"
+            columns="NAME;LIST;GP_NOTIFY;PRODUCER;MARKETER;SOURCE;IN_HOUSE;PRIVATE_LABEL;COPACKER;CORPORATE;COMPANY_TYPE;INVOICE_TYPE;INVOICE_FREQUENCY;INVOICE_DTL;TIMESTAMP;STATUS;RC;PARENT_CO;INVOICE_LAST_DATE;COMPANY_BILL_TO_NAME;ACTIVE;AcquiredFrom;MoveToGP;DefaultPO;POexpiry;PrivateLabelPO;PrivateLabelPOexpiry;VisitPO;VisitPOexpiry;ValidFromTime;ValidToTime;CATEGORY;OLDCOMPANYTYPE;BoilerplateInvoiceComment;ShouldPropagateCompanyPo;ShouldPropagateKscPoToPlants;ShouldPropagateVisitPoToPlants;PoReason;On3rdPartyBilling;IsTest;ChometzEmailSentDate;COMPANY_ID;JEWISH_OWNED;UID;CHANGESET_ID;IsPoRequired" 
+            header-actions="R;D"
+            visible-columns="NAME;LIST;GP_NOTIFY;PRODUCER;MARKETER;SOURCE;IN_HOUSE;PRIVATE_LABEL;COPACKER;CORPORATE;COMPANY_TYPE;INVOICE_TYPE;INVOICE_FREQUENCY;INVOICE_DTL;TIMESTAMP;STATUS;RC;PARENT_CO;INVOICE_LAST_DATE;COMPANY_BILL_TO_NAME;ACTIVE;AcquiredFrom;MoveToGP;DefaultPO;POexpiry;PrivateLabelPO;PrivateLabelPOexpiry;VisitPO;VisitPOexpiry;ValidFromTime;ValidToTime;CATEGORY;OLDCOMPANYTYPE;BoilerplateInvoiceComment;ShouldPropagateCompanyPo;ShouldPropagateKscPoToPlants;ShouldPropagateVisitPoToPlants;PoReason;On3rdPartyBilling;IsTest;ChometzEmailSentDate;COMPANY_ID;JEWISH_OWNED;UID;CHANGESET_ID;IsPoRequired"  
+            sort-columns="NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #LIST attr="LIST" title="LIST" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #GP_NOTIFY attr="GP_NOTIFY" title="GP_NOTIFY" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="PRODUCER" title="PRODUCER">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="MARKETER" title="MARKETER">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="SOURCE" title="SOURCE">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #IN_HOUSE attr="IN_HOUSE" title="IN_HOUSE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PRIVATE_LABEL attr="PRIVATE_LABEL" title="PRIVATE_LABEL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COPACKER attr="COPACKER" title="COPACKER" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CORPORATE attr="CORPORATE" title="CORPORATE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMPANY_TYPE attr="COMPANY_TYPE" title="COMPANY_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_TYPE attr="INVOICE_TYPE" title="INVOICE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_FREQUENCY attr="INVOICE_FREQUENCY" title="INVOICE_FREQUENCY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_DTL attr="INVOICE_DTL" title="INVOICE_DTL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RC attr="RC" title="RC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PARENT_CO attr="PARENT_CO" title="PARENT_CO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_LAST_DATE attr="INVOICE_LAST_DATE" title="INVOICE_LAST_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #COMPANY_BILL_TO_NAME attr="COMPANY_BILL_TO_NAME" title="COMPANY_BILL_TO_NAME" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #AcquiredFrom attr="AcquiredFrom" title="AcquiredFrom" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #MoveToGP attr="MoveToGP" title="MoveToGP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DefaultPO attr="DefaultPO" title="DefaultPO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #POexpiry attr="POexpiry" title="POexpiry" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #PrivateLabelPO attr="PrivateLabelPO" title="PrivateLabelPO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PrivateLabelPOexpiry attr="PrivateLabelPOexpiry" title="PrivateLabelPOexpiry" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #VisitPO attr="VisitPO" title="VisitPO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VisitPOexpiry attr="VisitPOexpiry" title="VisitPOexpiry" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CATEGORY attr="CATEGORY" title="CATEGORY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OLDCOMPANYTYPE attr="OLDCOMPANYTYPE" title="OLDCOMPANYTYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #BoilerplateInvoiceComment attr="BoilerplateInvoiceComment" title="BoilerplateInvoiceComment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="ShouldPropagateCompanyPo" title="ShouldPropagateCompanyPo">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="ShouldPropagateKscPoToPlants" title="ShouldPropagateKscPoToPlants">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="ShouldPropagateVisitPoToPlants" title="ShouldPropagateVisitPoToPlants">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #PoReason attr="PoReason" title="PoReason" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="On3rdPartyBilling" title="On3rdPartyBilling">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="IsTest" title="IsTest">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #ChometzEmailSentDate attr="ChometzEmailSentDate" title="ChometzEmailSentDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #COMPANY_ID attr="COMPANY_ID" title="COMPANY_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #JEWISH_OWNED attr="JEWISH_OWNED" title="JEWISH_OWNED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #UID attr="UID" title="UID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsPoRequired" title="IsPoRequired">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

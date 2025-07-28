@@ -1,0 +1,106 @@
+<o-form #COMPANYTBForm attr="COMPANYTB_form_insert" service="COMPANYTB" entity="COMPANYTB"
+keys="COMPANY_ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #NAME attr="NAME" label=" N A M E" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LIST attr="LIST" label="LIST" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #GP_NOTIFY attr="GP_NOTIFY" label="GP_NOTIFY" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #PRODUCER attr="PRODUCER" label="PRODUCER" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #MARKETER attr="MARKETER" label="MARKETER" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #SOURCE attr="SOURCE" label="SOURCE" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #IN_HOUSE attr="IN_HOUSE" label="IN_HOUSE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PRIVATE_LABEL attr="PRIVATE_LABEL" label="PRIVATE_LABEL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COPACKER attr="COPACKER" label="COPACKER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CORPORATE attr="CORPORATE" label="CORPORATE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COMPANY_TYPE attr="COMPANY_TYPE" label="COMPANY_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INVOICE_TYPE attr="INVOICE_TYPE" label="INVOICE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INVOICE_FREQUENCY attr="INVOICE_FREQUENCY" label="INVOICE_FREQUENCY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INVOICE_DTL attr="INVOICE_DTL" label="INVOICE_DTL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+        <o-text-input #STATUS attr="STATUS" label="STATUS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #RC attr="RC" label="RC" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PARENT_CO attr="PARENT_CO" label="PARENT_CO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #INVOICE_LAST_DATE attr="INVOICE_LAST_DATE" value-type="string" label="INVOICE_LAST_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #COMPANY_BILL_TO_NAME attr="COMPANY_BILL_TO_NAME" label="COMPANY_BILL_TO_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AcquiredFrom attr="AcquiredFrom" label="AcquiredFrom" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MoveToGP attr="MoveToGP" label="MoveToGP" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DefaultPO attr="DefaultPO" label="DefaultPO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #POexpiry attr="POexpiry" value-type="string" label="POexpiry" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #PrivateLabelPO attr="PrivateLabelPO" label="PrivateLabelPO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #PrivateLabelPOexpiry attr="PrivateLabelPOexpiry" value-type="string" label="PrivateLabelPOexpiry" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #VisitPO attr="VisitPO" label="VisitPO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #VisitPOexpiry attr="VisitPOexpiry" value-type="string" label="VisitPOexpiry" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CATEGORY attr="CATEGORY" label="CATEGORY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OLDCOMPANYTYPE attr="OLDCOMPANYTYPE" label="OLDCOMPANYTYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BoilerplateInvoiceComment attr="BoilerplateInvoiceComment" label="BoilerplateInvoiceComment" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #ShouldPropagateCompanyPo attr="ShouldPropagateCompanyPo" label="ShouldPropagateCompanyPo" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #ShouldPropagateKscPoToPlants attr="ShouldPropagateKscPoToPlants" label="ShouldPropagateKscPoToPlants" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #ShouldPropagateVisitPoToPlants attr="ShouldPropagateVisitPoToPlants" label="ShouldPropagateVisitPoToPlants" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #PoReason attr="PoReason" label="PoReason" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #On3rdPartyBilling attr="On3rdPartyBilling" label="On3rdPartyBilling" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #IsTest attr="IsTest" label="IsTest" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-date-input #ChometzEmailSentDate attr="ChometzEmailSentDate" value-type="string" label="ChometzEmailSentDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #COMPANY_ID attr="COMPANY_ID" label="COMPANY_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #JEWISH_OWNED attr="JEWISH_OWNED" label="JEWISH_OWNED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #UID attr="UID" label="UID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #IsPoRequired attr="IsPoRequired" label="IsPoRequired" read-only="no" enabled="yes"></o-checkbox>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

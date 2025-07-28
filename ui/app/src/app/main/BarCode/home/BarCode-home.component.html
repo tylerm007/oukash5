@@ -1,0 +1,40 @@
+<o-form-layout-manager attr="BarCode" mode="tab" title="BARCODE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="BarCodeTable" 
+            service="BarCode" 
+            entity="BarCode" 
+            title="BARCODE"
+            keys="Id"
+            columns="Id;COMPANY_ID" 
+            header-actions="R;D"
+            visible-columns="Id;COMPANY_ID"  
+            sort-columns="Id" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Id attr="Id" title=" Id" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="Id:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,66 @@
+<o-form-layout-manager attr="AchAuthToken" mode="tab" title="ACHAUTHTOKEN">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="AchAuthTokenTable" 
+            service="AchAuthToken" 
+            entity="AchAuthToken" 
+            title="ACHAUTHTOKEN"
+            keys="Id"
+            columns="institutionName;company_id;userLogin;public_token;accountName;accountMask;accountType;ValidFromTime;ValidToTime;agreedBy;link_session_id;accountID;institutionId;Id;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="institutionName;company_id;userLogin;public_token;accountName;accountMask;accountType;ValidFromTime;ValidToTime;agreedBy;link_session_id;accountID;institutionId;Id;CHANGESET_ID"  
+            sort-columns="institutionName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #institutionName attr="institutionName" title=" institution Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="company_id" title="company_id">
+    <o-table-cell-renderer-service attr="company_id" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="Id:company_id"
+        value-column="NAME" keys="company_id"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #userLogin attr="userLogin" title="userLogin" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #public_token attr="public_token" title="public_token" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #accountName attr="accountName" title="accountName" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #accountMask attr="accountMask" title="accountMask" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #accountType attr="accountType" title="accountType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #agreedBy attr="agreedBy" title="agreedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #link_session_id attr="link_session_id" title="link_session_id" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #accountID attr="accountID" title="accountID" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #institutionId attr="institutionId" title="institutionId" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Id attr="Id" title="Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

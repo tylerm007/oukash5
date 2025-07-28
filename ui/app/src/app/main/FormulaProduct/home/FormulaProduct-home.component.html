@@ -1,0 +1,42 @@
+<o-form-layout-manager attr="FormulaProduct" mode="tab" title="FORMULAPRODUCT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="FormulaProductTable" 
+            service="FormulaProduct" 
+            entity="FormulaProduct" 
+            title="FORMULAPRODUCT"
+            keys="ID"
+            columns="ID;Merchandise_ID;FormulaID" 
+            header-actions="R;D"
+            visible-columns="ID;Merchandise_ID;FormulaID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="Merchandise_ID" title="Merchandise_ID">
+    <o-table-cell-renderer-service attr="Merchandise_ID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="ID:Merchandise_ID"
+        value-column="NAME" keys="Merchandise_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #FormulaID attr="FormulaID" title="FormulaID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

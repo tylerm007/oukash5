@@ -1,0 +1,96 @@
+<o-form-layout-manager attr="CompanycontactsTb" mode="tab" title="COMPANYCONTACTSTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CompanycontactsTbTable" 
+            service="CompanycontactsTb" 
+            entity="CompanycontactsTb" 
+            title="COMPANYCONTACTSTB"
+            keys="ccID"
+            columns="ccID;Company_ID;CompanyTitle;PrimaryCT;BillingCT;WebCT;OtherCT;EnteredBy;ModifiedBy;Active;StatementType;InvoiceType;UsedInComment;LOAtype;EIREmail;ScheduleBEmail;FormulaEmail;ValidFromTime;ValidToTime;PoCT;CopackerCT;DateEntered;DateModified;UserVendorID;ContactID;CHANGESET_ID;UsedByCompID" 
+            header-actions="R;D"
+            visible-columns="ccID;Company_ID;CompanyTitle;PrimaryCT;BillingCT;WebCT;OtherCT;EnteredBy;ModifiedBy;Active;StatementType;InvoiceType;UsedInComment;LOAtype;EIREmail;ScheduleBEmail;FormulaEmail;ValidFromTime;ValidToTime;PoCT;CopackerCT;DateEntered;DateModified;UserVendorID;ContactID;CHANGESET_ID;UsedByCompID"  
+            sort-columns="ccID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ccID attr="ccID" title=" cc I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="Company_ID" title="Company_ID">
+    <o-table-cell-renderer-service attr="Company_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ccID:Company_ID"
+        value-column="NAME" keys="Company_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #CompanyTitle attr="CompanyTitle" title="CompanyTitle" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PrimaryCT attr="PrimaryCT" title="PrimaryCT" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #BillingCT attr="BillingCT" title="BillingCT" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #WebCT attr="WebCT" title="WebCT" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #OtherCT attr="OtherCT" title="OtherCT" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #EnteredBy attr="EnteredBy" title="EnteredBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Active attr="Active" title="Active" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #StatementType attr="StatementType" title="StatementType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #InvoiceType attr="InvoiceType" title="InvoiceType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #UsedInComment attr="UsedInComment" title="UsedInComment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LOAtype attr="LOAtype" title="LOAtype" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #EIREmail attr="EIREmail" title="EIREmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ScheduleBEmail attr="ScheduleBEmail" title="ScheduleBEmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #FormulaEmail attr="FormulaEmail" title="FormulaEmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="PoCT" title="PoCT">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="CopackerCT" title="CopackerCT">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #DateEntered attr="DateEntered" title="DateEntered" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DateModified attr="DateModified" title="DateModified" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #UserVendorID attr="UserVendorID" title="UserVendorID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ContactID attr="ContactID" title="ContactID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #UsedByCompID attr="UsedByCompID" title="UsedByCompID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

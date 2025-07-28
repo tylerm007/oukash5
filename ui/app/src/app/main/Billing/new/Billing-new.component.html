@@ -1,0 +1,89 @@
+<o-form #BillingForm attr="Billing_form_insert" service="Billing" entity="Billing"
+keys="Id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #Id attr="Id" label=" Id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="OWNS_ID"
+        service="OWNSTB" 
+        entity="OWNSTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;OWNS_ID;PlantName" 
+        title="OWNS_ID"
+        visible-columns="ID;PlantName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="PFSO_ID"
+        service="PLANTFEESTRUCTUREOUT" 
+        entity="PLANTFEESTRUCTUREOUTType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;PFSO_ID;ID" 
+        title="PFSO_ID"
+        visible-columns="ID;ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #VisitType attr="VisitType" label="VisitType" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PayType attr="PayType" label="PayType" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #Amount attr="Amount" title="Amount" type="currency" editable="no" required="yes" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-currency-input #VirtualAmount attr="VirtualAmount" title="VirtualAmount" type="currency" editable="no" required="yes" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Kind attr="Kind" label="Kind" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

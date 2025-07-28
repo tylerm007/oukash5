@@ -1,0 +1,243 @@
+<o-form-layout-manager attr="PLANTFEESTRUCTURE" mode="tab" title="PLANTFEESTRUCTURE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTFEESTRUCTURETable" 
+            service="PLANTFEESTRUCTURE" 
+            entity="PLANTFEESTRUCTURE" 
+            title="PLANTFEESTRUCTURE"
+            keys="ID"
+            columns="ID;COMPANY_ID;OwnsID;EFFECTIVE_DATE;APPROVAL;APPROVAL_DATE;IN_CERT_FEE;IN_EXPENSE_TYPE;IN_EXPENSE_AMT;IN_EXPENSE_PERCENT;IN_VISIT_FEE_TYPEx;IN_FREE_VISITS_NUM;IN_VISIT_FEEx;IN_SPECIAL_PRODUCTION_TYPEx;IN_SPECIAL_PRODUCTION_FEEx;IN_UNIT_BASE;IN_PASSOVER_FEE_TYPEx;IN_PASSOVER_FEEx;IN_PASSOVER_VISIT_FEE;IN_PASSOVER_UNIT_RATE;IN_PASSOVER_UNIT_BASE;IN_PRIVATE_LABEL_TYPE;IN_PRIVATE_LABEL_FEE1;IN_PRIVATE_LABEL_BASE1;IN_PRIVATE_LABEL_FEE2;IN_PRIVATE_LABEL_BASE2;IN_PRIVATE_LABEL_FEE3;IN_PRIVATE_LABEL_BASE3;IN_SPECIAL_PRODUCTION_FEE1;IN_UNIT_BASE1;IN_SPECIAL_PRODUCTION_FEE2;IN_UNIT_BASE2;IN_VISIT_FEE1;IN_FREE_VISITS_NUM1;IN_VISIT_FEE2;IN_FREE_VISITS_NUM2;IN_CERT_FREQ;IN_CERT_DATE;IN_PASSOVER_RATE_FEE1;IN_PASSOVER_FOR_FEE1;IN_PASSOVER_RATE_FEE2;IN_PASSOVER_FOR_FEE2;IN_PASSOVER_RATE_FEE3;IN_PASSOVER_FOR_FEE3;IN_BILL_REG_VISIT_TYPEx;IN_BILL_REG_VISIT_AMTx;IN_BILL_SPEC_PROD_TYPEx;IN_BILL_SPEC_PROD_AMTx;IN_BILL_PASSOVER_TYPEx;IN_BILL_PASSOVER_AMTx;OUT_CERT_FEE;OUT_EXPENSE_TYPE;OUT_EXPENSE_AMT;OUT_EXPENSE_PERCENT;OUT_VISIT_FEE_TYPE;OUT_FREE_VISITS_NUM;OUT_VISIT_FEE;OUT_SPECIAL_PRODUCTION_TYPE;OUT_SPECIAL_PRODUCTION_FEE;OUT_UNIT_BASE;OUT_PASSOVER_FEE_TYPE;OUT_PASSOVER_FEE;OUT_PASSOVER_VISIT_FEE;OUT_PASSOVER_UNIT_RATE;OUT_PASSOVER_UNIT_BASE;OUT_PRIVATE_LABEL_TYPE;OUT_PRIVATE_LABEL_FEE1;OUT_PRIVATE_LABEL_BASE1;OUT_PRIVATE_LABEL_FEE2;OUT_PRIVATE_LABEL_BASE2;OUT_PRIVATE_LABEL_FEE3;OUT_PRIVATE_LABEL_BASE3;OUT_SPECIAL_PRODUCTION_FEE1;OUT_UNIT_BASE1;OUT_SPECIAL_PRODUCTION_FEE2;OUT_UNIT_BASE2;OUT_VISIT_FEE1;OUT_FREE_VISITS_NUM1;OUT_VISIT_FEE2;OUT_FREE_VISITS_NUM2;OUT_CERT_FREQ;OUT_CERT_DATE;OUT_PASSOVER_RATE_FEE1;OUT_PASSOVER_FOR_FEE1;OUT_PASSOVER_RATE_FEE2;OUT_PASSOVER_FOR_FEE2;OUT_PASSOVER_RATE_FEE3;OUT_PASSOVER_FOR_FEE3;OUT_BILL_REG_VISIT_TYPE;OUT_BILL_REG_VISIT_AMT;OUT_BILL_SPEC_PROD_TYPE;OUT_BILL_SPEC_PROD_AMT;OUT_BILL_PASSOVER_TYPE;OUT_BILL_PASSOVER_AMT;OUT_FREE_VISITS_OVERNIGHTPAY;OUT_SPECIAL_PRODN_OVERNIGHTPAY;OUT_PASSOVER_RATE_OVERNIGHTPAY;ValidFromTime;ValidToTime;PLANT_ID;COMPANY_FEE_ID,APPROVAL_PERSON_ID,PERSON_JOB_ID,CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;COMPANY_ID;OwnsID;EFFECTIVE_DATE;APPROVAL;APPROVAL_DATE;IN_CERT_FEE;IN_EXPENSE_TYPE;IN_EXPENSE_AMT;IN_EXPENSE_PERCENT;IN_VISIT_FEE_TYPEx;IN_FREE_VISITS_NUM;IN_VISIT_FEEx;IN_SPECIAL_PRODUCTION_TYPEx;IN_SPECIAL_PRODUCTION_FEEx;IN_UNIT_BASE;IN_PASSOVER_FEE_TYPEx;IN_PASSOVER_FEEx;IN_PASSOVER_VISIT_FEE;IN_PASSOVER_UNIT_RATE;IN_PASSOVER_UNIT_BASE;IN_PRIVATE_LABEL_TYPE;IN_PRIVATE_LABEL_FEE1;IN_PRIVATE_LABEL_BASE1;IN_PRIVATE_LABEL_FEE2;IN_PRIVATE_LABEL_BASE2;IN_PRIVATE_LABEL_FEE3;IN_PRIVATE_LABEL_BASE3;IN_SPECIAL_PRODUCTION_FEE1;IN_UNIT_BASE1;IN_SPECIAL_PRODUCTION_FEE2;IN_UNIT_BASE2;IN_VISIT_FEE1;IN_FREE_VISITS_NUM1;IN_VISIT_FEE2;IN_FREE_VISITS_NUM2;IN_CERT_FREQ;IN_CERT_DATE;IN_PASSOVER_RATE_FEE1;IN_PASSOVER_FOR_FEE1;IN_PASSOVER_RATE_FEE2;IN_PASSOVER_FOR_FEE2;IN_PASSOVER_RATE_FEE3;IN_PASSOVER_FOR_FEE3;IN_BILL_REG_VISIT_TYPEx;IN_BILL_REG_VISIT_AMTx;IN_BILL_SPEC_PROD_TYPEx;IN_BILL_SPEC_PROD_AMTx;IN_BILL_PASSOVER_TYPEx;IN_BILL_PASSOVER_AMTx;OUT_CERT_FEE;OUT_EXPENSE_TYPE;OUT_EXPENSE_AMT;OUT_EXPENSE_PERCENT;OUT_VISIT_FEE_TYPE;OUT_FREE_VISITS_NUM;OUT_VISIT_FEE;OUT_SPECIAL_PRODUCTION_TYPE;OUT_SPECIAL_PRODUCTION_FEE;OUT_UNIT_BASE;OUT_PASSOVER_FEE_TYPE;OUT_PASSOVER_FEE;OUT_PASSOVER_VISIT_FEE;OUT_PASSOVER_UNIT_RATE;OUT_PASSOVER_UNIT_BASE;OUT_PRIVATE_LABEL_TYPE;OUT_PRIVATE_LABEL_FEE1;OUT_PRIVATE_LABEL_BASE1;OUT_PRIVATE_LABEL_FEE2;OUT_PRIVATE_LABEL_BASE2;OUT_PRIVATE_LABEL_FEE3;OUT_PRIVATE_LABEL_BASE3;OUT_SPECIAL_PRODUCTION_FEE1;OUT_UNIT_BASE1;OUT_SPECIAL_PRODUCTION_FEE2;OUT_UNIT_BASE2;OUT_VISIT_FEE1;OUT_FREE_VISITS_NUM1;OUT_VISIT_FEE2;OUT_FREE_VISITS_NUM2;OUT_CERT_FREQ;OUT_CERT_DATE;OUT_PASSOVER_RATE_FEE1;OUT_PASSOVER_FOR_FEE1;OUT_PASSOVER_RATE_FEE2;OUT_PASSOVER_FOR_FEE2;OUT_PASSOVER_RATE_FEE3;OUT_PASSOVER_FOR_FEE3;OUT_BILL_REG_VISIT_TYPE;OUT_BILL_REG_VISIT_AMT;OUT_BILL_SPEC_PROD_TYPE;OUT_BILL_SPEC_PROD_AMT;OUT_BILL_PASSOVER_TYPE;OUT_BILL_PASSOVER_AMT;OUT_FREE_VISITS_OVERNIGHTPAY;OUT_SPECIAL_PRODN_OVERNIGHTPAY;OUT_PASSOVER_RATE_OVERNIGHTPAY;ValidFromTime;ValidToTime;PLANT_ID;COMPANY_FEE_ID,APPROVAL_PERSON_ID,PERSON_JOB_ID,CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="OwnsID" title="OwnsID">
+    <o-table-cell-renderer-service attr="OwnsID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OwnsID"
+        value-column="PlantName" keys="OwnsID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #EFFECTIVE_DATE attr="EFFECTIVE_DATE" title="EFFECTIVE_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #APPROVAL attr="APPROVAL" title="APPROVAL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #APPROVAL_DATE attr="APPROVAL_DATE" title="APPROVAL_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #IN_CERT_FEE attr="IN_CERT_FEE" title="IN_CERT_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_EXPENSE_TYPE attr="IN_EXPENSE_TYPE" title="IN_EXPENSE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_EXPENSE_AMT attr="IN_EXPENSE_AMT" title="IN_EXPENSE_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #IN_EXPENSE_PERCENT attr="IN_EXPENSE_PERCENT" title="IN_EXPENSE_PERCENT" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_VISIT_FEE_TYPEx attr="IN_VISIT_FEE_TYPEx" title="IN_VISIT_FEE_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_FREE_VISITS_NUM attr="IN_FREE_VISITS_NUM" title="IN_FREE_VISITS_NUM" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_VISIT_FEEx attr="IN_VISIT_FEEx" title="IN_VISIT_FEEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_SPECIAL_PRODUCTION_TYPEx attr="IN_SPECIAL_PRODUCTION_TYPEx" title="IN_SPECIAL_PRODUCTION_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_SPECIAL_PRODUCTION_FEEx attr="IN_SPECIAL_PRODUCTION_FEEx" title="IN_SPECIAL_PRODUCTION_FEEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_UNIT_BASE attr="IN_UNIT_BASE" title="IN_UNIT_BASE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_FEE_TYPEx attr="IN_PASSOVER_FEE_TYPEx" title="IN_PASSOVER_FEE_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_FEEx attr="IN_PASSOVER_FEEx" title="IN_PASSOVER_FEEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_VISIT_FEE attr="IN_PASSOVER_VISIT_FEE" title="IN_PASSOVER_VISIT_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_UNIT_RATE attr="IN_PASSOVER_UNIT_RATE" title="IN_PASSOVER_UNIT_RATE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_UNIT_BASE attr="IN_PASSOVER_UNIT_BASE" title="IN_PASSOVER_UNIT_BASE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_TYPE attr="IN_PRIVATE_LABEL_TYPE" title="IN_PRIVATE_LABEL_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_FEE1 attr="IN_PRIVATE_LABEL_FEE1" title="IN_PRIVATE_LABEL_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_BASE1 attr="IN_PRIVATE_LABEL_BASE1" title="IN_PRIVATE_LABEL_BASE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_FEE2 attr="IN_PRIVATE_LABEL_FEE2" title="IN_PRIVATE_LABEL_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_BASE2 attr="IN_PRIVATE_LABEL_BASE2" title="IN_PRIVATE_LABEL_BASE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_FEE3 attr="IN_PRIVATE_LABEL_FEE3" title="IN_PRIVATE_LABEL_FEE3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PRIVATE_LABEL_BASE3 attr="IN_PRIVATE_LABEL_BASE3" title="IN_PRIVATE_LABEL_BASE3" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_SPECIAL_PRODUCTION_FEE1 attr="IN_SPECIAL_PRODUCTION_FEE1" title="IN_SPECIAL_PRODUCTION_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_UNIT_BASE1 attr="IN_UNIT_BASE1" title="IN_UNIT_BASE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_SPECIAL_PRODUCTION_FEE2 attr="IN_SPECIAL_PRODUCTION_FEE2" title="IN_SPECIAL_PRODUCTION_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_UNIT_BASE2 attr="IN_UNIT_BASE2" title="IN_UNIT_BASE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_VISIT_FEE1 attr="IN_VISIT_FEE1" title="IN_VISIT_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_FREE_VISITS_NUM1 attr="IN_FREE_VISITS_NUM1" title="IN_FREE_VISITS_NUM1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_VISIT_FEE2 attr="IN_VISIT_FEE2" title="IN_VISIT_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_FREE_VISITS_NUM2 attr="IN_FREE_VISITS_NUM2" title="IN_FREE_VISITS_NUM2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_CERT_FREQ attr="IN_CERT_FREQ" title="IN_CERT_FREQ" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_CERT_DATE attr="IN_CERT_DATE" title="IN_CERT_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_RATE_FEE1 attr="IN_PASSOVER_RATE_FEE1" title="IN_PASSOVER_RATE_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_FOR_FEE1 attr="IN_PASSOVER_FOR_FEE1" title="IN_PASSOVER_FOR_FEE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_RATE_FEE2 attr="IN_PASSOVER_RATE_FEE2" title="IN_PASSOVER_RATE_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_FOR_FEE2 attr="IN_PASSOVER_FOR_FEE2" title="IN_PASSOVER_FOR_FEE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_RATE_FEE3 attr="IN_PASSOVER_RATE_FEE3" title="IN_PASSOVER_RATE_FEE3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_PASSOVER_FOR_FEE3 attr="IN_PASSOVER_FOR_FEE3" title="IN_PASSOVER_FOR_FEE3" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IN_BILL_REG_VISIT_TYPEx attr="IN_BILL_REG_VISIT_TYPEx" title="IN_BILL_REG_VISIT_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_BILL_REG_VISIT_AMTx attr="IN_BILL_REG_VISIT_AMTx" title="IN_BILL_REG_VISIT_AMTx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_BILL_SPEC_PROD_TYPEx attr="IN_BILL_SPEC_PROD_TYPEx" title="IN_BILL_SPEC_PROD_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_BILL_SPEC_PROD_AMTx attr="IN_BILL_SPEC_PROD_AMTx" title="IN_BILL_SPEC_PROD_AMTx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_BILL_PASSOVER_TYPEx attr="IN_BILL_PASSOVER_TYPEx" title="IN_BILL_PASSOVER_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IN_BILL_PASSOVER_AMTx attr="IN_BILL_PASSOVER_AMTx" title="IN_BILL_PASSOVER_AMTx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_CERT_FEE attr="OUT_CERT_FEE" title="OUT_CERT_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_EXPENSE_TYPE attr="OUT_EXPENSE_TYPE" title="OUT_EXPENSE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_EXPENSE_AMT attr="OUT_EXPENSE_AMT" title="OUT_EXPENSE_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #OUT_EXPENSE_PERCENT attr="OUT_EXPENSE_PERCENT" title="OUT_EXPENSE_PERCENT" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE_TYPE attr="OUT_VISIT_FEE_TYPE" title="OUT_VISIT_FEE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM attr="OUT_FREE_VISITS_NUM" title="OUT_FREE_VISITS_NUM" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE attr="OUT_VISIT_FEE" title="OUT_VISIT_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_TYPE attr="OUT_SPECIAL_PRODUCTION_TYPE" title="OUT_SPECIAL_PRODUCTION_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEE attr="OUT_SPECIAL_PRODUCTION_FEE" title="OUT_SPECIAL_PRODUCTION_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE attr="OUT_UNIT_BASE" title="OUT_UNIT_BASE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FEE_TYPE attr="OUT_PASSOVER_FEE_TYPE" title="OUT_PASSOVER_FEE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FEE attr="OUT_PASSOVER_FEE" title="OUT_PASSOVER_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_VISIT_FEE attr="OUT_PASSOVER_VISIT_FEE" title="OUT_PASSOVER_VISIT_FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_UNIT_RATE attr="OUT_PASSOVER_UNIT_RATE" title="OUT_PASSOVER_UNIT_RATE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_UNIT_BASE attr="OUT_PASSOVER_UNIT_BASE" title="OUT_PASSOVER_UNIT_BASE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_TYPE attr="OUT_PRIVATE_LABEL_TYPE" title="OUT_PRIVATE_LABEL_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_FEE1 attr="OUT_PRIVATE_LABEL_FEE1" title="OUT_PRIVATE_LABEL_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_BASE1 attr="OUT_PRIVATE_LABEL_BASE1" title="OUT_PRIVATE_LABEL_BASE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_FEE2 attr="OUT_PRIVATE_LABEL_FEE2" title="OUT_PRIVATE_LABEL_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_BASE2 attr="OUT_PRIVATE_LABEL_BASE2" title="OUT_PRIVATE_LABEL_BASE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_FEE3 attr="OUT_PRIVATE_LABEL_FEE3" title="OUT_PRIVATE_LABEL_FEE3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PRIVATE_LABEL_BASE3 attr="OUT_PRIVATE_LABEL_BASE3" title="OUT_PRIVATE_LABEL_BASE3" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEE1 attr="OUT_SPECIAL_PRODUCTION_FEE1" title="OUT_SPECIAL_PRODUCTION_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE1 attr="OUT_UNIT_BASE1" title="OUT_UNIT_BASE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEE2 attr="OUT_SPECIAL_PRODUCTION_FEE2" title="OUT_SPECIAL_PRODUCTION_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE2 attr="OUT_UNIT_BASE2" title="OUT_UNIT_BASE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE1 attr="OUT_VISIT_FEE1" title="OUT_VISIT_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM1 attr="OUT_FREE_VISITS_NUM1" title="OUT_FREE_VISITS_NUM1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE2 attr="OUT_VISIT_FEE2" title="OUT_VISIT_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM2 attr="OUT_FREE_VISITS_NUM2" title="OUT_FREE_VISITS_NUM2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_CERT_FREQ attr="OUT_CERT_FREQ" title="OUT_CERT_FREQ" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_CERT_DATE attr="OUT_CERT_DATE" title="OUT_CERT_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE1 attr="OUT_PASSOVER_RATE_FEE1" title="OUT_PASSOVER_RATE_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE1 attr="OUT_PASSOVER_FOR_FEE1" title="OUT_PASSOVER_FOR_FEE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE2 attr="OUT_PASSOVER_RATE_FEE2" title="OUT_PASSOVER_RATE_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE2 attr="OUT_PASSOVER_FOR_FEE2" title="OUT_PASSOVER_FOR_FEE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE3 attr="OUT_PASSOVER_RATE_FEE3" title="OUT_PASSOVER_RATE_FEE3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE3 attr="OUT_PASSOVER_FOR_FEE3" title="OUT_PASSOVER_FOR_FEE3" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_BILL_REG_VISIT_TYPE attr="OUT_BILL_REG_VISIT_TYPE" title="OUT_BILL_REG_VISIT_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_BILL_REG_VISIT_AMT attr="OUT_BILL_REG_VISIT_AMT" title="OUT_BILL_REG_VISIT_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #OUT_BILL_SPEC_PROD_TYPE attr="OUT_BILL_SPEC_PROD_TYPE" title="OUT_BILL_SPEC_PROD_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_BILL_SPEC_PROD_AMT attr="OUT_BILL_SPEC_PROD_AMT" title="OUT_BILL_SPEC_PROD_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #OUT_BILL_PASSOVER_TYPE attr="OUT_BILL_PASSOVER_TYPE" title="OUT_BILL_PASSOVER_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_BILL_PASSOVER_AMT attr="OUT_BILL_PASSOVER_AMT" title="OUT_BILL_PASSOVER_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_OVERNIGHTPAY attr="OUT_FREE_VISITS_OVERNIGHTPAY" title="OUT_FREE_VISITS_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODN_OVERNIGHTPAY attr="OUT_SPECIAL_PRODN_OVERNIGHTPAY" title="OUT_SPECIAL_PRODN_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_OVERNIGHTPAY attr="OUT_PASSOVER_RATE_OVERNIGHTPAY" title="OUT_PASSOVER_RATE_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #PLANT_ID attr="PLANT_ID" title="PLANT_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

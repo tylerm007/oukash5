@@ -1,0 +1,112 @@
+<o-form-layout-manager attr="PERSONTB" mode="tab" title="PERSONTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PERSONTBTable" 
+            service="PERSONTB" 
+            entity="PERSONTB" 
+            title="PERSONTB"
+            keys="PERSON_ID"
+            columns="PERSON_ID;AdministrativeAssistant;FIRST;LAST;MIDDLE;PREFIX;SUFFIX;HIRE_DATE;SSN;TIMESTAMP;ACTIVE;SENDTICKETTO;ACCTS_PAY_NUM;MaxPay;MileageRate;WebAccess;GroupLeader;KashLogIn;IsGroupLeader;HiddenSSN;WorkflowEmails;PasswordQuestion;PasswordAnswer;ValidFromTime;ValidToTime;IncludeInIngWFAssignmentList;TempRfr;IsBillForMileageDifferential;AllowCopackerManagement;VENDOR_ID;Password;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="PERSON_ID;AdministrativeAssistant;FIRST;LAST;MIDDLE;PREFIX;SUFFIX;HIRE_DATE;SSN;TIMESTAMP;ACTIVE;SENDTICKETTO;ACCTS_PAY_NUM;MaxPay;MileageRate;WebAccess;GroupLeader;KashLogIn;IsGroupLeader;HiddenSSN;WorkflowEmails;PasswordQuestion;PasswordAnswer;ValidFromTime;ValidToTime;IncludeInIngWFAssignmentList;TempRfr;IsBillForMileageDifferential;AllowCopackerManagement;VENDOR_ID;Password;CHANGESET_ID"  
+            sort-columns="PERSON_ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #PERSON_ID attr="PERSON_ID" title=" P E R S O N_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="AdministrativeAssistant" title="AdministrativeAssistant">
+    <o-table-cell-renderer-service attr="AdministrativeAssistant" 
+        service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
+        parent-keys="PERSON_ID:AdministrativeAssistant"
+        value-column="PERSON_JOB_ID" keys="AdministrativeAssistant"
+        visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #FIRST attr="FIRST" title="FIRST" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LAST attr="LAST" title="LAST" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #MIDDLE attr="MIDDLE" title="MIDDLE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PREFIX attr="PREFIX" title="PREFIX" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SUFFIX attr="SUFFIX" title="SUFFIX" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #HIRE_DATE attr="HIRE_DATE" title="HIRE_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #SSN attr="SSN" title="SSN" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #SENDTICKETTO attr="SENDTICKETTO" title="SENDTICKETTO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACCTS_PAY_NUM attr="ACCTS_PAY_NUM" title="ACCTS_PAY_NUM" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #MaxPay attr="MaxPay" title="MaxPay" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #MileageRate attr="MileageRate" title="MileageRate" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #WebAccess attr="WebAccess" title="WebAccess" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #GroupLeader attr="GroupLeader" title="GroupLeader" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #KashLogIn attr="KashLogIn" title="KashLogIn" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IsGroupLeader attr="IsGroupLeader" title="IsGroupLeader" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #HiddenSSN attr="HiddenSSN" title="HiddenSSN" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #WorkflowEmails attr="WorkflowEmails" title="WorkflowEmails" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PasswordQuestion attr="PasswordQuestion" title="PasswordQuestion" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PasswordAnswer attr="PasswordAnswer" title="PasswordAnswer" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IncludeInIngWFAssignmentList" title="IncludeInIngWFAssignmentList">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="TempRfr" title="TempRfr">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="IsBillForMileageDifferential" title="IsBillForMileageDifferential">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="AllowCopackerManagement" title="AllowCopackerManagement">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #VENDOR_ID attr="VENDOR_ID" title="VENDOR_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #Password attr="Password" title="Password" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

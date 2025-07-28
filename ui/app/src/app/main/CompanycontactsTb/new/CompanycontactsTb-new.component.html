@@ -1,0 +1,85 @@
+<o-form #CompanycontactsTbForm attr="CompanycontactsTb_form_insert" service="CompanycontactsTb" entity="CompanycontactsTb"
+keys="ccID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ccID attr="ccID" label=" cc I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="Company_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;Company_ID;NAME" 
+        title="Company_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #CompanyTitle attr="CompanyTitle" label="CompanyTitle" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PrimaryCT attr="PrimaryCT" label="PrimaryCT" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BillingCT attr="BillingCT" label="BillingCT" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #WebCT attr="WebCT" label="WebCT" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OtherCT attr="OtherCT" label="OtherCT" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #EnteredBy attr="EnteredBy" label="EnteredBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #Active attr="Active" label="Active" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #StatementType attr="StatementType" label="StatementType" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #InvoiceType attr="InvoiceType" label="InvoiceType" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #UsedInComment attr="UsedInComment" label="UsedInComment" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LOAtype attr="LOAtype" label="LOAtype" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #EIREmail attr="EIREmail" label="EIREmail" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ScheduleBEmail attr="ScheduleBEmail" label="ScheduleBEmail" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #FormulaEmail attr="FormulaEmail" label="FormulaEmail" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #PoCT attr="PoCT" label="PoCT" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #CopackerCT attr="CopackerCT" label="CopackerCT" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #DateEntered attr="DateEntered" label="DateEntered" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #DateModified attr="DateModified" value-type="string" label="DateModified" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #UserVendorID attr="UserVendorID" label="UserVendorID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ContactID attr="ContactID" label="ContactID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #UsedByCompID attr="UsedByCompID" label="UsedByCompID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

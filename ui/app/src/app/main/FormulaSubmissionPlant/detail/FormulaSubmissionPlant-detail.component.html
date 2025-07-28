@@ -1,0 +1,182 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="PlantName" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="FormulaSubmissionPlant_form_edit" 
+        service="FormulaSubmissionPlant" 
+        entity="FormulaSubmissionPlant" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #PlantName attr="PlantName" label=" Plant Name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PlantCode attr="PlantCode" label="PlantCode" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ActionTaken attr="ActionTaken" label="ActionTaken" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ProductionMode attr="ProductionMode" label="ProductionMode" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #FormulaSubmissionID attr="FormulaSubmissionID" label="FormulaSubmissionID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+      <o-integer-input #Owns_ID attr="Owns_ID" label="Owns_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="PRODUCEDIN1TB-FormulaSubmissionPlantID">
+    <div layout-padding>
+      <o-table 
+        attr="ProducedIn1TbTable" 
+        service="ProducedIn1Tb" 
+        entity="ProducedIn1Tb" 
+        keys="ID"
+        parent-keys="FormulaSubmissionPlantID:ID"
+        columns="BatchSheetName;FormulaSubmissionPlantID;LabelID;OWNS_ID;START_DATE;END_DATE;REGULAR;SPECIAL;PASSOVER;PRIVATE_LABEL_FEE;TIMESTAMP;STATUS;SPECIAL_STATUS_1;RC_1;DATE_1;SPECIAL_STATUS_2;RC_2;DATE_2;SPECIAL_STATUS_3;RC_3;DATE_3;SPECIAL_STATUS_4;RC_4;DATE_4;ACTIVE;DATE_LAST_REV;CREATE_DATE;CREATED_BY;MODIFIED_DATE;MODIFIED_BY;DIST;MEHADRIN;LOTNUM;ValidFromTime;ValidToTime;LatestPesachSeason;ID;PROC_LINE_ID;DATE_CERTIFIED;ProductPlantsID;CHANGESET_ID"  
+        horizontal-scroll="yes"
+        detail-form-route="ProducedIn1Tb" 
+        edit-form-route="ProducedIn1Tb"
+        visible-columns="BatchSheetName;FormulaSubmissionPlantID;LabelID;OWNS_ID;START_DATE;END_DATE;REGULAR;SPECIAL;PASSOVER;PRIVATE_LABEL_FEE;TIMESTAMP;STATUS;SPECIAL_STATUS_1;RC_1;DATE_1;SPECIAL_STATUS_2;RC_2;DATE_2;SPECIAL_STATUS_3;RC_3;DATE_3;SPECIAL_STATUS_4;RC_4;DATE_4;ACTIVE;DATE_LAST_REV;CREATE_DATE;CREATED_BY;MODIFIED_DATE;MODIFIED_BY;DIST;MEHADRIN;LOTNUM;ValidFromTime;ValidToTime;LatestPesachSeason;ID;PROC_LINE_ID;DATE_CERTIFIED;ProductPlantsID;CHANGESET_ID"  
+        sort-columns="BatchSheetName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #BatchSheetName attr="BatchSheetName" title=" Batch Sheet Name" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="FormulaSubmissionPlantID" title="FormulaSubmissionPlantID">
+    <o-table-cell-renderer-service attr="FormulaSubmissionPlantID" 
+        service="FormulaSubmissionPlant" entity="FormulaSubmissionPlantType" columns="ID;PlantName"
+        parent-keys="ID:FormulaSubmissionPlantID"
+        value-column="PlantName" keys="FormulaSubmissionPlantID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="LabelID" title="LabelID">
+    <o-table-cell-renderer-service attr="LabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="ID:LabelID"
+        value-column="BRAND_NAME" keys="LabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="OWNS_ID" title="OWNS_ID">
+    <o-table-cell-renderer-service attr="OWNS_ID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OWNS_ID"
+        value-column="PlantName" keys="OWNS_ID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #REGULAR attr="REGULAR" title="REGULAR" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SPECIAL attr="SPECIAL" title="SPECIAL" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PASSOVER attr="PASSOVER" title="PASSOVER" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PRIVATE_LABEL_FEE attr="PRIVATE_LABEL_FEE" title="PRIVATE_LABEL_FEE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SPECIAL_STATUS_1 attr="SPECIAL_STATUS_1" title="SPECIAL_STATUS_1" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #RC_1 attr="RC_1" title="RC_1" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #DATE_1 attr="DATE_1" title="DATE_1" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SPECIAL_STATUS_2 attr="SPECIAL_STATUS_2" title="SPECIAL_STATUS_2" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #RC_2 attr="RC_2" title="RC_2" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #DATE_2 attr="DATE_2" title="DATE_2" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SPECIAL_STATUS_3 attr="SPECIAL_STATUS_3" title="SPECIAL_STATUS_3" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #RC_3 attr="RC_3" title="RC_3" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #DATE_3 attr="DATE_3" title="DATE_3" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SPECIAL_STATUS_4 attr="SPECIAL_STATUS_4" title="SPECIAL_STATUS_4" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #RC_4 attr="RC_4" title="RC_4" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #DATE_4 attr="DATE_4" title="DATE_4" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #DATE_LAST_REV attr="DATE_LAST_REV" title="DATE_LAST_REV" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CREATE_DATE attr="CREATE_DATE" title="CREATE_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CREATED_BY attr="CREATED_BY" title="CREATED_BY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #MODIFIED_DATE attr="MODIFIED_DATE" title="MODIFIED_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #MODIFIED_BY attr="MODIFIED_BY" title="MODIFIED_BY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="DIST" title="DIST">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column attr="MEHADRIN" title="MEHADRIN">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #LOTNUM attr="LOTNUM" title="LOTNUM" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #LatestPesachSeason attr="LatestPesachSeason" title="LatestPesachSeason" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #PROC_LINE_ID attr="PROC_LINE_ID" title="PROC_LINE_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #DATE_CERTIFIED attr="DATE_CERTIFIED" title="DATE_CERTIFIED" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ProductPlantsID attr="ProductPlantsID" title="ProductPlantsID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

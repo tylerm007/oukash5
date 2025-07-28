@@ -1,0 +1,3086 @@
+about:
+  date: July 28, 2025 14:48:19
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 98
+  number_tables: 62
+info_toggle_checked: true
+resources:
+  AchAuthToken:
+    attributes:
+    - label: ' institution Name*'
+      name: institutionName
+      required: true
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: userLogin
+      required: true
+    - name: public_token
+      required: true
+    - name: accountName
+      required: true
+    - name: accountMask
+      required: true
+    - name: accountType
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: agreedBy
+    - name: link_session_id
+      required: true
+    - name: accountID
+      required: true
+    - name: institutionId
+      required: true
+    - name: Id
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: COMPANYTB
+    type: AchAuthToken
+    user_key: institutionName
+  AchPlaidLambdaResponse:
+    attributes:
+    - label: ' Id*'
+      name: Id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: userLogin
+      required: true
+    - name: stripe_bank_account_token
+      required: true
+    - name: access_token
+    - name: status_code
+      required: true
+    - name: public_token
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: request_id
+      required: true
+    - name: accountID
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: COMPANYTB
+    type: AchPlaidLambdaResponse
+    user_key: Id
+  AchStripePayment:
+    attributes:
+    - label: ' Description*'
+      name: Description
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: UserLogin
+    - name: Amount
+    - name: Currency
+    - name: ReceiptEmail
+    - name: JsonRet
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ProcessorType
+      required: true
+    - name: FeeAmount
+    - name: Comments
+    - name: Id
+    - name: StripeId
+    - name: CHANGESET_ID
+    - name: CardKnoxId
+    - name: CustomerFeeWaived
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: tomany
+      fks:
+      - AchStripePaymentId
+      name: AchStripePaymentDetailList
+      resource: AchStripePaymentDetail
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: COMPANYTB
+    type: AchStripePayment
+    user_key: Description
+  AchStripePaymentDetail:
+    attributes:
+    - label: ' Id*'
+      name: Id
+      search: true
+      sort: true
+    - name: AchStripePaymentId
+      required: true
+    - name: DocumentNumber
+    - name: Amount
+    - name: TransactionBalance
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - AchStripePaymentId
+      name: AchStripePayment
+      resource: AchStripePayment
+    type: AchStripePaymentDetail
+    user_key: Id
+  BarCode:
+    attributes:
+    - label: ' Id*'
+      name: Id
+      required: true
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - barcodeId
+      name: LabelBarcodeList
+      resource: LabelBarcode
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: BarCode
+    user_key: Id
+  Billing:
+    attributes:
+    - label: ' Id*'
+      name: Id
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: OWNS_ID
+    - name: PFSO_ID
+    - name: VisitType
+    - name: PayType
+    - name: Amount
+      required: true
+    - name: VirtualAmount
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: Kind
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OWNS_ID
+      name: OWNS_TB
+      resource: OWNSTB
+    - direction: toone
+      fks:
+      - PFSO_ID
+      name: PLANT_FEE_STRUCTURE_OUT
+      resource: PLANTFEESTRUCTUREOUT
+    type: Billing
+    user_key: Id
+  COMPANYADDRESSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: ADDRESS_SEQ_NUM
+      required: true
+    - name: TYPE
+    - name: ATTN
+    - name: STREET1
+    - name: STREET2
+    - name: STREET3
+    - name: CITY
+    - name: STATE
+    - name: ZIP
+    - name: COUNTRY
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COMPANYADDRESSTB
+    user_key: ID
+  COMPANYCERTDETAIL:
+    attributes:
+    - label: ' C E R T_ D E T A I L_ D E S C R I P T I O N*'
+      name: CERT_DETAIL_DESCRIPTION
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: CERT_DETAIL_SEQ_NUM
+      required: true
+    - name: CERT_DETAIL_AMOUNT
+    - name: CERT_DETAIL_DATE
+      type: DATETIME
+    - name: CERT_DETAIL_COMMENT
+    - name: ID
+    - name: COMPANY_FEE_ID
+      required: true
+    - name: CERT_DETAIL_PERSON_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COMPANYCERTDETAIL
+    user_key: CERT_DETAIL_DESCRIPTION
+  COMPANYCOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: TIMESTAMP
+    - name: COMMENT_ID
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COMPANYCOMMENT
+    user_key: ID
+  COMPANYFEECOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: TIMESTAMP
+    - name: COMMENT_ID
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COMPANYFEECOMMENT
+    user_key: ID
+  COMPANYFEESTRUCTURE:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: COMPANY_ID
+      required: true
+    - name: EFFECTIVE_DATE
+      type: DATETIME
+    - name: APPROVAL
+      required: true
+    - name: APPROVAL_DATE
+      type: DATETIME
+    - name: CERT_FEE
+    - name: EXPENSE_TYPE
+    - name: EXPENSE_AMT
+    - name: EXPENSE_PERCENT
+    - name: VISIT_FEE_TYPE
+    - name: FREE_VISITS_NUM
+    - name: VISIT_FEE
+    - name: SPECIAL_PRODUCTION_TYPE
+    - name: SPECIAL_PRODUCTION_FEE
+    - name: UNIT_BASE
+    - name: PASSOVER_FEE_TYPE
+    - name: PASSOVER_FEE
+    - name: PASSOVER_VISIT_FEE
+    - name: PASSOVER_UNIT_RATE
+    - name: PASSOVER_UNIT_BASE
+    - name: PRIVATE_LABEL_TYPE
+    - name: PRIVATE_LABEL_FEE1
+    - name: PRIVATE_LABEL_BASE1
+    - name: PRIVATE_LABEL_FEE2
+    - name: PRIVATE_LABEL_BASE2
+    - name: PRIVATE_LABEL_FEE3
+    - name: PRIVATE_LABEL_BASE3
+    - name: SPECIAL_PRODUCTION_FEE1
+    - name: UNIT_BASE1
+    - name: SPECIAL_PRODUCTION_FEE2
+    - name: UNIT_BASE2
+    - name: VISIT_FEE1
+    - name: FREE_VISITS_NUM1
+    - name: VISIT_FEE2
+    - name: FREE_VISITS_NUM2
+    - name: CERT_FREQ
+    - name: CERT_DATE
+      type: DATETIME
+    - name: PASSOVER_RATE_FEE1
+    - name: PASSOVER_FOR_FEE1
+    - name: PASSOVER_RATE_FEE2
+    - name: PASSOVER_FOR_FEE2
+    - name: PASSOVER_RATE_FEE3
+    - name: PASSOVER_FOR_FEE3
+    - name: BILL_REG_VISIT_TYPEx
+    - name: BILL_REG_VISIT_AMTx
+    - name: BILL_SPEC_PROD_TYPEx
+    - name: BILL_SPEC_PROD_AMTx
+    - name: BILL_PASSOVER_TYPEx
+    - name: BILL_PASSOVER_AMTx
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: LockPerDistributorRate
+      required: true
+      type: Boolean
+    - name: PRIVATE_LABEL_COMMENT
+    - name: COMPANY_FEE_ID
+      required: true
+    - name: APPROVAL_PERSON_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB1
+      resource: COMPANYTB
+    type: COMPANYFEESTRUCTURE
+    user_key: ID
+  COMPANYHOLDTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: COMPANY_ID
+      required: true
+    - name: COMPANY_SEQ_NUM
+      required: true
+    - name: HOLD_TYPE
+    - name: START_DATE
+      type: DATETIME
+    - name: START_REASON
+      required: true
+    - name: END_DATE
+      type: DATETIME
+    - name: END_REASON
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: START_PERSON_ID
+      required: true
+    - name: END_PERSON_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB1
+      resource: COMPANYTB
+    type: COMPANYHOLDTB
+    user_key: ID
+  COMPANYOTHERNAME:
+    attributes:
+    - label: ' L E G A L_ N A M E*'
+      name: LEGAL_NAME
+      search: true
+      sort: true
+      type: Boolean
+    - name: COMPANY_ID
+    - name: DBA
+      type: Boolean
+    - name: CONTRACT_NAME
+      type: Boolean
+    - name: TIMESTAMP
+    - name: ID
+    - name: ALIAS_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COMPANYOTHERNAME
+    user_key: LEGAL_NAME
+  COMPANYSTATUSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: COMPANY_ID
+    - name: ROLE
+    - name: STATUS
+    - name: ACTIVE_FLAG
+      type: Boolean
+    - name: START_DATE
+      type: DATETIME
+    - name: START_REASON
+    - name: END_DATE
+      type: DATETIME
+    - name: END_REASON
+    - name: ACTIVE
+    - name: DateDone
+      type: DATETIME
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: START_PERSON_ID
+    - name: END_PERSON_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB1
+      resource: COMPANYTB
+    type: COMPANYSTATUSTB
+    user_key: ID
+  COMPANYTB:
+    attributes:
+    - label: ' N A M E*'
+      name: NAME
+      required: true
+      search: true
+      sort: true
+    - name: LIST
+    - name: GP_NOTIFY
+    - name: PRODUCER
+      type: Boolean
+    - name: MARKETER
+      type: Boolean
+    - name: SOURCE
+      type: Boolean
+    - name: IN_HOUSE
+    - name: PRIVATE_LABEL
+    - name: COPACKER
+    - name: CORPORATE
+    - name: COMPANY_TYPE
+    - name: INVOICE_TYPE
+    - name: INVOICE_FREQUENCY
+    - name: INVOICE_DTL
+    - name: TIMESTAMP
+    - name: STATUS
+    - name: RC
+    - name: PARENT_CO
+    - name: INVOICE_LAST_DATE
+      type: DATETIME
+    - name: COMPANY_BILL_TO_NAME
+    - name: ACTIVE
+    - name: AcquiredFrom
+    - name: MoveToGP
+    - name: DefaultPO
+    - name: POexpiry
+      type: DATE
+    - name: PrivateLabelPO
+    - name: PrivateLabelPOexpiry
+      type: DATE
+    - name: VisitPO
+    - name: VisitPOexpiry
+      type: DATE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CATEGORY
+    - name: OLDCOMPANYTYPE
+    - name: BoilerplateInvoiceComment
+    - name: ShouldPropagateCompanyPo
+      required: true
+      type: Boolean
+    - name: ShouldPropagateKscPoToPlants
+      required: true
+      type: Boolean
+    - name: ShouldPropagateVisitPoToPlants
+      required: true
+      type: Boolean
+    - name: PoReason
+    - name: On3rdPartyBilling
+      required: true
+      type: Boolean
+    - name: IsTest
+      required: true
+      type: Boolean
+    - name: ChometzEmailSentDate
+      type: DATETIME
+    - name: COMPANY_ID
+    - name: JEWISH_OWNED
+    - name: UID
+    - name: CHANGESET_ID
+    - name: IsPoRequired
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: tomany
+      fks:
+      - company_id
+      name: AchAuthTokenList
+      resource: AchAuthToken
+    - direction: tomany
+      fks:
+      - company_id
+      name: AchPlaidLambdaResponseList
+      resource: AchPlaidLambdaResponse
+    - direction: tomany
+      fks:
+      - company_id
+      name: AchStripePaymentList
+      resource: AchStripePayment
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: BarCodeList
+      resource: BarCode
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: BillingList
+      resource: Billing
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYADDRESSTBList
+      resource: COMPANYADDRESSTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYCERTDETAILList
+      resource: COMPANYCERTDETAIL
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYCOMMENTList
+      resource: COMPANYCOMMENT
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYFEECOMMENTList
+      resource: COMPANYFEECOMMENT
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYFEESTRUCTUREList
+      resource: COMPANYFEESTRUCTURE
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYFEESTRUCTUREList1
+      resource: COMPANYFEESTRUCTURE
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYHOLDTBList
+      resource: COMPANYHOLDTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYHOLDTBList1
+      resource: COMPANYHOLDTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYOTHERNAMEList
+      resource: COMPANYOTHERNAME
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYSTATUSTBList
+      resource: COMPANYSTATUSTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COMPANYSTATUSTBList1
+      resource: COMPANYSTATUSTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: COPRIVATELABELFEEDETAILList
+      resource: COPRIVATELABELFEEDETAIL
+    - direction: tomany
+      fks:
+      - CompanyId
+      name: CoPackerFacilityList
+      resource: CoPackerFacility
+    - direction: tomany
+      fks:
+      - Company_ID
+      name: CompanyPlantOptionList
+      resource: CompanyPlantOption
+    - direction: tomany
+      fks:
+      - Company_ID
+      name: CompanycontactsTbList
+      resource: CompanycontactsTb
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: INVOICEFEEList
+      resource: INVOICEFEE
+    - direction: tomany
+      fks:
+      - SRC_MAR_ID
+      name: LabelTbList
+      resource: LabelTb
+    - direction: tomany
+      fks:
+      - SRC_MAR_ID
+      name: LabelTbList1
+      resource: LabelTb
+    - direction: tomany
+      fks:
+      - CompanyId
+      name: MiniCRMActionList
+      resource: MiniCRMAction
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: OWNSTBList
+      resource: OWNSTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PENDINGINFOTBList
+      resource: PENDINGINFOTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTADDRESSTBList
+      resource: PLANTADDRESSTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTCERTDETAILList
+      resource: PLANTCERTDETAIL
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTCOMMENTList
+      resource: PLANTCOMMENT
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTFEECOMMENTList
+      resource: PLANTFEECOMMENT
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTFEESTRUCTUREList
+      resource: PLANTFEESTRUCTURE
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTFEESTRUCTUREOUTList
+      resource: PLANTFEESTRUCTUREOUT
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTHOLDTBList
+      resource: PLANTHOLDTB
+    - direction: tomany
+      fks:
+      - PrimaryCompany
+      name: PLANTTBList
+      resource: PLANTTB
+    - direction: tomany
+      fks:
+      - BILL_TO_CO_ID
+      name: PRIVATELABELBILLList
+      resource: PRIVATELABELBILL
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PRIVATELABELBILLList1
+      resource: PRIVATELABELBILL
+    - direction: tomany
+      fks:
+      - SRC_MAR_ID
+      name: PRIVATELABELBILLList2
+      resource: PRIVATELABELBILL
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PrivateLabelTemplateList
+      resource: PrivateLabelTemplate
+    - direction: tomany
+      fks:
+      - company_id
+      name: ProductJobList
+      resource: ProductJob
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PurchaseOrderList
+      resource: PurchaseOrder
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: RCTBList
+      resource: RCTB
+    - direction: tomany
+      fks:
+      - company_id
+      name: StripeCustomerList
+      resource: StripeCustomer
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: ThirdPartyBillingCompanyList
+      resource: ThirdPartyBillingCompany
+    - direction: tomany
+      fks:
+      - BrokerID
+      name: USEDIN1TBList
+      resource: USEDIN1TB
+    - direction: tomany
+      fks:
+      - VISIT_FOR_ID
+      name: VISITList
+      resource: VISIT
+    type: COMPANYTB
+    user_key: NAME
+  COPRIVATELABELFEEDETAIL:
+    attributes:
+    - label: ' P L_ D E T A I L_ D E S C R I P T I O N*'
+      name: PL_DETAIL_DESCRIPTION
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PL_DETAIL_SEQ_NUM
+      required: true
+    - name: PL_DETAIL_AMOUNT
+    - name: PL_DETAIL_DATE
+      type: DATETIME
+    - name: PL_DETAIL_COMMENT
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ID
+    - name: COMPANY_FEE_ID
+      required: true
+    - name: PL_DETAIL_PERSON_ID
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: COPRIVATELABELFEEDETAIL
+    user_key: PL_DETAIL_DESCRIPTION
+  CoPackerFacilitiesCategory:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: CoPackerId
+      required: true
+    - name: Category
+      required: true
+    - name: CategoryParent
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CategoryChild
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - CoPackerId
+      name: CoPacker
+      resource: CoPackerFacility
+    type: CoPackerFacilitiesCategory
+    user_key: ID
+  CoPackerFacilitiesLocation:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: CoPackerId
+      required: true
+    - name: Location
+      required: true
+    - name: LocationCity
+    - name: LocationState
+    - name: LocationProvince
+    - name: LocationCountry
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - CoPackerId
+      name: CoPacker
+      resource: CoPackerFacility
+    type: CoPackerFacilitiesLocation
+    user_key: ID
+  CoPackerFacility:
+    attributes:
+    - label: ' Description*'
+      name: Description
+      search: true
+      sort: true
+    - name: CompanyId
+      required: true
+    - name: WebsiteURL
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - CoPackerId
+      name: CoPackerFacilitiesCategoryList
+      resource: CoPackerFacilitiesCategory
+    - direction: tomany
+      fks:
+      - CoPackerId
+      name: CoPackerFacilitiesLocationList
+      resource: CoPackerFacilitiesLocation
+    - direction: toone
+      fks:
+      - CompanyId
+      name: Company
+      resource: COMPANYTB
+    type: CoPackerFacility
+    user_key: Description
+  CompanyPlantOption:
+    attributes:
+    - label: ' Option Name*'
+      name: OptionName
+      search: true
+      sort: true
+    - name: Company_ID
+    - name: OwnsID
+    - name: Plant_id
+    - name: OptionValue
+    - name: OptIn
+    - name: ModifiedBy
+    - name: ModifiedDate
+      type: DATETIME
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ID
+    - name: rcApproved
+    - name: glApproved
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - Company_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OwnsID
+      name: OWNS_TB
+      resource: OWNSTB
+    - direction: toone
+      fks:
+      - Plant_id
+      name: Plant
+      resource: PLANTTB
+    type: CompanyPlantOption
+    user_key: OptionName
+  CompanycontactsTb:
+    attributes:
+    - label: ' cc I D*'
+      name: ccID
+      search: true
+      sort: true
+    - name: Company_ID
+    - name: CompanyTitle
+    - name: PrimaryCT
+      required: true
+    - name: BillingCT
+      required: true
+    - name: WebCT
+      required: true
+    - name: OtherCT
+      required: true
+    - name: EnteredBy
+    - name: ModifiedBy
+    - name: Active
+    - name: StatementType
+      required: true
+    - name: InvoiceType
+      required: true
+    - name: UsedInComment
+    - name: LOAtype
+    - name: EIREmail
+    - name: ScheduleBEmail
+    - name: FormulaEmail
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: PoCT
+      required: true
+      type: Boolean
+    - name: CopackerCT
+      required: true
+      type: Boolean
+    - name: DateEntered
+    - name: DateModified
+      type: DATETIME
+    - name: UserVendorID
+    - name: ContactID
+      required: true
+    - name: CHANGESET_ID
+    - name: UsedByCompID
+    tab_groups:
+    - direction: toone
+      fks:
+      - Company_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: CompanycontactsTb
+    user_key: ccID
+  FormulaComponent:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: ComponentLabelID
+    - name: ComponentMerchID
+    - name: Component
+      required: true
+    - name: ComponentIDType
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: FormulaID
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - ComponentLabelID
+      name: label_tb
+      resource: LabelTb
+    - direction: toone
+      fks:
+      - ComponentMerchID
+      name: MERCH_TB
+      resource: MERCHTB
+    type: FormulaComponent
+    user_key: ID
+  FormulaProduct:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: Merchandise_ID
+      required: true
+    - name: FormulaID
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - Merchandise_ID
+      name: MERCH_TB
+      resource: MERCHTB
+    type: FormulaProduct
+    user_key: ID
+  FormulaSubmissionComponent:
+    attributes:
+    - label: ' Component Name*'
+      name: ComponentName
+      search: true
+      sort: true
+    - name: ComponentLabelID
+    - name: ComponentMerchID
+    - name: RMC
+    - name: ProductNumber
+    - name: SupplierCode
+    - name: SupplierName
+    - name: AgencyName
+    - name: seq
+    - name: ID
+    - name: FormulaSubmissionID
+      required: true
+    - name: UniqueID
+    - name: AgencyID
+    tab_groups:
+    - direction: toone
+      fks:
+      - ComponentLabelID
+      name: label_tb
+      resource: LabelTb
+    - direction: toone
+      fks:
+      - ComponentMerchID
+      name: MERCH_TB
+      resource: MERCHTB
+    type: FormulaSubmissionComponent
+    user_key: ComponentName
+  FormulaSubmissionPlant:
+    attributes:
+    - label: ' Plant Name*'
+      name: PlantName
+      search: true
+      sort: true
+    - name: PlantCode
+    - name: ActionTaken
+    - name: ProductionMode
+    - name: ID
+    - name: FormulaSubmissionID
+      required: true
+    - name: Owns_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - FormulaSubmissionPlantID
+      name: ProducedIn1TbList
+      resource: ProducedIn1Tb
+    type: FormulaSubmissionPlant
+    user_key: PlantName
+  INVOICEFEE:
+    attributes:
+    - label: ' I N V O I C E_ I D*'
+      name: INVOICE_ID
+      search: true
+      sort: true
+    - name: BILL_TO_PLANT_ID
+    - name: COMPANY_ID
+      required: true
+    - name: TYPE
+      required: true
+    - name: INVOICE_TYPE
+    - name: INVOICE_DATE
+      type: DATETIME
+    - name: FREQ
+    - name: TOTAL_AMOUNT
+    - name: STATUS
+    - name: REPLACED_BY
+    - name: PAYMENT
+    - name: CHECK_NO
+    - name: CHECK_DATE
+      type: DATETIME
+    - name: OK_TO_POST
+    - name: WHO
+    - name: REPLACEMENT_FOR
+    - name: BATCH_ID_S36
+    - name: BATCH_DATE
+      type: DATETIME
+    - name: TRANSFER_FLAG
+    - name: PRINT_FLAG
+    - name: HOLD_FLAG
+    - name: ATTACHED_LETTER
+    - name: TIMESTAMP
+    - name: COMMENT
+    - name: INVOICE_LEVEL
+    - name: PurchaseOrder
+    - name: DeliveryDate
+      type: DATE
+    - name: OriginalInvoiceAmount
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: PeriodStart
+      type: DATETIME
+    - name: BalanceInAccounting
+    - name: DATE_POSTED
+      type: DATETIME
+    - name: CHECK_RECEIVED
+      type: DATETIME
+    - name: BILL_TO_CO_ID
+    - name: ID
+    - name: DeliveryMethod
+    - name: CHANGESET_ID
+    - name: achPaid
+      required: true
+      type: Boolean
+    - name: BatchId
+    - name: PeriodEnd
+      type: DATETIME
+    tab_groups:
+    - direction: toone
+      fks:
+      - BILL_TO_PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: INVOICEFEE
+    user_key: INVOICE_ID
+  INVOICEFEESDETAIL:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: INVOICE_LINE
+      required: true
+    - name: DESTINATION_TYPE
+    - name: FEE
+    - name: EXPENSES
+    - name: VISIT_TYPE
+    - name: VISIT_DATE
+      type: DATETIME
+    - name: PERIOD_START_DATE
+      type: DATETIME
+    - name: PERIOD_END_DATE
+      type: DATETIME
+    - name: REASON
+    - name: TIMESTAMP
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: INVOICE_ID
+      required: true
+    - name: VISIT_ID
+    - name: DESTINATION_ID
+    - name: VISIT_PERSON_JOB_ID
+    - name: ownsID
+    - name: voided
+      required: true
+      type: Boolean
+    - name: CHANGESET_ID
+    type: INVOICEFEESDETAIL
+    user_key: ID
+  LabelBarcode:
+    attributes:
+    - label: ' label Id*'
+      name: labelId
+      search: true
+      sort: true
+    - name: barcodeId
+      required: true
+    - name: labelId
+    - name: Type
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - barcodeId
+      name: barcode
+      resource: BarCode
+    - direction: toone
+      fks:
+      - labelId
+      name: label
+      resource: LabelTb
+    type: LabelBarcode
+    user_key: labelId
+  LabelComment:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      required: true
+      search: true
+      sort: true
+    - name: LabelId
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CommentID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - LabelId
+      name: Label
+      resource: LabelTb
+    type: LabelComment
+    user_key: ID
+  LabelOption:
+    attributes:
+    - label: ' Label I D*'
+      name: LabelID
+      search: true
+      sort: true
+    - name: LabelID
+    - name: LabelID
+    - name: IncludeInParentCompanyLOC
+    tab_groups:
+    - direction: toone
+      fks:
+      - LabelID
+      name: label_tb
+      resource: LabelTb
+    - direction: toone
+      fks:
+      - LabelID
+      name: label_tb1
+      resource: LabelTb
+    type: LabelOption
+    user_key: LabelID
+  LabelTb:
+    attributes:
+    - label: ' B R A N D_ N A M E*'
+      name: BRAND_NAME
+      search: true
+      sort: true
+    - name: MERCHANDISE_ID
+      required: true
+    - name: SRC_MAR_ID
+      required: true
+    - name: SRC_MAR_ID
+      required: true
+    - name: LABEL_SEQ_NUM
+      required: true
+    - name: SYMBOL
+    - name: INSTITUTIONAL
+    - name: BLK
+      required: true
+    - name: SEAL_SIGN
+    - name: GRP
+    - name: SEAL_SIGN_FLAG
+    - name: LABEL_NAME
+    - name: INDUSTRIAL
+    - name: CONSUMER
+    - name: LABEL_TYPE
+    - name: ACTIVE
+    - name: SPECIAL_PRODUCTION
+    - name: CREATE_DATE
+      type: DATETIME
+    - name: LAST_MODIFY_DATE
+      type: DATETIME
+    - name: STATUS_DATE
+      type: DATETIME
+    - name: JEWISH_ACTION
+    - name: CREATED_BY
+    - name: MODIFIED_BY
+    - name: LABEL_NUM
+    - name: NUM_NAME
+    - name: Confidential
+    - name: LOCholdDate
+      type: DATETIME
+    - name: PassoverSpecialProduction
+    - name: COMMENT
+    - name: DisplayNewlyCertifiedOnWeb
+    - name: Status
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: LastChangeDate
+      type: DATETIME
+    - name: LastChangeReason
+    - name: LastChangeType
+    - name: Kitniyot
+      type: Boolean
+    - name: IsDairyEquipment
+      required: true
+      type: Boolean
+    - name: NameNum
+    - name: ID
+    - name: AgencyID
+    - name: LOChold
+    - name: CHANGESET_ID
+    - name: ReplacedByAgencyId
+    - name: TransferredFromAgencyId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ComponentLabelID
+      name: FormulaComponentList
+      resource: FormulaComponent
+    - direction: tomany
+      fks:
+      - ComponentLabelID
+      name: FormulaSubmissionComponentList
+      resource: FormulaSubmissionComponent
+    - direction: tomany
+      fks:
+      - labelId
+      name: LabelBarcodeList
+      resource: LabelBarcode
+    - direction: tomany
+      fks:
+      - LabelId
+      name: LabelCommentList
+      resource: LabelComment
+    - direction: tomany
+      fks:
+      - LabelID
+      name: LabelOptionList
+      resource: LabelOption
+    - direction: tomany
+      fks:
+      - LabelID
+      name: LabelOptionList1
+      resource: LabelOption
+    - direction: tomany
+      fks:
+      - LabelID
+      name: ProducedIn1TbList
+      resource: ProducedIn1Tb
+    - direction: tomany
+      fks:
+      - LabelID
+      name: USEDIN1TBList
+      resource: USEDIN1TB
+    - direction: toone
+      fks:
+      - MERCHANDISE_ID
+      name: MERCH_TB
+      resource: MERCHTB
+    - direction: toone
+      fks:
+      - SRC_MAR_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - SRC_MAR_ID
+      name: COMPANY_TB1
+      resource: COMPANYTB
+    type: LabelTb
+    user_key: BRAND_NAME
+  MERCHCOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: TIMESTAMP
+    - name: CommentType
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: MERCHANDISE_ID
+      required: true
+    - name: COMMENT_ID
+      required: true
+    - name: CHANGESET_ID
+    type: MERCHCOMMENT
+    user_key: ID
+  MERCHOTHERNAME:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: MERCHANDISE_ID
+    - name: TYPE
+    - name: TIMESTAMP
+    - name: ALIAS_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - MERCHANDISE_ID
+      name: MERCH_TB
+      resource: MERCHTB
+    type: MERCHOTHERNAME
+    user_key: ID
+  MERCHTB:
+    attributes:
+    - label: ' N A M E*'
+      name: NAME
+      required: true
+      search: true
+      sort: true
+    - name: STIPULATION
+    - name: CONFIDENTIAL
+    - name: RETAIL
+    - name: FOODSERVICE
+    - name: CONSUMER
+    - name: INDUSTRIAL
+    - name: INSTITUTIONAL
+    - name: GENERIC
+    - name: SPECIFIED_SOURCE
+    - name: SPECIFIED_SYMBOL
+    - name: DESCRIPTION
+    - name: DPM
+    - name: PESACH
+    - name: COMMENT
+    - name: ACTIVE
+    - name: CONFIDENTIAL_TEXT
+    - name: GROUP_COMMENT
+    - name: STATUS
+    - name: LOC_CATEGORY
+    - name: COMMENTS_SCHED_B
+    - name: PROD_NUM
+    - name: INTERMEDIATE_MIX
+    - name: ALTERNATE_NAME
+    - name: BrochoCode
+    - name: Brocho2Code
+    - name: CAS
+    - name: Symbol
+    - name: LOC
+      type: DATE
+    - name: UKDdisplay
+    - name: TransferredTo
+      required: true
+      type: Boolean
+    - name: TransferredMerch
+    - name: Special_Status
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: MERCHANDISE_ID
+    - name: AS_STIPULATED
+    - name: OUP_REQUIRED
+    - name: LOC_SELECTED
+    - name: Reviewed
+      type: Boolean
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ComponentMerchID
+      name: FormulaComponentList
+      resource: FormulaComponent
+    - direction: tomany
+      fks:
+      - Merchandise_ID
+      name: FormulaProductList
+      resource: FormulaProduct
+    - direction: tomany
+      fks:
+      - ComponentMerchID
+      name: FormulaSubmissionComponentList
+      resource: FormulaSubmissionComponent
+    - direction: tomany
+      fks:
+      - MERCHANDISE_ID
+      name: LabelTbList
+      resource: LabelTb
+    - direction: tomany
+      fks:
+      - MERCHANDISE_ID
+      name: MERCHOTHERNAMEList
+      resource: MERCHOTHERNAME
+    - direction: tomany
+      fks:
+      - MerchId
+      name: YoshonInfoList
+      resource: YoshonInfo
+    type: MERCHTB
+    user_key: NAME
+  MiniCRMAction:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: CompanyId
+      required: true
+    - name: CreatedDate
+      required: true
+      type: DATETIME
+    - name: CreatedBy
+    - name: ModifiedDate
+      type: DATETIME
+    - name: ModifiedBy
+    - name: ActivityDate
+      type: DATETIME
+    - name: Modality
+    - name: Result
+    - name: ReminderDate
+      type: DATETIME
+    - name: Comment
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ContactId
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - CompanyId
+      name: Company
+      resource: COMPANYTB
+    type: MiniCRMAction
+    user_key: ID
+  OWNSTB:
+    attributes:
+    - label: ' Plant Name*'
+      name: PlantName
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+      required: true
+    - name: Setup_By
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: TYPE
+    - name: VISIT_FREQUENCY
+    - name: INVOICE_TYPE
+    - name: INVOICE_FREQUENCY
+    - name: INVOICE_DTL
+    - name: ROYALTIES
+    - name: SPECIAL_TICKET
+    - name: STATUS
+    - name: ACTIVE
+    - name: AcquiredFrom
+    - name: LOCtext
+    - name: MoveToGP
+    - name: DefaultPO
+    - name: VisitBilling
+    - name: ShareAB
+    - name: POexpiry
+      type: DATE
+    - name: BillingName
+    - name: PLANT_BILL_TO_NAME
+    - name: AutoCertification
+      required: true
+      type: Boolean
+    - name: primaryCompany
+    - name: Override
+      required: true
+      type: Boolean
+    - name: VisitPO
+    - name: VisitPOexpiry
+      type: DATE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: BoilerplateInvoiceComment
+    - name: IsCertBillingOverride
+      required: true
+      type: Boolean
+    - name: HOLD
+    - name: ID
+    - name: NoRFRneeded
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - OWNS_ID
+      name: BillingList
+      resource: Billing
+    - direction: tomany
+      fks:
+      - OwnsID
+      name: CompanyPlantOptionList
+      resource: CompanyPlantOption
+    - direction: tomany
+      fks:
+      - OwnsID
+      name: PLANTFEESTRUCTUREList
+      resource: PLANTFEESTRUCTURE
+    - direction: tomany
+      fks:
+      - OwnsID
+      name: PLANTHOLDTBList
+      resource: PLANTHOLDTB
+    - direction: tomany
+      fks:
+      - OWNS_ID
+      name: ProducedIn1TbList
+      resource: ProducedIn1Tb
+    - direction: tomany
+      fks:
+      - ownsID
+      name: ProductJobLineItemList
+      resource: ProductJobLineItem
+    - direction: tomany
+      fks:
+      - OWNS_ID
+      name: PurchaseOrderList
+      resource: PurchaseOrder
+    - direction: tomany
+      fks:
+      - OWNS_ID
+      name: ThirdPartyBillingCompanyList
+      resource: ThirdPartyBillingCompany
+    - direction: tomany
+      fks:
+      - OWNS_ID
+      name: USEDIN1TBList
+      resource: USEDIN1TB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    - direction: toone
+      fks:
+      - Setup_By
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    type: OWNSTB
+    user_key: PlantName
+  PENDINGINFOTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: PLANT_ID
+    - name: IINVOICEFEE
+    - name: IINVOICEEXPENSE
+    - name: IINVOICEDATE
+    - name: IINVOICENUMBER
+    - name: TERMSCERTFEE
+    - name: SPECIALCLAUSES
+    - name: ANNUALFEE
+    - name: ANNUALEXPENSES
+    - name: CINVOICEDATE
+    - name: ACTIVE
+    - name: IINVOICEAMOUNT
+    - name: PROEXPENSES
+    - name: PROFEE
+    - name: PRODATE
+    - name: CONTRACTFEE
+    - name: CONTRACTEXPENSE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: VOID
+    - name: PAID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PENDINGINFOTB
+    user_key: ID
+  PERSONADDRESSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: PERSON_ID
+      required: true
+    - name: ADDRESS_SEQ_NUM
+      required: true
+    - name: TYPE
+    - name: ATTN
+    - name: STREET1
+    - name: STREET2
+    - name: STREET3
+    - name: CITY
+    - name: STATE
+    - name: ZIP
+    - name: COUNTRY
+    - name: ACTIVE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - PERSON_ID
+      name: PERSON_TB
+      resource: PERSONTB
+    type: PERSONADDRESSTB
+    user_key: ID
+  PERSONJOBSTATUSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: STATUS_SEQ_NUM
+      required: true
+    - name: STATUS
+      required: true
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: ACTIVE
+    - name: REASON
+    - name: PERSON_JOB_ID
+      required: true
+    type: PERSONJOBSTATUSTB
+    user_key: ID
+  PERSONJOBTB:
+    attributes:
+    - label: ' P E R S O N_ J O B_ I D*'
+      name: PERSON_JOB_ID
+      search: true
+      sort: true
+    - name: PERSON_ID
+      required: true
+    - name: FUNCTION
+      required: true
+    - name: TITLE
+    - name: ON_PAYROLL
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: STATUS
+    - name: ACCT_PAYROLL_NUM
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: StatusEffectiveStartDate
+      type: DATETIME
+    - name: EMPLOYER_ID
+    - name: OUDirectRFRTerminationHold
+    - name: CHANGESET_ID
+    - name: TeamId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Setup_By
+      name: OWNSTBList
+      resource: OWNSTB
+    - direction: tomany
+      fks:
+      - AdministrativeAssistant
+      name: PERSONTBList
+      resource: PERSONTB
+    - direction: tomany
+      fks:
+      - DesignatedRFR
+      name: PLANTTBList
+      resource: PLANTTB
+    - direction: tomany
+      fks:
+      - DesignatedRFR
+      name: PLANTTBList1
+      resource: PLANTTB
+    - direction: tomany
+      fks:
+      - AssignedTo
+      name: ProductJobLineItemList
+      resource: ProductJobLineItem
+    - direction: tomany
+      fks:
+      - PERSON_JOB_ID
+      name: RCTBList
+      resource: RCTB
+    - direction: tomany
+      fks:
+      - ACTUAL_PERSON_JOB_ID
+      name: VISITList
+      resource: VISIT
+    - direction: tomany
+      fks:
+      - ASSIGNED_PERSON_JOB_ID
+      name: VISITList1
+      resource: VISIT
+    - direction: toone
+      fks:
+      - PERSON_ID
+      name: PERSON_TB
+      resource: PERSONTB
+    type: PERSONJOBTB
+    user_key: PERSON_JOB_ID
+  PERSONTB:
+    attributes:
+    - label: ' P E R S O N_ I D*'
+      name: PERSON_ID
+      search: true
+      sort: true
+    - name: AdministrativeAssistant
+    - name: FIRST
+    - name: LAST
+    - name: MIDDLE
+    - name: PREFIX
+    - name: SUFFIX
+    - name: HIRE_DATE
+      type: DATETIME
+    - name: SSN
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: SENDTICKETTO
+    - name: ACCTS_PAY_NUM
+    - name: MaxPay
+    - name: MileageRate
+    - name: WebAccess
+    - name: GroupLeader
+    - name: KashLogIn
+    - name: IsGroupLeader
+    - name: HiddenSSN
+    - name: WorkflowEmails
+    - name: PasswordQuestion
+    - name: PasswordAnswer
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: IncludeInIngWFAssignmentList
+      type: Boolean
+    - name: TempRfr
+      required: true
+      type: Boolean
+    - name: IsBillForMileageDifferential
+      required: true
+      type: Boolean
+    - name: AllowCopackerManagement
+      type: Boolean
+    - name: VENDOR_ID
+    - name: Password
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - PERSON_ID
+      name: PERSONADDRESSTBList
+      resource: PERSONADDRESSTB
+    - direction: tomany
+      fks:
+      - PERSON_ID
+      name: PERSONJOBTBList
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - AdministrativeAssistant
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    type: PERSONTB
+    user_key: PERSON_ID
+  PLANTADDRESSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: PLANT_ID
+      required: true
+    - name: ADDRESS_SEQ_NUM
+      required: true
+    - name: TYPE
+      required: true
+    - name: ATTN
+    - name: STREET1
+    - name: STREET2
+    - name: STREET3
+    - name: CITY
+    - name: STATE
+    - name: ZIP
+    - name: COUNTRY
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTADDRESSTB
+    user_key: ID
+  PLANTCERTDETAIL:
+    attributes:
+    - label: ' C E R T_ D E T A I L_ D E S C R I P T I O N*'
+      name: CERT_DETAIL_DESCRIPTION
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+      required: true
+    - name: CERT_DETAIL_SEQ_NUM
+      required: true
+    - name: CERT_DETAIL_AMOUNT
+    - name: CERT_DETAIL_DATE
+      type: DATETIME
+    - name: CERT_DETAIL_COMMENT
+    - name: ID
+    - name: COMPANY_FEE_ID
+      required: true
+    - name: CERT_DETAIL_PERSON_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTCERTDETAIL
+    user_key: CERT_DETAIL_DESCRIPTION
+  PLANTCOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+    - name: TIMESTAMP
+    - name: COMMENT_ID
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTCOMMENT
+    user_key: ID
+  PLANTFEECOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+    - name: Type
+    - name: Expires
+      type: DATETIME
+    - name: RfrPay
+    - name: BillingCompanyFee
+    - name: VisitType
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: PLANT_FEE_ID
+    - name: COMMENT_ID
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTFEECOMMENT
+    user_key: ID
+  PLANTFEESTRUCTURE:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: OwnsID
+    - name: EFFECTIVE_DATE
+      type: DATETIME
+    - name: APPROVAL
+    - name: APPROVAL_DATE
+      type: DATETIME
+    - name: IN_CERT_FEE
+    - name: IN_EXPENSE_TYPE
+    - name: IN_EXPENSE_AMT
+    - name: IN_EXPENSE_PERCENT
+    - name: IN_VISIT_FEE_TYPEx
+    - name: IN_FREE_VISITS_NUM
+    - name: IN_VISIT_FEEx
+    - name: IN_SPECIAL_PRODUCTION_TYPEx
+    - name: IN_SPECIAL_PRODUCTION_FEEx
+    - name: IN_UNIT_BASE
+    - name: IN_PASSOVER_FEE_TYPEx
+    - name: IN_PASSOVER_FEEx
+    - name: IN_PASSOVER_VISIT_FEE
+    - name: IN_PASSOVER_UNIT_RATE
+    - name: IN_PASSOVER_UNIT_BASE
+    - name: IN_PRIVATE_LABEL_TYPE
+    - name: IN_PRIVATE_LABEL_FEE1
+    - name: IN_PRIVATE_LABEL_BASE1
+    - name: IN_PRIVATE_LABEL_FEE2
+    - name: IN_PRIVATE_LABEL_BASE2
+    - name: IN_PRIVATE_LABEL_FEE3
+    - name: IN_PRIVATE_LABEL_BASE3
+    - name: IN_SPECIAL_PRODUCTION_FEE1
+    - name: IN_UNIT_BASE1
+    - name: IN_SPECIAL_PRODUCTION_FEE2
+    - name: IN_UNIT_BASE2
+    - name: IN_VISIT_FEE1
+    - name: IN_FREE_VISITS_NUM1
+    - name: IN_VISIT_FEE2
+    - name: IN_FREE_VISITS_NUM2
+    - name: IN_CERT_FREQ
+    - name: IN_CERT_DATE
+      type: DATETIME
+    - name: IN_PASSOVER_RATE_FEE1
+    - name: IN_PASSOVER_FOR_FEE1
+    - name: IN_PASSOVER_RATE_FEE2
+    - name: IN_PASSOVER_FOR_FEE2
+    - name: IN_PASSOVER_RATE_FEE3
+    - name: IN_PASSOVER_FOR_FEE3
+    - name: IN_BILL_REG_VISIT_TYPEx
+    - name: IN_BILL_REG_VISIT_AMTx
+    - name: IN_BILL_SPEC_PROD_TYPEx
+    - name: IN_BILL_SPEC_PROD_AMTx
+    - name: IN_BILL_PASSOVER_TYPEx
+    - name: IN_BILL_PASSOVER_AMTx
+    - name: OUT_CERT_FEE
+    - name: OUT_EXPENSE_TYPE
+    - name: OUT_EXPENSE_AMT
+    - name: OUT_EXPENSE_PERCENT
+    - name: OUT_VISIT_FEE_TYPE
+    - name: OUT_FREE_VISITS_NUM
+    - name: OUT_VISIT_FEE
+    - name: OUT_SPECIAL_PRODUCTION_TYPE
+    - name: OUT_SPECIAL_PRODUCTION_FEE
+    - name: OUT_UNIT_BASE
+    - name: OUT_PASSOVER_FEE_TYPE
+    - name: OUT_PASSOVER_FEE
+    - name: OUT_PASSOVER_VISIT_FEE
+    - name: OUT_PASSOVER_UNIT_RATE
+    - name: OUT_PASSOVER_UNIT_BASE
+    - name: OUT_PRIVATE_LABEL_TYPE
+    - name: OUT_PRIVATE_LABEL_FEE1
+    - name: OUT_PRIVATE_LABEL_BASE1
+    - name: OUT_PRIVATE_LABEL_FEE2
+    - name: OUT_PRIVATE_LABEL_BASE2
+    - name: OUT_PRIVATE_LABEL_FEE3
+    - name: OUT_PRIVATE_LABEL_BASE3
+    - name: OUT_SPECIAL_PRODUCTION_FEE1
+    - name: OUT_UNIT_BASE1
+    - name: OUT_SPECIAL_PRODUCTION_FEE2
+    - name: OUT_UNIT_BASE2
+    - name: OUT_VISIT_FEE1
+    - name: OUT_FREE_VISITS_NUM1
+    - name: OUT_VISIT_FEE2
+    - name: OUT_FREE_VISITS_NUM2
+    - name: OUT_CERT_FREQ
+    - name: OUT_CERT_DATE
+      type: DATETIME
+    - name: OUT_PASSOVER_RATE_FEE1
+    - name: OUT_PASSOVER_FOR_FEE1
+    - name: OUT_PASSOVER_RATE_FEE2
+    - name: OUT_PASSOVER_FOR_FEE2
+    - name: OUT_PASSOVER_RATE_FEE3
+    - name: OUT_PASSOVER_FOR_FEE3
+    - name: OUT_BILL_REG_VISIT_TYPE
+    - name: OUT_BILL_REG_VISIT_AMT
+    - name: OUT_BILL_SPEC_PROD_TYPE
+    - name: OUT_BILL_SPEC_PROD_AMT
+    - name: OUT_BILL_PASSOVER_TYPE
+    - name: OUT_BILL_PASSOVER_AMT
+    - name: OUT_FREE_VISITS_OVERNIGHTPAY
+    - name: OUT_SPECIAL_PRODN_OVERNIGHTPAY
+    - name: OUT_PASSOVER_RATE_OVERNIGHTPAY
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: PLANT_ID
+    - name: COMPANY_FEE_ID
+    - name: APPROVAL_PERSON_ID
+    - name: PERSON_JOB_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OwnsID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: PLANTFEESTRUCTURE
+    user_key: ID
+  PLANTFEESTRUCTUREOUT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+    - name: OUT_VISIT_FEE_TYPEx
+    - name: OUT_VISIT_FEEx
+    - name: OUT_FREE_VISITS_NUM
+    - name: OUT_VISIT_FEE1
+    - name: OUT_FREE_VISITS_NUM1
+    - name: OUT_VISIT_FEE2
+    - name: OUT_FREE_VISITS_NUM2
+    - name: OUT_FREE_VISITS_OVERNIGHTPAY
+    - name: OUT_SPECIAL_PRODUCTION_TYPEx
+    - name: OUT_SPECIAL_PRODUCTION_FEEx
+    - name: OUT_UNIT_BASE
+    - name: OUT_SPECIAL_PRODUCTION_FEE1
+    - name: OUT_UNIT_BASE1
+    - name: OUT_SPECIAL_PRODUCTION_FEE2
+    - name: OUT_UNIT_BASE2
+    - name: OUT_SPEC_PRODN_OVERNIGHTPAY
+    - name: OUT_PASSOVER_FEE_TYPEx
+    - name: OUT_PASSOVER_RATE_FEE1x
+    - name: OUT_PASSOVER_FOR_FEE1
+    - name: OUT_PASSOVER_RATE_FEE2
+    - name: OUT_PASSOVER_FOR_FEE2
+    - name: OUT_PASSOVER_RATE_FEE3
+    - name: OUT_PASSOVER_FOR_FEE3
+    - name: OUT_PASSOVER_OVERNIGHTPAY
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: PERSON_JOB_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - PFSO_ID
+      name: BillingList
+      resource: Billing
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTFEESTRUCTUREOUT
+    user_key: ID
+  PLANTHOLDTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: OwnsID
+    - name: PLANT_ID
+      required: true
+    - name: HOLD_SEQ_NUM
+      required: true
+    - name: HOLD_TYPE
+      required: true
+    - name: START_DATE
+      type: DATETIME
+    - name: START_REASON
+    - name: END_DATE
+      type: DATETIME
+    - name: END_REASON
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: START_PERSON_ID
+      required: true
+    - name: END_PERSON_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OwnsID
+      name: OWNS_TB
+      resource: OWNSTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTHOLDTB
+    user_key: ID
+  PLANTTB:
+    attributes:
+    - label: ' N A M E*'
+      name: NAME
+      required: true
+      search: true
+      sort: true
+    - name: DesignatedRFR
+    - name: DesignatedRFR
+    - name: PrimaryCompany
+    - name: GP_NOTIFY
+      type: Boolean
+    - name: MULTILINES
+    - name: PASSOVER
+    - name: PLANT_TYPE
+    - name: PLANT_DIRECTIONS
+    - name: ACTIVE
+    - name: USDA_CODE
+    - name: DoNotAttach
+    - name: OtherCertification
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: MaxOnSiteVisits
+      required: true
+    - name: MaxVirtualVisits
+      required: true
+    - name: IsDaily
+      required: true
+      type: Boolean
+    - name: PLANT_ID
+    - name: SPECIAL_PROD
+      required: true
+    - name: JEWISH_OWNED
+    - name: PlantUID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Plant_id
+      name: CompanyPlantOptionList
+      resource: CompanyPlantOption
+    - direction: tomany
+      fks:
+      - BILL_TO_PLANT_ID
+      name: INVOICEFEEList
+      resource: INVOICEFEE
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: OWNSTBList
+      resource: OWNSTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PENDINGINFOTBList
+      resource: PENDINGINFOTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTADDRESSTBList
+      resource: PLANTADDRESSTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTCERTDETAILList
+      resource: PLANTCERTDETAIL
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTCOMMENTList
+      resource: PLANTCOMMENT
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTFEECOMMENTList
+      resource: PLANTFEECOMMENT
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTFEESTRUCTUREOUTList
+      resource: PLANTFEESTRUCTUREOUT
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTHOLDTBList
+      resource: PLANTHOLDTB
+    - direction: tomany
+      fks:
+      - BILL_TO_PLANT_ID
+      name: PRIVATELABELBILLList
+      resource: PRIVATELABELBILL
+    - direction: tomany
+      fks:
+      - DESTINATION_ID
+      name: VISITList
+      resource: VISIT
+    - direction: toone
+      fks:
+      - DesignatedRFR
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - DesignatedRFR
+      name: PERSON_JOB_TB1
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - PrimaryCompany
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: PLANTTB
+    user_key: NAME
+  PRIVATELABELBILL:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: BILL_TO_CO_ID
+    - name: BILL_TO_PLANT_ID
+    - name: COMPANY_ID
+      required: true
+    - name: SRC_MAR_ID
+      required: true
+    - name: DATE_UPDATE
+      type: DATETIME
+    - name: PRIV_LABEL_FEE
+    - name: TIMESTAMP
+    - name: AGREEMENT_RECEIVED_DATE
+      type: DATETIME
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: MAN_ENTERED
+      required: true
+      type: Boolean
+    - name: PRO_RATED
+    - name: LAST_BIILED
+      type: DATETIME
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - BILL_TO_CO_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - BILL_TO_PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB1
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - SRC_MAR_ID
+      name: COMPANY_TB2
+      resource: COMPANYTB
+    type: PRIVATELABELBILL
+    user_key: ID
+  PrivateLabelTemplate:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: Template
+    - name: AddedBy
+    - name: DateAdded
+      type: DATETIME
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: PrivateLabelTemplate
+    user_key: ID
+  ProducedIn1Tb:
+    attributes:
+    - label: ' Batch Sheet Name*'
+      name: BatchSheetName
+      search: true
+      sort: true
+    - name: FormulaSubmissionPlantID
+    - name: LabelID
+    - name: OWNS_ID
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: REGULAR
+    - name: SPECIAL
+    - name: PASSOVER
+    - name: PRIVATE_LABEL_FEE
+    - name: TIMESTAMP
+    - name: STATUS
+    - name: SPECIAL_STATUS_1
+    - name: RC_1
+    - name: DATE_1
+      type: DATETIME
+    - name: SPECIAL_STATUS_2
+    - name: RC_2
+    - name: DATE_2
+      type: DATETIME
+    - name: SPECIAL_STATUS_3
+    - name: RC_3
+    - name: DATE_3
+      type: DATETIME
+    - name: SPECIAL_STATUS_4
+    - name: RC_4
+    - name: DATE_4
+      type: DATETIME
+    - name: ACTIVE
+    - name: DATE_LAST_REV
+    - name: CREATE_DATE
+      type: DATETIME
+    - name: CREATED_BY
+    - name: MODIFIED_DATE
+      type: DATETIME
+    - name: MODIFIED_BY
+    - name: DIST
+      type: Boolean
+    - name: MEHADRIN
+      type: Boolean
+    - name: LOTNUM
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: LatestPesachSeason
+    - name: ID
+    - name: PROC_LINE_ID
+    - name: DATE_CERTIFIED
+    - name: ProductPlantsID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - prid
+      name: ProductJobLineItemList
+      resource: ProductJobLineItem
+    - direction: toone
+      fks:
+      - FormulaSubmissionPlantID
+      name: FormulaSubmissionPlant
+      resource: FormulaSubmissionPlant
+    - direction: toone
+      fks:
+      - LabelID
+      name: label_tb
+      resource: LabelTb
+    - direction: toone
+      fks:
+      - OWNS_ID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: ProducedIn1Tb
+    user_key: BatchSheetName
+  ProductJob:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: company_id
+    - name: SubmissionDate
+    - name: RequestedBy
+    - name: RequestType
+    - name: JobComment
+    - name: DueDate
+    - name: UserEmail
+    - name: Source
+    - name: ImportSource
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ActualLogin
+    - name: jobid
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: COMPANYTB
+    type: ProductJob
+    user_key: ID
+  ProductJobLineItem:
+    attributes:
+    - label: ' Requested Label Name*'
+      name: RequestedLabelName
+      search: true
+      sort: true
+    - name: AssignedTo
+    - name: ownsID
+    - name: prid
+    - name: LineItem
+    - name: RequestedLabelNumber
+    - name: WorkflowStatus
+    - name: LineItemComment
+    - name: requestedProductNumber
+    - name: requestedProductName
+    - name: requestedSymbol
+    - name: requestedDPM
+    - name: requestedGRP
+    - name: requestedConsumer
+    - name: requestedIndustrial
+    - name: requestedPesach
+    - name: requestedSealSign
+    - name: requestedStipulation
+    - name: requestedCommentsScheduleB
+    - name: requestedConfidential
+    - name: requestedLabelType
+    - name: requestedCategory
+    - name: requestedShipping
+    - name: requestedTerminationDate
+      type: DATETIME
+    - name: requestedForInternalUseOnly
+    - name: LineInstructions
+    - name: ProductValidationComments
+    - name: DistributorName
+    - name: DistributorAddress
+    - name: DistributorContactName
+    - name: DistributorContactEmail
+    - name: DistributorContactPhone
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: coPackProductPL
+      required: true
+      type: Boolean
+    - name: barcodes
+    - name: ID
+    - name: JobID
+    - name: RequestedBrand
+    - name: ProductInCartID
+    - name: requestedAgencyID
+    - name: PreSubmissionProductApproved
+    - name: CHANGESET_ID
+    - name: ingredientsAllApproved
+      type: Boolean
+    - name: oldPrid
+    tab_groups:
+    - direction: toone
+      fks:
+      - AssignedTo
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - ownsID
+      name: OWNS_TB
+      resource: OWNSTB
+    - direction: toone
+      fks:
+      - prid
+      name: pr
+      resource: ProducedIn1Tb
+    type: ProductJobLineItem
+    user_key: RequestedLabelName
+  PurchaseOrder:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: OWNS_ID
+    - name: discriminator
+    - name: PO
+    - name: Expires
+    - name: FeeType
+      required: true
+    - name: Inherits
+      required: true
+      type: Boolean
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: Required
+      required: true
+      type: Boolean
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OWNS_ID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: PurchaseOrder
+    user_key: ID
+  RCTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PERSON_JOB_ID
+      required: true
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: NCRC
+      required: true
+    - name: TIMESTAMP
+    - name: ACTIVE
+    - name: EnteredBy
+    - name: EnteredOn
+      type: DATE
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PERSON_JOB_ID
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    type: RCTB
+    user_key: ID
+  StripeCustomer:
+    attributes:
+    - label: ' Id*'
+      name: Id
+      search: true
+      sort: true
+    - name: company_id
+      required: true
+    - name: userLogin
+      required: true
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: customerId
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - company_id
+      name: company
+      resource: COMPANYTB
+    type: StripeCustomer
+    user_key: Id
+  ThirdPartyBillingCompany:
+    attributes:
+    - label: ' Name*'
+      name: Name
+      search: true
+      sort: true
+    - name: COMPANY_ID
+    - name: OWNS_ID
+    - name: Dis
+    - name: Account
+    - name: Comments
+    - name: DeliveryNote
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - OWNS_ID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: ThirdPartyBillingCompany
+    user_key: Name
+  USEDIN1TB:
+    attributes:
+    - label: ' B R A N D_ N A M E*'
+      name: BRAND_NAME
+      search: true
+      sort: true
+    - name: BrokerID
+    - name: LabelID
+    - name: OWNS_ID
+    - name: START_DATE
+    - name: END_DATE
+      type: DATETIME
+    - name: TIMESTAMP
+    - name: STATUS
+    - name: COMMENT
+    - name: ACTIVE
+    - name: RAW_MATERIAL_CODE
+    - name: ENTERED_BY
+    - name: Ing_Name_ps
+    - name: Comment_NTA
+    - name: LineItem
+    - name: DoNotDelete
+    - name: PassoverProductionUse
+    - name: LocReceivedStatus
+    - name: InternalCode
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: ID
+    - name: PROC_LINE_ID
+    - name: JobID
+    - name: PreferredBrokerContactID
+    - name: PreferredSourceContactID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - BrokerID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - LabelID
+      name: label_tb
+      resource: LabelTb
+    - direction: toone
+      fks:
+      - OWNS_ID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: USEDIN1TB
+    user_key: BRAND_NAME
+  VISIT:
+    attributes:
+    - label: ' V I S I T_ I D*'
+      name: VISIT_ID
+      search: true
+      sort: true
+    - name: ACTUAL_PERSON_JOB_ID
+    - name: ASSIGNED_PERSON_JOB_ID
+      required: true
+    - name: DESTINATION_ID
+    - name: MainVisit
+    - name: VISIT_FOR_ID
+    - name: ASSIGNMENT_DATE
+      type: DATETIME
+    - name: VISIT_TYPE
+      required: true
+    - name: VISIT_PURPOSE
+    - name: DESTINATION_TYPE
+      required: true
+    - name: VISIT_FOR_TYPE
+    - name: BILL_TO_TYPE
+    - name: PERIOD_START_DATE
+    - name: PERIOD_END_DATE
+    - name: ACTUAL_VISIT_DATE
+    - name: ACTUAL_VISIT_DAYS
+    - name: DEFAULT_BILL_AMOUNT
+    - name: DEFAULT_EXPENSES
+    - name: DEFAULT_PAYMENT_AMOUNY
+    - name: OU_RENTAL_CAR
+    - name: OU_PLANE
+    - name: OU_OTHER
+    - name: OU_Mileage_Differential
+    - name: TOTAL_MASHGIACH_PAY
+    - name: TOTAL_MASHGIACH_EXPENSE
+    - name: TOTAL_MASHGIACH_ADVANCES
+    - name: TOTAL_BILLABLE_FEE
+    - name: TOTAL_BILLABLE_EXPENSES
+    - name: TOTAL_BILLABLE_PAYMENT
+    - name: PAY_TYPE
+    - name: PAY_AMOUNT
+    - name: PAY_OVERTIME
+    - name: PAY_OVERNIGHT
+    - name: NUMBER_SHIFTS
+    - name: PAY_TOTAL
+    - name: RATE_PER_MILEAGE
+    - name: BILLABLE_FEE
+    - name: BILLABLE_OVERTIME_FEE
+    - name: BILLABLE_OVERNIGHT_FEE
+    - name: APPROVAL
+    - name: APPROVAL_DATE
+      type: DATETIME
+    - name: GP_GO
+      type: Boolean
+    - name: AP_BATCH
+    - name: AP_DATE
+      type: DATETIME
+    - name: AP_DONE
+      type: Boolean
+    - name: AR_BATCH
+    - name: AR_DATE
+      type: DATETIME
+    - name: AR_DONE
+      type: Boolean
+    - name: PAY_BATCH
+    - name: PAY_DATE
+      type: DATETIME
+    - name: PAY_DONE
+      type: Boolean
+    - name: GL_BATCH
+    - name: GL_DATE
+      type: DATETIME
+    - name: GL_DONE
+      type: Boolean
+    - name: NUMBER_OVERTIME_SHIFTS
+    - name: NO_OVERTIME_HRS
+    - name: ACTUAL_MASH_COST
+    - name: ProcessedBy
+    - name: VisitStatus
+    - name: CreatedBy
+    - name: CreatedDate
+      type: DATETIME
+    - name: PurchaseOrder
+    - name: OnHoldModifiedBy
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: TotalVisitsInTrip
+    - name: BILL_TO_ID
+    - name: PERIOD
+    - name: TOTAL_EXPENSES_PAID
+    - name: MILEAGE_NOT_PAID
+    - name: PLANE_NOT_PAID
+    - name: RENTAL_CAR_NOT_PAID
+    - name: TOLLS_NOT_PAID
+    - name: PARKING_NOT_PAID
+    - name: GAS_NOT_PAID
+    - name: TAXI_NOT_PAID
+    - name: MOTEL_NOT_PAID
+    - name: TELEPHONE_NOT_PAID
+    - name: MISC_NOT_PAID
+    - name: APPROVAL_PERSON_ID
+    - name: INV_ID
+    - name: TRIP_ID
+    - name: GP_BILL_TO_ID
+    - name: ID
+    - name: AssignmentID
+    - name: OnHold
+      type: DATETIME
+    - name: CHANGESET_ID
+    - name: TeamId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - MainVisit
+      name: VISITList
+      resource: VISIT
+    - direction: toone
+      fks:
+      - ACTUAL_PERSON_JOB_ID
+      name: PERSON_JOB_TB
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - ASSIGNED_PERSON_JOB_ID
+      name: PERSON_JOB_TB1
+      resource: PERSONJOBTB
+    - direction: toone
+      fks:
+      - DESTINATION_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    - direction: toone
+      fks:
+      - MainVisit
+      name: VISIT
+      resource: VISIT
+    - direction: toone
+      fks:
+      - VISIT_FOR_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    type: VISIT
+    user_key: VISIT_ID
+  VISITSCOMMENT:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: COMMENT_TYPE
+      required: true
+    - name: COMMENT
+      required: true
+    - name: WHO
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: VISIT_REC_ID
+      required: true
+    - name: DATE_ENTERED
+      type: DATETIME
+    - name: CHANGESET_ID
+    type: VISITSCOMMENT
+    user_key: ID
+  YoshonInfo:
+    attributes:
+    - label: ' Description*'
+      name: Description
+      search: true
+      sort: true
+    - name: MerchId
+      required: true
+    - name: Comment
+    - name: Value
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: Id
+    - name: OuCertified
+      required: true
+      type: Boolean
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - MerchId
+      name: Merch
+      resource: MERCHTB
+    type: YoshonInfo
+    user_key: Description
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

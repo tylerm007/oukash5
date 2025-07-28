@@ -1,0 +1,62 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="ID" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="INVOICEFEESDETAIL_form_edit" 
+        service="INVOICEFEESDETAIL" 
+        entity="INVOICEFEESDETAIL" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #INVOICE_LINE attr="INVOICE_LINE" label="INVOICE_LINE" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+      <o-text-input #DESTINATION_TYPE attr="DESTINATION_TYPE" label="DESTINATION_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #FEE attr="FEE" label="FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #EXPENSES attr="EXPENSES" label="EXPENSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #VISIT_TYPE attr="VISIT_TYPE" label="VISIT_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #VISIT_DATE attr="VISIT_DATE" value-type="string" label="VISIT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-date-input #PERIOD_START_DATE attr="PERIOD_START_DATE" value-type="string" label="PERIOD_START_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-date-input #PERIOD_END_DATE attr="PERIOD_END_DATE" value-type="string" label="PERIOD_END_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #REASON attr="REASON" label="REASON" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+      <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #INVOICE_ID attr="INVOICE_ID" label="INVOICE_ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+      <o-integer-input #VISIT_ID attr="VISIT_ID" label="VISIT_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #DESTINATION_ID attr="DESTINATION_ID" label="DESTINATION_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #VISIT_PERSON_JOB_ID attr="VISIT_PERSON_JOB_ID" label="VISIT_PERSON_JOB_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #ownsID attr="ownsID" label="ownsID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-checkbox #voided attr="voided" label="voided" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+    </o-form>
+  </o-form-container>
+</div>

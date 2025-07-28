@@ -1,0 +1,48 @@
+<o-form-layout-manager attr="LabelBarcode" mode="tab" title="LABELBARCODE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="LabelBarcodeTable" 
+            service="LabelBarcode" 
+            entity="LabelBarcode" 
+            title="LABELBARCODE"
+            keys="labelId;barcodeId"
+            columns="labelId;barcodeId;Type;ValidFromTime;ValidToTime;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="labelId;barcodeId;Type;ValidFromTime;ValidToTime;CHANGESET_ID"  
+            sort-columns="labelId" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column attr="labelId" title="label">
+    <o-table-cell-renderer-service attr="labelId" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="labelId:labelId"
+        value-column="BRAND_NAME" keys="labelId"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #barcodeId attr="barcodeId" title="barcodeId" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Type attr="Type" title="Type" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

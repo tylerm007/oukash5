@@ -1,0 +1,45 @@
+<o-form-layout-manager attr="MERCHCOMMENT" mode="dialog" title="MERCHCOMMENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="MERCHCOMMENTTable" 
+            service="MERCHCOMMENT" 
+            entity="MERCHCOMMENT" 
+            title="MERCHCOMMENT"
+            keys="ID"
+            columns="ID;TIMESTAMP;CommentType;ValidFromTime;ValidToTime;MERCHANDISE_ID;COMMENT_ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;TIMESTAMP;CommentType;ValidFromTime;ValidToTime;MERCHANDISE_ID;COMMENT_ID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MERCHANDISE_ID attr="MERCHANDISE_ID" title="MERCHANDISE_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #COMMENT_ID attr="COMMENT_ID" title="COMMENT_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,92 @@
+<o-form #PLANTTBForm attr="PLANTTB_form_insert" service="PLANTTB" entity="PLANTTB"
+keys="PLANT_ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #NAME attr="NAME" label=" N A M E" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="DesignatedRFR"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;DesignatedRFR;PERSON_JOB_ID" 
+        title="DesignatedRFR"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="PrimaryCompany"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;PrimaryCompany;NAME" 
+        title="PrimaryCompany"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-checkbox #GP_NOTIFY attr="GP_NOTIFY" label="GP_NOTIFY" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #MULTILINES attr="MULTILINES" label="MULTILINES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PASSOVER attr="PASSOVER" label="PASSOVER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PLANT_TYPE attr="PLANT_TYPE" label="PLANT_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PLANT_DIRECTIONS attr="PLANT_DIRECTIONS" label="PLANT_DIRECTIONS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #USDA_CODE attr="USDA_CODE" label="USDA_CODE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DoNotAttach attr="DoNotAttach" label="DoNotAttach" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OtherCertification attr="OtherCertification" label="OtherCertification" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #MaxOnSiteVisits attr="MaxOnSiteVisits" label="MaxOnSiteVisits" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-integer-input #MaxVirtualVisits attr="MaxVirtualVisits" label="MaxVirtualVisits" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-checkbox #IsDaily attr="IsDaily" label="IsDaily" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #PLANT_ID attr="PLANT_ID" label="PLANT_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #SPECIAL_PROD attr="SPECIAL_PROD" label="SPECIAL_PROD" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #JEWISH_OWNED attr="JEWISH_OWNED" label="JEWISH_OWNED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PlantUID attr="PlantUID" label="PlantUID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

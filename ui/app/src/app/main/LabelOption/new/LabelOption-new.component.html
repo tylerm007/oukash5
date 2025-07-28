@@ -1,0 +1,35 @@
+<o-form #LabelOptionForm attr="LabelOption_form_insert" service="LabelOption" entity="LabelOption"
+keys="LabelID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-list-picker 
+        attr="LabelID"
+        service="LabelTb" 
+        entity="LabelTbType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;LabelID;BRAND_NAME" 
+        title="LabelID"
+        visible-columns="ID;BRAND_NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #IncludeInParentCompanyLOC attr="IncludeInParentCompanyLOC" label="IncludeInParentCompanyLOC" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

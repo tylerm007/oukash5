@@ -1,0 +1,65 @@
+<o-form-layout-manager attr="ThirdPartyBillingCompany" mode="tab" title="THIRDPARTYBILLINGCOMPANY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ThirdPartyBillingCompanyTable" 
+            service="ThirdPartyBillingCompany" 
+            entity="ThirdPartyBillingCompany" 
+            title="THIRDPARTYBILLINGCOMPANY"
+            keys="ID"
+            columns="Name;COMPANY_ID;OWNS_ID;Dis;Account;Comments;DeliveryNote;ValidFromTime;ValidToTime;ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="Name;COMPANY_ID;OWNS_ID;Dis;Account;Comments;DeliveryNote;ValidFromTime;ValidToTime;ID;CHANGESET_ID"  
+            sort-columns="Name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Name attr="Name" title=" Name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="OWNS_ID" title="OWNS_ID">
+    <o-table-cell-renderer-service attr="OWNS_ID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OWNS_ID"
+        value-column="PlantName" keys="OWNS_ID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Dis attr="Dis" title="Dis" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Account attr="Account" title="Account" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Comments attr="Comments" title="Comments" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DeliveryNote attr="DeliveryNote" title="DeliveryNote" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

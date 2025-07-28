@@ -1,0 +1,78 @@
+<o-form-layout-manager attr="CompanyPlantOption" mode="tab" title="COMPANYPLANTOPTION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CompanyPlantOptionTable" 
+            service="CompanyPlantOption" 
+            entity="CompanyPlantOption" 
+            title="COMPANYPLANTOPTION"
+            keys="ID"
+            columns="OptionName;Company_ID;OwnsID;Plant_id;OptionValue;OptIn;ModifiedBy;ModifiedDate;ValidFromTime;ValidToTime;ID;rcApproved;glApproved;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="OptionName;Company_ID;OwnsID;Plant_id;OptionValue;OptIn;ModifiedBy;ModifiedDate;ValidFromTime;ValidToTime;ID;rcApproved;glApproved;CHANGESET_ID"  
+            sort-columns="OptionName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #OptionName attr="OptionName" title=" Option Name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="Company_ID" title="Company_ID">
+    <o-table-cell-renderer-service attr="Company_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:Company_ID"
+        value-column="NAME" keys="Company_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="OwnsID" title="OwnsID">
+    <o-table-cell-renderer-service attr="OwnsID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OwnsID"
+        value-column="PlantName" keys="OwnsID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="Plant_id" title="Plant_id">
+    <o-table-cell-renderer-service attr="Plant_id" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:Plant_id"
+        value-column="NAME" keys="Plant_id"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #OptionValue attr="OptionValue" title="OptionValue" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OptIn attr="OptIn" title="OptIn" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #rcApproved attr="rcApproved" title="rcApproved" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #glApproved attr="glApproved" title="glApproved" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

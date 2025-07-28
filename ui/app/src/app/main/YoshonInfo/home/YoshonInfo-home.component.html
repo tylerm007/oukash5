@@ -1,0 +1,57 @@
+<o-form-layout-manager attr="YoshonInfo" mode="tab" title="YOSHONINFO">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="YoshonInfoTable" 
+            service="YoshonInfo" 
+            entity="YoshonInfo" 
+            title="YOSHONINFO"
+            keys="Id"
+            columns="Description;MerchId;Comment;Value;ValidFromTime;ValidToTime;Id;OuCertified;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="Description;MerchId;Comment;Value;ValidFromTime;ValidToTime;Id;OuCertified;CHANGESET_ID"  
+            sort-columns="Description" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Description attr="Description" title=" Description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="MerchId" title="Merch">
+    <o-table-cell-renderer-service attr="MerchId" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="Id:MerchId"
+        value-column="NAME" keys="MerchId"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Comment attr="Comment" title="Comment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Value attr="Value" title="Value" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Id attr="Id" title="Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="OuCertified" title="OuCertified">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,66 @@
+<o-form-layout-manager attr="ProductJob" mode="tab" title="PRODUCTJOB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ProductJobTable" 
+            service="ProductJob" 
+            entity="ProductJob" 
+            title="PRODUCTJOB"
+            keys="ID"
+            columns="ID;company_id;SubmissionDate;RequestedBy;RequestType;JobComment;DueDate;UserEmail;Source;ImportSource;ValidFromTime;ValidToTime;ActualLogin;jobid;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;company_id;SubmissionDate;RequestedBy;RequestType;JobComment;DueDate;UserEmail;Source;ImportSource;ValidFromTime;ValidToTime;ActualLogin;jobid;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="company_id" title="company_id">
+    <o-table-cell-renderer-service attr="company_id" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:company_id"
+        value-column="NAME" keys="company_id"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #SubmissionDate attr="SubmissionDate" title="SubmissionDate" type="SMALLDATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #RequestedBy attr="RequestedBy" title="RequestedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RequestType attr="RequestType" title="RequestType" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #JobComment attr="JobComment" title="JobComment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DueDate attr="DueDate" title="DueDate" type="SMALLDATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #UserEmail attr="UserEmail" title="UserEmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Source attr="Source" title="Source" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ImportSource attr="ImportSource" title="ImportSource" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ActualLogin attr="ActualLogin" title="ActualLogin" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #jobid attr="jobid" title="jobid" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,50 @@
+<o-form-layout-manager attr="CoPackerFacility" mode="tab" title="COPACKERFACILITY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CoPackerFacilityTable" 
+            service="CoPackerFacility" 
+            entity="CoPackerFacility" 
+            title="COPACKERFACILITY"
+            keys="ID"
+            columns="Description;CompanyId;WebsiteURL;ValidFromTime;ValidToTime;ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="Description;CompanyId;WebsiteURL;ValidFromTime;ValidToTime;ID;CHANGESET_ID"  
+            sort-columns="Description" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Description attr="Description" title=" Description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="CompanyId" title="Company">
+    <o-table-cell-renderer-service attr="CompanyId" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:CompanyId"
+        value-column="NAME" keys="CompanyId"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #WebsiteURL attr="WebsiteURL" title="WebsiteURL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

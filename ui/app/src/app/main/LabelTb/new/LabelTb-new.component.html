@@ -1,0 +1,136 @@
+<o-form #LabelTbForm attr="LabelTb_form_insert" service="LabelTb" entity="LabelTb"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #BRAND_NAME attr="BRAND_NAME" label=" B R A N D_ N A M E" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="MERCHANDISE_ID"
+        service="MERCHTB" 
+        entity="MERCHTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="MERCHANDISE_ID" 
+        value-column-type="INTEGER"  
+        keys="MERCHANDISE_ID" 
+        columns="MERCHANDISE_ID;MERCHANDISE_ID;NAME" 
+        title="MERCHANDISE_ID"
+        visible-columns="MERCHANDISE_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="SRC_MAR_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;SRC_MAR_ID;NAME" 
+        title="SRC_MAR_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #LABEL_SEQ_NUM attr="LABEL_SEQ_NUM" label="LABEL_SEQ_NUM" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-text-input #SYMBOL attr="SYMBOL" label="SYMBOL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INSTITUTIONAL attr="INSTITUTIONAL" label="INSTITUTIONAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BLK attr="BLK" label="BLK" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #SEAL_SIGN attr="SEAL_SIGN" label="SEAL_SIGN" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #GRP attr="GRP" label="GRP" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #SEAL_SIGN_FLAG attr="SEAL_SIGN_FLAG" label="SEAL_SIGN_FLAG" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LABEL_NAME attr="LABEL_NAME" label="LABEL_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INDUSTRIAL attr="INDUSTRIAL" label="INDUSTRIAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CONSUMER attr="CONSUMER" label="CONSUMER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LABEL_TYPE attr="LABEL_TYPE" label="LABEL_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #SPECIAL_PRODUCTION attr="SPECIAL_PRODUCTION" label="SPECIAL_PRODUCTION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #CREATE_DATE attr="CREATE_DATE" value-type="string" label="CREATE_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #LAST_MODIFY_DATE attr="LAST_MODIFY_DATE" value-type="string" label="LAST_MODIFY_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #STATUS_DATE attr="STATUS_DATE" value-type="string" label="STATUS_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #JEWISH_ACTION attr="JEWISH_ACTION" label="JEWISH_ACTION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CREATED_BY attr="CREATED_BY" label="CREATED_BY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MODIFIED_BY attr="MODIFIED_BY" label="MODIFIED_BY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LABEL_NUM attr="LABEL_NUM" label="LABEL_NUM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #NUM_NAME attr="NUM_NAME" label="NUM_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Confidential attr="Confidential" label="Confidential" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #LOCholdDate attr="LOCholdDate" value-type="string" label="LOCholdDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #PassoverSpecialProduction attr="PassoverSpecialProduction" label="PassoverSpecialProduction" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COMMENT attr="COMMENT" label="COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DisplayNewlyCertifiedOnWeb attr="DisplayNewlyCertifiedOnWeb" label="DisplayNewlyCertifiedOnWeb" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Status attr="Status" label="Status" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #LastChangeDate attr="LastChangeDate" value-type="string" label="LastChangeDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #LastChangeReason attr="LastChangeReason" label="LastChangeReason" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LastChangeType attr="LastChangeType" label="LastChangeType" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #Kitniyot attr="Kitniyot" label="Kitniyot" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-checkbox #IsDairyEquipment attr="IsDairyEquipment" label="IsDairyEquipment" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #NameNum attr="NameNum" label="NameNum" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AgencyID attr="AgencyID" label="AgencyID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LOChold attr="LOChold" label="LOChold" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #ReplacedByAgencyId attr="ReplacedByAgencyId" label="ReplacedByAgencyId" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TransferredFromAgencyId attr="TransferredFromAgencyId" label="TransferredFromAgencyId" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

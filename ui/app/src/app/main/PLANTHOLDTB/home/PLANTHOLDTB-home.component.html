@@ -1,0 +1,84 @@
+<o-form-layout-manager attr="PLANTHOLDTB" mode="tab" title="PLANTHOLDTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTHOLDTBTable" 
+            service="PLANTHOLDTB" 
+            entity="PLANTHOLDTB" 
+            title="PLANTHOLDTB"
+            keys="ID"
+            columns="ID;COMPANY_ID;OwnsID;PLANT_ID;HOLD_SEQ_NUM;HOLD_TYPE;START_DATE;START_REASON;END_DATE;END_REASON;TIMESTAMP;ACTIVE;ValidFromTime;ValidToTime;START_PERSON_ID;END_PERSON_ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;COMPANY_ID;OwnsID;PLANT_ID;HOLD_SEQ_NUM;HOLD_TYPE;START_DATE;START_REASON;END_DATE;END_REASON;TIMESTAMP;ACTIVE;ValidFromTime;ValidToTime;START_PERSON_ID;END_PERSON_ID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="OwnsID" title="OwnsID">
+    <o-table-cell-renderer-service attr="OwnsID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OwnsID"
+        value-column="PlantName" keys="OwnsID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #HOLD_SEQ_NUM attr="HOLD_SEQ_NUM" title="HOLD_SEQ_NUM" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #HOLD_TYPE attr="HOLD_TYPE" title="HOLD_TYPE" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #START_REASON attr="START_REASON" title="START_REASON" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #END_REASON attr="END_REASON" title="END_REASON" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #START_PERSON_ID attr="START_PERSON_ID" title="START_PERSON_ID" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #END_PERSON_ID attr="END_PERSON_ID" title="END_PERSON_ID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

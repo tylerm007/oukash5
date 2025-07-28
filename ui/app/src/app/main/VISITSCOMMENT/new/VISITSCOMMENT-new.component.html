@@ -1,0 +1,32 @@
+<o-form #VISITSCOMMENTForm attr="VISITSCOMMENT_form_insert" service="VISITSCOMMENT" entity="VISITSCOMMENT"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #COMMENT_TYPE attr="COMMENT_TYPE" label="COMMENT_TYPE" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COMMENT attr="COMMENT" label="COMMENT" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #WHO attr="WHO" label="WHO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #VISIT_REC_ID attr="VISIT_REC_ID" label="VISIT_REC_ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-date-input #DATE_ENTERED attr="DATE_ENTERED" value-type="string" label="DATE_ENTERED" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

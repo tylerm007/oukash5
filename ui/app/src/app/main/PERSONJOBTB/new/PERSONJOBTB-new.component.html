@@ -1,0 +1,63 @@
+<o-form #PERSONJOBTBForm attr="PERSONJOBTB_form_insert" service="PERSONJOBTB" entity="PERSONJOBTB"
+keys="PERSON_JOB_ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #PERSON_JOB_ID attr="PERSON_JOB_ID" label=" P E R S O N_ J O B_ I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="PERSON_ID"
+        service="PERSONTB" 
+        entity="PERSONTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_ID" 
+        columns="PERSON_ID;PERSON_ID;PERSON_ID" 
+        title="PERSON_ID"
+        visible-columns="PERSON_ID;PERSON_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #FUNCTION attr="FUNCTION" label="FUNCTION" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TITLE attr="TITLE" label="TITLE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ON_PAYROLL attr="ON_PAYROLL" label="ON_PAYROLL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #STATUS attr="STATUS" label="STATUS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ACCT_PAYROLL_NUM attr="ACCT_PAYROLL_NUM" label="ACCT_PAYROLL_NUM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #StatusEffectiveStartDate attr="StatusEffectiveStartDate" value-type="string" label="StatusEffectiveStartDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #EMPLOYER_ID attr="EMPLOYER_ID" label="EMPLOYER_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #OUDirectRFRTerminationHold attr="OUDirectRFRTerminationHold" label="OUDirectRFRTerminationHold" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #TeamId attr="TeamId" label="TeamId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

@@ -1,0 +1,61 @@
+<o-form #COMPANYHOLDTBForm attr="COMPANYHOLDTB_form_insert" service="COMPANYHOLDTB" entity="COMPANYHOLDTB"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #COMPANY_SEQ_NUM attr="COMPANY_SEQ_NUM" label="COMPANY_SEQ_NUM" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-text-input #HOLD_TYPE attr="HOLD_TYPE" label="HOLD_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #START_DATE attr="START_DATE" value-type="string" label="START_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #START_REASON attr="START_REASON" label="START_REASON" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #END_DATE attr="END_DATE" value-type="string" label="END_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #END_REASON attr="END_REASON" label="END_REASON" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #START_PERSON_ID attr="START_PERSON_ID" label="START_PERSON_ID" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #END_PERSON_ID attr="END_PERSON_ID" label="END_PERSON_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

@@ -1,0 +1,108 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="ID" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="PENDINGINFOTB_form_edit" 
+        service="PENDINGINFOTB" 
+        entity="PENDINGINFOTB" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-list-picker 
+        attr="PLANT_ID"
+        service="PLANTTB" 
+        entity="PLANTTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PLANT_ID" 
+        value-column-type="INTEGER"  
+        keys="PLANT_ID" 
+        columns="PLANT_ID;PLANT_ID;NAME" 
+        title="PLANT_ID"
+        visible-columns="PLANT_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-text-input #IINVOICEFEE attr="IINVOICEFEE" label="IINVOICEFEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IINVOICEEXPENSE attr="IINVOICEEXPENSE" label="IINVOICEEXPENSE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #IINVOICEDATE attr="IINVOICEDATE" value-type="string" label="IINVOICEDATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #IINVOICENUMBER attr="IINVOICENUMBER" label="IINVOICENUMBER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #TERMSCERTFEE attr="TERMSCERTFEE" label="TERMSCERTFEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #SPECIALCLAUSES attr="SPECIALCLAUSES" label="SPECIALCLAUSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ANNUALFEE attr="ANNUALFEE" label="ANNUALFEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ANNUALEXPENSES attr="ANNUALEXPENSES" label="ANNUALEXPENSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #CINVOICEDATE attr="CINVOICEDATE" value-type="string" label="CINVOICEDATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-currency-input #IINVOICEAMOUNT attr="IINVOICEAMOUNT" title="IINVOICEAMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #PROEXPENSES attr="PROEXPENSES" label="PROEXPENSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PROFEE attr="PROFEE" label="PROFEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #PRODATE attr="PRODATE" value-type="string" label="PRODATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #CONTRACTFEE attr="CONTRACTFEE" label="CONTRACTFEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #CONTRACTEXPENSE attr="CONTRACTEXPENSE" label="CONTRACTEXPENSE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #VOID attr="VOID" label="VOID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PAID attr="PAID" label="PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

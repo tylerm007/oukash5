@@ -1,0 +1,56 @@
+<o-form-layout-manager attr="CoPackerFacilitiesLocation" mode="tab" title="COPACKERFACILITIESLOCATION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CoPackerFacilitiesLocationTable" 
+            service="CoPackerFacilitiesLocation" 
+            entity="CoPackerFacilitiesLocation" 
+            title="COPACKERFACILITIESLOCATION"
+            keys="ID"
+            columns="ID;CoPackerId;Location;LocationCity;LocationState;LocationProvince;LocationCountry;ValidFromTime;ValidToTime;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;CoPackerId;Location;LocationCity;LocationState;LocationProvince;LocationCountry;ValidFromTime;ValidToTime;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="CoPackerId" title="CoPacker">
+    <o-table-cell-renderer-service attr="CoPackerId" 
+        service="CoPackerFacility" entity="CoPackerFacilityType" columns="ID;Description"
+        parent-keys="ID:CoPackerId"
+        value-column="Description" keys="CoPackerId"
+        visible-columns="Description" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Location attr="Location" title="Location" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #LocationCity attr="LocationCity" title="LocationCity" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LocationState attr="LocationState" title="LocationState" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LocationProvince attr="LocationProvince" title="LocationProvince" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LocationCountry attr="LocationCountry" title="LocationCountry" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

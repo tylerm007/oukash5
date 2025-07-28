@@ -1,0 +1,128 @@
+<o-form-layout-manager attr="INVOICEFEE" mode="tab" title="INVOICEFEE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="INVOICEFEETable" 
+            service="INVOICEFEE" 
+            entity="INVOICEFEE" 
+            title="INVOICEFEE"
+            keys="INVOICE_ID"
+            columns="INVOICE_ID;BILL_TO_PLANT_ID;COMPANY_ID;TYPE;INVOICE_TYPE;INVOICE_DATE;FREQ;TOTAL_AMOUNT;STATUS;REPLACED_BY;PAYMENT;CHECK_NO;CHECK_DATE;OK_TO_POST;WHO;REPLACEMENT_FOR;BATCH_ID_S36;BATCH_DATE;TRANSFER_FLAG;PRINT_FLAG;HOLD_FLAG;ATTACHED_LETTER;TIMESTAMP;COMMENT;INVOICE_LEVEL;PurchaseOrder;DeliveryDate;OriginalInvoiceAmount;ValidFromTime;ValidToTime;PeriodStart;BalanceInAccounting;DATE_POSTED;CHECK_RECEIVED;BILL_TO_CO_ID;ID;DeliveryMethod;CHANGESET_ID;achPaid;BatchId;PeriodEnd" 
+            header-actions="R;D"
+            visible-columns="INVOICE_ID;BILL_TO_PLANT_ID;COMPANY_ID;TYPE;INVOICE_TYPE;INVOICE_DATE;FREQ;TOTAL_AMOUNT;STATUS;REPLACED_BY;PAYMENT;CHECK_NO;CHECK_DATE;OK_TO_POST;WHO;REPLACEMENT_FOR;BATCH_ID_S36;BATCH_DATE;TRANSFER_FLAG;PRINT_FLAG;HOLD_FLAG;ATTACHED_LETTER;TIMESTAMP;COMMENT;INVOICE_LEVEL;PurchaseOrder;DeliveryDate;OriginalInvoiceAmount;ValidFromTime;ValidToTime;PeriodStart;BalanceInAccounting;DATE_POSTED;CHECK_RECEIVED;BILL_TO_CO_ID;ID;DeliveryMethod;CHANGESET_ID;achPaid;BatchId;PeriodEnd"  
+            sort-columns="INVOICE_ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #INVOICE_ID attr="INVOICE_ID" title=" I N V O I C E_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="BILL_TO_PLANT_ID" title="BILL_TO_PLANT_ID">
+    <o-table-cell-renderer-service attr="BILL_TO_PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="INVOICE_ID:BILL_TO_PLANT_ID"
+        value-column="NAME" keys="BILL_TO_PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="INVOICE_ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #TYPE attr="TYPE" title="TYPE" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_TYPE attr="INVOICE_TYPE" title="INVOICE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_DATE attr="INVOICE_DATE" title="INVOICE_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #FREQ attr="FREQ" title="FREQ" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TOTAL_AMOUNT attr="TOTAL_AMOUNT" title="TOTAL_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #REPLACED_BY attr="REPLACED_BY" title="REPLACED_BY" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PAYMENT attr="PAYMENT" title="PAYMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHECK_NO attr="CHECK_NO" title="CHECK_NO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHECK_DATE attr="CHECK_DATE" title="CHECK_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #OK_TO_POST attr="OK_TO_POST" title="OK_TO_POST" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #WHO attr="WHO" title="WHO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #REPLACEMENT_FOR attr="REPLACEMENT_FOR" title="REPLACEMENT_FOR" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #BATCH_ID_S36 attr="BATCH_ID_S36" title="BATCH_ID_S36" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #BATCH_DATE attr="BATCH_DATE" title="BATCH_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #TRANSFER_FLAG attr="TRANSFER_FLAG" title="TRANSFER_FLAG" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PRINT_FLAG attr="PRINT_FLAG" title="PRINT_FLAG" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #HOLD_FLAG attr="HOLD_FLAG" title="HOLD_FLAG" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ATTACHED_LETTER attr="ATTACHED_LETTER" title="ATTACHED_LETTER" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #COMMENT attr="COMMENT" title="COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_LEVEL attr="INVOICE_LEVEL" title="INVOICE_LEVEL" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PurchaseOrder attr="PurchaseOrder" title="PurchaseOrder" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DeliveryDate attr="DeliveryDate" title="DeliveryDate" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #OriginalInvoiceAmount attr="OriginalInvoiceAmount" title="OriginalInvoiceAmount" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #PeriodStart attr="PeriodStart" title="PeriodStart" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #BalanceInAccounting attr="BalanceInAccounting" title="BalanceInAccounting" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #DATE_POSTED attr="DATE_POSTED" title="DATE_POSTED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHECK_RECEIVED attr="CHECK_RECEIVED" title="CHECK_RECEIVED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #BILL_TO_CO_ID attr="BILL_TO_CO_ID" title="BILL_TO_CO_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #DeliveryMethod attr="DeliveryMethod" title="DeliveryMethod" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="achPaid" title="achPaid">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #BatchId attr="BatchId" title="BatchId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PeriodEnd attr="PeriodEnd" title="PeriodEnd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

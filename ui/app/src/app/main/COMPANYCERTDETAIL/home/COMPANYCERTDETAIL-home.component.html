@@ -1,0 +1,54 @@
+<o-form-layout-manager attr="COMPANYCERTDETAIL" mode="tab" title="COMPANYCERTDETAIL">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="COMPANYCERTDETAILTable" 
+            service="COMPANYCERTDETAIL" 
+            entity="COMPANYCERTDETAIL" 
+            title="COMPANYCERTDETAIL"
+            keys="ID"
+            columns="CERT_DETAIL_DESCRIPTION;COMPANY_ID;CERT_DETAIL_SEQ_NUM;CERT_DETAIL_AMOUNT;CERT_DETAIL_DATE;CERT_DETAIL_COMMENT;ID;COMPANY_FEE_ID;CERT_DETAIL_PERSON_ID" 
+            header-actions="R;D"
+            visible-columns="CERT_DETAIL_DESCRIPTION;COMPANY_ID;CERT_DETAIL_SEQ_NUM;CERT_DETAIL_AMOUNT;CERT_DETAIL_DATE;CERT_DETAIL_COMMENT;ID;COMPANY_FEE_ID;CERT_DETAIL_PERSON_ID"  
+            sort-columns="CERT_DETAIL_DESCRIPTION" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #CERT_DETAIL_DESCRIPTION attr="CERT_DETAIL_DESCRIPTION" title=" C E R T_ D E T A I L_ D E S C R I P T I O N" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #CERT_DETAIL_SEQ_NUM attr="CERT_DETAIL_SEQ_NUM" title="CERT_DETAIL_SEQ_NUM" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CERT_DETAIL_AMOUNT attr="CERT_DETAIL_AMOUNT" title="CERT_DETAIL_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #CERT_DETAIL_DATE attr="CERT_DETAIL_DATE" title="CERT_DETAIL_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #CERT_DETAIL_COMMENT attr="CERT_DETAIL_COMMENT" title="CERT_DETAIL_COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #COMPANY_FEE_ID attr="COMPANY_FEE_ID" title="COMPANY_FEE_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CERT_DETAIL_PERSON_ID attr="CERT_DETAIL_PERSON_ID" title="CERT_DETAIL_PERSON_ID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

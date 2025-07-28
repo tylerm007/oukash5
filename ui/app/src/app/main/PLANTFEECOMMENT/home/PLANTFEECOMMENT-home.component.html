@@ -1,0 +1,69 @@
+<o-form-layout-manager attr="PLANTFEECOMMENT" mode="tab" title="PLANTFEECOMMENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTFEECOMMENTTable" 
+            service="PLANTFEECOMMENT" 
+            entity="PLANTFEECOMMENT" 
+            title="PLANTFEECOMMENT"
+            keys="ID"
+            columns="ID;COMPANY_ID;PLANT_ID;Type;Expires;RfrPay;BillingCompanyFee;VisitType;ValidFromTime;ValidToTime;PLANT_FEE_ID;COMMENT_ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;COMPANY_ID;PLANT_ID;Type;Expires;RfrPay;BillingCompanyFee;VisitType;ValidFromTime;ValidToTime;PLANT_FEE_ID;COMMENT_ID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Type attr="Type" title="Type" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Expires attr="Expires" title="Expires" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RfrPay attr="RfrPay" title="RfrPay" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #BillingCompanyFee attr="BillingCompanyFee" title="BillingCompanyFee" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #VisitType attr="VisitType" title="VisitType" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #PLANT_FEE_ID attr="PLANT_FEE_ID" title="PLANT_FEE_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #COMMENT_ID attr="COMMENT_ID" title="COMMENT_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

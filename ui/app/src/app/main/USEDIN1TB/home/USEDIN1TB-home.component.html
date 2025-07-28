@@ -1,0 +1,104 @@
+<o-form-layout-manager attr="USEDIN1TB" mode="tab" title="USEDIN1TB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="USEDIN1TBTable" 
+            service="USEDIN1TB" 
+            entity="USEDIN1TB" 
+            title="USEDIN1TB"
+            keys="ID"
+            columns="BRAND_NAME;BrokerID;LabelID;OWNS_ID;START_DATE;END_DATE;TIMESTAMP;STATUS;COMMENT;ACTIVE;RAW_MATERIAL_CODE;ENTERED_BY;Ing_Name_ps;Comment_NTA;LineItem;DoNotDelete;PassoverProductionUse;LocReceivedStatus;InternalCode;ValidFromTime;ValidToTime;ID;PROC_LINE_ID;JobID;PreferredBrokerContactID;PreferredSourceContactID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="BRAND_NAME;BrokerID;LabelID;OWNS_ID;START_DATE;END_DATE;TIMESTAMP;STATUS;COMMENT;ACTIVE;RAW_MATERIAL_CODE;ENTERED_BY;Ing_Name_ps;Comment_NTA;LineItem;DoNotDelete;PassoverProductionUse;LocReceivedStatus;InternalCode;ValidFromTime;ValidToTime;ID;PROC_LINE_ID;JobID;PreferredBrokerContactID;PreferredSourceContactID;CHANGESET_ID"  
+            sort-columns="BRAND_NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #BRAND_NAME attr="BRAND_NAME" title=" B R A N D_ N A M E" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="BrokerID" title="BrokerID">
+    <o-table-cell-renderer-service attr="BrokerID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:BrokerID"
+        value-column="NAME" keys="BrokerID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="LabelID" title="LabelID">
+    <o-table-cell-renderer-service attr="LabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="ID:LabelID"
+        value-column="BRAND_NAME" keys="LabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="OWNS_ID" title="OWNS_ID">
+    <o-table-cell-renderer-service attr="OWNS_ID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:OWNS_ID"
+        value-column="PlantName" keys="OWNS_ID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="SMALLDATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMMENT attr="COMMENT" title="COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #RAW_MATERIAL_CODE attr="RAW_MATERIAL_CODE" title="RAW_MATERIAL_CODE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ENTERED_BY attr="ENTERED_BY" title="ENTERED_BY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Ing_Name_ps attr="Ing_Name_ps" title="Ing_Name_ps" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Comment_NTA attr="Comment_NTA" title="Comment_NTA" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LineItem attr="LineItem" title="LineItem" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #DoNotDelete attr="DoNotDelete" title="DoNotDelete" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PassoverProductionUse attr="PassoverProductionUse" title="PassoverProductionUse" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LocReceivedStatus attr="LocReceivedStatus" title="LocReceivedStatus" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #InternalCode attr="InternalCode" title="InternalCode" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PROC_LINE_ID attr="PROC_LINE_ID" title="PROC_LINE_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #JobID attr="JobID" title="JobID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PreferredBrokerContactID attr="PreferredBrokerContactID" title="PreferredBrokerContactID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PreferredSourceContactID attr="PreferredSourceContactID" title="PreferredSourceContactID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

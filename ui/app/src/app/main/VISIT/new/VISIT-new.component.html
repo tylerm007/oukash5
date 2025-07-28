@@ -1,0 +1,275 @@
+<o-form #VISITForm attr="VISIT_form_insert" service="VISIT" entity="VISIT"
+keys="VISIT_ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #VISIT_ID attr="VISIT_ID" label=" V I S I T_ I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="ACTUAL_PERSON_JOB_ID"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;ACTUAL_PERSON_JOB_ID;PERSON_JOB_ID" 
+        title="ACTUAL_PERSON_JOB_ID"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ASSIGNED_PERSON_JOB_ID"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;ASSIGNED_PERSON_JOB_ID;PERSON_JOB_ID" 
+        title="ASSIGNED_PERSON_JOB_ID"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="DESTINATION_ID"
+        service="PLANTTB" 
+        entity="PLANTTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PLANT_ID" 
+        value-column-type="INTEGER"  
+        keys="PLANT_ID" 
+        columns="PLANT_ID;DESTINATION_ID;NAME" 
+        title="DESTINATION_ID"
+        visible-columns="PLANT_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="MainVisit"
+        service="VISIT" 
+        entity="VISITType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="VISIT_ID" 
+        value-column-type="INTEGER"  
+        keys="VISIT_ID" 
+        columns="VISIT_ID;MainVisit;VISIT_ID" 
+        title="MainVisit"
+        visible-columns="VISIT_ID;VISIT_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="VISIT_FOR_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;VISIT_FOR_ID;NAME" 
+        title="VISIT_FOR_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-date-input #ASSIGNMENT_DATE attr="ASSIGNMENT_DATE" value-type="string" label="ASSIGNMENT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #VISIT_TYPE attr="VISIT_TYPE" label="VISIT_TYPE" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #VISIT_PURPOSE attr="VISIT_PURPOSE" label="VISIT_PURPOSE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DESTINATION_TYPE attr="DESTINATION_TYPE" label="DESTINATION_TYPE" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #VISIT_FOR_TYPE attr="VISIT_FOR_TYPE" label="VISIT_FOR_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BILL_TO_TYPE attr="BILL_TO_TYPE" label="BILL_TO_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #PERIOD_START_DATE attr="PERIOD_START_DATE" value-type="string" label="PERIOD_START_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #PERIOD_END_DATE attr="PERIOD_END_DATE" value-type="string" label="PERIOD_END_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #ACTUAL_VISIT_DATE attr="ACTUAL_VISIT_DATE" value-type="string" label="ACTUAL_VISIT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ACTUAL_VISIT_DAYS attr="ACTUAL_VISIT_DAYS" label="ACTUAL_VISIT_DAYS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #DEFAULT_BILL_AMOUNT attr="DEFAULT_BILL_AMOUNT" title="DEFAULT_BILL_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #DEFAULT_EXPENSES attr="DEFAULT_EXPENSES" label="DEFAULT_EXPENSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DEFAULT_PAYMENT_AMOUNY attr="DEFAULT_PAYMENT_AMOUNY" label="DEFAULT_PAYMENT_AMOUNY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OU_RENTAL_CAR attr="OU_RENTAL_CAR" label="OU_RENTAL_CAR" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OU_PLANE attr="OU_PLANE" label="OU_PLANE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OU_OTHER attr="OU_OTHER" label="OU_OTHER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OU_Mileage_Differential attr="OU_Mileage_Differential" label="OU_Mileage_Differential" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_MASHGIACH_PAY attr="TOTAL_MASHGIACH_PAY" label="TOTAL_MASHGIACH_PAY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_MASHGIACH_EXPENSE attr="TOTAL_MASHGIACH_EXPENSE" label="TOTAL_MASHGIACH_EXPENSE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_MASHGIACH_ADVANCES attr="TOTAL_MASHGIACH_ADVANCES" label="TOTAL_MASHGIACH_ADVANCES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_BILLABLE_FEE attr="TOTAL_BILLABLE_FEE" label="TOTAL_BILLABLE_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_BILLABLE_EXPENSES attr="TOTAL_BILLABLE_EXPENSES" label="TOTAL_BILLABLE_EXPENSES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_BILLABLE_PAYMENT attr="TOTAL_BILLABLE_PAYMENT" label="TOTAL_BILLABLE_PAYMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PAY_TYPE attr="PAY_TYPE" label="PAY_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #PAY_AMOUNT attr="PAY_AMOUNT" title="PAY_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #PAY_OVERTIME attr="PAY_OVERTIME" label="PAY_OVERTIME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PAY_OVERNIGHT attr="PAY_OVERNIGHT" label="PAY_OVERNIGHT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #NUMBER_SHIFTS attr="NUMBER_SHIFTS" label="NUMBER_SHIFTS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #PAY_TOTAL attr="PAY_TOTAL" title="PAY_TOTAL" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #RATE_PER_MILEAGE attr="RATE_PER_MILEAGE" label="RATE_PER_MILEAGE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BILLABLE_FEE attr="BILLABLE_FEE" label="BILLABLE_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BILLABLE_OVERTIME_FEE attr="BILLABLE_OVERTIME_FEE" label="BILLABLE_OVERTIME_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BILLABLE_OVERNIGHT_FEE attr="BILLABLE_OVERNIGHT_FEE" label="BILLABLE_OVERNIGHT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #APPROVAL attr="APPROVAL" label="APPROVAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #APPROVAL_DATE attr="APPROVAL_DATE" value-type="string" label="APPROVAL_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-checkbox #GP_GO attr="GP_GO" label="GP_GO" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #AP_BATCH attr="AP_BATCH" label="AP_BATCH" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #AP_DATE attr="AP_DATE" value-type="string" label="AP_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-checkbox #AP_DONE attr="AP_DONE" label="AP_DONE" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #AR_BATCH attr="AR_BATCH" label="AR_BATCH" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #AR_DATE attr="AR_DATE" value-type="string" label="AR_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-checkbox #AR_DONE attr="AR_DONE" label="AR_DONE" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #PAY_BATCH attr="PAY_BATCH" label="PAY_BATCH" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #PAY_DATE attr="PAY_DATE" value-type="string" label="PAY_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-checkbox #PAY_DONE attr="PAY_DONE" label="PAY_DONE" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #GL_BATCH attr="GL_BATCH" label="GL_BATCH" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #GL_DATE attr="GL_DATE" value-type="string" label="GL_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-checkbox #GL_DONE attr="GL_DONE" label="GL_DONE" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #NUMBER_OVERTIME_SHIFTS attr="NUMBER_OVERTIME_SHIFTS" label="NUMBER_OVERTIME_SHIFTS" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #NO_OVERTIME_HRS attr="NO_OVERTIME_HRS" label="NO_OVERTIME_HRS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ACTUAL_MASH_COST attr="ACTUAL_MASH_COST" label="ACTUAL_MASH_COST" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ProcessedBy attr="ProcessedBy" label="ProcessedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #VisitStatus attr="VisitStatus" label="VisitStatus" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #PurchaseOrder attr="PurchaseOrder" label="PurchaseOrder" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OnHoldModifiedBy attr="OnHoldModifiedBy" label="OnHoldModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #TotalVisitsInTrip attr="TotalVisitsInTrip" label="TotalVisitsInTrip" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #BILL_TO_ID attr="BILL_TO_ID" label="BILL_TO_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #PERIOD attr="PERIOD" label="PERIOD" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOTAL_EXPENSES_PAID attr="TOTAL_EXPENSES_PAID" label="TOTAL_EXPENSES_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MILEAGE_NOT_PAID attr="MILEAGE_NOT_PAID" label="MILEAGE_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PLANE_NOT_PAID attr="PLANE_NOT_PAID" label="PLANE_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #RENTAL_CAR_NOT_PAID attr="RENTAL_CAR_NOT_PAID" label="RENTAL_CAR_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TOLLS_NOT_PAID attr="TOLLS_NOT_PAID" label="TOLLS_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PARKING_NOT_PAID attr="PARKING_NOT_PAID" label="PARKING_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #GAS_NOT_PAID attr="GAS_NOT_PAID" label="GAS_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TAXI_NOT_PAID attr="TAXI_NOT_PAID" label="TAXI_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MOTEL_NOT_PAID attr="MOTEL_NOT_PAID" label="MOTEL_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TELEPHONE_NOT_PAID attr="TELEPHONE_NOT_PAID" label="TELEPHONE_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MISC_NOT_PAID attr="MISC_NOT_PAID" label="MISC_NOT_PAID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #APPROVAL_PERSON_ID attr="APPROVAL_PERSON_ID" label="APPROVAL_PERSON_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #INV_ID attr="INV_ID" label="INV_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #TRIP_ID attr="TRIP_ID" label="TRIP_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #GP_BILL_TO_ID attr="GP_BILL_TO_ID" label="GP_BILL_TO_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #AssignmentID attr="AssignmentID" label="AssignmentID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #OnHold attr="OnHold" value-type="string" label="OnHold" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #TeamId attr="TeamId" label="TeamId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

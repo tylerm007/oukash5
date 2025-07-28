@@ -1,0 +1,544 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="NAME" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="MERCHTB_form_edit" 
+        service="MERCHTB" 
+        entity="MERCHTB" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="MERCHANDISE_ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #NAME attr="NAME" label=" N A M E" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #STIPULATION attr="STIPULATION" label="STIPULATION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #CONFIDENTIAL attr="CONFIDENTIAL" label="CONFIDENTIAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #RETAIL attr="RETAIL" label="RETAIL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #FOODSERVICE attr="FOODSERVICE" label="FOODSERVICE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #CONSUMER attr="CONSUMER" label="CONSUMER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #INDUSTRIAL attr="INDUSTRIAL" label="INDUSTRIAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #INSTITUTIONAL attr="INSTITUTIONAL" label="INSTITUTIONAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #GENERIC attr="GENERIC" label="GENERIC" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #SPECIFIED_SOURCE attr="SPECIFIED_SOURCE" label="SPECIFIED_SOURCE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #SPECIFIED_SYMBOL attr="SPECIFIED_SYMBOL" label="SPECIFIED_SYMBOL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #DESCRIPTION attr="DESCRIPTION" label="DESCRIPTION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #DPM attr="DPM" label="DPM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PESACH attr="PESACH" label="PESACH" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #COMMENT attr="COMMENT" label="COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #CONFIDENTIAL_TEXT attr="CONFIDENTIAL_TEXT" label="CONFIDENTIAL_TEXT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #GROUP_COMMENT attr="GROUP_COMMENT" label="GROUP_COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #STATUS attr="STATUS" label="STATUS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #LOC_CATEGORY attr="LOC_CATEGORY" label="LOC_CATEGORY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #COMMENTS_SCHED_B attr="COMMENTS_SCHED_B" label="COMMENTS_SCHED_B" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PROD_NUM attr="PROD_NUM" label="PROD_NUM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #INTERMEDIATE_MIX attr="INTERMEDIATE_MIX" label="INTERMEDIATE_MIX" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ALTERNATE_NAME attr="ALTERNATE_NAME" label="ALTERNATE_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #BrochoCode attr="BrochoCode" label="BrochoCode" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #Brocho2Code attr="Brocho2Code" label="Brocho2Code" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #CAS attr="CAS" label="CAS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #Symbol attr="Symbol" label="Symbol" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #LOC attr="LOC" value-type="string" label="LOC" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #UKDdisplay attr="UKDdisplay" label="UKDdisplay" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-checkbox #TransferredTo attr="TransferredTo" label="TransferredTo" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-integer-input #TransferredMerch attr="TransferredMerch" label="TransferredMerch" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #Special_Status attr="Special_Status" label="Special_Status" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #MERCHANDISE_ID attr="MERCHANDISE_ID" label="MERCHANDISE_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #AS_STIPULATED attr="AS_STIPULATED" label="AS_STIPULATED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUP_REQUIRED attr="OUP_REQUIRED" label="OUP_REQUIRED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #LOC_SELECTED attr="LOC_SELECTED" label="LOC_SELECTED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-checkbox #Reviewed attr="Reviewed" label="Reviewed" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="FORMULACOMPONENT-ComponentMerchID">
+    <div layout-padding>
+      <o-table 
+        attr="FormulaComponentTable" 
+        service="FormulaComponent" 
+        entity="FormulaComponent" 
+        keys="ID"
+        parent-keys="ComponentMerchID:MERCHANDISE_ID"
+        columns="ID;ComponentLabelID;ComponentMerchID;Component;ComponentIDType;ValidFromTime;ValidToTime;FormulaID;CHANGESET_ID"  
+        horizontal-scroll="yes"
+        detail-form-route="FormulaComponent" 
+        edit-form-route="FormulaComponent"
+        visible-columns="ID;ComponentLabelID;ComponentMerchID;Component;ComponentIDType;ValidFromTime;ValidToTime;FormulaID;CHANGESET_ID"  
+        sort-columns="ID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ComponentLabelID" title="ComponentLabelID">
+    <o-table-cell-renderer-service attr="ComponentLabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="MERCHANDISE_ID:ComponentLabelID"
+        value-column="BRAND_NAME" keys="ComponentLabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="ComponentMerchID" title="ComponentMerchID">
+    <o-table-cell-renderer-service attr="ComponentMerchID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:ComponentMerchID"
+        value-column="NAME" keys="ComponentMerchID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Component attr="Component" title="Component" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ComponentIDType attr="ComponentIDType" title="ComponentIDType" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #FormulaID attr="FormulaID" title="FormulaID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="FORMULAPRODUCT-Merchandise_ID">
+    <div layout-padding>
+      <o-table 
+        attr="FormulaProductTable" 
+        service="FormulaProduct" 
+        entity="FormulaProduct" 
+        keys="ID"
+        parent-keys="Merchandise_ID:MERCHANDISE_ID"
+        columns="ID;Merchandise_ID;FormulaID"  
+        horizontal-scroll="yes"
+        detail-form-route="FormulaProduct" 
+        edit-form-route="FormulaProduct"
+        visible-columns="ID;Merchandise_ID;FormulaID"  
+        sort-columns="ID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="Merchandise_ID" title="Merchandise_ID">
+    <o-table-cell-renderer-service attr="Merchandise_ID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:Merchandise_ID"
+        value-column="NAME" keys="Merchandise_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #FormulaID attr="FormulaID" title="FormulaID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="FORMULASUBMISSIONCOMPONENT-ComponentMerchID">
+    <div layout-padding>
+      <o-table 
+        attr="FormulaSubmissionComponentTable" 
+        service="FormulaSubmissionComponent" 
+        entity="FormulaSubmissionComponent" 
+        keys="ID"
+        parent-keys="ComponentMerchID:MERCHANDISE_ID"
+        columns="ComponentName;ComponentLabelID;ComponentMerchID;RMC;ProductNumber;SupplierCode;SupplierName;AgencyName;seq;ID;FormulaSubmissionID;UniqueID;AgencyID"  
+        horizontal-scroll="yes"
+        detail-form-route="FormulaSubmissionComponent" 
+        edit-form-route="FormulaSubmissionComponent"
+        visible-columns="ComponentName;ComponentLabelID;ComponentMerchID;RMC;ProductNumber;SupplierCode;SupplierName;AgencyName;seq;ID;FormulaSubmissionID;UniqueID;AgencyID"  
+        sort-columns="ComponentName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #ComponentName attr="ComponentName" title=" Component Name" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="ComponentLabelID" title="ComponentLabelID">
+    <o-table-cell-renderer-service attr="ComponentLabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="MERCHANDISE_ID:ComponentLabelID"
+        value-column="BRAND_NAME" keys="ComponentLabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="ComponentMerchID" title="ComponentMerchID">
+    <o-table-cell-renderer-service attr="ComponentMerchID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:ComponentMerchID"
+        value-column="NAME" keys="ComponentMerchID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #RMC attr="RMC" title="RMC" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ProductNumber attr="ProductNumber" title="ProductNumber" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SupplierCode attr="SupplierCode" title="SupplierCode" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SupplierName attr="SupplierName" title="SupplierName" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #AgencyName attr="AgencyName" title="AgencyName" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #seq attr="seq" title="seq" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #FormulaSubmissionID attr="FormulaSubmissionID" title="FormulaSubmissionID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #UniqueID attr="UniqueID" title="UniqueID" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #AgencyID attr="AgencyID" title="AgencyID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="LABELTB-MERCHANDISE_ID">
+    <div layout-padding>
+      <o-table 
+        attr="LabelTbTable" 
+        service="LabelTb" 
+        entity="LabelTb" 
+        keys="ID"
+        parent-keys="MERCHANDISE_ID:MERCHANDISE_ID"
+        columns="BRAND_NAME;MERCHANDISE_ID;SRC_MAR_ID;LABEL_SEQ_NUM;SYMBOL;INSTITUTIONAL;BLK;SEAL_SIGN;GRP;SEAL_SIGN_FLAG;LABEL_NAME;INDUSTRIAL;CONSUMER;LABEL_TYPE;ACTIVE;SPECIAL_PRODUCTION;CREATE_DATE;LAST_MODIFY_DATE;STATUS_DATE;JEWISH_ACTION;CREATED_BY;MODIFIED_BY;LABEL_NUM;NUM_NAME;Confidential;LOCholdDate;PassoverSpecialProduction;COMMENT;DisplayNewlyCertifiedOnWeb;Status;ValidFromTime;ValidToTime;LastChangeDate;LastChangeReason;LastChangeType;Kitniyot;IsDairyEquipment;NameNum;ID;AgencyID;LOChold;CHANGESET_ID;ReplacedByAgencyId;TransferredFromAgencyId"  
+        horizontal-scroll="yes"
+        detail-form-route="LabelTb" 
+        edit-form-route="LabelTb"
+        visible-columns="BRAND_NAME;MERCHANDISE_ID;SRC_MAR_ID;LABEL_SEQ_NUM;SYMBOL;INSTITUTIONAL;BLK;SEAL_SIGN;GRP;SEAL_SIGN_FLAG;LABEL_NAME;INDUSTRIAL;CONSUMER;LABEL_TYPE;ACTIVE;SPECIAL_PRODUCTION;CREATE_DATE;LAST_MODIFY_DATE;STATUS_DATE;JEWISH_ACTION;CREATED_BY;MODIFIED_BY;LABEL_NUM;NUM_NAME;Confidential;LOCholdDate;PassoverSpecialProduction;COMMENT;DisplayNewlyCertifiedOnWeb;Status;ValidFromTime;ValidToTime;LastChangeDate;LastChangeReason;LastChangeType;Kitniyot;IsDairyEquipment;NameNum;ID;AgencyID;LOChold;CHANGESET_ID;ReplacedByAgencyId;TransferredFromAgencyId"  
+        sort-columns="BRAND_NAME" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #BRAND_NAME attr="BRAND_NAME" title=" B R A N D_ N A M E" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="MERCHANDISE_ID" title="MERCHANDISE_ID">
+    <o-table-cell-renderer-service attr="MERCHANDISE_ID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:MERCHANDISE_ID"
+        value-column="NAME" keys="MERCHANDISE_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="SRC_MAR_ID" title="SRC_MAR_ID">
+    <o-table-cell-renderer-service attr="SRC_MAR_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="MERCHANDISE_ID:SRC_MAR_ID"
+        value-column="NAME" keys="SRC_MAR_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #LABEL_SEQ_NUM attr="LABEL_SEQ_NUM" title="LABEL_SEQ_NUM" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #SYMBOL attr="SYMBOL" title="SYMBOL" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #INSTITUTIONAL attr="INSTITUTIONAL" title="INSTITUTIONAL" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #BLK attr="BLK" title="BLK" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #SEAL_SIGN attr="SEAL_SIGN" title="SEAL_SIGN" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #GRP attr="GRP" title="GRP" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #SEAL_SIGN_FLAG attr="SEAL_SIGN_FLAG" title="SEAL_SIGN_FLAG" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LABEL_NAME attr="LABEL_NAME" title="LABEL_NAME" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #INDUSTRIAL attr="INDUSTRIAL" title="INDUSTRIAL" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CONSUMER attr="CONSUMER" title="CONSUMER" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LABEL_TYPE attr="LABEL_TYPE" title="LABEL_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #SPECIAL_PRODUCTION attr="SPECIAL_PRODUCTION" title="SPECIAL_PRODUCTION" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CREATE_DATE attr="CREATE_DATE" title="CREATE_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #LAST_MODIFY_DATE attr="LAST_MODIFY_DATE" title="LAST_MODIFY_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #STATUS_DATE attr="STATUS_DATE" title="STATUS_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #JEWISH_ACTION attr="JEWISH_ACTION" title="JEWISH_ACTION" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CREATED_BY attr="CREATED_BY" title="CREATED_BY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #MODIFIED_BY attr="MODIFIED_BY" title="MODIFIED_BY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LABEL_NUM attr="LABEL_NUM" title="LABEL_NUM" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #NUM_NAME attr="NUM_NAME" title="NUM_NAME" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #Confidential attr="Confidential" title="Confidential" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LOCholdDate attr="LOCholdDate" title="LOCholdDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #PassoverSpecialProduction attr="PassoverSpecialProduction" title="PassoverSpecialProduction" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #COMMENT attr="COMMENT" title="COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #DisplayNewlyCertifiedOnWeb attr="DisplayNewlyCertifiedOnWeb" title="DisplayNewlyCertifiedOnWeb" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #Status attr="Status" title="Status" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #LastChangeDate attr="LastChangeDate" title="LastChangeDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #LastChangeReason attr="LastChangeReason" title="LastChangeReason" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LastChangeType attr="LastChangeType" title="LastChangeType" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="Kitniyot" title="Kitniyot">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column attr="IsDairyEquipment" title="IsDairyEquipment">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #NameNum attr="NameNum" title="NameNum" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #AgencyID attr="AgencyID" title="AgencyID" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LOChold attr="LOChold" title="LOChold" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ReplacedByAgencyId attr="ReplacedByAgencyId" title="ReplacedByAgencyId" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TransferredFromAgencyId attr="TransferredFromAgencyId" title="TransferredFromAgencyId" editable="no" required="no" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="MERCHOTHERNAME-MERCHANDISE_ID">
+    <div layout-padding>
+      <o-table 
+        attr="MERCHOTHERNAMETable" 
+        service="MERCHOTHERNAME" 
+        entity="MERCHOTHERNAME" 
+        keys="ID"
+        parent-keys="MERCHANDISE_ID:MERCHANDISE_ID"
+        columns="ID;MERCHANDISE_ID;TYPE;TIMESTAMP;ALIAS_ID"  
+        horizontal-scroll="yes"
+        detail-form-route="MERCHOTHERNAME" 
+        edit-form-route="MERCHOTHERNAME"
+        visible-columns="ID;MERCHANDISE_ID;TYPE;TIMESTAMP;ALIAS_ID"  
+        sort-columns="ID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="MERCHANDISE_ID" title="MERCHANDISE_ID">
+    <o-table-cell-renderer-service attr="MERCHANDISE_ID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:MERCHANDISE_ID"
+        value-column="NAME" keys="MERCHANDISE_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #TYPE attr="TYPE" title="TYPE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ALIAS_ID attr="ALIAS_ID" title="ALIAS_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="YOSHONINFO-MerchId">
+    <div layout-padding>
+      <o-table 
+        attr="YoshonInfoTable" 
+        service="YoshonInfo" 
+        entity="YoshonInfo" 
+        keys="Id"
+        parent-keys="MerchId:MERCHANDISE_ID"
+        columns="Description;MerchId;Comment;Value;ValidFromTime;ValidToTime;Id;OuCertified;CHANGESET_ID"  
+        horizontal-scroll="yes"
+        detail-form-route="YoshonInfo" 
+        edit-form-route="YoshonInfo"
+        visible-columns="Description;MerchId;Comment;Value;ValidFromTime;ValidToTime;Id;OuCertified;CHANGESET_ID"  
+        sort-columns="Description" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #Description attr="Description" title=" Description" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="MerchId" title="Merch">
+    <o-table-cell-renderer-service attr="MerchId" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="MERCHANDISE_ID:MerchId"
+        value-column="NAME" keys="MerchId"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Comment attr="Comment" title="Comment" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #Value attr="Value" title="Value" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Id attr="Id" title="Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="OuCertified" title="OuCertified">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

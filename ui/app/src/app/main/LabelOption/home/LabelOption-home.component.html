@@ -1,0 +1,40 @@
+<o-form-layout-manager attr="LabelOption" mode="tab" title="LABELOPTION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="LabelOptionTable" 
+            service="LabelOption" 
+            entity="LabelOption" 
+            title="LABELOPTION"
+            keys="LabelID"
+            columns="LabelID;IncludeInParentCompanyLOC" 
+            header-actions="R;D"
+            visible-columns="LabelID;IncludeInParentCompanyLOC"  
+            sort-columns="LabelID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column attr="LabelID" title="LabelID">
+    <o-table-cell-renderer-service attr="LabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="LabelID:LabelID"
+        value-column="BRAND_NAME" keys="LabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #IncludeInParentCompanyLOC attr="IncludeInParentCompanyLOC" title="IncludeInParentCompanyLOC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

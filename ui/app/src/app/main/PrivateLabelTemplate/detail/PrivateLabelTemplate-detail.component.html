@@ -1,0 +1,53 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="ID" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="PrivateLabelTemplate_form_edit" 
+        service="PrivateLabelTemplate" 
+        entity="PrivateLabelTemplate" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-textarea-input #Template attr="Template"  label="Template" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+      <o-text-input #AddedBy attr="AddedBy" label="AddedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #DateAdded attr="DateAdded" value-type="string" label="DateAdded" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

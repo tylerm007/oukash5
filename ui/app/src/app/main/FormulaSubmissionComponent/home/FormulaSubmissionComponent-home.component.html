@@ -1,0 +1,69 @@
+<o-form-layout-manager attr="FormulaSubmissionComponent" mode="tab" title="FORMULASUBMISSIONCOMPONENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="FormulaSubmissionComponentTable" 
+            service="FormulaSubmissionComponent" 
+            entity="FormulaSubmissionComponent" 
+            title="FORMULASUBMISSIONCOMPONENT"
+            keys="ID"
+            columns="ComponentName;ComponentLabelID;ComponentMerchID;RMC;ProductNumber;SupplierCode;SupplierName;AgencyName;seq;ID;FormulaSubmissionID;UniqueID;AgencyID" 
+            header-actions="R;D"
+            visible-columns="ComponentName;ComponentLabelID;ComponentMerchID;RMC;ProductNumber;SupplierCode;SupplierName;AgencyName;seq;ID;FormulaSubmissionID;UniqueID;AgencyID"  
+            sort-columns="ComponentName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ComponentName attr="ComponentName" title=" Component Name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="ComponentLabelID" title="ComponentLabelID">
+    <o-table-cell-renderer-service attr="ComponentLabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="ID:ComponentLabelID"
+        value-column="BRAND_NAME" keys="ComponentLabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ComponentMerchID" title="ComponentMerchID">
+    <o-table-cell-renderer-service attr="ComponentMerchID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="ID:ComponentMerchID"
+        value-column="NAME" keys="ComponentMerchID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #RMC attr="RMC" title="RMC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ProductNumber attr="ProductNumber" title="ProductNumber" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SupplierCode attr="SupplierCode" title="SupplierCode" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SupplierName attr="SupplierName" title="SupplierName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #AgencyName attr="AgencyName" title="AgencyName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #seq attr="seq" title="seq" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #FormulaSubmissionID attr="FormulaSubmissionID" title="FormulaSubmissionID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #UniqueID attr="UniqueID" title="UniqueID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #AgencyID attr="AgencyID" title="AgencyID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

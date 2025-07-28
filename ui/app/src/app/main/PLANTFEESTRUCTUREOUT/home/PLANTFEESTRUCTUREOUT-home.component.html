@@ -1,0 +1,105 @@
+<o-form-layout-manager attr="PLANTFEESTRUCTUREOUT" mode="tab" title="PLANTFEESTRUCTUREOUT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTFEESTRUCTUREOUTTable" 
+            service="PLANTFEESTRUCTUREOUT" 
+            entity="PLANTFEESTRUCTUREOUT" 
+            title="PLANTFEESTRUCTUREOUT"
+            keys="ID"
+            columns="ID;COMPANY_ID;PLANT_ID;OUT_VISIT_FEE_TYPEx;OUT_VISIT_FEEx;OUT_FREE_VISITS_NUM;OUT_VISIT_FEE1;OUT_FREE_VISITS_NUM1;OUT_VISIT_FEE2;OUT_FREE_VISITS_NUM2;OUT_FREE_VISITS_OVERNIGHTPAY;OUT_SPECIAL_PRODUCTION_TYPEx;OUT_SPECIAL_PRODUCTION_FEEx;OUT_UNIT_BASE;OUT_SPECIAL_PRODUCTION_FEE1;OUT_UNIT_BASE1;OUT_SPECIAL_PRODUCTION_FEE2;OUT_UNIT_BASE2;OUT_SPEC_PRODN_OVERNIGHTPAY;OUT_PASSOVER_FEE_TYPEx;OUT_PASSOVER_RATE_FEE1x;OUT_PASSOVER_FOR_FEE1;OUT_PASSOVER_RATE_FEE2;OUT_PASSOVER_FOR_FEE2;OUT_PASSOVER_RATE_FEE3;OUT_PASSOVER_FOR_FEE3;OUT_PASSOVER_OVERNIGHTPAY;ValidFromTime;ValidToTime;PERSON_JOB_ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;COMPANY_ID;PLANT_ID;OUT_VISIT_FEE_TYPEx;OUT_VISIT_FEEx;OUT_FREE_VISITS_NUM;OUT_VISIT_FEE1;OUT_FREE_VISITS_NUM1;OUT_VISIT_FEE2;OUT_FREE_VISITS_NUM2;OUT_FREE_VISITS_OVERNIGHTPAY;OUT_SPECIAL_PRODUCTION_TYPEx;OUT_SPECIAL_PRODUCTION_FEEx;OUT_UNIT_BASE;OUT_SPECIAL_PRODUCTION_FEE1;OUT_UNIT_BASE1;OUT_SPECIAL_PRODUCTION_FEE2;OUT_UNIT_BASE2;OUT_SPEC_PRODN_OVERNIGHTPAY;OUT_PASSOVER_FEE_TYPEx;OUT_PASSOVER_RATE_FEE1x;OUT_PASSOVER_FOR_FEE1;OUT_PASSOVER_RATE_FEE2;OUT_PASSOVER_FOR_FEE2;OUT_PASSOVER_RATE_FEE3;OUT_PASSOVER_FOR_FEE3;OUT_PASSOVER_OVERNIGHTPAY;ValidFromTime;ValidToTime;PERSON_JOB_ID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE_TYPEx attr="OUT_VISIT_FEE_TYPEx" title="OUT_VISIT_FEE_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEEx attr="OUT_VISIT_FEEx" title="OUT_VISIT_FEEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM attr="OUT_FREE_VISITS_NUM" title="OUT_FREE_VISITS_NUM" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE1 attr="OUT_VISIT_FEE1" title="OUT_VISIT_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM1 attr="OUT_FREE_VISITS_NUM1" title="OUT_FREE_VISITS_NUM1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_VISIT_FEE2 attr="OUT_VISIT_FEE2" title="OUT_VISIT_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_NUM2 attr="OUT_FREE_VISITS_NUM2" title="OUT_FREE_VISITS_NUM2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_FREE_VISITS_OVERNIGHTPAY attr="OUT_FREE_VISITS_OVERNIGHTPAY" title="OUT_FREE_VISITS_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_TYPEx attr="OUT_SPECIAL_PRODUCTION_TYPEx" title="OUT_SPECIAL_PRODUCTION_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEEx attr="OUT_SPECIAL_PRODUCTION_FEEx" title="OUT_SPECIAL_PRODUCTION_FEEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE attr="OUT_UNIT_BASE" title="OUT_UNIT_BASE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEE1 attr="OUT_SPECIAL_PRODUCTION_FEE1" title="OUT_SPECIAL_PRODUCTION_FEE1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE1 attr="OUT_UNIT_BASE1" title="OUT_UNIT_BASE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_SPECIAL_PRODUCTION_FEE2 attr="OUT_SPECIAL_PRODUCTION_FEE2" title="OUT_SPECIAL_PRODUCTION_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_UNIT_BASE2 attr="OUT_UNIT_BASE2" title="OUT_UNIT_BASE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_SPEC_PRODN_OVERNIGHTPAY attr="OUT_SPEC_PRODN_OVERNIGHTPAY" title="OUT_SPEC_PRODN_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FEE_TYPEx attr="OUT_PASSOVER_FEE_TYPEx" title="OUT_PASSOVER_FEE_TYPEx" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE1x attr="OUT_PASSOVER_RATE_FEE1x" title="OUT_PASSOVER_RATE_FEE1x" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE1 attr="OUT_PASSOVER_FOR_FEE1" title="OUT_PASSOVER_FOR_FEE1" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE2 attr="OUT_PASSOVER_RATE_FEE2" title="OUT_PASSOVER_RATE_FEE2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE2 attr="OUT_PASSOVER_FOR_FEE2" title="OUT_PASSOVER_FOR_FEE2" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_RATE_FEE3 attr="OUT_PASSOVER_RATE_FEE3" title="OUT_PASSOVER_RATE_FEE3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_FOR_FEE3 attr="OUT_PASSOVER_FOR_FEE3" title="OUT_PASSOVER_FOR_FEE3" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUT_PASSOVER_OVERNIGHTPAY attr="OUT_PASSOVER_OVERNIGHTPAY" title="OUT_PASSOVER_OVERNIGHTPAY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #PERSON_JOB_ID attr="PERSON_JOB_ID" title="PERSON_JOB_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

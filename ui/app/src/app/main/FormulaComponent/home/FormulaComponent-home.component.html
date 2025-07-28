@@ -1,0 +1,61 @@
+<o-form-layout-manager attr="FormulaComponent" mode="tab" title="FORMULACOMPONENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="FormulaComponentTable" 
+            service="FormulaComponent" 
+            entity="FormulaComponent" 
+            title="FORMULACOMPONENT"
+            keys="ID"
+            columns="ID;ComponentLabelID;ComponentMerchID;Component;ComponentIDType;ValidFromTime;ValidToTime;FormulaID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;ComponentLabelID;ComponentMerchID;Component;ComponentIDType;ValidFromTime;ValidToTime;FormulaID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="ComponentLabelID" title="ComponentLabelID">
+    <o-table-cell-renderer-service attr="ComponentLabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;BRAND_NAME"
+        parent-keys="ID:ComponentLabelID"
+        value-column="BRAND_NAME" keys="ComponentLabelID"
+        visible-columns="BRAND_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ComponentMerchID" title="ComponentMerchID">
+    <o-table-cell-renderer-service attr="ComponentMerchID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="ID:ComponentMerchID"
+        value-column="NAME" keys="ComponentMerchID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Component attr="Component" title="Component" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ComponentIDType attr="ComponentIDType" title="ComponentIDType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #FormulaID attr="FormulaID" title="FormulaID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

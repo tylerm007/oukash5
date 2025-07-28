@@ -1,0 +1,55 @@
+<o-form #COPRIVATELABELFEEDETAILForm attr="COPRIVATELABELFEEDETAIL_form_insert" service="COPRIVATELABELFEEDETAIL" entity="COPRIVATELABELFEEDETAIL"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #PL_DETAIL_DESCRIPTION attr="PL_DETAIL_DESCRIPTION" label=" P L_ D E T A I L_ D E S C R I P T I O N" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #PL_DETAIL_SEQ_NUM attr="PL_DETAIL_SEQ_NUM" label="PL_DETAIL_SEQ_NUM" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-currency-input #PL_DETAIL_AMOUNT attr="PL_DETAIL_AMOUNT" title="PL_DETAIL_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-date-input #PL_DETAIL_DATE attr="PL_DETAIL_DATE" value-type="string" label="PL_DETAIL_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #PL_DETAIL_COMMENT attr="PL_DETAIL_COMMENT" label="PL_DETAIL_COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #COMPANY_FEE_ID attr="COMPANY_FEE_ID" label="COMPANY_FEE_ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-text-input #PL_DETAIL_PERSON_ID attr="PL_DETAIL_PERSON_ID" label="PL_DETAIL_PERSON_ID" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

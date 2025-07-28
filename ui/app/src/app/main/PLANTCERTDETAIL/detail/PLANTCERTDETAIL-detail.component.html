@@ -1,0 +1,80 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="CERT_DETAIL_DESCRIPTION" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="PLANTCERTDETAIL_form_edit" 
+        service="PLANTCERTDETAIL" 
+        entity="PLANTCERTDETAIL" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #CERT_DETAIL_DESCRIPTION attr="CERT_DETAIL_DESCRIPTION" label=" C E R T_ D E T A I L_ D E S C R I P T I O N" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-list-picker 
+        attr="PLANT_ID"
+        service="PLANTTB" 
+        entity="PLANTTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PLANT_ID" 
+        value-column-type="INTEGER"  
+        keys="PLANT_ID" 
+        columns="PLANT_ID;PLANT_ID;NAME" 
+        title="PLANT_ID"
+        visible-columns="PLANT_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-integer-input #CERT_DETAIL_SEQ_NUM attr="CERT_DETAIL_SEQ_NUM" label="CERT_DETAIL_SEQ_NUM" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+      <o-currency-input #CERT_DETAIL_AMOUNT attr="CERT_DETAIL_AMOUNT" title="CERT_DETAIL_AMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-date-input #CERT_DETAIL_DATE attr="CERT_DETAIL_DATE" value-type="string" label="CERT_DETAIL_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #CERT_DETAIL_COMMENT attr="CERT_DETAIL_COMMENT" label="CERT_DETAIL_COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-integer-input #COMPANY_FEE_ID attr="COMPANY_FEE_ID" label="COMPANY_FEE_ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+      <o-text-input #CERT_DETAIL_PERSON_ID attr="CERT_DETAIL_PERSON_ID" label="CERT_DETAIL_PERSON_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

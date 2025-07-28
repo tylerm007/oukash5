@@ -1,0 +1,37 @@
+<o-form #FormulaProductForm attr="FormulaProduct_form_insert" service="FormulaProduct" entity="FormulaProduct"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="Merchandise_ID"
+        service="MERCHTB" 
+        entity="MERCHTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="MERCHANDISE_ID" 
+        value-column-type="INTEGER"  
+        keys="MERCHANDISE_ID" 
+        columns="MERCHANDISE_ID;Merchandise_ID;NAME" 
+        title="Merchandise_ID"
+        visible-columns="MERCHANDISE_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #FormulaID attr="FormulaID" label="FormulaID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

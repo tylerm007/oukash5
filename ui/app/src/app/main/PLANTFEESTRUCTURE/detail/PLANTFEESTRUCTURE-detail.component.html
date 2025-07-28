@@ -1,0 +1,260 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="ID" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="PLANTFEESTRUCTURE_form_edit" 
+        service="PLANTFEESTRUCTURE" 
+        entity="PLANTFEESTRUCTURE" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-list-picker 
+        attr="OwnsID"
+        service="OWNSTB" 
+        entity="OWNSTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;OwnsID;PlantName" 
+        title="OwnsID"
+        visible-columns="ID;PlantName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-date-input #EFFECTIVE_DATE attr="EFFECTIVE_DATE" value-type="string" label="EFFECTIVE_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #APPROVAL attr="APPROVAL" label="APPROVAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #APPROVAL_DATE attr="APPROVAL_DATE" value-type="string" label="APPROVAL_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #IN_CERT_FEE attr="IN_CERT_FEE" label="IN_CERT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_EXPENSE_TYPE attr="IN_EXPENSE_TYPE" label="IN_EXPENSE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-currency-input #IN_EXPENSE_AMT attr="IN_EXPENSE_AMT" title="IN_EXPENSE_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #IN_EXPENSE_PERCENT attr="IN_EXPENSE_PERCENT" label="IN_EXPENSE_PERCENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_VISIT_FEE_TYPEx attr="IN_VISIT_FEE_TYPEx" label="IN_VISIT_FEE_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_FREE_VISITS_NUM attr="IN_FREE_VISITS_NUM" label="IN_FREE_VISITS_NUM" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_VISIT_FEEx attr="IN_VISIT_FEEx" label="IN_VISIT_FEEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_SPECIAL_PRODUCTION_TYPEx attr="IN_SPECIAL_PRODUCTION_TYPEx" label="IN_SPECIAL_PRODUCTION_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_SPECIAL_PRODUCTION_FEEx attr="IN_SPECIAL_PRODUCTION_FEEx" label="IN_SPECIAL_PRODUCTION_FEEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_UNIT_BASE attr="IN_UNIT_BASE" label="IN_UNIT_BASE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_PASSOVER_FEE_TYPEx attr="IN_PASSOVER_FEE_TYPEx" label="IN_PASSOVER_FEE_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PASSOVER_FEEx attr="IN_PASSOVER_FEEx" label="IN_PASSOVER_FEEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PASSOVER_VISIT_FEE attr="IN_PASSOVER_VISIT_FEE" label="IN_PASSOVER_VISIT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PASSOVER_UNIT_RATE attr="IN_PASSOVER_UNIT_RATE" label="IN_PASSOVER_UNIT_RATE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PASSOVER_UNIT_BASE attr="IN_PASSOVER_UNIT_BASE" label="IN_PASSOVER_UNIT_BASE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PRIVATE_LABEL_TYPE attr="IN_PRIVATE_LABEL_TYPE" label="IN_PRIVATE_LABEL_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_PRIVATE_LABEL_FEE1 attr="IN_PRIVATE_LABEL_FEE1" label="IN_PRIVATE_LABEL_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PRIVATE_LABEL_BASE1 attr="IN_PRIVATE_LABEL_BASE1" label="IN_PRIVATE_LABEL_BASE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_PRIVATE_LABEL_FEE2 attr="IN_PRIVATE_LABEL_FEE2" label="IN_PRIVATE_LABEL_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PRIVATE_LABEL_BASE2 attr="IN_PRIVATE_LABEL_BASE2" label="IN_PRIVATE_LABEL_BASE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_PRIVATE_LABEL_FEE3 attr="IN_PRIVATE_LABEL_FEE3" label="IN_PRIVATE_LABEL_FEE3" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PRIVATE_LABEL_BASE3 attr="IN_PRIVATE_LABEL_BASE3" label="IN_PRIVATE_LABEL_BASE3" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_SPECIAL_PRODUCTION_FEE1 attr="IN_SPECIAL_PRODUCTION_FEE1" label="IN_SPECIAL_PRODUCTION_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_UNIT_BASE1 attr="IN_UNIT_BASE1" label="IN_UNIT_BASE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_SPECIAL_PRODUCTION_FEE2 attr="IN_SPECIAL_PRODUCTION_FEE2" label="IN_SPECIAL_PRODUCTION_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_UNIT_BASE2 attr="IN_UNIT_BASE2" label="IN_UNIT_BASE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_VISIT_FEE1 attr="IN_VISIT_FEE1" label="IN_VISIT_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_FREE_VISITS_NUM1 attr="IN_FREE_VISITS_NUM1" label="IN_FREE_VISITS_NUM1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_VISIT_FEE2 attr="IN_VISIT_FEE2" label="IN_VISIT_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_FREE_VISITS_NUM2 attr="IN_FREE_VISITS_NUM2" label="IN_FREE_VISITS_NUM2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_CERT_FREQ attr="IN_CERT_FREQ" label="IN_CERT_FREQ" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #IN_CERT_DATE attr="IN_CERT_DATE" value-type="string" label="IN_CERT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #IN_PASSOVER_RATE_FEE1 attr="IN_PASSOVER_RATE_FEE1" label="IN_PASSOVER_RATE_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PASSOVER_FOR_FEE1 attr="IN_PASSOVER_FOR_FEE1" label="IN_PASSOVER_FOR_FEE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_PASSOVER_RATE_FEE2 attr="IN_PASSOVER_RATE_FEE2" label="IN_PASSOVER_RATE_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PASSOVER_FOR_FEE2 attr="IN_PASSOVER_FOR_FEE2" label="IN_PASSOVER_FOR_FEE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_PASSOVER_RATE_FEE3 attr="IN_PASSOVER_RATE_FEE3" label="IN_PASSOVER_RATE_FEE3" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #IN_PASSOVER_FOR_FEE3 attr="IN_PASSOVER_FOR_FEE3" label="IN_PASSOVER_FOR_FEE3" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #IN_BILL_REG_VISIT_TYPEx attr="IN_BILL_REG_VISIT_TYPEx" label="IN_BILL_REG_VISIT_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_BILL_REG_VISIT_AMTx attr="IN_BILL_REG_VISIT_AMTx" label="IN_BILL_REG_VISIT_AMTx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_BILL_SPEC_PROD_TYPEx attr="IN_BILL_SPEC_PROD_TYPEx" label="IN_BILL_SPEC_PROD_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_BILL_SPEC_PROD_AMTx attr="IN_BILL_SPEC_PROD_AMTx" label="IN_BILL_SPEC_PROD_AMTx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_BILL_PASSOVER_TYPEx attr="IN_BILL_PASSOVER_TYPEx" label="IN_BILL_PASSOVER_TYPEx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IN_BILL_PASSOVER_AMTx attr="IN_BILL_PASSOVER_AMTx" label="IN_BILL_PASSOVER_AMTx" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_CERT_FEE attr="OUT_CERT_FEE" label="OUT_CERT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_EXPENSE_TYPE attr="OUT_EXPENSE_TYPE" label="OUT_EXPENSE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-currency-input #OUT_EXPENSE_AMT attr="OUT_EXPENSE_AMT" title="OUT_EXPENSE_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #OUT_EXPENSE_PERCENT attr="OUT_EXPENSE_PERCENT" label="OUT_EXPENSE_PERCENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_VISIT_FEE_TYPE attr="OUT_VISIT_FEE_TYPE" label="OUT_VISIT_FEE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_FREE_VISITS_NUM attr="OUT_FREE_VISITS_NUM" label="OUT_FREE_VISITS_NUM" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_VISIT_FEE attr="OUT_VISIT_FEE" label="OUT_VISIT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_SPECIAL_PRODUCTION_TYPE attr="OUT_SPECIAL_PRODUCTION_TYPE" label="OUT_SPECIAL_PRODUCTION_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_SPECIAL_PRODUCTION_FEE attr="OUT_SPECIAL_PRODUCTION_FEE" label="OUT_SPECIAL_PRODUCTION_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_UNIT_BASE attr="OUT_UNIT_BASE" label="OUT_UNIT_BASE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_PASSOVER_FEE_TYPE attr="OUT_PASSOVER_FEE_TYPE" label="OUT_PASSOVER_FEE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PASSOVER_FEE attr="OUT_PASSOVER_FEE" label="OUT_PASSOVER_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PASSOVER_VISIT_FEE attr="OUT_PASSOVER_VISIT_FEE" label="OUT_PASSOVER_VISIT_FEE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PASSOVER_UNIT_RATE attr="OUT_PASSOVER_UNIT_RATE" label="OUT_PASSOVER_UNIT_RATE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PASSOVER_UNIT_BASE attr="OUT_PASSOVER_UNIT_BASE" label="OUT_PASSOVER_UNIT_BASE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PRIVATE_LABEL_TYPE attr="OUT_PRIVATE_LABEL_TYPE" label="OUT_PRIVATE_LABEL_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PRIVATE_LABEL_FEE1 attr="OUT_PRIVATE_LABEL_FEE1" label="OUT_PRIVATE_LABEL_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PRIVATE_LABEL_BASE1 attr="OUT_PRIVATE_LABEL_BASE1" label="OUT_PRIVATE_LABEL_BASE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_PRIVATE_LABEL_FEE2 attr="OUT_PRIVATE_LABEL_FEE2" label="OUT_PRIVATE_LABEL_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PRIVATE_LABEL_BASE2 attr="OUT_PRIVATE_LABEL_BASE2" label="OUT_PRIVATE_LABEL_BASE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_PRIVATE_LABEL_FEE3 attr="OUT_PRIVATE_LABEL_FEE3" label="OUT_PRIVATE_LABEL_FEE3" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PRIVATE_LABEL_BASE3 attr="OUT_PRIVATE_LABEL_BASE3" label="OUT_PRIVATE_LABEL_BASE3" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_SPECIAL_PRODUCTION_FEE1 attr="OUT_SPECIAL_PRODUCTION_FEE1" label="OUT_SPECIAL_PRODUCTION_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_UNIT_BASE1 attr="OUT_UNIT_BASE1" label="OUT_UNIT_BASE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_SPECIAL_PRODUCTION_FEE2 attr="OUT_SPECIAL_PRODUCTION_FEE2" label="OUT_SPECIAL_PRODUCTION_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_UNIT_BASE2 attr="OUT_UNIT_BASE2" label="OUT_UNIT_BASE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_VISIT_FEE1 attr="OUT_VISIT_FEE1" label="OUT_VISIT_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_FREE_VISITS_NUM1 attr="OUT_FREE_VISITS_NUM1" label="OUT_FREE_VISITS_NUM1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_VISIT_FEE2 attr="OUT_VISIT_FEE2" label="OUT_VISIT_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_FREE_VISITS_NUM2 attr="OUT_FREE_VISITS_NUM2" label="OUT_FREE_VISITS_NUM2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_CERT_FREQ attr="OUT_CERT_FREQ" label="OUT_CERT_FREQ" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #OUT_CERT_DATE attr="OUT_CERT_DATE" value-type="string" label="OUT_CERT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #OUT_PASSOVER_RATE_FEE1 attr="OUT_PASSOVER_RATE_FEE1" label="OUT_PASSOVER_RATE_FEE1" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PASSOVER_FOR_FEE1 attr="OUT_PASSOVER_FOR_FEE1" label="OUT_PASSOVER_FOR_FEE1" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_PASSOVER_RATE_FEE2 attr="OUT_PASSOVER_RATE_FEE2" label="OUT_PASSOVER_RATE_FEE2" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PASSOVER_FOR_FEE2 attr="OUT_PASSOVER_FOR_FEE2" label="OUT_PASSOVER_FOR_FEE2" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_PASSOVER_RATE_FEE3 attr="OUT_PASSOVER_RATE_FEE3" label="OUT_PASSOVER_RATE_FEE3" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #OUT_PASSOVER_FOR_FEE3 attr="OUT_PASSOVER_FOR_FEE3" label="OUT_PASSOVER_FOR_FEE3" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #OUT_BILL_REG_VISIT_TYPE attr="OUT_BILL_REG_VISIT_TYPE" label="OUT_BILL_REG_VISIT_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-currency-input #OUT_BILL_REG_VISIT_AMT attr="OUT_BILL_REG_VISIT_AMT" title="OUT_BILL_REG_VISIT_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #OUT_BILL_SPEC_PROD_TYPE attr="OUT_BILL_SPEC_PROD_TYPE" label="OUT_BILL_SPEC_PROD_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-currency-input #OUT_BILL_SPEC_PROD_AMT attr="OUT_BILL_SPEC_PROD_AMT" title="OUT_BILL_SPEC_PROD_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #OUT_BILL_PASSOVER_TYPE attr="OUT_BILL_PASSOVER_TYPE" label="OUT_BILL_PASSOVER_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-currency-input #OUT_BILL_PASSOVER_AMT attr="OUT_BILL_PASSOVER_AMT" title="OUT_BILL_PASSOVER_AMT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #OUT_FREE_VISITS_OVERNIGHTPAY attr="OUT_FREE_VISITS_OVERNIGHTPAY" label="OUT_FREE_VISITS_OVERNIGHTPAY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_SPECIAL_PRODN_OVERNIGHTPAY attr="OUT_SPECIAL_PRODN_OVERNIGHTPAY" label="OUT_SPECIAL_PRODN_OVERNIGHTPAY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #OUT_PASSOVER_RATE_OVERNIGHTPAY attr="OUT_PASSOVER_RATE_OVERNIGHTPAY" label="OUT_PASSOVER_RATE_OVERNIGHTPAY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #PLANT_ID attr="PLANT_ID" label="PLANT_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

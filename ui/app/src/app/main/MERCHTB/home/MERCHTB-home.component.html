@@ -1,0 +1,117 @@
+<o-form-layout-manager attr="MERCHTB" mode="tab" title="MERCHTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="MERCHTBTable" 
+            service="MERCHTB" 
+            entity="MERCHTB" 
+            title="MERCHTB"
+            keys="MERCHANDISE_ID"
+            columns="NAME;STIPULATION;CONFIDENTIAL;RETAIL;FOODSERVICE;CONSUMER;INDUSTRIAL;INSTITUTIONAL;GENERIC;SPECIFIED_SOURCE;SPECIFIED_SYMBOL;DESCRIPTION;DPM;PESACH;COMMENT;ACTIVE;CONFIDENTIAL_TEXT;GROUP_COMMENT;STATUS;LOC_CATEGORY;COMMENTS_SCHED_B;PROD_NUM;INTERMEDIATE_MIX;ALTERNATE_NAME;BrochoCode;Brocho2Code;CAS;Symbol;LOC;UKDdisplay;TransferredTo;TransferredMerch;Special_Status;ValidFromTime;ValidToTime;MERCHANDISE_ID;AS_STIPULATED;OUP_REQUIRED;LOC_SELECTED;Reviewed;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="NAME;STIPULATION;CONFIDENTIAL;RETAIL;FOODSERVICE;CONSUMER;INDUSTRIAL;INSTITUTIONAL;GENERIC;SPECIFIED_SOURCE;SPECIFIED_SYMBOL;DESCRIPTION;DPM;PESACH;COMMENT;ACTIVE;CONFIDENTIAL_TEXT;GROUP_COMMENT;STATUS;LOC_CATEGORY;COMMENTS_SCHED_B;PROD_NUM;INTERMEDIATE_MIX;ALTERNATE_NAME;BrochoCode;Brocho2Code;CAS;Symbol;LOC;UKDdisplay;TransferredTo;TransferredMerch;Special_Status;ValidFromTime;ValidToTime;MERCHANDISE_ID;AS_STIPULATED;OUP_REQUIRED;LOC_SELECTED;Reviewed;CHANGESET_ID"  
+            sort-columns="NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #STIPULATION attr="STIPULATION" title="STIPULATION" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CONFIDENTIAL attr="CONFIDENTIAL" title="CONFIDENTIAL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RETAIL attr="RETAIL" title="RETAIL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #FOODSERVICE attr="FOODSERVICE" title="FOODSERVICE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CONSUMER attr="CONSUMER" title="CONSUMER" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INDUSTRIAL attr="INDUSTRIAL" title="INDUSTRIAL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INSTITUTIONAL attr="INSTITUTIONAL" title="INSTITUTIONAL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #GENERIC attr="GENERIC" title="GENERIC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SPECIFIED_SOURCE attr="SPECIFIED_SOURCE" title="SPECIFIED_SOURCE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SPECIFIED_SYMBOL attr="SPECIFIED_SYMBOL" title="SPECIFIED_SYMBOL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DESCRIPTION attr="DESCRIPTION" title="DESCRIPTION" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DPM attr="DPM" title="DPM" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PESACH attr="PESACH" title="PESACH" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMMENT attr="COMMENT" title="COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CONFIDENTIAL_TEXT attr="CONFIDENTIAL_TEXT" title="CONFIDENTIAL_TEXT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #GROUP_COMMENT attr="GROUP_COMMENT" title="GROUP_COMMENT" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LOC_CATEGORY attr="LOC_CATEGORY" title="LOC_CATEGORY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMMENTS_SCHED_B attr="COMMENTS_SCHED_B" title="COMMENTS_SCHED_B" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PROD_NUM attr="PROD_NUM" title="PROD_NUM" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INTERMEDIATE_MIX attr="INTERMEDIATE_MIX" title="INTERMEDIATE_MIX" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ALTERNATE_NAME attr="ALTERNATE_NAME" title="ALTERNATE_NAME" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #BrochoCode attr="BrochoCode" title="BrochoCode" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #Brocho2Code attr="Brocho2Code" title="Brocho2Code" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CAS attr="CAS" title="CAS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Symbol attr="Symbol" title="Symbol" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LOC attr="LOC" title="LOC" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #UKDdisplay attr="UKDdisplay" title="UKDdisplay" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="TransferredTo" title="TransferredTo">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #TransferredMerch attr="TransferredMerch" title="TransferredMerch" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #Special_Status attr="Special_Status" title="Special_Status" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MERCHANDISE_ID attr="MERCHANDISE_ID" title="MERCHANDISE_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #AS_STIPULATED attr="AS_STIPULATED" title="AS_STIPULATED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUP_REQUIRED attr="OUP_REQUIRED" title="OUP_REQUIRED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LOC_SELECTED attr="LOC_SELECTED" title="LOC_SELECTED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="Reviewed" title="Reviewed">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

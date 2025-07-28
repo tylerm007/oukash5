@@ -1,0 +1,93 @@
+<o-form-layout-manager attr="PLANTTB" mode="tab" title="PLANTTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTTBTable" 
+            service="PLANTTB" 
+            entity="PLANTTB" 
+            title="PLANTTB"
+            keys="PLANT_ID"
+            columns="NAME;DesignatedRFR;PrimaryCompany;GP_NOTIFY;MULTILINES;PASSOVER;PLANT_TYPE;PLANT_DIRECTIONS;ACTIVE;USDA_CODE;DoNotAttach;OtherCertification;ValidFromTime;ValidToTime;MaxOnSiteVisits;MaxVirtualVisits;IsDaily;PLANT_ID;SPECIAL_PROD;JEWISH_OWNED;PlantUID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="NAME;DesignatedRFR;PrimaryCompany;GP_NOTIFY;MULTILINES;PASSOVER;PLANT_TYPE;PLANT_DIRECTIONS;ACTIVE;USDA_CODE;DoNotAttach;OtherCertification;ValidFromTime;ValidToTime;MaxOnSiteVisits;MaxVirtualVisits;IsDaily;PLANT_ID;SPECIAL_PROD;JEWISH_OWNED;PlantUID;CHANGESET_ID"  
+            sort-columns="NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="DesignatedRFR" title="DesignatedRFR">
+    <o-table-cell-renderer-service attr="DesignatedRFR" 
+        service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
+        parent-keys="PLANT_ID:DesignatedRFR"
+        value-column="PERSON_JOB_ID" keys="DesignatedRFR"
+        visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PrimaryCompany" title="PrimaryCompany">
+    <o-table-cell-renderer-service attr="PrimaryCompany" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="PLANT_ID:PrimaryCompany"
+        value-column="NAME" keys="PrimaryCompany"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="GP_NOTIFY" title="GP_NOTIFY">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #MULTILINES attr="MULTILINES" title="MULTILINES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PASSOVER attr="PASSOVER" title="PASSOVER" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PLANT_TYPE attr="PLANT_TYPE" title="PLANT_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PLANT_DIRECTIONS attr="PLANT_DIRECTIONS" title="PLANT_DIRECTIONS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #USDA_CODE attr="USDA_CODE" title="USDA_CODE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DoNotAttach attr="DoNotAttach" title="DoNotAttach" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OtherCertification attr="OtherCertification" title="OtherCertification" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MaxOnSiteVisits attr="MaxOnSiteVisits" title="MaxOnSiteVisits" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #MaxVirtualVisits attr="MaxVirtualVisits" title="MaxVirtualVisits" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsDaily" title="IsDaily">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #PLANT_ID attr="PLANT_ID" title="PLANT_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #SPECIAL_PROD attr="SPECIAL_PROD" title="SPECIAL_PROD" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #JEWISH_OWNED attr="JEWISH_OWNED" title="JEWISH_OWNED" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PlantUID attr="PlantUID" title="PlantUID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

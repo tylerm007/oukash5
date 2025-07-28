@@ -1,0 +1,72 @@
+<o-form-layout-manager attr="INVOICEFEESDETAIL" mode="dialog" title="INVOICEFEESDETAIL">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="INVOICEFEESDETAILTable" 
+            service="INVOICEFEESDETAIL" 
+            entity="INVOICEFEESDETAIL" 
+            title="INVOICEFEESDETAIL"
+            keys="ID"
+            columns="ID;INVOICE_LINE;DESTINATION_TYPE;FEE;EXPENSES;VISIT_TYPE;VISIT_DATE;PERIOD_START_DATE;PERIOD_END_DATE;REASON;TIMESTAMP;ValidFromTime;ValidToTime;INVOICE_ID;VISIT_ID;DESTINATION_ID;VISIT_PERSON_JOB_ID;ownsID;voided;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;INVOICE_LINE;DESTINATION_TYPE;FEE;EXPENSES;VISIT_TYPE;VISIT_DATE;PERIOD_START_DATE;PERIOD_END_DATE;REASON;TIMESTAMP;ValidFromTime;ValidToTime;INVOICE_ID;VISIT_ID;DESTINATION_ID;VISIT_PERSON_JOB_ID;ownsID;voided;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #INVOICE_LINE attr="INVOICE_LINE" title="INVOICE_LINE" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #DESTINATION_TYPE attr="DESTINATION_TYPE" title="DESTINATION_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #FEE attr="FEE" title="FEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #EXPENSES attr="EXPENSES" title="EXPENSES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_TYPE attr="VISIT_TYPE" title="VISIT_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_DATE attr="VISIT_DATE" title="VISIT_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #PERIOD_START_DATE attr="PERIOD_START_DATE" title="PERIOD_START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #PERIOD_END_DATE attr="PERIOD_END_DATE" title="PERIOD_END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #REASON attr="REASON" title="REASON" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_ID attr="INVOICE_ID" title="INVOICE_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #VISIT_ID attr="VISIT_ID" title="VISIT_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #DESTINATION_ID attr="DESTINATION_ID" title="DESTINATION_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #VISIT_PERSON_JOB_ID attr="VISIT_PERSON_JOB_ID" title="VISIT_PERSON_JOB_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ownsID attr="ownsID" title="ownsID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="voided" title="voided">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,139 @@
+<o-form #OWNSTBForm attr="OWNSTB_form_insert" service="OWNSTB" entity="OWNSTB"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #PlantName attr="PlantName" label=" Plant Name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="PLANT_ID"
+        service="PLANTTB" 
+        entity="PLANTTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PLANT_ID" 
+        value-column-type="INTEGER"  
+        keys="PLANT_ID" 
+        columns="PLANT_ID;PLANT_ID;NAME" 
+        title="PLANT_ID"
+        visible-columns="PLANT_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="Setup_By"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;Setup_By;PERSON_JOB_ID" 
+        title="Setup_By"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-date-input #START_DATE attr="START_DATE" value-type="string" label="START_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #END_DATE attr="END_DATE" value-type="string" label="END_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #TYPE attr="TYPE" label="TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #VISIT_FREQUENCY attr="VISIT_FREQUENCY" label="VISIT_FREQUENCY" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #INVOICE_TYPE attr="INVOICE_TYPE" label="INVOICE_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INVOICE_FREQUENCY attr="INVOICE_FREQUENCY" label="INVOICE_FREQUENCY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INVOICE_DTL attr="INVOICE_DTL" label="INVOICE_DTL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ROYALTIES attr="ROYALTIES" label="ROYALTIES" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #SPECIAL_TICKET attr="SPECIAL_TICKET" label="SPECIAL_TICKET" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #STATUS attr="STATUS" label="STATUS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AcquiredFrom attr="AcquiredFrom" label="AcquiredFrom" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LOCtext attr="LOCtext" label="LOCtext" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MoveToGP attr="MoveToGP" label="MoveToGP" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DefaultPO attr="DefaultPO" label="DefaultPO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #VisitBilling attr="VisitBilling" label="VisitBilling" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ShareAB attr="ShareAB" label="ShareAB" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #POexpiry attr="POexpiry" value-type="string" label="POexpiry" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #BillingName attr="BillingName" label="BillingName" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PLANT_BILL_TO_NAME attr="PLANT_BILL_TO_NAME" label="PLANT_BILL_TO_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #AutoCertification attr="AutoCertification" label="AutoCertification" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #primaryCompany attr="primaryCompany" label="primaryCompany" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #Override attr="Override" label="Override" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #VisitPO attr="VisitPO" label="VisitPO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #VisitPOexpiry attr="VisitPOexpiry" value-type="string" label="VisitPOexpiry" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #BoilerplateInvoiceComment attr="BoilerplateInvoiceComment" label="BoilerplateInvoiceComment" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #IsCertBillingOverride attr="IsCertBillingOverride" label="IsCertBillingOverride" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #HOLD attr="HOLD" label="HOLD" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #NoRFRneeded attr="NoRFRneeded" label="NoRFRneeded" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

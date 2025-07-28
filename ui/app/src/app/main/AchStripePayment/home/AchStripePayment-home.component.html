@@ -1,0 +1,73 @@
+<o-form-layout-manager attr="AchStripePayment" mode="tab" title="ACHSTRIPEPAYMENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="AchStripePaymentTable" 
+            service="AchStripePayment" 
+            entity="AchStripePayment" 
+            title="ACHSTRIPEPAYMENT"
+            keys="Id"
+            columns="Description;company_id;UserLogin;Amount;Currency;ReceiptEmail;JsonRet;ValidFromTime;ValidToTime;ProcessorType;FeeAmount;Comments;Id;StripeId;CHANGESET_ID;CardKnoxId;CustomerFeeWaived" 
+            header-actions="R;D"
+            visible-columns="Description;company_id;UserLogin;Amount;Currency;ReceiptEmail;JsonRet;ValidFromTime;ValidToTime;ProcessorType;FeeAmount;Comments;Id;StripeId;CHANGESET_ID;CardKnoxId;CustomerFeeWaived"  
+            sort-columns="Description" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Description attr="Description" title=" Description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="company_id" title="company_id">
+    <o-table-cell-renderer-service attr="company_id" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="Id:company_id"
+        value-column="NAME" keys="company_id"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #UserLogin attr="UserLogin" title="UserLogin" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Amount attr="Amount" title="Amount" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #Currency attr="Currency" title="Currency" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ReceiptEmail attr="ReceiptEmail" title="ReceiptEmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #JsonRet attr="JsonRet" title="JsonRet" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ProcessorType attr="ProcessorType" title="ProcessorType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #FeeAmount attr="FeeAmount" title="FeeAmount" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #Comments attr="Comments" title="Comments" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Id attr="Id" title="Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #StripeId attr="StripeId" title="StripeId" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CardKnoxId attr="CardKnoxId" title="CardKnoxId" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="CustomerFeeWaived" title="CustomerFeeWaived">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

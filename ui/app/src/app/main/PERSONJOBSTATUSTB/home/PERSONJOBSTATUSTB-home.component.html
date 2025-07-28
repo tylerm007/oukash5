@@ -1,0 +1,45 @@
+<o-form-layout-manager attr="PERSONJOBSTATUSTB" mode="dialog" title="PERSONJOBSTATUSTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PERSONJOBSTATUSTBTable" 
+            service="PERSONJOBSTATUSTB" 
+            entity="PERSONJOBSTATUSTB" 
+            title="PERSONJOBSTATUSTB"
+            keys="ID"
+            columns="ID;STATUS_SEQ_NUM;STATUS;START_DATE;END_DATE;ACTIVE;REASON;PERSON_JOB_ID" 
+            header-actions="R;D"
+            visible-columns="ID;STATUS_SEQ_NUM;STATUS;START_DATE;END_DATE;ACTIVE;REASON;PERSON_JOB_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #STATUS_SEQ_NUM attr="STATUS_SEQ_NUM" title="STATUS_SEQ_NUM" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #REASON attr="REASON" title="REASON" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PERSON_JOB_ID attr="PERSON_JOB_ID" title="PERSON_JOB_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

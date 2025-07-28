@@ -1,0 +1,146 @@
+<o-form-layout-manager attr="ProductJobLineItem" mode="tab" title="PRODUCTJOBLINEITEM">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ProductJobLineItemTable" 
+            service="ProductJobLineItem" 
+            entity="ProductJobLineItem" 
+            title="PRODUCTJOBLINEITEM"
+            keys="ID"
+            columns="RequestedLabelName;AssignedTo;ownsID;prid;LineItem;RequestedLabelNumber;WorkflowStatus;LineItemComment;requestedProductNumber;requestedProductName;requestedSymbol;requestedDPM;requestedGRP;requestedConsumer;requestedIndustrial;requestedPesach;requestedSealSign;requestedStipulation;requestedCommentsScheduleB;requestedConfidential;requestedLabelType;requestedCategory;requestedShipping;requestedTerminationDate;requestedForInternalUseOnly;LineInstructions;ProductValidationComments;DistributorName;DistributorAddress;DistributorContactName;DistributorContactEmail;DistributorContactPhone;ValidFromTime;ValidToTime;coPackProductPL;barcodes;ID;JobID;RequestedBrand;ProductInCartID;requestedAgencyID;PreSubmissionProductApproved;CHANGESET_ID;ingredientsAllApproved;oldPrid" 
+            header-actions="R;D"
+            visible-columns="RequestedLabelName;AssignedTo;ownsID;prid;LineItem;RequestedLabelNumber;WorkflowStatus;LineItemComment;requestedProductNumber;requestedProductName;requestedSymbol;requestedDPM;requestedGRP;requestedConsumer;requestedIndustrial;requestedPesach;requestedSealSign;requestedStipulation;requestedCommentsScheduleB;requestedConfidential;requestedLabelType;requestedCategory;requestedShipping;requestedTerminationDate;requestedForInternalUseOnly;LineInstructions;ProductValidationComments;DistributorName;DistributorAddress;DistributorContactName;DistributorContactEmail;DistributorContactPhone;ValidFromTime;ValidToTime;coPackProductPL;barcodes;ID;JobID;RequestedBrand;ProductInCartID;requestedAgencyID;PreSubmissionProductApproved;CHANGESET_ID;ingredientsAllApproved;oldPrid"  
+            sort-columns="RequestedLabelName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #RequestedLabelName attr="RequestedLabelName" title=" Requested Label Name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="AssignedTo" title="AssignedTo">
+    <o-table-cell-renderer-service attr="AssignedTo" 
+        service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
+        parent-keys="ID:AssignedTo"
+        value-column="PERSON_JOB_ID" keys="AssignedTo"
+        visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ownsID" title="ownsID">
+    <o-table-cell-renderer-service attr="ownsID" 
+        service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
+        parent-keys="ID:ownsID"
+        value-column="PlantName" keys="ownsID"
+        visible-columns="PlantName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="prid" title="prid">
+    <o-table-cell-renderer-service attr="prid" 
+        service="ProducedIn1Tb" entity="ProducedIn1TbType" columns="ID;BatchSheetName"
+        parent-keys="ID:prid"
+        value-column="BatchSheetName" keys="prid"
+        visible-columns="BatchSheetName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #LineItem attr="LineItem" title="LineItem" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #RequestedLabelNumber attr="RequestedLabelNumber" title="RequestedLabelNumber" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #WorkflowStatus attr="WorkflowStatus" title="WorkflowStatus" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LineItemComment attr="LineItemComment" title="LineItemComment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedProductNumber attr="requestedProductNumber" title="requestedProductNumber" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedProductName attr="requestedProductName" title="requestedProductName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedSymbol attr="requestedSymbol" title="requestedSymbol" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedDPM attr="requestedDPM" title="requestedDPM" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedGRP attr="requestedGRP" title="requestedGRP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedConsumer attr="requestedConsumer" title="requestedConsumer" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedIndustrial attr="requestedIndustrial" title="requestedIndustrial" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedPesach attr="requestedPesach" title="requestedPesach" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedSealSign attr="requestedSealSign" title="requestedSealSign" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedStipulation attr="requestedStipulation" title="requestedStipulation" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedCommentsScheduleB attr="requestedCommentsScheduleB" title="requestedCommentsScheduleB" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedConfidential attr="requestedConfidential" title="requestedConfidential" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedLabelType attr="requestedLabelType" title="requestedLabelType" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedCategory attr="requestedCategory" title="requestedCategory" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedShipping attr="requestedShipping" title="requestedShipping" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #requestedTerminationDate attr="requestedTerminationDate" title="requestedTerminationDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #requestedForInternalUseOnly attr="requestedForInternalUseOnly" title="requestedForInternalUseOnly" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #LineInstructions attr="LineInstructions" title="LineInstructions" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ProductValidationComments attr="ProductValidationComments" title="ProductValidationComments" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DistributorName attr="DistributorName" title="DistributorName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DistributorAddress attr="DistributorAddress" title="DistributorAddress" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DistributorContactName attr="DistributorContactName" title="DistributorContactName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DistributorContactEmail attr="DistributorContactEmail" title="DistributorContactEmail" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DistributorContactPhone attr="DistributorContactPhone" title="DistributorContactPhone" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="coPackProductPL" title="coPackProductPL">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #barcodes attr="barcodes" title="barcodes" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #JobID attr="JobID" title="JobID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RequestedBrand attr="RequestedBrand" title="RequestedBrand" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ProductInCartID attr="ProductInCartID" title="ProductInCartID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #requestedAgencyID attr="requestedAgencyID" title="requestedAgencyID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PreSubmissionProductApproved attr="PreSubmissionProductApproved" title="PreSubmissionProductApproved" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="ingredientsAllApproved" title="ingredientsAllApproved">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #oldPrid attr="oldPrid" title="oldPrid" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

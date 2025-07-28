@@ -1,0 +1,155 @@
+<o-form #ProductJobLineItemForm attr="ProductJobLineItem_form_insert" service="ProductJobLineItem" entity="ProductJobLineItem"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #RequestedLabelName attr="RequestedLabelName" label=" Requested Label Name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="AssignedTo"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;AssignedTo;PERSON_JOB_ID" 
+        title="AssignedTo"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ownsID"
+        service="OWNSTB" 
+        entity="OWNSTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;ownsID;PlantName" 
+        title="ownsID"
+        visible-columns="ID;PlantName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="prid"
+        service="ProducedIn1Tb" 
+        entity="ProducedIn1TbType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;prid;BatchSheetName" 
+        title="prid"
+        visible-columns="ID;BatchSheetName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #LineItem attr="LineItem" label="LineItem" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #RequestedLabelNumber attr="RequestedLabelNumber" label="RequestedLabelNumber" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #WorkflowStatus attr="WorkflowStatus" label="WorkflowStatus" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LineItemComment attr="LineItemComment" label="LineItemComment" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedProductNumber attr="requestedProductNumber" label="requestedProductNumber" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedProductName attr="requestedProductName" label="requestedProductName" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedSymbol attr="requestedSymbol" label="requestedSymbol" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedDPM attr="requestedDPM" label="requestedDPM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedGRP attr="requestedGRP" label="requestedGRP" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedConsumer attr="requestedConsumer" label="requestedConsumer" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedIndustrial attr="requestedIndustrial" label="requestedIndustrial" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedPesach attr="requestedPesach" label="requestedPesach" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedSealSign attr="requestedSealSign" label="requestedSealSign" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedStipulation attr="requestedStipulation" label="requestedStipulation" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedCommentsScheduleB attr="requestedCommentsScheduleB" label="requestedCommentsScheduleB" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedConfidential attr="requestedConfidential" label="requestedConfidential" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedLabelType attr="requestedLabelType" label="requestedLabelType" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedCategory attr="requestedCategory" label="requestedCategory" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #requestedShipping attr="requestedShipping" label="requestedShipping" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #requestedTerminationDate attr="requestedTerminationDate" value-type="string" label="requestedTerminationDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #requestedForInternalUseOnly attr="requestedForInternalUseOnly" label="requestedForInternalUseOnly" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #LineInstructions attr="LineInstructions" label="LineInstructions" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ProductValidationComments attr="ProductValidationComments" label="ProductValidationComments" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DistributorName attr="DistributorName" label="DistributorName" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DistributorAddress attr="DistributorAddress" label="DistributorAddress" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DistributorContactName attr="DistributorContactName" label="DistributorContactName" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DistributorContactEmail attr="DistributorContactEmail" label="DistributorContactEmail" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DistributorContactPhone attr="DistributorContactPhone" label="DistributorContactPhone" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #coPackProductPL attr="coPackProductPL" label="coPackProductPL" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #barcodes attr="barcodes" label="barcodes" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #JobID attr="JobID" label="JobID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #RequestedBrand attr="RequestedBrand" label="RequestedBrand" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ProductInCartID attr="ProductInCartID" label="ProductInCartID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #requestedAgencyID attr="requestedAgencyID" label="requestedAgencyID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PreSubmissionProductApproved attr="PreSubmissionProductApproved" label="PreSubmissionProductApproved" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #ingredientsAllApproved attr="ingredientsAllApproved" label="ingredientsAllApproved" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #oldPrid attr="oldPrid" label="oldPrid" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

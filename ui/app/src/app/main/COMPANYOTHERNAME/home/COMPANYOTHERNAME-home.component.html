@@ -1,0 +1,59 @@
+<o-form-layout-manager attr="COMPANYOTHERNAME" mode="tab" title="COMPANYOTHERNAME">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="COMPANYOTHERNAMETable" 
+            service="COMPANYOTHERNAME" 
+            entity="COMPANYOTHERNAME" 
+            title="COMPANYOTHERNAME"
+            keys="ID"
+            columns="LEGAL_NAME;COMPANY_ID;DBA;CONTRACT_NAME;TIMESTAMP;ID;ALIAS_ID" 
+            header-actions="R;D"
+            visible-columns="LEGAL_NAME;COMPANY_ID;DBA;CONTRACT_NAME;TIMESTAMP;ID;ALIAS_ID"  
+            sort-columns="LEGAL_NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column attr="LEGAL_NAME" title=" L E G A L_ N A M E">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="DBA" title="DBA">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column attr="CONTRACT_NAME" title="CONTRACT_NAME">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ALIAS_ID attr="ALIAS_ID" title="ALIAS_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

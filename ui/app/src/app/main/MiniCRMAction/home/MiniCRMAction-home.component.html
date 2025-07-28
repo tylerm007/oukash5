@@ -1,0 +1,66 @@
+<o-form-layout-manager attr="MiniCRMAction" mode="tab" title="MINICRMACTION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="MiniCRMActionTable" 
+            service="MiniCRMAction" 
+            entity="MiniCRMAction" 
+            title="MINICRMACTION"
+            keys="ID"
+            columns="ID;CompanyId;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;ActivityDate;Modality;Result;ReminderDate;Comment;ValidFromTime;ValidToTime;ContactId;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;CompanyId;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;ActivityDate;Modality;Result;ReminderDate;Comment;ValidFromTime;ValidToTime;ContactId;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="CompanyId" title="Company">
+    <o-table-cell-renderer-service attr="CompanyId" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:CompanyId"
+        value-column="NAME" keys="CompanyId"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ActivityDate attr="ActivityDate" title="ActivityDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #Modality attr="Modality" title="Modality" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ReminderDate attr="ReminderDate" title="ReminderDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #Comment attr="Comment" title="Comment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ContactId attr="ContactId" title="ContactId" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

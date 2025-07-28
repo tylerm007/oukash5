@@ -1,0 +1,68 @@
+<o-form-layout-manager attr="PERSONJOBTB" mode="tab" title="PERSONJOBTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PERSONJOBTBTable" 
+            service="PERSONJOBTB" 
+            entity="PERSONJOBTB" 
+            title="PERSONJOBTB"
+            keys="PERSON_JOB_ID"
+            columns="PERSON_JOB_ID;PERSON_ID;FUNCTION;TITLE;ON_PAYROLL;TIMESTAMP;ACTIVE;STATUS;ACCT_PAYROLL_NUM;ValidFromTime;ValidToTime;StatusEffectiveStartDate;EMPLOYER_ID;OUDirectRFRTerminationHold;CHANGESET_ID;TeamId" 
+            header-actions="R;D"
+            visible-columns="PERSON_JOB_ID;PERSON_ID;FUNCTION;TITLE;ON_PAYROLL;TIMESTAMP;ACTIVE;STATUS;ACCT_PAYROLL_NUM;ValidFromTime;ValidToTime;StatusEffectiveStartDate;EMPLOYER_ID;OUDirectRFRTerminationHold;CHANGESET_ID;TeamId"  
+            sort-columns="PERSON_JOB_ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #PERSON_JOB_ID attr="PERSON_JOB_ID" title=" P E R S O N_ J O B_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="PERSON_ID" title="PERSON_ID">
+    <o-table-cell-renderer-service attr="PERSON_ID" 
+        service="PERSONTB" entity="PERSONTBType" columns="PERSON_ID;PERSON_ID"
+        parent-keys="PERSON_JOB_ID:PERSON_ID"
+        value-column="PERSON_ID" keys="PERSON_ID"
+        visible-columns="PERSON_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #FUNCTION attr="FUNCTION" title="FUNCTION" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #TITLE attr="TITLE" title="TITLE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ON_PAYROLL attr="ON_PAYROLL" title="ON_PAYROLL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACCT_PAYROLL_NUM attr="ACCT_PAYROLL_NUM" title="ACCT_PAYROLL_NUM" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #StatusEffectiveStartDate attr="StatusEffectiveStartDate" title="StatusEffectiveStartDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #EMPLOYER_ID attr="EMPLOYER_ID" title="EMPLOYER_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #OUDirectRFRTerminationHold attr="OUDirectRFRTerminationHold" title="OUDirectRFRTerminationHold" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #TeamId attr="TeamId" title="TeamId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

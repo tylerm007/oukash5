@@ -1,0 +1,96 @@
+<o-form #MERCHTBForm attr="MERCHTB_form_insert" service="MERCHTB" entity="MERCHTB"
+keys="MERCHANDISE_ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #NAME attr="NAME" label=" N A M E" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #STIPULATION attr="STIPULATION" label="STIPULATION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CONFIDENTIAL attr="CONFIDENTIAL" label="CONFIDENTIAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #RETAIL attr="RETAIL" label="RETAIL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #FOODSERVICE attr="FOODSERVICE" label="FOODSERVICE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #CONSUMER attr="CONSUMER" label="CONSUMER" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INDUSTRIAL attr="INDUSTRIAL" label="INDUSTRIAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INSTITUTIONAL attr="INSTITUTIONAL" label="INSTITUTIONAL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #GENERIC attr="GENERIC" label="GENERIC" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #SPECIFIED_SOURCE attr="SPECIFIED_SOURCE" label="SPECIFIED_SOURCE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #SPECIFIED_SYMBOL attr="SPECIFIED_SYMBOL" label="SPECIFIED_SYMBOL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DESCRIPTION attr="DESCRIPTION" label="DESCRIPTION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #DPM attr="DPM" label="DPM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PESACH attr="PESACH" label="PESACH" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COMMENT attr="COMMENT" label="COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #CONFIDENTIAL_TEXT attr="CONFIDENTIAL_TEXT" label="CONFIDENTIAL_TEXT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #GROUP_COMMENT attr="GROUP_COMMENT" label="GROUP_COMMENT" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #STATUS attr="STATUS" label="STATUS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LOC_CATEGORY attr="LOC_CATEGORY" label="LOC_CATEGORY" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #COMMENTS_SCHED_B attr="COMMENTS_SCHED_B" label="COMMENTS_SCHED_B" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PROD_NUM attr="PROD_NUM" label="PROD_NUM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #INTERMEDIATE_MIX attr="INTERMEDIATE_MIX" label="INTERMEDIATE_MIX" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ALTERNATE_NAME attr="ALTERNATE_NAME" label="ALTERNATE_NAME" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #BrochoCode attr="BrochoCode" label="BrochoCode" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #Brocho2Code attr="Brocho2Code" label="Brocho2Code" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #CAS attr="CAS" label="CAS" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Symbol attr="Symbol" label="Symbol" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #LOC attr="LOC" value-type="string" label="LOC" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #UKDdisplay attr="UKDdisplay" label="UKDdisplay" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #TransferredTo attr="TransferredTo" label="TransferredTo" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #TransferredMerch attr="TransferredMerch" label="TransferredMerch" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #Special_Status attr="Special_Status" label="Special_Status" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #MERCHANDISE_ID attr="MERCHANDISE_ID" label="MERCHANDISE_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AS_STIPULATED attr="AS_STIPULATED" label="AS_STIPULATED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #OUP_REQUIRED attr="OUP_REQUIRED" label="OUP_REQUIRED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #LOC_SELECTED attr="LOC_SELECTED" label="LOC_SELECTED" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #Reviewed attr="Reviewed" label="Reviewed" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

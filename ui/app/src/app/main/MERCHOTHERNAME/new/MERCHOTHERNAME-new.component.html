@@ -1,0 +1,41 @@
+<o-form #MERCHOTHERNAMEForm attr="MERCHOTHERNAME_form_insert" service="MERCHOTHERNAME" entity="MERCHOTHERNAME"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ID attr="ID" label=" I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="MERCHANDISE_ID"
+        service="MERCHTB" 
+        entity="MERCHTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="MERCHANDISE_ID" 
+        value-column-type="INTEGER"  
+        keys="MERCHANDISE_ID" 
+        columns="MERCHANDISE_ID;MERCHANDISE_ID;NAME" 
+        title="MERCHANDISE_ID"
+        visible-columns="MERCHANDISE_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #TYPE attr="TYPE" label="TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+        <o-integer-input #ALIAS_ID attr="ALIAS_ID" label="ALIAS_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

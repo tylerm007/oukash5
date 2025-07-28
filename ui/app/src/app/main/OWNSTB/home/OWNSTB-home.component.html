@@ -1,0 +1,133 @@
+<o-form-layout-manager attr="OWNSTB" mode="tab" title="OWNSTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="OWNSTBTable" 
+            service="OWNSTB" 
+            entity="OWNSTB" 
+            title="OWNSTB"
+            keys="ID"
+            columns="PlantName;COMPANY_ID;PLANT_ID;Setup_By;START_DATE;END_DATE;TYPE;VISIT_FREQUENCY;INVOICE_TYPE;INVOICE_FREQUENCY;INVOICE_DTL;ROYALTIES;SPECIAL_TICKET;STATUS;ACTIVE;AcquiredFrom;LOCtext;MoveToGP;DefaultPO;VisitBilling;ShareAB;POexpiry;BillingName;PLANT_BILL_TO_NAME;AutoCertification;primaryCompany;Override;VisitPO;VisitPOexpiry;ValidFromTime;ValidToTime;BoilerplateInvoiceComment;IsCertBillingOverride;HOLD;ID;NoRFRneeded;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="PlantName;COMPANY_ID;PLANT_ID;Setup_By;START_DATE;END_DATE;TYPE;VISIT_FREQUENCY;INVOICE_TYPE;INVOICE_FREQUENCY;INVOICE_DTL;ROYALTIES;SPECIAL_TICKET;STATUS;ACTIVE;AcquiredFrom;LOCtext;MoveToGP;DefaultPO;VisitBilling;ShareAB;POexpiry;BillingName;PLANT_BILL_TO_NAME;AutoCertification;primaryCompany;Override;VisitPO;VisitPOexpiry;ValidFromTime;ValidToTime;BoilerplateInvoiceComment;IsCertBillingOverride;HOLD;ID;NoRFRneeded;CHANGESET_ID"  
+            sort-columns="PlantName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #PlantName attr="PlantName" title=" Plant Name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="Setup_By" title="Setup_By">
+    <o-table-cell-renderer-service attr="Setup_By" 
+        service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
+        parent-keys="ID:Setup_By"
+        value-column="PERSON_JOB_ID" keys="Setup_By"
+        visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #TYPE attr="TYPE" title="TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_FREQUENCY attr="VISIT_FREQUENCY" title="VISIT_FREQUENCY" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #INVOICE_TYPE attr="INVOICE_TYPE" title="INVOICE_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_FREQUENCY attr="INVOICE_FREQUENCY" title="INVOICE_FREQUENCY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #INVOICE_DTL attr="INVOICE_DTL" title="INVOICE_DTL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ROYALTIES attr="ROYALTIES" title="ROYALTIES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SPECIAL_TICKET attr="SPECIAL_TICKET" title="SPECIAL_TICKET" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #AcquiredFrom attr="AcquiredFrom" title="AcquiredFrom" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LOCtext attr="LOCtext" title="LOCtext" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #MoveToGP attr="MoveToGP" title="MoveToGP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DefaultPO attr="DefaultPO" title="DefaultPO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VisitBilling attr="VisitBilling" title="VisitBilling" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ShareAB attr="ShareAB" title="ShareAB" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #POexpiry attr="POexpiry" title="POexpiry" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #BillingName attr="BillingName" title="BillingName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PLANT_BILL_TO_NAME attr="PLANT_BILL_TO_NAME" title="PLANT_BILL_TO_NAME" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="AutoCertification" title="AutoCertification">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #primaryCompany attr="primaryCompany" title="primaryCompany" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="Override" title="Override">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #VisitPO attr="VisitPO" title="VisitPO" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VisitPOexpiry attr="VisitPOexpiry" title="VisitPOexpiry" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #BoilerplateInvoiceComment attr="BoilerplateInvoiceComment" title="BoilerplateInvoiceComment" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsCertBillingOverride" title="IsCertBillingOverride">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #HOLD attr="HOLD" title="HOLD" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #NoRFRneeded attr="NoRFRneeded" title="NoRFRneeded" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

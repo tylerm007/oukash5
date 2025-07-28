@@ -1,0 +1,91 @@
+<o-form-layout-manager attr="PENDINGINFOTB" mode="tab" title="PENDINGINFOTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PENDINGINFOTBTable" 
+            service="PENDINGINFOTB" 
+            entity="PENDINGINFOTB" 
+            title="PENDINGINFOTB"
+            keys="ID"
+            columns="ID;COMPANY_ID;PLANT_ID;IINVOICEFEE;IINVOICEEXPENSE;IINVOICEDATE;IINVOICENUMBER;TERMSCERTFEE;SPECIALCLAUSES;ANNUALFEE;ANNUALEXPENSES;CINVOICEDATE;ACTIVE;IINVOICEAMOUNT;PROEXPENSES;PROFEE;PRODATE;CONTRACTFEE;CONTRACTEXPENSE;ValidFromTime;ValidToTime;VOID;PAID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="ID;COMPANY_ID;PLANT_ID;IINVOICEFEE;IINVOICEEXPENSE;IINVOICEDATE;IINVOICENUMBER;TERMSCERTFEE;SPECIALCLAUSES;ANNUALFEE;ANNUALEXPENSES;CINVOICEDATE;ACTIVE;IINVOICEAMOUNT;PROEXPENSES;PROFEE;PRODATE;CONTRACTFEE;CONTRACTEXPENSE;ValidFromTime;ValidToTime;VOID;PAID;CHANGESET_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #IINVOICEFEE attr="IINVOICEFEE" title="IINVOICEFEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IINVOICEEXPENSE attr="IINVOICEEXPENSE" title="IINVOICEEXPENSE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IINVOICEDATE attr="IINVOICEDATE" title="IINVOICEDATE" type="VARCHAR" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #IINVOICENUMBER attr="IINVOICENUMBER" title="IINVOICENUMBER" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TERMSCERTFEE attr="TERMSCERTFEE" title="TERMSCERTFEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SPECIALCLAUSES attr="SPECIALCLAUSES" title="SPECIALCLAUSES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ANNUALFEE attr="ANNUALFEE" title="ANNUALFEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ANNUALEXPENSES attr="ANNUALEXPENSES" title="ANNUALEXPENSES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CINVOICEDATE attr="CINVOICEDATE" title="CINVOICEDATE" type="VARCHAR" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IINVOICEAMOUNT attr="IINVOICEAMOUNT" title="IINVOICEAMOUNT" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #PROEXPENSES attr="PROEXPENSES" title="PROEXPENSES" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PROFEE attr="PROFEE" title="PROFEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PRODATE attr="PRODATE" title="PRODATE" type="VARCHAR" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #CONTRACTFEE attr="CONTRACTFEE" title="CONTRACTFEE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CONTRACTEXPENSE attr="CONTRACTEXPENSE" title="CONTRACTEXPENSE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #VOID attr="VOID" title="VOID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PAID attr="PAID" title="PAID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,251 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="PERSON_ID" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="PERSONTB_form_edit" 
+        service="PERSONTB" 
+        entity="PERSONTB" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="PERSON_ID" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #PERSON_ID attr="PERSON_ID" label=" P E R S O N_ I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-list-picker 
+        attr="AdministrativeAssistant"
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PERSON_JOB_ID" 
+        value-column-type="INTEGER"  
+        keys="PERSON_JOB_ID" 
+        columns="PERSON_JOB_ID;AdministrativeAssistant;PERSON_JOB_ID" 
+        title="AdministrativeAssistant"
+        visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-text-input #FIRST attr="FIRST" label="FIRST" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #LAST attr="LAST" label="LAST" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #MIDDLE attr="MIDDLE" label="MIDDLE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PREFIX attr="PREFIX" label="PREFIX" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #SUFFIX attr="SUFFIX" label="SUFFIX" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #HIRE_DATE attr="HIRE_DATE" value-type="string" label="HIRE_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #SSN attr="SSN" label="SSN" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+      <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #SENDTICKETTO attr="SENDTICKETTO" label="SENDTICKETTO" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ACCTS_PAY_NUM attr="ACCTS_PAY_NUM" label="ACCTS_PAY_NUM" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #MaxPay attr="MaxPay" label="MaxPay" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #MileageRate attr="MileageRate" label="MileageRate" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #WebAccess attr="WebAccess" label="WebAccess" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #GroupLeader attr="GroupLeader" label="GroupLeader" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #KashLogIn attr="KashLogIn" label="KashLogIn" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #IsGroupLeader attr="IsGroupLeader" label="IsGroupLeader" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #HiddenSSN attr="HiddenSSN" label="HiddenSSN" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #WorkflowEmails attr="WorkflowEmails" label="WorkflowEmails" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PasswordQuestion attr="PasswordQuestion" label="PasswordQuestion" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PasswordAnswer attr="PasswordAnswer" label="PasswordAnswer" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-checkbox #IncludeInIngWFAssignmentList attr="IncludeInIngWFAssignmentList" label="IncludeInIngWFAssignmentList" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #TempRfr attr="TempRfr" label="TempRfr" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #IsBillForMileageDifferential attr="IsBillForMileageDifferential" label="IsBillForMileageDifferential" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #AllowCopackerManagement attr="AllowCopackerManagement" label="AllowCopackerManagement" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-integer-input #VENDOR_ID attr="VENDOR_ID" label="VENDOR_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-text-input #Password attr="Password" label="Password" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="PERSONADDRESSTB-PERSON_ID">
+    <div layout-padding>
+      <o-table 
+        attr="PERSONADDRESSTBTable" 
+        service="PERSONADDRESSTB" 
+        entity="PERSONADDRESSTB" 
+        keys="ID"
+        parent-keys="PERSON_ID:PERSON_ID"
+        columns="ID;PERSON_ID;ADDRESS_SEQ_NUM;TYPE;ATTN;STREET1;STREET2;STREET3;CITY;STATE;ZIP;COUNTRY;ACTIVE;ValidFromTime;ValidToTime;CHANGESET_ID"  
+        horizontal-scroll="yes"
+        detail-form-route="PERSONADDRESSTB" 
+        edit-form-route="PERSONADDRESSTB"
+        visible-columns="ID;PERSON_ID;ADDRESS_SEQ_NUM;TYPE;ATTN;STREET1;STREET2;STREET3;CITY;STATE;ZIP;COUNTRY;ACTIVE;ValidFromTime;ValidToTime;CHANGESET_ID"  
+        sort-columns="ID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="PERSON_ID" title="PERSON_ID">
+    <o-table-cell-renderer-service attr="PERSON_ID" 
+        service="PERSONTB" entity="PERSONTBType" columns="PERSON_ID;PERSON_ID"
+        parent-keys="PERSON_ID:PERSON_ID"
+        value-column="PERSON_ID" keys="PERSON_ID"
+        visible-columns="PERSON_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #ADDRESS_SEQ_NUM attr="ADDRESS_SEQ_NUM" title="ADDRESS_SEQ_NUM" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #TYPE attr="TYPE" title="TYPE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ATTN attr="ATTN" title="ATTN" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #STREET1 attr="STREET1" title="STREET1" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #STREET2 attr="STREET2" title="STREET2" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #STREET3 attr="STREET3" title="STREET3" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CITY attr="CITY" title="CITY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #STATE attr="STATE" title="STATE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ZIP attr="ZIP" title="ZIP" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #COUNTRY attr="COUNTRY" title="COUNTRY" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="PERSONJOBTB-PERSON_ID">
+    <div layout-padding>
+      <o-table 
+        attr="PERSONJOBTBTable" 
+        service="PERSONJOBTB" 
+        entity="PERSONJOBTB" 
+        keys="PERSON_JOB_ID"
+        parent-keys="PERSON_ID:PERSON_ID"
+        columns="PERSON_JOB_ID;PERSON_ID;FUNCTION;TITLE;ON_PAYROLL;TIMESTAMP;ACTIVE;STATUS;ACCT_PAYROLL_NUM;ValidFromTime;ValidToTime;StatusEffectiveStartDate;EMPLOYER_ID;OUDirectRFRTerminationHold;CHANGESET_ID;TeamId"  
+        horizontal-scroll="yes"
+        detail-form-route="PERSONJOBTB" 
+        edit-form-route="PERSONJOBTB"
+        visible-columns="PERSON_JOB_ID;PERSON_ID;FUNCTION;TITLE;ON_PAYROLL;TIMESTAMP;ACTIVE;STATUS;ACCT_PAYROLL_NUM;ValidFromTime;ValidToTime;StatusEffectiveStartDate;EMPLOYER_ID;OUDirectRFRTerminationHold;CHANGESET_ID;TeamId"  
+        sort-columns="PERSON_JOB_ID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #PERSON_JOB_ID attr="PERSON_JOB_ID" title=" P E R S O N_ J O B_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="PERSON_ID" title="PERSON_ID">
+    <o-table-cell-renderer-service attr="PERSON_ID" 
+        service="PERSONTB" entity="PERSONTBType" columns="PERSON_ID;PERSON_ID"
+        parent-keys="PERSON_ID:PERSON_ID"
+        value-column="PERSON_ID" keys="PERSON_ID"
+        visible-columns="PERSON_ID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #FUNCTION attr="FUNCTION" title="FUNCTION" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #TITLE attr="TITLE" title="TITLE" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ON_PAYROLL attr="ON_PAYROLL" title="ON_PAYROLL" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ACCT_PAYROLL_NUM attr="ACCT_PAYROLL_NUM" title="ACCT_PAYROLL_NUM" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #StatusEffectiveStartDate attr="StatusEffectiveStartDate" title="StatusEffectiveStartDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #EMPLOYER_ID attr="EMPLOYER_ID" title="EMPLOYER_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #OUDirectRFRTerminationHold attr="OUDirectRFRTerminationHold" title="OUDirectRFRTerminationHold" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #TeamId attr="TeamId" title="TeamId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>
