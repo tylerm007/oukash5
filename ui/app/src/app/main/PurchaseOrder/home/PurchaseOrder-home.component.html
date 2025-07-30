@@ -24,23 +24,23 @@
             
             <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
-            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+            <!-- o-table-column attr="COMPANY_ID" title="COMPANY_ID">
     <o-table-cell-renderer-service attr="COMPANY_ID" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="ID:COMPANY_ID"
         value-column="NAME" keys="COMPANY_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
             
-            <o-table-column attr="OWNS_ID" title="OWNS_ID">
+            <!-- o-table-column attr="OWNS_ID" title="OWNS_ID">
     <o-table-cell-renderer-service attr="OWNS_ID" 
         service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
         parent-keys="ID:OWNS_ID"
         value-column="PlantName" keys="OWNS_ID"
         visible-columns="PlantName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
             
             <o-table-column #discriminator attr="discriminator" title="discriminator" editable="no" required="no" content-align="left"></o-table-column>
             

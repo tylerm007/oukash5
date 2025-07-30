@@ -8,7 +8,7 @@ after-insert-mode="new" class="standalone-form-container" >
     
         <o-integer-input #INVOICE_ID attr="INVOICE_ID" label=" I N V O I C E_ I D" type="integer" editable="no" required="no" ></o-integer-input>
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="BILL_TO_PLANT_ID"
         service="PLANTTB" 
         entity="PLANTTBType"
@@ -25,9 +25,9 @@ after-insert-mode="new" class="standalone-form-container" >
         title="BILL_TO_PLANT_ID"
         visible-columns="PLANT_ID;NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="COMPANY_ID"
         service="COMPANYTB" 
         entity="COMPANYTBType"
@@ -44,7 +44,7 @@ after-insert-mode="new" class="standalone-form-container" >
         title="COMPANY_ID"
         visible-columns="COMPANY_ID;NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
         <o-text-input #TYPE attr="TYPE" label="TYPE" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       

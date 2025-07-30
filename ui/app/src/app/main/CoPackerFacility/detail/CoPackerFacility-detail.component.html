@@ -16,7 +16,7 @@
       
       <o-text-input #Description attr="Description" label=" Description" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
-      <o-list-picker 
+      <!-- o-list-picker 
         attr="CompanyId"
         service="COMPANYTB" 
         entity="COMPANYTBType"
@@ -33,7 +33,7 @@
         title="Company"
         visible-columns="COMPANY_ID;NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
       <o-text-input #WebsiteURL attr="WebsiteURL" label="WebsiteURL" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
@@ -80,14 +80,14 @@
         
           <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="CoPackerId" title="CoPacker">
+          <!-- o-table-column attr="CoPackerId" title="CoPacker">
     <o-table-cell-renderer-service attr="CoPackerId" 
         service="CoPackerFacility" entity="CoPackerFacilityType" columns="ID;Description"
         parent-keys="ID:CoPackerId"
         value-column="Description" keys="CoPackerId"
         visible-columns="Description" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #Category attr="Category" title="Category" editable="no" required="yes" content-align="left"></o-table-column>
         
@@ -136,14 +136,14 @@
         
           <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="CoPackerId" title="CoPacker">
+          <!-- o-table-column attr="CoPackerId" title="CoPacker">
     <o-table-cell-renderer-service attr="CoPackerId" 
         service="CoPackerFacility" entity="CoPackerFacilityType" columns="ID;Description"
         parent-keys="ID:CoPackerId"
         value-column="Description" keys="CoPackerId"
         visible-columns="Description" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #Location attr="Location" title="Location" editable="no" required="yes" content-align="left"></o-table-column>
         

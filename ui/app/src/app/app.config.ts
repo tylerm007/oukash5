@@ -13,17 +13,17 @@ export const CONFIG: Config = {
   // Application identifier. Is the unique package identifier of the app.
   // It is used when storing or managing temporal data related with the app.
   // By default is set as 'ontimize-web-uuid'.
-  uuid: 'com.ontimize.web.ngx.oukash5',
+  uuid: 'com.ontimize.web.ngx.C:\OUProjects\oukash5',
 
   // Title of the app
-  title: 'ApiLogicServer oukash5',
+  title: 'ApiLogicServer C:\OUProjects\oukash5',
 
   //  Language of the application.
   locale: 'en',
 
   // The service type used (Ontimize REST standard, Ontimize REST JEE
   // or custom implementation) in the whole application. JSONAPI is also supported.
-  serviceType: 'JSONAPI',
+  serviceType: 'OntimizeEE',
 
   // Configuration parameters of application services.
   servicesConfiguration: SERVICE_CONFIG,

@@ -24,23 +24,23 @@
             
             <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
             
-            <o-table-column attr="DesignatedRFR" title="DesignatedRFR">
+            <!-- o-table-column attr="DesignatedRFR" title="DesignatedRFR">
     <o-table-cell-renderer-service attr="DesignatedRFR" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PLANT_ID:DesignatedRFR"
         value-column="PERSON_JOB_ID" keys="DesignatedRFR"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
             
-            <o-table-column attr="PrimaryCompany" title="PrimaryCompany">
+            <!-- o-table-column attr="PrimaryCompany" title="PrimaryCompany">
     <o-table-cell-renderer-service attr="PrimaryCompany" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PLANT_ID:PrimaryCompany"
         value-column="NAME" keys="PrimaryCompany"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
             
             <o-table-column attr="GP_NOTIFY" title="GP_NOTIFY">
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"

@@ -16,7 +16,7 @@
       
       <o-text-input #BatchSheetName attr="BatchSheetName" label=" Batch Sheet Name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
-      <o-list-picker 
+      <!-- o-list-picker 
         attr="FormulaSubmissionPlantID"
         service="FormulaSubmissionPlant" 
         entity="FormulaSubmissionPlantType"
@@ -33,9 +33,9 @@
         title="FormulaSubmissionPlantID"
         visible-columns="ID;PlantName" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-      <o-list-picker 
+      <!-- o-list-picker 
         attr="LabelID"
         service="LabelTb" 
         entity="LabelTbType"
@@ -52,9 +52,9 @@
         title="LabelID"
         visible-columns="ID;BRAND_NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-      <o-list-picker 
+      <!-- o-list-picker 
         attr="OWNS_ID"
         service="OWNSTB" 
         entity="OWNSTBType"
@@ -71,7 +71,7 @@
         title="OWNS_ID"
         visible-columns="ID;PlantName" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
       <o-date-input #START_DATE attr="START_DATE" value-type="string" label="START_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
@@ -182,32 +182,32 @@
         
           <o-table-column #RequestedLabelName attr="RequestedLabelName" title=" Requested Label Name" editable="no" required="no" content-align="left"></o-table-column>
         
-          <o-table-column attr="AssignedTo" title="AssignedTo">
+          <!-- o-table-column attr="AssignedTo" title="AssignedTo">
     <o-table-cell-renderer-service attr="AssignedTo" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="ID:AssignedTo"
         value-column="PERSON_JOB_ID" keys="AssignedTo"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="ownsID" title="ownsID">
+          <!-- o-table-column attr="ownsID" title="ownsID">
     <o-table-cell-renderer-service attr="ownsID" 
         service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
         parent-keys="ID:ownsID"
         value-column="PlantName" keys="ownsID"
         visible-columns="PlantName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="prid" title="prid">
+          <!-- o-table-column attr="prid" title="prid">
     <o-table-cell-renderer-service attr="prid" 
         service="ProducedIn1Tb" entity="ProducedIn1TbType" columns="ID;BatchSheetName"
         parent-keys="ID:prid"
         value-column="BatchSheetName" keys="prid"
         visible-columns="BatchSheetName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #LineItem attr="LineItem" title="LineItem" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         

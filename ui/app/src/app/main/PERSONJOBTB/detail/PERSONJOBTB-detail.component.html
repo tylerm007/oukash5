@@ -16,7 +16,7 @@
       
       <o-integer-input #PERSON_JOB_ID attr="PERSON_JOB_ID" label=" P E R S O N_ J O B_ I D" type="integer" editable="no" required="no" ></o-integer-input>
       
-      <o-list-picker 
+      <!-- o-list-picker 
         attr="PERSON_ID"
         service="PERSONTB" 
         entity="PERSONTBType"
@@ -33,7 +33,7 @@
         title="PERSON_ID"
         visible-columns="PERSON_ID;PERSON_ID" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
       <o-text-input #FUNCTION attr="FUNCTION" label="FUNCTION" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       
@@ -98,32 +98,32 @@
         
           <o-table-column #PlantName attr="PlantName" title=" Plant Name" editable="no" required="no" content-align="left"></o-table-column>
         
-          <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+          <!-- o-table-column attr="COMPANY_ID" title="COMPANY_ID">
     <o-table-cell-renderer-service attr="COMPANY_ID" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:COMPANY_ID"
         value-column="NAME" keys="COMPANY_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="PLANT_ID" title="PLANT_ID">
+          <!-- o-table-column attr="PLANT_ID" title="PLANT_ID">
     <o-table-cell-renderer-service attr="PLANT_ID" 
         service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
         parent-keys="PERSON_JOB_ID:PLANT_ID"
         value-column="NAME" keys="PLANT_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="Setup_By" title="Setup_By">
+          <!-- o-table-column attr="Setup_By" title="Setup_By">
     <o-table-cell-renderer-service attr="Setup_By" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:Setup_By"
         value-column="PERSON_JOB_ID" keys="Setup_By"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
         
@@ -235,14 +235,14 @@
         
           <o-table-column #PERSON_ID attr="PERSON_ID" title=" P E R S O N_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="AdministrativeAssistant" title="AdministrativeAssistant">
+          <!-- o-table-column attr="AdministrativeAssistant" title="AdministrativeAssistant">
     <o-table-cell-renderer-service attr="AdministrativeAssistant" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:AdministrativeAssistant"
         value-column="PERSON_JOB_ID" keys="AdministrativeAssistant"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #FIRST attr="FIRST" title="FIRST" editable="no" required="no" content-align="left"></o-table-column>
         
@@ -351,23 +351,23 @@
         
           <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column attr="DesignatedRFR" title="DesignatedRFR">
+          <!-- o-table-column attr="DesignatedRFR" title="DesignatedRFR">
     <o-table-cell-renderer-service attr="DesignatedRFR" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:DesignatedRFR"
         value-column="PERSON_JOB_ID" keys="DesignatedRFR"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="PrimaryCompany" title="PrimaryCompany">
+          <!-- o-table-column attr="PrimaryCompany" title="PrimaryCompany">
     <o-table-cell-renderer-service attr="PrimaryCompany" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:PrimaryCompany"
         value-column="NAME" keys="PrimaryCompany"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column attr="GP_NOTIFY" title="GP_NOTIFY">
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
@@ -448,23 +448,23 @@
         
           <o-table-column #NAME attr="NAME" title=" N A M E" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column attr="DesignatedRFR" title="DesignatedRFR">
+          <!-- o-table-column attr="DesignatedRFR" title="DesignatedRFR">
     <o-table-cell-renderer-service attr="DesignatedRFR" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:DesignatedRFR"
         value-column="PERSON_JOB_ID" keys="DesignatedRFR"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="PrimaryCompany" title="PrimaryCompany">
+          <!-- o-table-column attr="PrimaryCompany" title="PrimaryCompany">
     <o-table-cell-renderer-service attr="PrimaryCompany" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:PrimaryCompany"
         value-column="NAME" keys="PrimaryCompany"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column attr="GP_NOTIFY" title="GP_NOTIFY">
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
@@ -545,32 +545,32 @@
         
           <o-table-column #RequestedLabelName attr="RequestedLabelName" title=" Requested Label Name" editable="no" required="no" content-align="left"></o-table-column>
         
-          <o-table-column attr="AssignedTo" title="AssignedTo">
+          <!-- o-table-column attr="AssignedTo" title="AssignedTo">
     <o-table-cell-renderer-service attr="AssignedTo" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:AssignedTo"
         value-column="PERSON_JOB_ID" keys="AssignedTo"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="ownsID" title="ownsID">
+          <!-- o-table-column attr="ownsID" title="ownsID">
     <o-table-cell-renderer-service attr="ownsID" 
         service="OWNSTB" entity="OWNSTBType" columns="ID;PlantName"
         parent-keys="PERSON_JOB_ID:ownsID"
         value-column="PlantName" keys="ownsID"
         visible-columns="PlantName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="prid" title="prid">
+          <!-- o-table-column attr="prid" title="prid">
     <o-table-cell-renderer-service attr="prid" 
         service="ProducedIn1Tb" entity="ProducedIn1TbType" columns="ID;BatchSheetName"
         parent-keys="PERSON_JOB_ID:prid"
         value-column="BatchSheetName" keys="prid"
         visible-columns="BatchSheetName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #LineItem attr="LineItem" title="LineItem" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
@@ -695,23 +695,23 @@
         
           <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+          <!-- o-table-column attr="COMPANY_ID" title="COMPANY_ID">
     <o-table-cell-renderer-service attr="COMPANY_ID" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:COMPANY_ID"
         value-column="NAME" keys="COMPANY_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="PERSON_JOB_ID" title="PERSON_JOB_ID">
+          <!-- o-table-column attr="PERSON_JOB_ID" title="PERSON_JOB_ID">
     <o-table-cell-renderer-service attr="PERSON_JOB_ID" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:PERSON_JOB_ID"
         value-column="PERSON_JOB_ID" keys="PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
         
@@ -768,50 +768,50 @@
         
           <o-table-column #VISIT_ID attr="VISIT_ID" title=" V I S I T_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="ACTUAL_PERSON_JOB_ID" title="ACTUAL_PERSON_JOB_ID">
+          <!-- o-table-column attr="ACTUAL_PERSON_JOB_ID" title="ACTUAL_PERSON_JOB_ID">
     <o-table-cell-renderer-service attr="ACTUAL_PERSON_JOB_ID" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:ACTUAL_PERSON_JOB_ID"
         value-column="PERSON_JOB_ID" keys="ACTUAL_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="ASSIGNED_PERSON_JOB_ID" title="ASSIGNED_PERSON_JOB_ID">
+          <!-- o-table-column attr="ASSIGNED_PERSON_JOB_ID" title="ASSIGNED_PERSON_JOB_ID">
     <o-table-cell-renderer-service attr="ASSIGNED_PERSON_JOB_ID" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:ASSIGNED_PERSON_JOB_ID"
         value-column="PERSON_JOB_ID" keys="ASSIGNED_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="DESTINATION_ID" title="DESTINATION_ID">
+          <!-- o-table-column attr="DESTINATION_ID" title="DESTINATION_ID">
     <o-table-cell-renderer-service attr="DESTINATION_ID" 
         service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
         parent-keys="PERSON_JOB_ID:DESTINATION_ID"
         value-column="NAME" keys="DESTINATION_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="MainVisit" title="MainVisit">
+          <!-- o-table-column attr="MainVisit" title="MainVisit">
     <o-table-cell-renderer-service attr="MainVisit" 
         service="VISIT" entity="VISITType" columns="VISIT_ID;VISIT_ID"
         parent-keys="PERSON_JOB_ID:MainVisit"
         value-column="VISIT_ID" keys="MainVisit"
         visible-columns="VISIT_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="VISIT_FOR_ID" title="VISIT_FOR_ID">
+          <!-- o-table-column attr="VISIT_FOR_ID" title="VISIT_FOR_ID">
     <o-table-cell-renderer-service attr="VISIT_FOR_ID" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:VISIT_FOR_ID"
         value-column="NAME" keys="VISIT_FOR_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #ASSIGNMENT_DATE attr="ASSIGNMENT_DATE" title="ASSIGNMENT_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
         
@@ -1027,50 +1027,50 @@
         
           <o-table-column #VISIT_ID attr="VISIT_ID" title=" V I S I T_ I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="ACTUAL_PERSON_JOB_ID" title="ACTUAL_PERSON_JOB_ID">
+          <!-- o-table-column attr="ACTUAL_PERSON_JOB_ID" title="ACTUAL_PERSON_JOB_ID">
     <o-table-cell-renderer-service attr="ACTUAL_PERSON_JOB_ID" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:ACTUAL_PERSON_JOB_ID"
         value-column="PERSON_JOB_ID" keys="ACTUAL_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="ASSIGNED_PERSON_JOB_ID" title="ASSIGNED_PERSON_JOB_ID">
+          <!-- o-table-column attr="ASSIGNED_PERSON_JOB_ID" title="ASSIGNED_PERSON_JOB_ID">
     <o-table-cell-renderer-service attr="ASSIGNED_PERSON_JOB_ID" 
         service="PERSONJOBTB" entity="PERSONJOBTBType" columns="PERSON_JOB_ID;PERSON_JOB_ID"
         parent-keys="PERSON_JOB_ID:ASSIGNED_PERSON_JOB_ID"
         value-column="PERSON_JOB_ID" keys="ASSIGNED_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="DESTINATION_ID" title="DESTINATION_ID">
+          <!-- o-table-column attr="DESTINATION_ID" title="DESTINATION_ID">
     <o-table-cell-renderer-service attr="DESTINATION_ID" 
         service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
         parent-keys="PERSON_JOB_ID:DESTINATION_ID"
         value-column="NAME" keys="DESTINATION_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="MainVisit" title="MainVisit">
+          <!-- o-table-column attr="MainVisit" title="MainVisit">
     <o-table-cell-renderer-service attr="MainVisit" 
         service="VISIT" entity="VISITType" columns="VISIT_ID;VISIT_ID"
         parent-keys="PERSON_JOB_ID:MainVisit"
         value-column="VISIT_ID" keys="MainVisit"
         visible-columns="VISIT_ID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
-          <o-table-column attr="VISIT_FOR_ID" title="VISIT_FOR_ID">
+          <!-- o-table-column attr="VISIT_FOR_ID" title="VISIT_FOR_ID">
     <o-table-cell-renderer-service attr="VISIT_FOR_ID" 
         service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
         parent-keys="PERSON_JOB_ID:VISIT_FOR_ID"
         value-column="NAME" keys="VISIT_FOR_ID"
         visible-columns="NAME" separator=" - " width="680px">
     </o-table-cell-renderer-service>
-</o-table-column>
+</o-table-column -->
         
           <o-table-column #ASSIGNMENT_DATE attr="ASSIGNMENT_DATE" title="ASSIGNMENT_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
         

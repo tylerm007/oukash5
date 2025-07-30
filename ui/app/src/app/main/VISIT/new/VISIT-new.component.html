@@ -8,7 +8,7 @@ after-insert-mode="new" class="standalone-form-container" >
     
         <o-integer-input #VISIT_ID attr="VISIT_ID" label=" V I S I T_ I D" type="integer" editable="no" required="no" ></o-integer-input>
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="ACTUAL_PERSON_JOB_ID"
         service="PERSONJOBTB" 
         entity="PERSONJOBTBType"
@@ -25,9 +25,9 @@ after-insert-mode="new" class="standalone-form-container" >
         title="ACTUAL_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="ASSIGNED_PERSON_JOB_ID"
         service="PERSONJOBTB" 
         entity="PERSONJOBTBType"
@@ -44,9 +44,9 @@ after-insert-mode="new" class="standalone-form-container" >
         title="ASSIGNED_PERSON_JOB_ID"
         visible-columns="PERSON_JOB_ID;PERSON_JOB_ID" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="DESTINATION_ID"
         service="PLANTTB" 
         entity="PLANTTBType"
@@ -63,9 +63,9 @@ after-insert-mode="new" class="standalone-form-container" >
         title="DESTINATION_ID"
         visible-columns="PLANT_ID;NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="MainVisit"
         service="VISIT" 
         entity="VISITType"
@@ -82,9 +82,9 @@ after-insert-mode="new" class="standalone-form-container" >
         title="MainVisit"
         visible-columns="VISIT_ID;VISIT_ID" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
-        <o-list-picker 
+        <!-- o-list-picker 
         attr="VISIT_FOR_ID"
         service="COMPANYTB" 
         entity="COMPANYTBType"
@@ -101,7 +101,7 @@ after-insert-mode="new" class="standalone-form-container" >
         title="VISIT_FOR_ID"
         visible-columns="COMPANY_ID;NAME" 
         separator=" - " width="680px" class="form-field">
-</o-list-picker>
+</o-list-picker -->
       
         <o-date-input #ASSIGNMENT_DATE attr="ASSIGNMENT_DATE" value-type="string" label="ASSIGNMENT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       

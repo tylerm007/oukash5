@@ -353,7 +353,7 @@ class CustomEndpoint():
                     resource_logger.debug(
                     f"Adding filter_by: {filter_by}")
                     qry = qry.filter(text(filter_by))
-                rows = qry.limit(limit).offset(offset).all()
+                rows = qry.all()
             else:
                 if filter_by is not None:
                     resource_logger.debug(
@@ -374,7 +374,7 @@ class CustomEndpoint():
                     else:
                         if order_by in self._attributes:
                             session_qry = session_qry.order_by(text(order_by))
-                rows = session_qry.limit(limit).offset(offset).all()
+                rows = session_qry.all() if filter_by is not None or filter_by != '' else session_qry.limit(limit).offset(offset).all()
         else:
             resource_logger.debug(
                 f"CreateRows on {model_class_name} using QueryFilter: {queryFilter} order_by: {self.order_by}")
