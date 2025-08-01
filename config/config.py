@@ -172,7 +172,7 @@ class Config:
     KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID','alsclient')
     ''' keycloak client id '''
 
-    SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
+    SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
     SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED','false').lower()  # type: ignore # type: str
