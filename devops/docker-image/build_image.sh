@@ -10,7 +10,7 @@
 #    $ sh devops/docker-image/build_image.sh .
 
 projectname="oukash5"  # lower case, only
-repositoryname="apilogicserver"
+repositoryname="tylerm007"
 version="1.0.0"
 
 debug() {
