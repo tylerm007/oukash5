@@ -9,6 +9,22 @@ FROM --platform=linux/amd64 apilogicserver/api_logic_server
 
 USER root
 
+# Install system dependencies needed to build pyodbc
+RUN apt-get update && \
+    apt-get install -y \
+        gcc \
+        g++ \
+        python3-dev \
+        unixodbc-dev \
+        curl \
+        gnupg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install pyodbc version 5.2.0
+RUN pip install --upgrade pip && \
+    pip install pyodbc==5.2.0
+    
 # user api_logic_server comes from apilogicserver/api_logic_server
 WORKDIR /home/api_logic_project
 # USER api_logic_server
