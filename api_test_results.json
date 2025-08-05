@@ -4,8 +4,8 @@
     "successful": 62,
     "failed": 0,
     "success_rate": 100.0,
-    "total_response_time": 16965.99,
-    "average_response_time": 273.65
+    "total_response_time": 22324.36,
+    "average_response_time": 360.07
   },
   "results": [
     {
@@ -13,37 +13,37 @@
       "url": "http://172.30.3.133:5656/api/AchAuthToken",
       "status_code": 200,
       "success": true,
-      "response_time": 145.01,
+      "response_time": 376.89,
       "record_count": 250,
       "error": null,
-      "response_size": 184497
+      "response_size": 184440
     },
     {
       "endpoint": "AchPlaidLambdaResponse",
       "url": "http://172.30.3.133:5656/api/AchPlaidLambdaResponse",
       "status_code": 200,
       "success": true,
-      "response_time": 161.01,
+      "response_time": 159.19,
       "record_count": 250,
       "error": null,
-      "response_size": 167975
+      "response_size": 167967
     },
     {
       "endpoint": "AchStripePayment",
       "url": "http://172.30.3.133:5656/api/AchStripePayment",
       "status_code": 200,
       "success": true,
-      "response_time": 218.17,
+      "response_time": 399.39,
       "record_count": 250,
       "error": null,
-      "response_size": 1197252
+      "response_size": 1197249
     },
     {
       "endpoint": "AchStripePaymentDetail",
       "url": "http://172.30.3.133:5656/api/AchStripePaymentDetail",
       "status_code": 200,
       "success": true,
-      "response_time": 132.14,
+      "response_time": 137.61,
       "record_count": 250,
       "error": null,
       "response_size": 111250
@@ -53,27 +53,27 @@
       "url": "http://172.30.3.133:5656/api/BarCode",
       "status_code": 200,
       "success": true,
-      "response_time": 107.99,
+      "response_time": 106.01,
       "record_count": 250,
       "error": null,
-      "response_size": 97590
+      "response_size": 97614
     },
     {
       "endpoint": "Billing",
       "url": "http://172.30.3.133:5656/api/Billing",
       "status_code": 200,
       "success": true,
-      "response_time": 174.84,
+      "response_time": 193.54,
       "record_count": 250,
       "error": null,
-      "response_size": 156447
+      "response_size": 156458
     },
     {
       "endpoint": "CompanyPlantOption",
       "url": "http://172.30.3.133:5656/api/CompanyPlantOption",
       "status_code": 200,
       "success": true,
-      "response_time": 156.51,
+      "response_time": 185.53,
       "record_count": 250,
       "error": null,
       "response_size": 206625
@@ -83,7 +83,7 @@
       "url": "http://172.30.3.133:5656/api/CompanycontactsTb",
       "status_code": 200,
       "success": true,
-      "response_time": 172.14,
+      "response_time": 365.56,
       "record_count": 250,
       "error": null,
       "response_size": 198722
@@ -93,27 +93,27 @@
       "url": "http://172.30.3.133:5656/api/COMPANYADDRESSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 236.12,
+      "response_time": 221.1,
       "record_count": 250,
       "error": null,
-      "response_size": 148982
+      "response_size": 148997
     },
     {
       "endpoint": "COMPANYCERTDETAIL",
       "url": "http://172.30.3.133:5656/api/COMPANYCERTDETAIL",
       "status_code": 200,
       "success": true,
-      "response_time": 1353.98,
+      "response_time": 185.89,
       "record_count": 250,
       "error": null,
-      "response_size": 141713
+      "response_size": 141715
     },
     {
       "endpoint": "COMPANYCOMMENT",
       "url": "http://172.30.3.133:5656/api/COMPANYCOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 118.02,
+      "response_time": 102.67,
       "record_count": 250,
       "error": null,
       "response_size": 73223
@@ -123,7 +123,7 @@
       "url": "http://172.30.3.133:5656/api/COMPANYFEECOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 122.54,
+      "response_time": 111.29,
       "record_count": 250,
       "error": null,
       "response_size": 80577
@@ -133,27 +133,27 @@
       "url": "http://172.30.3.133:5656/api/COMPANYFEESTRUCTURE",
       "status_code": 200,
       "success": true,
-      "response_time": 278.45,
+      "response_time": 315.34,
       "record_count": 250,
       "error": null,
-      "response_size": 439934
+      "response_size": 439953
     },
     {
       "endpoint": "COMPANYHOLDTB",
       "url": "http://172.30.3.133:5656/api/COMPANYHOLDTB",
       "status_code": 200,
       "success": true,
-      "response_time": 257.02,
+      "response_time": 147.85,
       "record_count": 250,
       "error": null,
-      "response_size": 169776
+      "response_size": 169777
     },
     {
       "endpoint": "COMPANYOTHERNAME",
       "url": "http://172.30.3.133:5656/api/COMPANYOTHERNAME",
       "status_code": 200,
       "success": true,
-      "response_time": 127.16,
+      "response_time": 118.53,
       "record_count": 250,
       "error": null,
       "response_size": 87736
@@ -163,7 +163,7 @@
       "url": "http://172.30.3.133:5656/api/COMPANYSTATUSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 187.71,
+      "response_time": 189.54,
       "record_count": 250,
       "error": null,
       "response_size": 171730
@@ -173,7 +173,7 @@
       "url": "http://172.30.3.133:5656/api/COMPANYTB",
       "status_code": 200,
       "success": true,
-      "response_time": 539.65,
+      "response_time": 1114.79,
       "record_count": 250,
       "error": null,
       "response_size": 1306851
@@ -183,27 +183,27 @@
       "url": "http://172.30.3.133:5656/api/CoPackerFacilitiesCategory",
       "status_code": 200,
       "success": true,
-      "response_time": 111.37,
+      "response_time": 133.4,
       "record_count": 250,
       "error": null,
-      "response_size": 125712
+      "response_size": 125721
     },
     {
       "endpoint": "CoPackerFacilitiesLocation",
       "url": "http://172.30.3.133:5656/api/CoPackerFacilitiesLocation",
       "status_code": 200,
       "success": true,
-      "response_time": 171.01,
+      "response_time": 147.1,
       "record_count": 250,
       "error": null,
-      "response_size": 130599
+      "response_size": 130604
     },
     {
       "endpoint": "CoPackerFacility",
       "url": "http://172.30.3.133:5656/api/CoPackerFacility",
       "status_code": 200,
       "success": true,
-      "response_time": 127.9,
+      "response_time": 136.31,
       "record_count": 250,
       "error": null,
       "response_size": 176032
@@ -213,7 +213,7 @@
       "url": "http://172.30.3.133:5656/api/COPRIVATELABELFEEDETAIL",
       "status_code": 200,
       "success": true,
-      "response_time": 153.08,
+      "response_time": 134.41,
       "record_count": 250,
       "error": null,
       "response_size": 152354
@@ -223,17 +223,17 @@
       "url": "http://172.30.3.133:5656/api/FormulaComponent",
       "status_code": 200,
       "success": true,
-      "response_time": 1140.15,
+      "response_time": 143.54,
       "record_count": 250,
       "error": null,
-      "response_size": 133063
+      "response_size": 133046
     },
     {
       "endpoint": "FormulaProduct",
       "url": "http://172.30.3.133:5656/api/FormulaProduct",
       "status_code": 200,
       "success": true,
-      "response_time": 110.01,
+      "response_time": 101.08,
       "record_count": 250,
       "error": null,
       "response_size": 68860
@@ -243,27 +243,27 @@
       "url": "http://172.30.3.133:5656/api/FormulaSubmissionComponent",
       "status_code": 200,
       "success": true,
-      "response_time": 161.86,
+      "response_time": 141.07,
       "record_count": 250,
       "error": null,
-      "response_size": 153310
+      "response_size": 153295
     },
     {
       "endpoint": "FormulaSubmissionPlant",
       "url": "http://172.30.3.133:5656/api/FormulaSubmissionPlant",
       "status_code": 200,
       "success": true,
-      "response_time": 108.98,
+      "response_time": 153.07,
       "record_count": 250,
       "error": null,
-      "response_size": 105557
+      "response_size": 105570
     },
     {
       "endpoint": "INVOICEFEE",
       "url": "http://172.30.3.133:5656/api/INVOICEFEE",
       "status_code": 200,
       "success": true,
-      "response_time": 275.11,
+      "response_time": 497.1,
       "record_count": 250,
       "error": null,
       "response_size": 365982
@@ -273,17 +273,17 @@
       "url": "http://172.30.3.133:5656/api/INVOICEFEESDETAIL",
       "status_code": 200,
       "success": true,
-      "response_time": 335.41,
+      "response_time": 264.99,
       "record_count": 250,
       "error": null,
-      "response_size": 161191
+      "response_size": 161197
     },
     {
       "endpoint": "LabelBarcode",
       "url": "http://172.30.3.133:5656/api/LabelBarcode",
       "status_code": 200,
       "success": true,
-      "response_time": 164.02,
+      "response_time": 283.71,
       "record_count": 250,
       "error": null,
       "response_size": 124799
@@ -293,27 +293,27 @@
       "url": "http://172.30.3.133:5656/api/LabelComment",
       "status_code": 200,
       "success": true,
-      "response_time": 220.23,
+      "response_time": 424.55,
       "record_count": 250,
       "error": null,
-      "response_size": 96889
+      "response_size": 96901
     },
     {
       "endpoint": "LabelOption",
       "url": "http://172.30.3.133:5656/api/LabelOption",
       "status_code": 200,
       "success": true,
-      "response_time": 144.07,
+      "response_time": 114.54,
       "record_count": 250,
       "error": null,
-      "response_size": 93285
+      "response_size": 93274
     },
     {
       "endpoint": "LabelTb",
       "url": "http://172.30.3.133:5656/api/LabelTb",
       "status_code": 200,
       "success": true,
-      "response_time": 575.77,
+      "response_time": 577.35,
       "record_count": 250,
       "error": null,
       "response_size": 511325
@@ -323,17 +323,17 @@
       "url": "http://172.30.3.133:5656/api/MERCHCOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 202.7,
+      "response_time": 192.01,
       "record_count": 250,
       "error": null,
-      "response_size": 84553
+      "response_size": 84540
     },
     {
       "endpoint": "MERCHOTHERNAME",
       "url": "http://172.30.3.133:5656/api/MERCHOTHERNAME",
       "status_code": 200,
       "success": true,
-      "response_time": 360.05,
+      "response_time": 255.19,
       "record_count": 250,
       "error": null,
       "response_size": 75408
@@ -343,7 +343,7 @@
       "url": "http://172.30.3.133:5656/api/MERCHTB",
       "status_code": 200,
       "success": true,
-      "response_time": 494.96,
+      "response_time": 472.43,
       "record_count": 250,
       "error": null,
       "response_size": 365352
@@ -353,7 +353,7 @@
       "url": "http://172.30.3.133:5656/api/MiniCRMAction",
       "status_code": 200,
       "success": true,
-      "response_time": 132.12,
+      "response_time": 134.11,
       "record_count": 250,
       "error": null,
       "response_size": 167127
@@ -363,7 +363,7 @@
       "url": "http://172.30.3.133:5656/api/OWNSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 269.03,
+      "response_time": 304.59,
       "record_count": 250,
       "error": null,
       "response_size": 484047
@@ -373,7 +373,7 @@
       "url": "http://172.30.3.133:5656/api/PENDINGINFOTB",
       "status_code": 200,
       "success": true,
-      "response_time": 197.84,
+      "response_time": 200.75,
       "record_count": 250,
       "error": null,
       "response_size": 179136
@@ -383,27 +383,27 @@
       "url": "http://172.30.3.133:5656/api/PERSONADDRESSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 157.5,
+      "response_time": 144.05,
       "record_count": 250,
       "error": null,
-      "response_size": 134531
+      "response_size": 134510
     },
     {
       "endpoint": "PERSONJOBSTATUSTB",
       "url": "http://172.30.3.133:5656/api/PERSONJOBSTATUSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 106.82,
+      "response_time": 361.17,
       "record_count": 250,
       "error": null,
-      "response_size": 76785
+      "response_size": 76757
     },
     {
       "endpoint": "PERSONJOBTB",
       "url": "http://172.30.3.133:5656/api/PERSONJOBTB",
       "status_code": 200,
       "success": true,
-      "response_time": 194.58,
+      "response_time": 227.88,
       "record_count": 250,
       "error": null,
       "response_size": 294693
@@ -413,7 +413,7 @@
       "url": "http://172.30.3.133:5656/api/PERSONTB",
       "status_code": 200,
       "success": true,
-      "response_time": 197.29,
+      "response_time": 260.01,
       "record_count": 250,
       "error": null,
       "response_size": 264146
@@ -423,7 +423,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTADDRESSTB",
       "status_code": 200,
       "success": true,
-      "response_time": 153.93,
+      "response_time": 174.5,
       "record_count": 250,
       "error": null,
       "response_size": 160125
@@ -433,7 +433,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTCERTDETAIL",
       "status_code": 200,
       "success": true,
-      "response_time": 155.63,
+      "response_time": 159.01,
       "record_count": 250,
       "error": null,
       "response_size": 154773
@@ -443,7 +443,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTCOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 113.68,
+      "response_time": 157.83,
       "record_count": 250,
       "error": null,
       "response_size": 86374
@@ -453,7 +453,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTFEECOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 167.98,
+      "response_time": 165.51,
       "record_count": 250,
       "error": null,
       "response_size": 138000
@@ -463,7 +463,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTFEESTRUCTURE",
       "status_code": 200,
       "success": true,
-      "response_time": 545.69,
+      "response_time": 938.15,
       "record_count": 250,
       "error": null,
       "response_size": 795488
@@ -473,7 +473,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTFEESTRUCTUREOUT",
       "status_code": 200,
       "success": true,
-      "response_time": 228.56,
+      "response_time": 255.31,
       "record_count": 250,
       "error": null,
       "response_size": 312116
@@ -483,7 +483,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTHOLDTB",
       "status_code": 200,
       "success": true,
-      "response_time": 229.48,
+      "response_time": 283.27,
       "record_count": 250,
       "error": null,
       "response_size": 187838
@@ -493,7 +493,7 @@
       "url": "http://172.30.3.133:5656/api/PLANTTB",
       "status_code": 200,
       "success": true,
-      "response_time": 295.01,
+      "response_time": 351.23,
       "record_count": 250,
       "error": null,
       "response_size": 480903
@@ -503,7 +503,7 @@
       "url": "http://172.30.3.133:5656/api/PRIVATELABELBILL",
       "status_code": 200,
       "success": true,
-      "response_time": 290.12,
+      "response_time": 174.55,
       "record_count": 250,
       "error": null,
       "response_size": 222461
@@ -513,7 +513,7 @@
       "url": "http://172.30.3.133:5656/api/PrivateLabelTemplate",
       "status_code": 200,
       "success": true,
-      "response_time": 1319.1,
+      "response_time": 6129.95,
       "record_count": 52,
       "error": null,
       "response_size": 11282600
@@ -523,7 +523,7 @@
       "url": "http://172.30.3.133:5656/api/ProducedIn1Tb",
       "status_code": 200,
       "success": true,
-      "response_time": 403.93,
+      "response_time": 536.62,
       "record_count": 250,
       "error": null,
       "response_size": 317291
@@ -533,7 +533,7 @@
       "url": "http://172.30.3.133:5656/api/ProductJob",
       "status_code": 200,
       "success": true,
-      "response_time": 179.21,
+      "response_time": 159.75,
       "record_count": 250,
       "error": null,
       "response_size": 141212
@@ -543,7 +543,7 @@
       "url": "http://172.30.3.133:5656/api/ProductJobLineItem",
       "status_code": 200,
       "success": true,
-      "response_time": 344.56,
+      "response_time": 477.22,
       "record_count": 250,
       "error": null,
       "response_size": 399180
@@ -553,7 +553,7 @@
       "url": "http://172.30.3.133:5656/api/PurchaseOrder",
       "status_code": 200,
       "success": true,
-      "response_time": 171.19,
+      "response_time": 138.32,
       "record_count": 250,
       "error": null,
       "response_size": 130240
@@ -563,7 +563,7 @@
       "url": "http://172.30.3.133:5656/api/RCTB",
       "status_code": 200,
       "success": true,
-      "response_time": 172.26,
+      "response_time": 175.65,
       "record_count": 250,
       "error": null,
       "response_size": 134093
@@ -573,7 +573,7 @@
       "url": "http://172.30.3.133:5656/api/StripeCustomer",
       "status_code": 200,
       "success": true,
-      "response_time": 103.04,
+      "response_time": 164.61,
       "record_count": 250,
       "error": null,
       "response_size": 97636
@@ -583,7 +583,7 @@
       "url": "http://172.30.3.133:5656/api/ThirdPartyBillingCompany",
       "status_code": 200,
       "success": true,
-      "response_time": 125.51,
+      "response_time": 140.01,
       "record_count": 250,
       "error": null,
       "response_size": 137871
@@ -593,7 +593,7 @@
       "url": "http://172.30.3.133:5656/api/USEDIN1TB",
       "status_code": 200,
       "success": true,
-      "response_time": 536.81,
+      "response_time": 534.37,
       "record_count": 250,
       "error": null,
       "response_size": 229090
@@ -603,7 +603,7 @@
       "url": "http://172.30.3.133:5656/api/VISIT",
       "status_code": 200,
       "success": true,
-      "response_time": 559.42,
+      "response_time": 635.95,
       "record_count": 250,
       "error": null,
       "response_size": 617219
@@ -613,17 +613,17 @@
       "url": "http://172.30.3.133:5656/api/VISITSCOMMENT",
       "status_code": 200,
       "success": true,
-      "response_time": 163.99,
+      "response_time": 190.75,
       "record_count": 250,
       "error": null,
-      "response_size": 100505
+      "response_size": 100479
     },
     {
       "endpoint": "YoshonInfo",
       "url": "http://172.30.3.133:5656/api/YoshonInfo",
       "status_code": 200,
       "success": true,
-      "response_time": 106.57,
+      "response_time": 146.67,
       "record_count": 250,
       "error": null,
       "response_size": 96651
