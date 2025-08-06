@@ -87,7 +87,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             nonce = secrets.token_urlsafe(32)
             session['oauth_nonce'] = nonce
             
-            # Build OKTA authorization URL
+            # Build OKTA authorization URL using v1 endpoints (not default)
             auth_params = {
                 'client_id': Args.instance.okta_client_id,
                 'response_type': 'code',
@@ -98,7 +98,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'nonce': nonce
             }
             
-            auth_url = f"{Args.instance.okta_domain}/oauth2/default/v1/authorize?" + urllib.parse.urlencode(auth_params)
+            auth_url = f"{Args.instance.okta_domain}/oauth2/v1/authorize?" + urllib.parse.urlencode(auth_params)
             
             logger.info(f"Redirecting to OKTA SSO: {auth_url}")
             return redirect(auth_url)
@@ -168,13 +168,13 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             # Clear local session
             session.clear()
             
-            # Build OKTA logout URL
+            # Build OKTA logout URL using v1 endpoints
             logout_params = {
                 'id_token_hint': session.get('id_token', ''),
                 'post_logout_redirect_uri': request.host_url
             }
             
-            logout_url = f"{Args.instance.okta_domain}/oauth2/default/v1/logout?" + urllib.parse.urlencode(logout_params)
+            logout_url = f"{Args.instance.okta_domain}/oauth2/v1/logout?" + urllib.parse.urlencode(logout_params)
             
             logger.info("User logged out, redirecting to OKTA logout")
             return redirect(logout_url)
@@ -198,7 +198,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args
         
         try:
-            token_url = f"{Args.instance.okta_domain}/oauth2/default/v1/token"
+            token_url = f"{Args.instance.okta_domain}/oauth2/v1/token"
             
             headers = {
                 'Accept': 'application/json',
@@ -234,7 +234,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args  # circular import error if at top
         
         # Use the correct JWKS endpoint for ou.okta.com
-        jwks_uri = f'{Args.instance.okta_domain}/oauth2/default/v1/keys'
+        jwks_uri = f'{Args.instance.okta_domain}/oauth2/v1/keys'
         
         logger.info(f"Attempting to retrieve JWKS from: {jwks_uri}")
         
@@ -373,9 +373,9 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args
         
         try:
-            # Get OKTA's well-known configuration for ou.okta.com
-            issuer = f"{Args.instance.okta_domain}/oauth2/default"
-            config_url = f"{issuer}/.well-known/openid-configuration"
+            # Get OKTA's well-known configuration for ou.okta.com using v1 endpoints
+            issuer = f"{Args.instance.okta_domain}"
+            config_url = f"{Args.instance.okta_domain}/.well-known/openid-configuration"
             
             logger.info(f"Fetching OKTA configuration from: {config_url}")
             

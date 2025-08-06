@@ -174,8 +174,8 @@ class Config:
 
     # OKTA Args
     # https://apilogicserver.github.io/Docs/Security-Activation/
-    # als add-auth --provider-type=okta --okta-domain=http://ou.okta.com
-    OKTA_DOMAIN = os.getenv('OKTA_DOMAIN', 'http://ou.okta.com')
+    # als add-auth --provider-type=okta --okta-domain=https://ou.okta.com
+    OKTA_DOMAIN = os.getenv('OKTA_DOMAIN', 'https://ou.okta.com')
     ''' OKTA domain - your organization's OKTA domain '''
     OKTA_CLIENT_ID = os.getenv('OKTA_CLIENT_ID', 'your-client-id')
     ''' OKTA OAuth client ID '''

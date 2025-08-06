@@ -5,8 +5,6 @@ import jwt
 from datetime import datetime, timedelta
 from urllib.parse import urlparse, parse_qs, urlencode
 from typing import Optional, Tuple, Dict, Any
-import asyncio
-import aiohttp
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
@@ -60,15 +58,16 @@ class OktaToken:
         
         headers = {
             "Accept": "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Agent": "API-Logic-Server/1.0"
         }
         
         body = {
             "username": username,
             "password": password,
             "options": {
-                "multiOptionalFactorEnroll": True,
-                "warnBeforePasswordExpired": True
+                "multiOptionalFactorEnroll": False,
+                "warnBeforePasswordExpired": False
             }
         }
         
@@ -80,13 +79,17 @@ class OktaToken:
                 allow_redirects=False,
                 timeout=10
             )
-            print(response.status_code, response.text)  # Debugging line, remove in production
+            
+            print(f"OKTA Auth Response: {response.status_code}")
+            print(f"Response Headers: {dict(response.headers)}")
+            print(f"Response Body: {response.text}")
+            
             if response.status_code == 200 and response.text:
                 response_data = response.json()
                 session_token = response_data.get("sessionToken")
                 
                 if session_token:
-                    print(session_token)
+                    print(f"Session token obtained: {session_token[:20]}...")
                     
                     # Second request: Get ID token using session token
                     authorize_url = (
@@ -117,10 +120,138 @@ class OktaToken:
                         
                         ret = location_header[start_index:end_index]
                         
+            elif response.status_code == 401:
+                response_data = response.json() if response.text else {}
+                error_code = response_data.get("errorCode", "Unknown")
+                error_summary = response_data.get("errorSummary", "Authentication failed")
+                error_causes = response_data.get("errorCauses", [])
+                
+                print(f"OKTA Authentication Error:")
+                print(f"  Error Code: {error_code}")
+                print(f"  Error Summary: {error_summary}")
+                if error_causes:
+                    print(f"  Error Causes: {error_causes}")
+                
+                # Handle specific error codes
+                if error_code == "E0000004":
+                    print("  This typically means invalid username/password or account locked")
+                    print("  Check credentials and account status in OKTA admin console")
+                elif error_code == "E0000014":
+                    print("  Update of credentials failed - check password policy")
+                elif error_code == "E0000001":
+                    print("  API validation failed - check request format")
+                    
+                logging.error(f"OKTA authentication failed: {error_code} - {error_summary}")
+                
+            else:
+                print(f"Unexpected response status: {response.status_code}")
+                print(f"Response: {response.text}")
+                        
         except requests.exceptions.RequestException as e:
             logging.error(f"Error getting ID token: {e}")
+            print(f"Network error connecting to OKTA: {e}")
             
         return ret
+    
+    def test_okta_connectivity(self) -> Dict[str, Any]:
+        """
+        Test connectivity and configuration for OKTA domain
+        
+        Returns:
+            Dictionary with test results
+        """
+        results = {
+            "domain_accessible": False,
+            "auth_endpoint_accessible": False,
+            "oauth_config_accessible": False,
+            "jwks_accessible": False,
+            "errors": []
+        }
+        
+        try:
+            # Test 1: Basic domain connectivity
+            print(f"Testing basic connectivity to {self.domain}...")
+            basic_response = requests.get(self.domain, timeout=10)
+            results["domain_accessible"] = basic_response.status_code < 400
+            print(f"  Domain connectivity: {results['domain_accessible']} (Status: {basic_response.status_code})")
+            
+        except Exception as e:
+            results["errors"].append(f"Domain connectivity failed: {e}")
+            print(f"  Domain connectivity failed: {e}")
+        
+        try:
+            # Test 2: Auth endpoint
+            auth_endpoint = f"{self.domain}/api/v1/authn"
+            print(f"Testing auth endpoint: {auth_endpoint}")
+            
+            # Try a basic POST to see if endpoint exists (should return 400/401, not 404)
+            auth_response = requests.post(
+                auth_endpoint,
+                headers={"Content-Type": "application/json"},
+                json={"username": "test", "password": "test"},
+                timeout=10
+            )
+            # Endpoint exists if we get 400/401 (bad request/unauthorized) rather than 404
+            results["auth_endpoint_accessible"] = auth_response.status_code in [400, 401]
+            print(f"  Auth endpoint accessible: {results['auth_endpoint_accessible']} (Status: {auth_response.status_code})")
+            
+            if auth_response.status_code == 404:
+                results["errors"].append("Auth endpoint not found - check OKTA domain configuration")
+                
+        except Exception as e:
+            results["errors"].append(f"Auth endpoint test failed: {e}")
+            print(f"  Auth endpoint test failed: {e}")
+        
+        try:
+            # Test 3: OAuth configuration using the correct endpoint for ou.okta.com
+            config_url = f"{self.domain}/.well-known/openid-configuration"
+            print(f"Testing OAuth config: {config_url}")
+            
+            config_response = requests.get(config_url, timeout=10)
+            results["oauth_config_accessible"] = config_response.status_code == 200
+            print(f"  OAuth config accessible: {results['oauth_config_accessible']} (Status: {config_response.status_code})")
+            
+            if config_response.status_code == 200:
+                config_data = config_response.json()
+                print(f"  Issuer: {config_data.get('issuer', 'Not found')}")
+                print(f"  Authorization endpoint: {config_data.get('authorization_endpoint', 'Not found')}")
+                print(f"  Token endpoint: {config_data.get('token_endpoint', 'Not found')}")
+                
+                # Test 4: JWKS endpoint
+                jwks_uri = config_data.get("jwks_uri")
+                if jwks_uri:
+                    print(f"Testing JWKS endpoint: {jwks_uri}")
+                    jwks_response = requests.get(jwks_uri, timeout=10)
+                    results["jwks_accessible"] = jwks_response.status_code == 200
+                    print(f"  JWKS accessible: {results['jwks_accessible']} (Status: {jwks_response.status_code})")
+                    
+                    if jwks_response.status_code == 200:
+                        jwks_data = jwks_response.json()
+                        key_count = len(jwks_data.get("keys", []))
+                        print(f"  Available signing keys: {key_count}")
+                else:
+                    results["errors"].append("JWKS URI not found in OAuth configuration")
+                    
+        except Exception as e:
+            results["errors"].append(f"OAuth configuration test failed: {e}")
+            print(f"  OAuth configuration test failed: {e}")
+        
+        # Summary
+        all_accessible = all([
+            results["domain_accessible"],
+            results["auth_endpoint_accessible"],
+            results["oauth_config_accessible"],
+            results["jwks_accessible"]
+        ])
+        
+        print(f"\nConnectivity Test Summary:")
+        print(f"  Overall Status: {'✅ Pass' if all_accessible else '❌ Issues detected'}")
+        if results["errors"]:
+            print(f"  Errors: {len(results['errors'])}")
+            for error in results["errors"]:
+                print(f"    - {error}")
+        
+        return results
     
     def create_web_access_token(self) -> Optional[OktaAccessToken]:
         """
@@ -186,8 +317,8 @@ class OktaToken:
             if not kid:
                 raise ValueError("Token header missing 'kid' parameter")
             
-            # Get key parameters
-            e, n = asyncio.run(self._get_key_parameters_async(self.domain, kid))
+            # Get key parameters synchronously
+            e, n = self._get_key_parameters_sync(self.domain, kid)
             
             if not e or not n:
                 raise ValueError("Could not retrieve key parameters")
@@ -199,9 +330,9 @@ class OktaToken:
             logging.error(f"Error validating PKCE token: {e}")
             return None
     
-    async def _get_key_parameters_async(self, domain: str, kid: str) -> Tuple[Optional[str], Optional[str]]:
+    def _get_key_parameters_sync(self, domain: str, kid: str) -> Tuple[Optional[str], Optional[str]]:
         """
-        Asynchronously get key parameters from Okta
+        Get key parameters from Okta synchronously
         
         Args:
             domain: Okta domain
@@ -211,15 +342,14 @@ class OktaToken:
             Tuple of (e, n) parameters or (None, None) if not found
         """
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"{domain}/oauth2/v1/keys") as response:
-                    if response.status == 200:
-                        jwks_data = await response.json()
+            response = requests.get(f"{domain}/oauth2/v1/keys", timeout=10)
+            if response.status_code == 200:
+                jwks_data = response.json()
+                
+                for key in jwks_data.get("keys", []):
+                    if key.get("kid") == kid:
+                        return key.get("e"), key.get("n")
                         
-                        for key in jwks_data.get("keys", []):
-                            if key.get("kid") == kid:
-                                return key.get("e"), key.get("n")
-                                
         except Exception as e:
             logging.error(f"Error getting key parameters: {e}")
             
@@ -274,12 +404,12 @@ class OktaToken:
         Returns:
             Claims dictionary or None if validation failed
         """
-        issuer = f"{self.domain}/oauth2/default"
+        issuer = self.domain
         
         try:
-            # Get OpenID Connect configuration
-            config_url = f"{issuer}/.well-known/oauth-authorization-server"
-            config_response = requests.get(config_url)
+            # Get OpenID Connect configuration using the correct endpoint for ou.okta.com
+            config_url = f"{self.domain}/.well-known/openid-configuration"
+            config_response = requests.get(config_url, timeout=10)
             
             if config_response.status_code != 200:
                 raise ValueError("Could not retrieve OpenID Connect configuration")
@@ -291,7 +421,7 @@ class OktaToken:
                 raise ValueError("JWKS URI not found in configuration")
             
             # Get signing keys
-            jwks_response = requests.get(jwks_uri)
+            jwks_response = requests.get(jwks_uri, timeout=10)
             if jwks_response.status_code != 200:
                 raise ValueError("Could not retrieve JWKS")
             
