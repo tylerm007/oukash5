@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from security.authentication_provider.okta.auth_provider import OktaToken 
+from security.authentication_provider.okta.okta_token import OktaToken 
 import logging
 import os
 
@@ -184,7 +184,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             logging.error(f"Error in validate_pkce_token: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
-    @app.route('/auth/callback')
+    @app.route('/callback')
     def auth_callback():
         """
         Handle the callback from Okta after authentication

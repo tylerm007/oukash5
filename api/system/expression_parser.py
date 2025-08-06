@@ -83,7 +83,7 @@ def parsePayload(clz, payload: str):
             if arg.startswith("fields"):
                 columns.append(value)
             elif arg == 'page[limit]':
-                pagesize = int(value) if value else 999
+                pagesize = int(value) if value else 250
             elif arg == 'page[offset]':
                 offset = int(value)
             elif arg == 'sort':

@@ -116,7 +116,7 @@ class CustomEndpoint():
         self.isParent= isParent 
         self.pagesize = pagesize
         self.offset = offset
-        self.totalQueryRecordsNumber =  999
+        self.totalQueryRecordsNumber =  250
         self.startRecordIndex = 0
         if isinstance(join_on, tuple):
             if len(join_on) > 0:

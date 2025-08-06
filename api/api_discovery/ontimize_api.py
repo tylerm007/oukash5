@@ -188,7 +188,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         expressions, filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(api_clz, payload)
         result = {}
         if method == 'GET':
-            pagesize = 999 #if isSearch else pagesize
+            pagesize = 250 #if isSearch else pagesize
             return get_rows(request, api_clz, filter, orderBy, columns, pagesize, offset)
         
         if method in ['PUT','PATCH']:
@@ -224,7 +224,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 if "TypeAggregate" in clz_type:
                     return get_rows_agg(request, api_clz, clz_type, filter, columns)
                 else:
-                    pagesize = 999 # if isSearch else pagesize
+                    pagesize = 250 # if isSearch else pagesize
                     return get_rows(request, api_clz, None, orderBy, columns, pagesize, offset)
         try:        
             session.commit()

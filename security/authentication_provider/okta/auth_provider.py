@@ -1,176 +1,368 @@
-import json
-import base64
-import requests
-import jwt
-from datetime import datetime, timedelta
-from urllib.parse import urlparse, parse_qs, urlencode
-from typing import Optional, Tuple, Dict, Any
-import asyncio
-import aiohttp
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend
+from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
+import sqlalchemy as sqlalchemy
+import database.database_discovery.authentication_models as authentication_models
+from flask import Flask
+import safrs
+from safrs.errors import JsonapiError
+from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict['name']... like a row
+from sqlalchemy import inspect
+from http import HTTPStatus
 import logging
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required as jwt_required_ori
+import flask_jwt_extended as flask_jwt_extended
+from flask import jsonify, g
+import requests
+import json
+import sys
+import time
+import jwt
+from jwt.algorithms import RSAAlgorithm
+import base64
+from datetime import datetime, timedelta
+from typing import Optional, Dict, Any
 
 
-class OktaAccessToken:
-    """Python equivalent of OktaAccessToken entity"""
-    def __init__(self, token_type: str = None, expires_in: str = None, 
-                 access_token: str = None, scope: str = None):
-        self.token_type = token_type
-        self.expires_in = expires_in
-        self.access_token = access_token
-        self.scope = scope
+# **********************
+# OKTA auth provider
+# **********************
+
+db = None
+session = None
+
+logger = logging.getLogger(__name__)
+
+class ALSError(JsonapiError):
+
+    def __init__(self, message, status_code=HTTPStatus.BAD_REQUEST):
+        super().__init__()
+        self.message = message
+        self.status_code = status_code
 
 
-class OktaToken:
-    """Python equivalent of C# OktaToken class for creating and validating Okta tokens"""
-    
-    def __init__(self, domain: str, client_id: str, redirect_url: str = None, client_secret: str = None):
-        """
-        Initialize OktaToken instance
-        
+class DotMapX(DotMap):
+    """ DotMap, with extended support for auth providers """
+    def check_password(self, password=None):
+        # For OKTA, password validation is handled by token validation
+        return True
+
+
+class Authentication_Provider(Abstract_Authentication_Provider):
+
+    @staticmethod
+    def configure_auth(flask_app: Flask):
+        """ Called by authentication.py on server start, to 
+        - initialize jwt
+        - establish Flask end points for login.
+
         Args:
-            domain: Okta domain (e.g., https://your-domain.okta.com)
-            client_id: OAuth client ID
-            redirect_url: OAuth redirect URL (optional)
-            client_secret: OAuth client secret (optional)
-        """
-        self.domain = domain
-        self.client_id = client_id
-        self.redirect_url = redirect_url
-        self.client_secret = client_secret
-        self._configuration_manager = None
-        
-    def get_id_token(self, username: str, password: str) -> str:
-        """
-        Get ID token using username and password authentication
-        
-        Args:
-            username: User's username
-            password: User's password
-            
+            flask_app (Flask): _description_
         Returns:
-            ID token string or empty string if failed
+            _type_: (no return)
         """
-        ret = ""
+        flask_app.config['JWT_ALGORITHM'] = 'RS256'
+        flask_app.config["JWT_PUBLIC_KEY"] = Authentication_Provider.get_jwt_public_key('RS256')
         
-        # First request: Get session token
-        session_token_url = f"{self.domain}/api/v1/authn"
+        # Add OKTA SSO endpoints
+        Authentication_Provider._add_okta_endpoints(flask_app)
+        return
+
+    @staticmethod
+    def _add_okta_endpoints(flask_app: Flask):
+        """Add OKTA SSO endpoints to Flask app"""
+        from flask import request, redirect, session, url_for
+        from config.config import Args
+        import urllib.parse
         
-        headers = {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        }
-        
-        body = {
-            "username": username,
-            "password": password,
-            "options": {
-                "multiOptionalFactorEnroll": True,
-                "warnBeforePasswordExpired": True
+        @flask_app.route('/auth/login')
+        def okta_login():
+            """Redirect to OKTA for SSO authentication"""
+            # Generate state for CSRF protection
+            import secrets
+            state = secrets.token_urlsafe(32)
+            session['oauth_state'] = state
+            
+            # Generate nonce for replay protection
+            nonce = secrets.token_urlsafe(32)
+            session['oauth_nonce'] = nonce
+            
+            # Build OKTA authorization URL
+            auth_params = {
+                'client_id': Args.instance.okta_client_id,
+                'response_type': 'code',
+                'response_mode': 'query',
+                'scope': 'openid profile email groups',
+                'redirect_uri': Args.instance.okta_redirect_uri,
+                'state': state,
+                'nonce': nonce
             }
-        }
+            
+            auth_url = f"{Args.instance.okta_domain}/oauth2/default/v1/authorize?" + urllib.parse.urlencode(auth_params)
+            
+            logger.info(f"Redirecting to OKTA SSO: {auth_url}")
+            return redirect(auth_url)
         
-        try:
-            response = requests.post(
-                session_token_url,
-                headers=headers,
-                json=body,
-                allow_redirects=False,
-                timeout=10
-            )
-            print(response.status_code, response.text)  # Debugging line, remove in production
-            if response.status_code == 200 and response.text:
-                response_data = response.json()
-                session_token = response_data.get("sessionToken")
+        @flask_app.route('/auth/callback')
+        def okta_callback():
+            """Handle OKTA SSO callback"""
+            # Verify state parameter
+            if request.args.get('state') != session.get('oauth_state'):
+                logger.error("Invalid state parameter in OKTA callback")
+                return jsonify({'error': 'Invalid state parameter'}), 400
+            
+            # Get authorization code
+            auth_code = request.args.get('code')
+            if not auth_code:
+                error = request.args.get('error', 'unknown_error')
+                error_description = request.args.get('error_description', 'No authorization code received')
+                logger.error(f"OKTA callback error: {error} - {error_description}")
+                return jsonify({'error': error, 'error_description': error_description}), 400
+            
+            try:
+                # Exchange authorization code for tokens
+                tokens = Authentication_Provider._exchange_code_for_tokens(auth_code)
+                if not tokens:
+                    return jsonify({'error': 'Failed to exchange code for tokens'}), 400
                 
-                if session_token:
-                    print(session_token)
-                    
-                    # Second request: Get ID token using session token
-                    authorize_url = (
-                        f"{self.domain}/oauth2/default/v1/authorize?"
-                        f"client_id={self.client_id}&"
-                        f"response_type=id_token&"
-                        f"response_mode=fragment&"
-                        f"scope=openid profile email&"
-                        f"redirect_uri={self.redirect_url}&"
-                        f"state=foreverInTheSameState&"
-                        f"nonce=ff1cd991&"
-                        f"sessionToken={session_token}"
-                    )
-                    
-                    id_token_response = requests.get(
-                        authorize_url,
-                        headers={"Accept": "application/json"},
-                        allow_redirects=False,
-                        timeout=10
-                    )
-                    
-                    location_header = id_token_response.headers.get("Location")
-                    if location_header and "id_token=" in location_header:
-                        start_index = location_header.find("id_token=") + len("id_token=")
-                        end_index = location_header.find("&", start_index)
-                        if end_index == -1:
-                            end_index = len(location_header)
-                        
-                        ret = location_header[start_index:end_index]
-                        
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Error getting ID token: {e}")
+                # Validate and decode the ID token
+                id_token = tokens.get('id_token')
+                if not id_token:
+                    return jsonify({'error': 'No ID token received'}), 400
+                
+                claims = Authentication_Provider.validate_okta_token(id_token)
+                if not claims:
+                    return jsonify({'error': 'Invalid ID token'}), 400
+                
+                # Verify nonce
+                if claims.get('nonce') != session.get('oauth_nonce'):
+                    logger.error("Invalid nonce in ID token")
+                    return jsonify({'error': 'Invalid nonce'}), 400
+                
+                # Create user session
+                user = Authentication_Provider.get_user_from_jwt(claims)
+                
+                # Store user info in session
+                session['user_id'] = user.name
+                session['user_email'] = user.email
+                session['user_roles'] = [role.role_name for role in user.UserRoleList]
+                session['access_token'] = tokens.get('access_token')
+                
+                # Clean up OAuth session data
+                session.pop('oauth_state', None)
+                session.pop('oauth_nonce', None)
+                
+                logger.info(f"User {user.name} successfully authenticated via OKTA SSO")
+                
+                # Redirect to application home or intended destination
+                next_url = session.pop('next_url', '/') 
+                return redirect(next_url)
+                
+            except Exception as e:
+                logger.error(f"Error processing OKTA callback: {e}")
+                return jsonify({'error': 'Authentication failed'}), 500
+        
+        @flask_app.route('/auth/logout')
+        def okta_logout():
+            """Logout from OKTA SSO"""
+            # Clear local session
+            session.clear()
             
-        return ret
-    
-    def create_web_access_token(self) -> Optional[OktaAccessToken]:
-        """
-        Create an Okta web access token using client credentials
-        
-        Returns:
-            OktaAccessToken object or None if failed
-        """
-        if not self.client_secret:
-            raise ValueError("Client secret is required for web access token")
+            # Build OKTA logout URL
+            logout_params = {
+                'id_token_hint': session.get('id_token', ''),
+                'post_logout_redirect_uri': request.host_url
+            }
             
-        ret = None
+            logout_url = f"{Args.instance.okta_domain}/oauth2/default/v1/logout?" + urllib.parse.urlencode(logout_params)
+            
+            logger.info("User logged out, redirecting to OKTA logout")
+            return redirect(logout_url)
         
-        # Create basic auth credentials
-        credentials = base64.b64encode(
-            f"{self.client_id}:{self.client_secret}".encode('utf-8')
-        ).decode('utf-8')
+        @flask_app.route('/auth/user')
+        def get_current_user():
+            """Get current authenticated user info"""
+            if 'user_id' not in session:
+                return jsonify({'error': 'Not authenticated'}), 401
+            
+            return jsonify({
+                'user_id': session.get('user_id'),
+                'email': session.get('user_email'),
+                'roles': session.get('user_roles', []),
+                'authenticated': True
+            })
+
+    @staticmethod
+    def _exchange_code_for_tokens(auth_code: str) -> Optional[Dict[str, str]]:
+        """Exchange authorization code for access and ID tokens"""
+        from config.config import Args
         
-        headers = {
-            "Authorization": f"Basic {credentials}",
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-        
-        data = {
-            "grant_type": "client_credentials",
-            "scope": "webAccess"
-        }
-        
-        token_url = f"{self.domain}/oauth2/default/v1/token"
-        print("token_url:", token_url)  # Debugging line, remove in production
         try:
-            response = requests.post(token_url, headers=headers, data=data)
-            print(response.status_code, response.text)  # Debugging line, remove in production
+            token_url = f"{Args.instance.okta_domain}/oauth2/default/v1/token"
+            
+            headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+            
+            data = {
+                'grant_type': 'authorization_code',
+                'client_id': Args.instance.okta_client_id,
+                'client_secret': Args.instance.okta_client_secret,
+                'code': auth_code,
+                'redirect_uri': Args.instance.okta_redirect_uri
+            }
+            
+            response = requests.post(token_url, headers=headers, data=data, timeout=10)
+            
             if response.status_code == 200:
-                token_data = response.json()
-                ret = OktaAccessToken(
-                    token_type=token_data.get("token_type"),
-                    expires_in=token_data.get("expires_in"),
-                    access_token=token_data.get("access_token"),
-                    scope=token_data.get("scope")
-                )
+                return response.json()
+            else:
+                logger.error(f"Token exchange failed: {response.status_code} - {response.text}")
+                return None
                 
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Error creating web access token: {e}")
-            
-        return ret
-    
-    def validate_okta_pkce_token(self, token: str) -> Optional[Dict[str, Any]]:
+        except Exception as e:
+            logger.error(f"Error exchanging code for tokens: {e}")
+            return None
+
+    @staticmethod
+    def get_jwt_public_key(alg, kid=None):
         """
-        Validate an Okta PKCE token
+        Retrieve the public key of the JWK keypair used by OKTA to sign the JWTs.
+        JWTs signed with this key are trusted by ALS.
+        """
+        from config.config import Args  # circular import error if at top
+        
+        # Use the correct JWKS endpoint for ou.okta.com
+        jwks_uri = f'{Args.instance.okta_domain}/oauth2/default/v1/keys'
+        
+        logger.info(f"Attempting to retrieve JWKS from: {jwks_uri}")
+        
+        for i in range(10):  # Reduced retries for faster feedback
+            try:
+                response = requests.get(jwks_uri, timeout=10)
+                if response.status_code == 200:
+                    keys = response.json()['keys']
+                    logger.info(f"Successfully retrieved {len(keys)} keys from OKTA JWKS")
+                    break
+                else:
+                    logger.warning(f"Attempt {i+1}: JWKS request failed with status {response.status_code}")
+            except Exception as e:
+                logger.warning(f"Attempt {i+1}: Failed to load jwks_uri {jwks_uri}: {e}")
+                if i < 9:  # Don't sleep on last attempt
+                    time.sleep(1)
+        else:
+            logger.error(f'Failed to load jwks_uri {jwks_uri} after 10 attempts')
+            # Don't exit, return a fallback or None to allow graceful degradation
+            return None
+            
+        for key in keys:
+            # loop over all keys until we find the one we're looking for
+            if key['alg'] == alg or (kid and key['kid'] == kid):
+                logger.info(f"Found JWK: {key['kid']} with algorithm {key['alg']}")
+                return RSAAlgorithm.from_jwk(json.dumps(key))
+                
+        logger.error(f"Couldn't find key with ALG {alg} or kid {kid}")
+        # Return None instead of exiting to allow graceful handling
+        return None
+
+    @staticmethod
+    def get_jwt_user(id: str) -> object:
+        """Get JWT user from Flask request context"""
+        from flask_jwt_extended import get_jwt
+        from flask import has_request_context
+        
+        return_jwt = None
+        if has_request_context():
+            return_jwt = g.als_jwt if hasattr(g, 'als_jwt') else None
+        return return_jwt
+
+    @staticmethod
+    def get_user_from_jwt(jwt_data: dict) -> object:
+        """return DotMapX (user+roles) from jwt_data
+
+        Args:
+            jwt_data (dict): jwt token claims
+
+        Returns:
+            object: ApiLogicServer user (with roles) DotMapX object
+        """
+        rtn_user = DotMapX()
+        rtn_user.client_id = 1  # hack until user data in place
+        
+        # OKTA standard claims
+        rtn_user.name = jwt_data.get("preferred_username") or jwt_data.get("sub") or jwt_data.get("email", "unknown")
+        rtn_user.email = jwt_data.get("email")
+        rtn_user.given_name = jwt_data.get("given_name")
+        rtn_user.family_name = jwt_data.get("family_name")
+        rtn_user.password_hash = None
+
+        # Get custom attributes if present
+        if "custom_attributes" in jwt_data:
+            attributes = jwt_data['custom_attributes']
+            for each_name, each_value in attributes.items():
+                rtn_user[each_name] = each_value
+
+        # Handle OKTA groups/roles
+        rtn_user.UserRoleList = []
+        
+        # OKTA typically uses 'groups' claim for roles
+        role_names = []
+        if "groups" in jwt_data:
+            role_names = jwt_data["groups"]
+        elif "roles" in jwt_data:
+            role_names = jwt_data["roles"]
+        elif "authorities" in jwt_data:
+            role_names = jwt_data["authorities"]
+        
+        for each_role_name in role_names:
+            each_user_role = DotMapX()
+            each_user_role.role_name = each_role_name
+            rtn_user.UserRoleList.append(each_user_role)
+            
+        return rtn_user
+    
+    @staticmethod
+    def get_user(id: str, password: str = "") -> object:
+        """ Must return a row object or UserAndRole(DotMap) with attributes:
+        * name
+        * role_list: a list of row objects with attribute name
+
+        For OKTA, the password parameter contains the JWT token data.
+
+        Args:
+            id (str): the user login id
+            password (str, optional): for OKTA, this contains jwt_data
+
+        Returns:
+            object: row object is a SQLAlchemy row or DotMapX
+        """        
+        from config.config import Args  # circular import error if at top
+        
+        use_db = False
+        if use_db:  # old code - get user info from sqlite db
+            global db, session
+            if db is None:
+                db = safrs.DB         # Use the safrs.DB for database access
+                session = db.session  # sqlalchemy.orm.scoping.scoped_session
+        
+            user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one_or_none()
+            if user is None:
+                logger.info(f'*****\nauth_provider: Create user for: {id}\n*****\n')
+                user = session.query(authentication_models.User).first()
+                return user
+            logger.info(f'*****\nauth_provider: User: {user}\n*****\n')
+            return user
+        
+        # Get user/roles from OKTA JWT data
+        jwt_data: dict = password if isinstance(password, dict) else {}
+        rtn_user = Authentication_Provider.get_user_from_jwt(jwt_data)
+        return rtn_user
+
+    @staticmethod
+    def validate_okta_token(token: str) -> Optional[Dict[str, Any]]:
+        """
+        Validate an OKTA JWT token for ou.okta.com
         
         Args:
             token: JWT token to validate
@@ -178,148 +370,42 @@ class OktaToken:
         Returns:
             Claims dictionary or None if validation failed
         """
-        try:
-            # Decode token header to get kid
-            unverified_header = jwt.get_unverified_header(token)
-            kid = unverified_header.get("kid")
-            
-            if not kid:
-                raise ValueError("Token header missing 'kid' parameter")
-            
-            # Get key parameters
-            e, n = asyncio.run(self._get_key_parameters_async(self.domain, kid))
-            
-            if not e or not n:
-                raise ValueError("Could not retrieve key parameters")
-            
-            # Validate token using OktaAuthenticator equivalent
-            return self._validate_token_with_key_params(token, e, n)
-            
-        except Exception as e:
-            logging.error(f"Error validating PKCE token: {e}")
-            return None
-    
-    async def _get_key_parameters_async(self, domain: str, kid: str) -> Tuple[Optional[str], Optional[str]]:
-        """
-        Asynchronously get key parameters from Okta
-        
-        Args:
-            domain: Okta domain
-            kid: Key ID from token header
-            
-        Returns:
-            Tuple of (e, n) parameters or (None, None) if not found
-        """
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"{domain}/oauth2/v1/keys") as response:
-                    if response.status == 200:
-                        jwks_data = await response.json()
-                        
-                        for key in jwks_data.get("keys", []):
-                            if key.get("kid") == kid:
-                                return key.get("e"), key.get("n")
-                                
-        except Exception as e:
-            logging.error(f"Error getting key parameters: {e}")
-            
-        return None, None
-    
-    def _validate_token_with_key_params(self, token: str, e: str, n: str) -> Optional[Dict[str, Any]]:
-        """
-        Validate token using RSA key parameters (equivalent to OktaAuthenticator.ValidateToken)
-        
-        Args:
-            token: JWT token
-            e: RSA public exponent
-            n: RSA modulus
-            
-        Returns:
-            Claims dictionary or None if validation failed
-        """
-        try:
-            # Convert base64url encoded parameters to integers
-            from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicNumbers
-            
-            e_int = int.from_bytes(self._base64url_decode(e), 'big')
-            n_int = int.from_bytes(self._base64url_decode(n), 'big')
-            
-            # Create RSA public key
-            public_numbers = RSAPublicNumbers(e_int, n_int)
-            public_key = public_numbers.public_key(default_backend())
-            
-            # Validate and decode token
-            claims = jwt.decode(
-                token,
-                public_key,
-                algorithms=["RS256"],
-                issuer=f"{self.domain}/oauth2/default",
-                audience=self.client_id,
-                options={"verify_exp": True, "verify_iat": True}
-            )
-            
-            return claims
-            
-        except Exception as e:
-            logging.error(f"Error validating token with key params: {e}")
-            return None
-    
-    def validate_okta_token(self, token: str) -> Optional[Dict[str, Any]]:
-        """
-        Validate an Okta token using OpenID Connect discovery
-        
-        Args:
-            token: JWT token to validate
-            
-        Returns:
-            Claims dictionary or None if validation failed
-        """
-        issuer = f"{self.domain}/oauth2/default"
+        from config.config import Args
         
         try:
-            # Get OpenID Connect configuration
-            config_url = f"{issuer}/.well-known/oauth-authorization-server"
-            config_response = requests.get(config_url)
+            # Get OKTA's well-known configuration for ou.okta.com
+            issuer = f"{Args.instance.okta_domain}/oauth2/default"
+            config_url = f"{issuer}/.well-known/openid-configuration"
             
+            logger.info(f"Fetching OKTA configuration from: {config_url}")
+            
+            config_response = requests.get(config_url, timeout=10)
             if config_response.status_code != 200:
-                raise ValueError("Could not retrieve OpenID Connect configuration")
+                logger.error(f"Could not retrieve OKTA OpenID Connect configuration: {config_response.status_code}")
+                return None
             
             config_data = config_response.json()
             jwks_uri = config_data.get("jwks_uri")
             
             if not jwks_uri:
-                raise ValueError("JWKS URI not found in configuration")
+                logger.error("JWKS URI not found in OKTA configuration")
+                return None
+            
+            logger.info(f"Using JWKS URI: {jwks_uri}")
             
             # Get signing keys
-            jwks_response = requests.get(jwks_uri)
+            jwks_response = requests.get(jwks_uri, timeout=10)
             if jwks_response.status_code != 200:
-                raise ValueError("Could not retrieve JWKS")
+                logger.error(f"Could not retrieve JWKS from OKTA: {jwks_response.status_code}")
+                return None
             
             jwks_data = jwks_response.json()
             
-            # Validate token
-            return self._validate_token_with_jwks(token, issuer, jwks_data)
-            
-        except Exception as e:
-            logging.error(f"Error validating Okta token: {e}")
-            return None
-    
-    def _validate_token_with_jwks(self, token: str, issuer: str, jwks_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """
-        Validate token using JWKS data
-        
-        Args:
-            token: JWT token
-            issuer: Token issuer
-            jwks_data: JWKS data containing signing keys
-            
-        Returns:
-            Claims dictionary or None if validation failed
-        """
-        try:
             # Get the signing key
             unverified_header = jwt.get_unverified_header(token)
             kid = unverified_header.get("kid")
+            
+            logger.info(f"Looking for signing key with kid: {kid}")
             
             signing_key = None
             for key in jwks_data.get("keys", []):
@@ -328,52 +414,79 @@ class OktaToken:
                     break
             
             if not signing_key:
-                raise ValueError("Signing key not found")
+                logger.error(f"Signing key not found in OKTA JWKS for kid: {kid}")
+                available_kids = [k.get("kid") for k in jwks_data.get("keys", [])]
+                logger.error(f"Available key IDs: {available_kids}")
+                return None
             
             # Convert JWK to PEM format for PyJWT
-            from jwt.algorithms import RSAAlgorithm
             public_key = RSAAlgorithm.from_jwk(signing_key)
             
-            # Validate token
+            # Validate token with more flexible options for ou.okta.com
             claims = jwt.decode(
                 token,
                 public_key,
                 algorithms=["RS256"],
                 issuer=issuer,
+                # audience=Args.instance.okta_client_id,  # May need to be more flexible
                 options={
                     "verify_exp": True,
                     "verify_iat": True,
-                    "verify_aud": False  # Set to False as mentioned in C# comment
+                    "verify_aud": False,  # Set to False for more flexibility with ou.okta.com
+                    "verify_iss": True
                 },
-                leeway=timedelta(minutes=2)  # Clock skew allowance
+                leeway=timedelta(minutes=5)  # Increased clock skew allowance
             )
             
+            logger.info(f"Successfully validated OKTA token for user: {claims.get('sub', 'unknown')}")
             return claims
             
-        except Exception as e:
-            logging.error(f"Error validating token with JWKS: {e}")
+        except jwt.ExpiredSignatureError:
+            logger.error("OKTA token has expired")
             return None
-    
+        except jwt.InvalidTokenError as e:
+            logger.error(f"Invalid OKTA token: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Error validating OKTA token: {e}")
+            return None
+
     @staticmethod
-    def _base64url_decode(data: str) -> bytes:
+    def check_password(user: object, password: str) -> bool:
         """
-        Decode base64url encoded data
+        For OKTA provider, password check is handled via JWT token validation
         
         Args:
-            data: Base64url encoded string
+            user (object): DotMap or SQLAlchemy row containing user info
+            password (str): Not used for OKTA (token validation handled elsewhere)
+
+        Returns:
+            bool: Always True for OKTA (validation done at token level)
+        """
+        return True
+
+    @staticmethod
+    def get_sso_login_url() -> str:
+        """
+        Get the OKTA SSO login URL for redirecting users
+        
+        Returns:
+            SSO login URL
+        """
+        from flask import request
+        from config.config import Args
+        return f"{request.host_url}auth/login"
+    
+    @staticmethod
+    def is_authenticated(request) -> bool:
+        """
+        Check if the current request is authenticated
+        
+        Args:
+            request: Flask request object
             
         Returns:
-            Decoded bytes
+            bool: True if authenticated, False otherwise
         """
-        # Add padding if necessary
-        padding = 4 - (len(data) % 4)
-        if padding != 4:
-            data += '=' * padding
-        
-        return base64.urlsafe_b64decode(data)
-
-
-# Utility functions (equivalent to Utils.cs functionality)
-def not_blank(value: str) -> bool:
-    """Check if string is not None and not empty/whitespace"""
-    return value is not None and value.strip() != ""
+        from flask import session
+        return 'user_id' in session and 'access_token' in session
