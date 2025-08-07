@@ -1,14 +1,15 @@
 ---
 include:
-  - AchAuthToken
-  - AchPlaidLambdaResponse
-  - AchStripePayment
+  - AchAuthToken.*
+  - AchPlaidLambdaResponse.*
+  - AchStripePayment.*
   - ASSIGNED_MASHGIACH.*
   - ASSIGNED_MASHGIACH_TB.*
-  - BarCode
-  - Billing
-  - CHANGESET
+  - BarCode.*
+  - Billing.*
+  - CHANGESET.*
   - CO_PRIVATE_LABEL_FEE_DETAIL
+  - CODE_TB.*
   - COMPANY_ADDRESS.*
   - CompanyContacts.*
   - COMPANY_ADDRESS_TB.*
@@ -27,7 +28,7 @@ include:
   - CompanyPlantOptions.*
   - CoPackerFacilities.*
   - COST_SHEET_INFO.*
-  - Documents
+  - Documents.*
   - FormulaComponents.*
   - FormulaProduct.*
   - FormulaSubmissionComponents.*

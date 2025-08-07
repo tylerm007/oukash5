@@ -46,6 +46,130 @@ else:
 
 
 
+t_ASSIGNED_MASHGIACH = Table(
+    'ASSIGNED_MASHGIACH', metadata,
+    Column('ID', Integer, nullable=False),
+    Column('PLANT_ID', Integer, nullable=False),
+    Column('PERSON_JOB_ID', Integer),
+    Column('START_DATE', DateTime),
+    Column('END_DATE', DateTime),
+    Column('VIST_TYPE', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('OnSiteVisits', TINYINT, nullable=False),
+    Column('VirtualVisits', TINYINT, nullable=False),
+    Column('IsDaily', Boolean, nullable=False),
+    Column('IsAsNeeded', Boolean, nullable=False),
+    Column('SEASONAL_START', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SEASONAL_END', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TIMESTAMP', DateTime),
+    Column('OWNS_ID', Integer, nullable=False),
+    Column('company_id', Integer, nullable=False),
+    Column('OwnsStatus', String(40, 'SQL_Latin1_General_CP1_CI_AS'))
+)
+
+
+t_ASSIGNED_MASHGIACH_OLD = Table(
+    'ASSIGNED_MASHGIACH_OLD', metadata,
+    Column('ID', Integer, nullable=False),
+    Column('PLANT_ID', Integer, nullable=False),
+    Column('PERSON_JOB_ID', Integer, nullable=False),
+    Column('START_DATE', DateTime),
+    Column('END_DATE', DateTime),
+    Column('VIST_TYPE', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD1', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD2', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD3', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD_SEASONAL', String(10, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SEASONAL_START', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SEASONAL_END', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DESIGNATED_MASHGIACH_FLAG', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TIMESTAMP', BINARY(8)),
+    Column('DESIGNATED_MASHGIACH', String(150, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('OWNS_ID', Integer),
+    Column('company_id', Integer, nullable=False)
+)
+
+
+class ASSIGNEDMASHGIACHTB(Base):  # type: ignore
+    __tablename__ = 'ASSIGNED_MASHGIACH_TB'
+    _s_collection_name = 'ASSIGNEDMASHGIACHTB'  # type: ignore
+
+    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    PLANT_ID = Column(Integer)
+    PERSON_JOB_ID = Column(Integer)
+    START_DATE = Column(DateTime)
+    END_DATE = Column(DateTime)
+    VIST_TYPE = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'))
+    VISIT_PERIOD1 = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'))
+    VISIT_PERIOD2 = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'))
+    VISIT_PERIOD3 = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'))
+    VISIT_PERIOD_SEASONAL = Column(String(1, 'SQL_Latin1_General_CP1_CI_AS'))
+    SEASONAL_START = Column(String(3, 'SQL_Latin1_General_CP1_CI_AS'))
+    SEASONAL_END = Column(String(3, 'SQL_Latin1_General_CP1_CI_AS'))
+    DESIGNATED_MASHGIACH_FLAG = Column(String(1, 'SQL_Latin1_General_CP1_CI_AS'))
+    ACTIVE = Column(Integer)
+    DESIGNATED_MASHGIACH = Column(String(150, 'SQL_Latin1_General_CP1_CI_AS'))
+    OWNS_ID = Column(Integer)
+    company_id = Column(Integer)
+    TimestampDateTime = Column(DateTime)
+    Timestamp = Column(DateTime)
+    CreatedBy = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'))
+    CreatedDate = Column(DateTime)
+    Discriminator = Column(String(1, 'SQL_Latin1_General_CP1_CI_AS'))
+    Zone = Column(String(10, 'SQL_Latin1_General_CP1_CI_AS'))
+    ValidFromTime = Column(DATETIME2, nullable=False)
+    ValidToTime = Column(DATETIME2, nullable=False)
+    CHANGESET_ID = Column(Integer)
+    OnSiteVisits = Column(TINYINT, nullable=False)
+    VirtualVisits = Column(TINYINT, nullable=False)
+    IsDaily = Column(Boolean, nullable=False)
+    IsAsNeeded = Column(Boolean, nullable=False)
+    SeasonalStart = Column(TINYINT, server_default=text("((1))"), nullable=False)
+    SeasonalEnd = Column(TINYINT, server_default=text("((12))"), nullable=False)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
+
+
+t_ASSIGNED_MASHGIACH_TB_history_temporal = Table(
+    'ASSIGNED_MASHGIACH_TB_history_temporal', metadata,
+    Column('ID', Integer, nullable=False),
+    Column('PLANT_ID', Integer),
+    Column('PERSON_JOB_ID', Integer),
+    Column('START_DATE', DateTime),
+    Column('END_DATE', DateTime),
+    Column('VIST_TYPE', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD1', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD2', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD3', String(20, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('VISIT_PERIOD_SEASONAL', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SEASONAL_START', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SEASONAL_END', String(3, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DESIGNATED_MASHGIACH_FLAG', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ACTIVE', Integer),
+    Column('DESIGNATED_MASHGIACH', String(150, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('OWNS_ID', Integer),
+    Column('company_id', Integer),
+    Column('TimestampDateTime', DateTime),
+    Column('Timestamp', DateTime),
+    Column('CreatedBy', String(100, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('CreatedDate', DateTime),
+    Column('Discriminator', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Zone', String(10, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ValidFromTime', DATETIME2, nullable=False),
+    Column('ValidToTime', DATETIME2, nullable=False),
+    Column('CHANGESET_ID', Integer),
+    Column('OnSiteVisits', TINYINT, nullable=False),
+    Column('VirtualVisits', TINYINT, nullable=False),
+    Column('IsDaily', Boolean, nullable=False),
+    Column('IsAsNeeded', Boolean, nullable=False),
+    Column('SeasonalStart', TINYINT, server_default=text("((1))"), nullable=False),
+    Column('SeasonalEnd', TINYINT, server_default=text("((12))"), nullable=False),
+    Index('ASSIGNED_MASHGIACH_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
+)
+
+
 t_AchAuthToken_history_temporal = Table(
     'AchAuthToken_history_temporal', metadata,
     Column('company_id', Integer, nullable=False),
@@ -137,6 +261,44 @@ t_Billing_history_temporal = Table(
     Column('OWNS_ID', Integer),
     Column('PFSO_ID', Integer),
     Index('ix_Billing_history_temporal', 'ValidFromTime', 'ValidToTime')
+)
+
+
+t_CODE_TB_history_temporal = Table(
+    'CODE_TB_history_temporal', metadata,
+    Column('CodeId', Integer, nullable=False, index=True),
+    Column('TABLE_NAME', String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('FIELD_NAME', String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('VALUE_SEQ_NUM', SmallInteger),
+    Column('FIELD_VALUE', String(500, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('VALUE_DESCRIPTION', String(255, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PERSON_ID', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TIMESTAMP', DateTime),
+    Column('ACTIVE', Integer),
+    Column('AdditionalParameters', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('IsDefaultValue', Boolean),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
+    Column('CHANGESET_ID', Integer, index=True),
+    Index('CODE_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
+)
+
+
+t_COMPANY_ADDRESS = Table(
+    'COMPANY_ADDRESS', metadata,
+    Column('ID', Integer, nullable=False),
+    Column('COMPANY_ID', Integer, nullable=False),
+    Column('ADDRESS_SEQ_NUM', Integer, nullable=False),
+    Column('TYPE', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ATTN', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET3', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('CITY', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STATE', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ZIP', String(18, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('COUNTRY', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TIMESTAMP', BINARY(8))
 )
 
 
@@ -379,6 +541,62 @@ t_CoPackerFacilities_history_temporal = Table(
     Column('ValidToTime', DATETIME2, nullable=False),
     Column('CHANGESET_ID', Integer),
     Index('ix_CoPackerFacilities_history_temporal', 'ValidFromTime', 'ValidToTime')
+)
+
+
+t_CompanyContacts = Table(
+    'CompanyContacts', metadata,
+    Column('ccID', Integer, nullable=False),
+    Column('companytitle', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Company_ID', Integer),
+    Column('Title', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('FirstName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('LastName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Voice', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Fax', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('EMail', String(100, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Cell', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PrimaryCT', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('BillingCT', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('WebCT', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('OtherCT', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('EnteredBy', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DateEntered', SMALLDATETIME),
+    Column('ModifiedBy', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DateModified', DateTime),
+    Column('Active', SmallInteger),
+    Column('OtherInfo', String(100, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('StatementType', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('InvoiceType', String(1, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('LOAtype', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('EIREmail', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ScheduleBEmail', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('FormulaEmail', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('UserVendorID', String(200, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('UsedInComment', String(500, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ContactID', Integer, nullable=False)
+)
+
+
+t_CompanyContactsAndAddresses = Table(
+    'CompanyContactsAndAddresses', metadata,
+    Column('Company', String(120, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('Industry', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Status', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('RC', String(255, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('CompanyTitle', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Title', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('FirstName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('LastName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Voice', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Fax', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Email', String(100, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ContactType', String(23, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('Street1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Street2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('City', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('State', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('Zip', String(18, 'SQL_Latin1_General_CP1_CI_AS'))
 )
 
 
@@ -696,7 +914,7 @@ t_PERSON_ADDRESS_TB_history_temporal = Table(
     Index('PERSON_ADDRESS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
 
-'''
+
 class PERSONJOBSTATUSTB(Base):  # type: ignore
     __tablename__ = 'PERSON_JOB_STATUS_TB'
     _s_collection_name = 'PERSONJOBSTATUSTB'  # type: ignore
@@ -868,6 +1086,45 @@ t_PERSON_TB_history_temporal = Table(
     Column('IsBillForMileageDifferential', Boolean, nullable=False),
     Column('AllowCopackerManagement', Boolean),
     Index('PERSON_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
+)
+
+
+t_PLANT = Table(
+    'PLANT', metadata,
+    Column('PLANT_ID', Integer, nullable=False),
+    Column('NAME', String(80, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('GP_NOTIFY', Boolean),
+    Column('MULTILINES', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PASSOVER', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('SPECIAL_PROD', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('JEWISH_OWNED', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PLANT_TYPE', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PLANT_DIRECTIONS', String(800, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('USDA_CODE', String(15, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PlantUID', String(75, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DoNotAttach', String(1, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('OtherCertification', String(500, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('PrimaryCompany', Integer),
+    Column('DesignatedRFR', Integer)
+)
+
+
+t_PLANT_ADDRESS = Table(
+    'PLANT_ADDRESS', metadata,
+    Column('ID', Integer, server_default=text("0"), nullable=False),
+    Column('PLANT_ID', Integer, nullable=False),
+    Column('ADDRESS_SEQ_NUM', Integer, nullable=False),
+    Column('TYPE', String(40, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
+    Column('ATTN', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STREET3', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('CITY', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('STATE', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('ZIP', String(15, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('COUNTRY', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TIMESTAMP', BINARY(8)),
+    Column('COMPANY_ID', Integer)
 )
 
 
@@ -1549,6 +1806,31 @@ t_produced_in1_tb_history_temporal = Table(
     Index('produced_in1_tb_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime'),
     Index('produced_in1_tb_history_temporal_ID_ACTIVE_INDEX', 'ID', 'ACTIVE')
 )
+
+
+class CODETB(Base):  # type: ignore
+    __tablename__ = 'CODE_TB'
+    _s_collection_name = 'CODETB'  # type: ignore
+
+    CodeId = Column(Integer, server_default=text("0"), primary_key=True)
+    TABLE_NAME = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, index=True)
+    FIELD_NAME = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    VALUE_SEQ_NUM = Column(SmallInteger)
+    FIELD_VALUE = Column(String(500, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    VALUE_DESCRIPTION = Column(String(255, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    PERSON_ID = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    TIMESTAMP = Column(DateTime)
+    ACTIVE = Column(Integer, server_default=text("((1))"))
+    AdditionalParameters = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    IsDefaultValue = Column(Boolean, server_default=text("((0))"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
 
 
 class COMPANYTB(Base):  # type: ignore
@@ -2301,6 +2583,7 @@ class PLANTTB(Base):  # type: ignore
     PLANTCOMMENTList : Mapped[List["PLANTCOMMENT"]] = relationship(back_populates="PLANT_TB")
     PLANTFEECOMMENTList : Mapped[List["PLANTFEECOMMENT"]] = relationship(back_populates="PLANT_TB")
     PLANTFEESTRUCTUREOUTList : Mapped[List["PLANTFEESTRUCTUREOUT"]] = relationship(back_populates="PLANT_TB")
+    PLANTOTHERNAMEList : Mapped[List["PLANTOTHERNAME"]] = relationship(back_populates="PLANT_TB")
     PRIVATELABELBILLList : Mapped[List["PRIVATELABELBILL"]] = relationship(back_populates="PLANT_TB")
     VISITList : Mapped[List["VISIT"]] = relationship(back_populates="PLANT_TB")
     CompanyPlantOptionList : Mapped[List["CompanyPlantOption"]] = relationship(back_populates="Plant")
@@ -2783,6 +3066,7 @@ class OWNSTB(Base):  # type: ignore
     CompanyPlantOptionList : Mapped[List["CompanyPlantOption"]] = relationship(back_populates="OWNS_TB")
     PLANTFEESTRUCTUREList : Mapped[List["PLANTFEESTRUCTURE"]] = relationship(back_populates="OWNS_TB")
     PLANTHOLDTBList : Mapped[List["PLANTHOLDTB"]] = relationship(back_populates="OWNS_TB")
+    PLANTSTATUSTBList : Mapped[List["PLANTSTATUSTB"]] = relationship(back_populates="OWNS_TB")
     PurchaseOrderList : Mapped[List["PurchaseOrder"]] = relationship(back_populates="OWNS_TB")
     ThirdPartyBillingCompanyList : Mapped[List["ThirdPartyBillingCompany"]] = relationship(back_populates="OWNS_TB")
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="OWNS_TB")
@@ -2984,6 +3268,26 @@ class PLANTFEESTRUCTUREOUT(Base):  # type: ignore
 
     # child relationships (access children)
     BillingList : Mapped[List["Billing"]] = relationship(back_populates="PLANT_FEE_STRUCTURE_OUT")
+
+
+
+class PLANTOTHERNAME(Base):  # type: ignore
+    __tablename__ = 'PLANT_OTHER_NAMES'
+    _s_collection_name = 'PLANTOTHERNAME'  # type: ignore
+    __table_args__ = (
+        Index('XPKPLANT_OTHER_NAMES', 'PLANT_ID', 'ALIAS_ID'),
+    )
+
+    ID = Column(Integer)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
+    ALIAS_ID = Column(Integer, primary_key=True)
+    TIMESTAMP = Column(BINARY(8))
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+    PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("PLANTOTHERNAMEList"))
+
+    # child relationships (access children)
 
 
 
@@ -3403,6 +3707,55 @@ class PLANTHOLDTB(Base):  # type: ignore
 
 
 
+t_PLANT_INSPECTION_TB = Table(
+    'PLANT_INSPECTION_TB', metadata,
+    Column('COMPANY_ID', Integer, nullable=False),
+    Column('PLANT_ID', Integer, nullable=False),
+    Column('OWNS_ID', ForeignKey('OWNS_TB.ID')),
+    Column('QUESTION_ID', Float(24), nullable=False),
+    Column('DESCRIPTION', String(255, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('WHO', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('DATE_POSTED', DateTime),
+    Column('ID', Integer, nullable=False),
+    Column('ACTIVE', Integer),
+    Index('PLANT_INSPECTION_1', 'COMPANY_ID', 'PLANT_ID', 'ID')
+)
+
+
+class PLANTSTATUSTB(Base):  # type: ignore
+    __tablename__ = 'PLANT_STATUS_TB'
+    _s_collection_name = 'PLANTSTATUSTB'  # type: ignore
+    __table_args__ = (
+        Index('PlantCompanyStatusSeqNum', 'OwnsID', 'COMPANY_ID', 'PLANT_ID', 'ACTIVE'),
+        Index('ID', 'COMPANY_ID', 'PLANT_ID', 'ID'),
+        Index('XPKPLANT_STATUS', 'ID', 'COMPANY_ID', 'PLANT_ID', 'STATUS', 'START_DATE', 'ACTIVE', 'DateDone', 'OwnsID', unique=True)
+    )
+
+    ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
+    COMPANY_ID = Column(Integer, nullable=False)
+    PLANT_ID = Column(Integer, nullable=False)
+    ROLE = Column(String(1, 'SQL_Latin1_General_CP1_CI_AS'))
+    STATUS = Column(String(25, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    START_DATE = Column(DateTime)
+    START_PERSON_ID = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"), nullable=False)
+    START_REASON = Column(String(120, 'SQL_Latin1_General_CP1_CI_AS'))
+    END_DATE = Column(DateTime)
+    END_PERSON_ID = Column(String(80, 'SQL_Latin1_General_CP1_CI_AS'))
+    END_REASON = Column(String(80, 'SQL_Latin1_General_CP1_CI_AS'))
+    ACTIVE = Column(Integer)
+    DateDone = Column(SMALLDATETIME, server_default=text("(getdate())"))
+    OwnsID = Column(ForeignKey('OWNS_TB.ID'), server_default=text("((0))"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+
+    # parent relationships (access parent)
+    OWNS_TB : Mapped["OWNSTB"] = relationship(back_populates=("PLANTSTATUSTBList"))
+
+    # child relationships (access children)
+
+
+
 class PurchaseOrder(Base):  # type: ignore
     __tablename__ = 'PurchaseOrder'
     _s_collection_name = 'PurchaseOrder'  # type: ignore
@@ -3621,4 +3974,3 @@ class ProductJobLineItem(Base):  # type: ignore
     pr : Mapped["ProducedIn1Tb"] = relationship(back_populates=("ProductJobLineItemList"))
 
     # child relationships (access children)
-'''

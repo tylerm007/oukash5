@@ -5,10 +5,64 @@ about:
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 98
-  number_tables: 62
+  number_relationships: 100
+  number_tables: 66
 info_toggle_checked: true
 resources:
+  ASSIGNEDMASHGIACHTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: VIST_TYPE
+    - name: VISIT_PERIOD1
+    - name: VISIT_PERIOD2
+    - name: VISIT_PERIOD3
+    - name: VISIT_PERIOD_SEASONAL
+    - name: SEASONAL_START
+    - name: DESIGNATED_MASHGIACH_FLAG
+    - name: ACTIVE
+    - name: DESIGNATED_MASHGIACH
+    - name: TimestampDateTime
+      type: DATETIME
+    - name: Timestamp
+      type: DATETIME
+    - name: CreatedBy
+    - name: CreatedDate
+      type: DATETIME
+    - name: Discriminator
+    - name: Zone
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: OnSiteVisits
+      required: true
+    - name: VirtualVisits
+      required: true
+    - name: IsDaily
+      required: true
+      type: Boolean
+    - name: SeasonalStart
+      required: true
+    - name: PLANT_ID
+    - name: PERSON_JOB_ID
+    - name: SEASONAL_END
+    - name: OWNS_ID
+    - name: company_id
+    - name: CHANGESET_ID
+    - name: IsAsNeeded
+      required: true
+      type: Boolean
+    - name: SeasonalEnd
+      required: true
+    type: ASSIGNEDMASHGIACHTB
+    user_key: ID
   AchAuthToken:
     attributes:
     - label: ' institution Name*'
@@ -208,6 +262,34 @@ resources:
       resource: PLANTFEESTRUCTUREOUT
     type: Billing
     user_key: Id
+  CODETB:
+    attributes:
+    - label: ' T A B L E_ N A M E*'
+      name: TABLE_NAME
+      required: true
+      search: true
+      sort: true
+    - name: FIELD_NAME
+      required: true
+    - name: VALUE_SEQ_NUM
+    - name: FIELD_VALUE
+      required: true
+    - name: VALUE_DESCRIPTION
+    - name: TIMESTAMP
+      type: DATETIME
+    - name: ACTIVE
+    - name: AdditionalParameters
+    - name: IsDefaultValue
+      type: Boolean
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: CodeId
+    - name: PERSON_ID
+    - name: CHANGESET_ID
+    type: CODETB
+    user_key: TABLE_NAME
   COMPANYADDRESSTB:
     attributes:
     - label: ' I D*'
@@ -1661,6 +1743,11 @@ resources:
       resource: PLANTHOLDTB
     - direction: tomany
       fks:
+      - OwnsID
+      name: PLANTSTATUSTBList
+      resource: PLANTSTATUSTB
+    - direction: tomany
+      fks:
       - OWNS_ID
       name: ProducedIn1TbList
       resource: ProducedIn1Tb
@@ -2305,6 +2392,61 @@ resources:
       resource: PLANTTB
     type: PLANTHOLDTB
     user_key: ID
+  PLANTOTHERNAME:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: PLANT_ID
+    - name: TIMESTAMP
+    - name: ALIAS_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTOTHERNAME
+    user_key: ID
+  PLANTSTATUSTB:
+    attributes:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+    - name: OwnsID
+    - name: ROLE
+    - name: STATUS
+      required: true
+    - name: START_DATE
+      type: DATETIME
+    - name: START_REASON
+    - name: END_DATE
+      type: DATETIME
+    - name: END_REASON
+    - name: ACTIVE
+    - name: DateDone
+    - name: ValidFromTime
+      required: true
+    - name: ValidToTime
+      required: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+      required: true
+    - name: START_PERSON_ID
+      required: true
+    - name: END_PERSON_ID
+    - name: CHANGESET_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - OwnsID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: PLANTSTATUSTB
+    user_key: ID
   PLANTTB:
     attributes:
     - label: ' N A M E*'
@@ -2393,6 +2535,11 @@ resources:
       - PLANT_ID
       name: PLANTHOLDTBList
       resource: PLANTHOLDTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTOTHERNAMEList
+      resource: PLANTOTHERNAME
     - direction: tomany
       fks:
       - BILL_TO_PLANT_ID

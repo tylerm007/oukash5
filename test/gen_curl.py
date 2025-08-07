@@ -16,16 +16,18 @@ logger = logging.getLogger(__name__)
 
 # Base API URL
 BASE_URL = "http://localhost:5656/api"
-BASE_URL = "http://172.30.3.133:5656/api"
+# BASE_URL = "http://172.30.3.133:5656/api"
 
 # List of all API endpoints (collection names from models.py)
 API_ENDPOINTS = [
     "AchAuthToken",
+    "ASSIGNEDMASHGIACHTB",
     "AchPlaidLambdaResponse", 
     "AchStripePayment",
     "AchStripePaymentDetail",
     "BarCode",
     "Billing",
+    "CODETB",
     "CompanyPlantOption",
     "CompanycontactsTb",
     "COMPANYADDRESSTB",
@@ -103,7 +105,7 @@ class APITester:
         Returns:
             Dictionary with test results
         """
-        url = f"{self.base_url}/{endpoint}"
+        url = f"{self.base_url}/{endpoint}?page[limit]=1"
         result = {
             "endpoint": endpoint,
             "url": url,

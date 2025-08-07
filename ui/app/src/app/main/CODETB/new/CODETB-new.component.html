@@ -1,0 +1,42 @@
+<o-form #CODETBForm attr="CODETB_form_insert" service="CODETB" entity="CODETB"
+keys="CodeId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #TABLE_NAME attr="TABLE_NAME" label=" T A B L E_ N A M E" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #FIELD_NAME attr="FIELD_NAME" label="FIELD_NAME" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #VALUE_SEQ_NUM attr="VALUE_SEQ_NUM" label="VALUE_SEQ_NUM" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #FIELD_VALUE attr="FIELD_VALUE" label="FIELD_VALUE" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #VALUE_DESCRIPTION attr="VALUE_DESCRIPTION" label="VALUE_DESCRIPTION" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #TIMESTAMP attr="TIMESTAMP" value-type="string" label="TIMESTAMP" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #ACTIVE attr="ACTIVE" label="ACTIVE" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AdditionalParameters attr="AdditionalParameters" label="AdditionalParameters" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #IsDefaultValue attr="IsDefaultValue" label="IsDefaultValue" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #ValidFromTime attr="ValidFromTime" label="ValidFromTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidToTime attr="ValidToTime" label="ValidToTime" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CodeId attr="CodeId" label="CodeId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #PERSON_ID attr="PERSON_ID" label="PERSON_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CHANGESET_ID attr="CHANGESET_ID" label="CHANGESET_ID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

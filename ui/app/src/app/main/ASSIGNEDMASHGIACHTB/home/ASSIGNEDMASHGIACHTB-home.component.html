@@ -1,0 +1,99 @@
+<o-form-layout-manager attr="ASSIGNEDMASHGIACHTB" mode="dialog" title="ASSIGNEDMASHGIACHTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ASSIGNEDMASHGIACHTBTable" 
+            service="ASSIGNEDMASHGIACHTB" 
+            entity="ASSIGNEDMASHGIACHTB" 
+            title="ASSIGNEDMASHGIACHTB"
+            keys="ID"
+            columns="ID;START_DATE;END_DATE;VIST_TYPE;VISIT_PERIOD1;VISIT_PERIOD2;VISIT_PERIOD3;VISIT_PERIOD_SEASONAL;SEASONAL_START;DESIGNATED_MASHGIACH_FLAG;ACTIVE;DESIGNATED_MASHGIACH;TimestampDateTime;Timestamp;CreatedBy;CreatedDate;Discriminator;Zone;ValidFromTime;ValidToTime;OnSiteVisits;VirtualVisits;IsDaily;SeasonalStart;PLANT_ID;PERSON_JOB_ID;SEASONAL_END;OWNS_ID;company_id;CHANGESET_ID;IsAsNeeded;SeasonalEnd" 
+            header-actions="R;D"
+            visible-columns="ID;START_DATE;END_DATE;VIST_TYPE;VISIT_PERIOD1;VISIT_PERIOD2;VISIT_PERIOD3;VISIT_PERIOD_SEASONAL;SEASONAL_START;DESIGNATED_MASHGIACH_FLAG;ACTIVE;DESIGNATED_MASHGIACH;TimestampDateTime;Timestamp;CreatedBy;CreatedDate;Discriminator;Zone;ValidFromTime;ValidToTime;OnSiteVisits;VirtualVisits;IsDaily;SeasonalStart;PLANT_ID;PERSON_JOB_ID;SEASONAL_END;OWNS_ID;company_id;CHANGESET_ID;IsAsNeeded;SeasonalEnd"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #START_DATE attr="START_DATE" title="START_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #END_DATE attr="END_DATE" title="END_DATE" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #VIST_TYPE attr="VIST_TYPE" title="VIST_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_PERIOD1 attr="VISIT_PERIOD1" title="VISIT_PERIOD1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_PERIOD2 attr="VISIT_PERIOD2" title="VISIT_PERIOD2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_PERIOD3 attr="VISIT_PERIOD3" title="VISIT_PERIOD3" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #VISIT_PERIOD_SEASONAL attr="VISIT_PERIOD_SEASONAL" title="VISIT_PERIOD_SEASONAL" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SEASONAL_START attr="SEASONAL_START" title="SEASONAL_START" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #DESIGNATED_MASHGIACH_FLAG attr="DESIGNATED_MASHGIACH_FLAG" title="DESIGNATED_MASHGIACH_FLAG" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #DESIGNATED_MASHGIACH attr="DESIGNATED_MASHGIACH" title="DESIGNATED_MASHGIACH" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TimestampDateTime attr="TimestampDateTime" title="TimestampDateTime" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Timestamp attr="Timestamp" title="Timestamp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #Discriminator attr="Discriminator" title="Discriminator" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Zone attr="Zone" title="Zone" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #OnSiteVisits attr="OnSiteVisits" title="OnSiteVisits" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #VirtualVisits attr="VirtualVisits" title="VirtualVisits" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsDaily" title="IsDaily">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #SeasonalStart attr="SeasonalStart" title="SeasonalStart" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #PLANT_ID attr="PLANT_ID" title="PLANT_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PERSON_JOB_ID attr="PERSON_JOB_ID" title="PERSON_JOB_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #SEASONAL_END attr="SEASONAL_END" title="SEASONAL_END" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OWNS_ID attr="OWNS_ID" title="OWNS_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #company_id attr="company_id" title="company_id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsAsNeeded" title="IsAsNeeded">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #SeasonalEnd attr="SeasonalEnd" title="SeasonalEnd" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

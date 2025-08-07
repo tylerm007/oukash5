@@ -10,6 +10,11 @@ This is an **auto-generated microservice** created by [API Logic Server](https:/
 - **Security Framework** - Authentication and authorization
 - **Swagger Documentation** - Interactive API docs
 
+
+## Create SQL Server project with Include files
+'''
+ genai-logic create --project-name=oukash6 --db-url="mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no" --include_tables=include_files.yml
+'''
 ## Quick Start
 
 ```bash

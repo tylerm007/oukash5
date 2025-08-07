@@ -1,0 +1,60 @@
+<o-form-layout-manager attr="CODETB" mode="dialog" title="CODETB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CODETBTable" 
+            service="CODETB" 
+            entity="CODETB" 
+            title="CODETB"
+            keys="CodeId"
+            columns="TABLE_NAME;FIELD_NAME;VALUE_SEQ_NUM;FIELD_VALUE;VALUE_DESCRIPTION;TIMESTAMP;ACTIVE;AdditionalParameters;IsDefaultValue;ValidFromTime;ValidToTime;CodeId;PERSON_ID;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="TABLE_NAME;FIELD_NAME;VALUE_SEQ_NUM;FIELD_VALUE;VALUE_DESCRIPTION;TIMESTAMP;ACTIVE;AdditionalParameters;IsDefaultValue;ValidFromTime;ValidToTime;CodeId;PERSON_ID;CHANGESET_ID"  
+            sort-columns="TABLE_NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #TABLE_NAME attr="TABLE_NAME" title=" T A B L E_ N A M E" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #FIELD_NAME attr="FIELD_NAME" title="FIELD_NAME" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #VALUE_SEQ_NUM attr="VALUE_SEQ_NUM" title="VALUE_SEQ_NUM" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #FIELD_VALUE attr="FIELD_VALUE" title="FIELD_VALUE" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #VALUE_DESCRIPTION attr="VALUE_DESCRIPTION" title="VALUE_DESCRIPTION" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #AdditionalParameters attr="AdditionalParameters" title="AdditionalParameters" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsDefaultValue" title="IsDefaultValue">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CodeId attr="CodeId" title="CodeId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PERSON_ID attr="PERSON_ID" title="PERSON_ID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

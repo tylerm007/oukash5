@@ -1,5 +1,5 @@
 about:
-  date: July 28, 2025 14:48:19
+  date: August 07, 2025 11:35:26
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -10,6 +10,36 @@ application:
       data:
         icon: edit_square
         menu_item:
+          ASSIGNEDMASHGIACHTB:
+            icon: edit_square
+            menu_name: ASSIGNEDMASHGIACHTB
+            menu_title: ASSIGNEDMASHGIACHTB
+            page:
+              detail:
+                columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: ASSIGNEDMASHGIACHTB
+                typescript_name: detail_component.jinja
+                visible_columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+              home:
+                columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: ASSIGNEDMASHGIACHTB
+                typescript_name: home_template.jinja
+                visible_columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+              new:
+                columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: ASSIGNEDMASHGIACHTB
+                typescript_name: new_component.jinja
+                visible_columns: ID,START_DATE,END_DATE,VIST_TYPE,VISIT_PERIOD1,VISIT_PERIOD2,VISIT_PERIOD3,VISIT_PERIOD_SEASONAL,SEASONAL_START,DESIGNATED_MASHGIACH_FLAG,ACTIVE,DESIGNATED_MASHGIACH,TimestampDateTime,Timestamp,CreatedBy,CreatedDate,Discriminator,Zone,ValidFromTime,ValidToTime,OnSiteVisits,VirtualVisits,IsDaily,SeasonalStart,PLANT_ID,PERSON_JOB_ID,SEASONAL_END,OWNS_ID,company_id,CHANGESET_ID,IsAsNeeded,SeasonalEnd
+            template_name: module.jinja
           AchAuthToken:
             icon: edit_square
             menu_name: AchAuthToken
@@ -189,6 +219,36 @@ application:
                 title: Billing
                 typescript_name: new_component.jinja
                 visible_columns: Id,COMPANY_ID,OWNS_ID,PFSO_ID,VisitType,PayType,Amount,VirtualAmount,ValidFromTime,ValidToTime,Kind,CHANGESET_ID
+            template_name: module.jinja
+          CODETB:
+            icon: edit_square
+            menu_name: CODETB
+            menu_title: CODETB
+            page:
+              detail:
+                columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CODETB
+                typescript_name: detail_component.jinja
+                visible_columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
+              home:
+                columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CODETB
+                typescript_name: home_template.jinja
+                visible_columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
+              new:
+                columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CODETB
+                typescript_name: new_component.jinja
+                visible_columns: TABLE_NAME,FIELD_NAME,VALUE_SEQ_NUM,FIELD_VALUE,VALUE_DESCRIPTION,TIMESTAMP,ACTIVE,AdditionalParameters,IsDefaultValue,ValidFromTime,ValidToTime,CodeId,PERSON_ID,CHANGESET_ID
             template_name: module.jinja
           COMPANYADDRESSTB:
             icon: edit_square
@@ -1450,6 +1510,66 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: ID,COMPANY_ID,OwnsID,PLANT_ID,HOLD_SEQ_NUM,HOLD_TYPE,START_DATE,START_REASON,END_DATE,END_REASON,TIMESTAMP,ACTIVE,ValidFromTime,ValidToTime,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
             template_name: module.jinja
+          PLANTOTHERNAME:
+            icon: edit_square
+            menu_name: PLANTOTHERNAME
+            menu_title: PLANTOTHERNAME
+            page:
+              detail:
+                columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: PLANTOTHERNAME
+                typescript_name: detail_component.jinja
+                visible_columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+              home:
+                columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: PLANTOTHERNAME
+                typescript_name: home_template.jinja
+                visible_columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+              new:
+                columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: PLANTOTHERNAME
+                typescript_name: new_component.jinja
+                visible_columns: ID,PLANT_ID,TIMESTAMP,ALIAS_ID
+            template_name: module.jinja
+          PLANTSTATUSTB:
+            icon: edit_square
+            menu_name: PLANTSTATUSTB
+            menu_title: PLANTSTATUSTB
+            page:
+              detail:
+                columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: PLANTSTATUSTB
+                typescript_name: detail_component.jinja
+                visible_columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+              home:
+                columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: PLANTSTATUSTB
+                typescript_name: home_template.jinja
+                visible_columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+              new:
+                columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: PLANTSTATUSTB
+                typescript_name: new_component.jinja
+                visible_columns: ID,OwnsID,ROLE,STATUS,START_DATE,START_REASON,END_DATE,END_REASON,ACTIVE,DateDone,ValidFromTime,ValidToTime,COMPANY_ID,PLANT_ID,START_PERSON_ID,END_PERSON_ID,CHANGESET_ID
+            template_name: module.jinja
           PLANTTB:
             icon: edit_square
             menu_name: PLANTTB
@@ -1876,6 +1996,117 @@ application:
     name: app
 authentication: '{system-default}'
 entities:
+  ASSIGNEDMASHGIACHTB:
+    columns:
+    - default: '0'
+      label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: START_DATE
+      type: DATETIME
+    - name: END_DATE
+      type: DATETIME
+    - name: VIST_TYPE
+      template: text
+      type: VARCHAR
+    - name: VISIT_PERIOD1
+      template: text
+      type: VARCHAR
+    - name: VISIT_PERIOD2
+      template: text
+      type: VARCHAR
+    - name: VISIT_PERIOD3
+      template: text
+      type: VARCHAR
+    - name: VISIT_PERIOD_SEASONAL
+      template: text
+      type: VARCHAR
+    - name: SEASONAL_START
+      template: text
+      type: VARCHAR
+    - name: DESIGNATED_MASHGIACH_FLAG
+      template: text
+      type: VARCHAR
+    - name: ACTIVE
+      template: integer
+      type: INTEGER
+    - name: DESIGNATED_MASHGIACH
+      template: text
+      type: VARCHAR
+    - name: TimestampDateTime
+      type: DATETIME
+    - name: Timestamp
+      type: DATETIME
+    - name: CreatedBy
+      template: text
+      type: VARCHAR
+    - name: CreatedDate
+      type: DATETIME
+    - name: Discriminator
+      template: text
+      type: VARCHAR
+    - name: Zone
+      template: text
+      type: VARCHAR
+    - name: ValidFromTime
+      required: true
+      template: text
+      type: DATETIME2
+    - name: ValidToTime
+      required: true
+      template: text
+      type: DATETIME2
+    - name: OnSiteVisits
+      required: true
+      template: text
+      type: TINYINT
+    - name: VirtualVisits
+      required: true
+      template: text
+      type: TINYINT
+    - name: IsDaily
+      required: true
+      type: Boolean
+    - default: ((1))
+      name: SeasonalStart
+      required: true
+      template: text
+      type: TINYINT
+    - name: PLANT_ID
+      template: integer
+      type: INTEGER
+    - name: PERSON_JOB_ID
+      template: integer
+      type: INTEGER
+    - name: SEASONAL_END
+      template: text
+      type: VARCHAR
+    - name: OWNS_ID
+      template: integer
+      type: INTEGER
+    - name: company_id
+      template: integer
+      type: INTEGER
+    - name: CHANGESET_ID
+      template: integer
+      type: INTEGER
+    - name: IsAsNeeded
+      required: true
+      type: Boolean
+    - default: ((12))
+      name: SeasonalEnd
+      required: true
+      template: text
+      type: TINYINT
+    favorite: ID
+    hidden: {}
+    label: ASSIGNEDMASHGIACHTB
+    primary_key:
+    - ID
+    type: ASSIGNEDMASHGIACHTB
   AchAuthToken:
     columns:
     - label: ' institution Name*'
@@ -2237,6 +2468,67 @@ entities:
       name: PLANT_FEE_STRUCTURE_OUT
       resource: PLANTFEESTRUCTUREOUT
     type: Billing
+  CODETB:
+    columns:
+    - label: ' T A B L E_ N A M E*'
+      name: TABLE_NAME
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: FIELD_NAME
+      required: true
+      template: text
+      type: VARCHAR
+    - name: VALUE_SEQ_NUM
+      template: integer
+      type: SMALLINT
+    - name: FIELD_VALUE
+      required: true
+      template: text
+      type: VARCHAR
+    - default: ('')
+      name: VALUE_DESCRIPTION
+      template: text
+      type: VARCHAR
+    - name: TIMESTAMP
+      type: DATETIME
+    - default: ((1))
+      name: ACTIVE
+      template: integer
+      type: INTEGER
+    - name: AdditionalParameters
+      template: text
+      type: VARCHAR
+    - name: IsDefaultValue
+      type: Boolean
+    - default: (CONVERT([datetime2](7),'1900-01-01 00:00:00'))
+      name: ValidFromTime
+      required: true
+      template: text
+      type: DATETIME2
+    - default: (CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))
+      name: ValidToTime
+      required: true
+      template: text
+      type: DATETIME2
+    - default: '0'
+      name: CodeId
+      template: integer
+      type: INTEGER
+    - name: PERSON_ID
+      template: text
+      type: VARCHAR
+    - name: CHANGESET_ID
+      template: integer
+      type: INTEGER
+    favorite: TABLE_NAME
+    hidden: {}
+    label: CODETB
+    primary_key:
+    - CodeId
+    type: CODETB
   COMPANYADDRESSTB:
     columns:
     - default: '0'
@@ -4809,6 +5101,11 @@ entities:
       resource: PLANTHOLDTB
     - direction: tomany
       fks:
+      - OwnsID
+      name: PLANTSTATUSTBList
+      resource: PLANTSTATUSTB
+    - direction: tomany
+      fks:
       - OWNS_ID
       name: ProducedIn1TbList
       resource: ProducedIn1Tb
@@ -6096,6 +6393,113 @@ entities:
       name: PLANT_TB
       resource: PLANTTB
     type: PLANTHOLDTB
+  PLANTOTHERNAME:
+    columns:
+    - label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: PLANT_ID
+      template: integer
+      type: INTEGER
+    - name: TIMESTAMP
+      template: textarea
+      type: BINARY
+    - name: ALIAS_ID
+      template: integer
+      type: INTEGER
+    favorite: ID
+    hidden: {}
+    label: PLANTOTHERNAME
+    primary_key:
+    - ALIAS_ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: PLANTOTHERNAME
+  PLANTSTATUSTB:
+    columns:
+    - default: '0'
+      label: ' I D*'
+      name: ID
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - default: ((0))
+      name: OwnsID
+      template: integer
+      type: INTEGER
+    - name: ROLE
+      template: text
+      type: VARCHAR
+    - name: STATUS
+      required: true
+      template: text
+      type: VARCHAR
+    - name: START_DATE
+      type: DATETIME
+    - name: START_REASON
+      template: text
+      type: VARCHAR
+    - name: END_DATE
+      type: DATETIME
+    - name: END_REASON
+      template: text
+      type: VARCHAR
+    - name: ACTIVE
+      template: integer
+      type: INTEGER
+    - default: (getdate())
+      name: DateDone
+      template: text
+      type: SMALLDATETIME
+    - default: (CONVERT([datetime2](7),'1900-01-01 00:00:00'))
+      name: ValidFromTime
+      required: true
+      template: text
+      type: DATETIME2
+    - default: (CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))
+      name: ValidToTime
+      required: true
+      template: text
+      type: DATETIME2
+    - name: COMPANY_ID
+      required: true
+      template: integer
+      type: INTEGER
+    - name: PLANT_ID
+      required: true
+      template: integer
+      type: INTEGER
+    - default: ('')
+      name: START_PERSON_ID
+      required: true
+      template: text
+      type: VARCHAR
+    - name: END_PERSON_ID
+      template: text
+      type: VARCHAR
+    - name: CHANGESET_ID
+      template: integer
+      type: INTEGER
+    favorite: ID
+    hidden: {}
+    label: PLANTSTATUSTB
+    primary_key:
+    - ID
+    tab_groups:
+    - direction: toone
+      fks:
+      - OwnsID
+      name: OWNS_TB
+      resource: OWNSTB
+    type: PLANTSTATUSTB
   PLANTTB:
     columns:
     - label: ' N A M E*'
@@ -6233,6 +6637,11 @@ entities:
       - PLANT_ID
       name: PLANTHOLDTBList
       resource: PLANTHOLDTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: PLANTOTHERNAMEList
+      resource: PLANTOTHERNAME
     - direction: tomany
       fks:
       - BILL_TO_PLANT_ID

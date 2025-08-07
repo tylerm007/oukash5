@@ -147,9 +147,12 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                         f'    clientId: {args.keycloak_client_id}\n'
                     )   
                     content = content.replace("'{system-default}'", s)
-                elif "sql" in provider_name:
+                elif provider_name == "sql":
                     sql_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
                     content = content.replace("'{system-default}'", sql_auth_config)
+                elif provider_name == "okta":
+                    okta_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
+                    content = content.replace("'{system-default}'", okta_auth_config)
                 elif getattr(Config.SECURITY_PROVIDER, 'auth_config', None):
                     content = content.replace("'{system-default}'", Config.SECURITY_PROVIDER.auth_config)
                 else:
