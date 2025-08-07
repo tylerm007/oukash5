@@ -15,8 +15,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Base API URL
-BASE_URL = "http://localhost:5656/api"
-# BASE_URL = "http://172.30.3.133:5656/api"
+BASE_URL = "http://localhost:5656/api" 
+BASE_URL = "http://172.30.3.133:5656/api"
 
 # List of all API endpoints (collection names from models.py)
 API_ENDPOINTS = [
@@ -105,7 +105,7 @@ class APITester:
         Returns:
             Dictionary with test results
         """
-        url = f"{self.base_url}/{endpoint}?page[limit]=1"
+        url = f"{self.base_url}/{endpoint}?page[limit]=10"
         result = {
             "endpoint": endpoint,
             "url": url,
@@ -305,7 +305,8 @@ class APITester:
 def main():
     """Main function to run API tests"""
     print("🚀 Starting API Endpoint Testing...")
-    
+    #from config,Config import Args as args
+    okta_auth_config = "http://localhost:5656/auth/login" #f'{args.http_scheme}://{args.swagger_host}:{args.swagger_port}/auth/login'
     # Create tester instance
     tester = APITester()
     

@@ -268,7 +268,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 session['user_email'] = user.email
                 session['user_roles'] = [role.role_name for role in user.UserRoleList]
                 session['access_token'] = tokens.get('access_token')
-                
+                from flask import g
+                g.access_token = tokens.get('access_token')
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
                 session.pop('oauth_nonce', None)
