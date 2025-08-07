@@ -64,7 +64,7 @@ def test_manual_auth_request():
     # Test with intentionally invalid credentials to see the response structure
     test_payload = {
         "username": "tyler.band@ou.org",
-        "password": "Tyleraum$2908",
+        "password": "GenAILogic$2908",
         "options": {
             "multiOptionalFactorEnroll": False,
             "warnBeforePasswordExpired": False
@@ -85,7 +85,7 @@ def test_manual_auth_request():
         
         print(f"\nResponse Status: {response.status_code}")
         print(f"Response Headers: {dict(response.headers)}")
-        print(f"Response Body: {json.dumps(response.text, indent=2)}")
+        print(f"Response Body: {response.tex}")
         
         if response.status_code == 401:
             try:

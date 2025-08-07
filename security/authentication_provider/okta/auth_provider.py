@@ -103,6 +103,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             logger.info(f"Generated OKTA SSO URL: {auth_url}")
             logger.info(f"Auth params: {auth_params}")
             logger.info(f"Redirecting to OKTA SSO: {auth_url}")
+            print(f"Redirecting to OKTA SSO: {auth_url}")
             return redirect(auth_url)
         
         @flask_app.route('/auth/callback')
@@ -112,7 +113,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             logger.info(f"OKTA callback received. All query parameters: {dict(request.args)}")
             logger.info(f"Request URL: {request.url}")
             logger.info(f"Request method: {request.method}")
-            
+            print("callback request.args:", dict(request.args))  # Debug output
             # Verify state parameter
             received_state = request.args.get('state')
             session_state = session.get('oauth_state')

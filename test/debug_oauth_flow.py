@@ -29,7 +29,7 @@ def test_okta_oauth_flow():
     OKTA_DOMAIN = "https://ou.okta.com"
     CLIENT_ID = "0oa1crjfiwoxRYadi0x8"  # Real client ID from config
     CLIENT_SECRET = "eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7"  # Real client secret
-    REDIRECT_URI = "http://192.168.13.18:5656/auth/callback"
+    REDIRECT_URI = "http://localhost:5656/auth/callback"
     
     print("🔍 OAuth Flow Debug Tool")
     print("=" * 50)
@@ -64,7 +64,7 @@ def test_okta_oauth_flow():
     auth_params = {
         'response_type': 'code',
         'client_id': CLIENT_ID,
-        'redirect_uri': REDIRECT_URI,
+        'redirect_uri':  REDIRECT_URI,
         'scope': 'openid profile email',
         'state': state,
         'nonce': nonce

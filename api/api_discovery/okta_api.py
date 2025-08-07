@@ -14,7 +14,7 @@ app_logger = logging.getLogger("api_logic_server_app")
 OKTA_DOMAIN = os.getenv('OKTA_DOMAIN', 'https://ou.okta.com')
 OKTA_CLIENT_ID = os.getenv('OKTA_CLIENT_ID', '0oa1crjfiwoxRYadi0x8')
 OKTA_CLIENT_SECRET = os.getenv('OKTA_CLIENT_SECRET', 'eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7')
-OKTA_REDIRECT_URL = os.getenv('OKTA_REDIRECT_URL', 'http://192.168.13.18:5656/auth/callback')# 'http://localhost:5000/callback')
+OKTA_REDIRECT_URL = os.getenv('OKTA_REDIRECT_URL', 'http://localhost:5656/auth/callback')# 'http://localhost:5000/callback')
 
 # Initialize OktaToken instance
 okta_token = OktaToken(

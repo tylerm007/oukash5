@@ -28,7 +28,7 @@ Secret: eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7
         'OKTA_DOMAIN': 'https://ou.okta.com',
         'OKTA_CLIENT_ID': '0oa1crjfiwoxRYadi0x8',
         'OKTA_CLIENT_SECRET': 'eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7',
-        'OKTA_REDIRECT_URI': 'http://192.168.13.18:5656/auth/callback',
+        'OKTA_REDIRECT_URI': 'http://localhost:5656/auth/callback',
         'SECURITY_ENABLED': 'true',
         'SECURITY_PROVIDER': 'okta'
     }
@@ -88,7 +88,7 @@ def test_sso_redirection():
             'client_id': args.okta_client_id,
             'response_type': 'code',
             'response_mode': 'query',
-            'scope': 'webAccess',# 'openid profile email groups',
+            'scope':'openid profile email groups',
             'redirect_uri': args.okta_redirect_uri,
             'state': 'test-state-123',
             'nonce': 'test-nonce-456'
@@ -130,12 +130,12 @@ def test_api_server_endpoints():
         
         # Test auth endpoints
         auth_endpoints = ['/auth/login', '/auth/callback', '/auth/logout', '/auth/user']
-        
+
         for endpoint in auth_endpoints:
             try:
                 response = requests.get(f"{base_url}{endpoint}", timeout=2, allow_redirects=False)
                 if response.status_code in [200, 302, 401]:  # Expected status codes
-                    print(f"   ✅ {endpoint}: {response.status_code}")
+                    print(f"   ✅ {endpoint}: {response.status_code} - {response.reason} - {response.text}")
                 else:
                     print(f"   ⚠️  {endpoint}: {response.status_code}")
             except requests.exceptions.ConnectionError:
@@ -217,7 +217,7 @@ def main():
         print("\n🎉 OKTA SSO is configured correctly!")
         print("Next steps:")
         print("1. Start your API Logic Server")
-        print("2. Navigate to http://192.168.13.18:5656/auth/login")
+        print("2. Navigate to http://localhost:5656/auth/login")
         print("3. You should be redirected to ou.okta.com for authentication")
     else:
         print("\n⚠️  Some issues detected:")
