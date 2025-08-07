@@ -253,15 +253,80 @@ class OktaToken:
         
         return results
     
-    def create_web_access_token(self) -> Optional[OktaAccessToken]:
+    def create_web_access_token(self, authorization_code: str) -> Optional[OktaAccessToken]:
         """
-        Create an Okta web access token using client credentials
+        Exchange authorization code for access token
         
+        Args:
+            authorization_code: The authorization code from OAuth callback
+            
         Returns:
             OktaAccessToken object or None if failed
         """
         if not self.client_secret:
             raise ValueError("Client secret is required for web access token")
+            
+        if not authorization_code:
+            raise ValueError("Authorization code is required")
+            
+        if not self.redirect_url:
+            raise ValueError("Redirect URL is required for authorization code exchange")
+            
+        ret = None
+        
+        # Create basic auth credentials
+        credentials = base64.b64encode(
+            f"{self.client_id}:{self.client_secret}".encode('utf-8')
+        ).decode('utf-8')
+        
+        headers = {
+            "Authorization": f"Basic {credentials}",
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": self.client_id,
+            "code": authorization_code,
+            "redirect_uri": self.redirect_url,
+            "scope": "openid profile email"
+        }
+        
+        token_url = f"{self.domain}/oauth2/v1/token"
+        print("token_url:", token_url)  # Debugging line, remove in production
+        try:
+            response = requests.post(token_url, headers=headers, data=data, timeout=10)
+            print(f"Token exchange response: {response.status_code}")  # Debugging line, remove in production
+            print(f"Response headers: {dict(response.headers)}")  # Debugging line, remove in production
+            
+            if response.status_code == 200:
+                token_data = response.json()
+                print(f"Token data received: {list(token_data.keys())}")  # Debugging line, remove in production
+                ret = OktaAccessToken(
+                    token_type=token_data.get("token_type"),
+                    expires_in=str(token_data.get("expires_in", 0)),
+                    access_token=token_data.get("access_token"),
+                    scope=token_data.get("scope")
+                )
+            else:
+                print(f"Token exchange failed: {response.text}")  # Debugging line, remove in production
+                logging.error(f"Token exchange failed: {response.status_code} - {response.text}")
+                
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Error exchanging authorization code for tokens: {e}")
+            print(f"Network error during token exchange: {e}")
+            
+        return ret
+    
+    def create_client_credentials_token(self) -> Optional[OktaAccessToken]:
+        """
+        Create an Okta access token using client credentials grant (for server-to-server)
+        
+        Returns:
+            OktaAccessToken object or None if failed
+        """
+        if not self.client_secret:
+            raise ValueError("Client secret is required for client credentials grant")
             
         ret = None
         
@@ -277,25 +342,24 @@ class OktaToken:
         
         data = {
             "grant_type": "client_credentials",
-            "scope": "webAccess"
+            "scope": "openid profile email"
         }
         
-        token_url = f"{self.domain}/oauth2/default/v1/token"
-        print("token_url:", token_url)  # Debugging line, remove in production
+        token_url = f"{self.domain}/oauth2/v1/token"
+        
         try:
-            response = requests.post(token_url, headers=headers, data=data)
-            print(response.status_code, response.text)  # Debugging line, remove in production
+            response = requests.post(token_url, headers=headers, data=data, timeout=10)
             if response.status_code == 200:
                 token_data = response.json()
                 ret = OktaAccessToken(
                     token_type=token_data.get("token_type"),
-                    expires_in=token_data.get("expires_in"),
+                    expires_in=str(token_data.get("expires_in", 0)),
                     access_token=token_data.get("access_token"),
                     scope=token_data.get("scope")
                 )
                 
         except requests.exceptions.RequestException as e:
-            logging.error(f"Error creating web access token: {e}")
+            logging.error(f"Error creating client credentials token: {e}")
             
         return ret
     

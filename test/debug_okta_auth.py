@@ -22,13 +22,17 @@ def test_okta_token_class():
     
     try:
         from security.authentication_provider.okta.okta_token import OktaToken
-        
+        '''
+        OKTA_CLIENT_ID = '0oa1crjfiwoxRYadi0x8'
+        OKTA_CLIENT_SECRET = 'eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7'
+        OKTA_REDIRECT_URI = 'http://localhost:5656/auth/callback'
+        '''
         # Initialize with ou.okta.com using HTTPS (as detected by the debug)
         okta_token = OktaToken(
             domain="https://ou.okta.com",
-            client_id="test-client-id",
+            client_id="0oa1crjfiwoxRYadi0x8d",
             redirect_url="http://localhost:5656/auth/callback",
-            client_secret="test-client-secret"
+            client_secret="eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7"
         )
         
         print(f"✅ OktaToken initialized with domain: {okta_token.domain}")
@@ -59,8 +63,8 @@ def test_manual_auth_request():
     
     # Test with intentionally invalid credentials to see the response structure
     test_payload = {
-        "username": "test-user",
-        "password": "test-password",
+        "username": "tyler.band@ou.org",
+        "password": "Tyleraum$2908",
         "options": {
             "multiOptionalFactorEnroll": False,
             "warnBeforePasswordExpired": False
@@ -81,7 +85,7 @@ def test_manual_auth_request():
         
         print(f"\nResponse Status: {response.status_code}")
         print(f"Response Headers: {dict(response.headers)}")
-        print(f"Response Body: {response.text}")
+        print(f"Response Body: {json.dumps(response.text, indent=2)}")
         
         if response.status_code == 401:
             try:
@@ -134,8 +138,8 @@ def test_oauth_endpoints():
     
     # Test well-known configuration endpoints
     endpoints_to_test = [
-        "/oauth2/default/.well-known/openid-configuration",
-        "/oauth2/default/.well-known/oauth-authorization-server",
+        "/oauth2/.well-known/openid-configuration",
+        "/oauth2/.well-known/oauth-authorization-server",
         "/.well-known/openid-configuration"
     ]
     

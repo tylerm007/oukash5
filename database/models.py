@@ -696,7 +696,7 @@ t_PERSON_ADDRESS_TB_history_temporal = Table(
     Index('PERSON_ADDRESS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
 
-
+'''
 class PERSONJOBSTATUSTB(Base):  # type: ignore
     __tablename__ = 'PERSON_JOB_STATUS_TB'
     _s_collection_name = 'PERSONJOBSTATUSTB'  # type: ignore
@@ -3621,3 +3621,4 @@ class ProductJobLineItem(Base):  # type: ignore
     pr : Mapped["ProducedIn1Tb"] = relationship(back_populates=("ProductJobLineItemList"))
 
     # child relationships (access children)
+'''

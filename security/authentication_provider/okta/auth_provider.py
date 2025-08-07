@@ -92,7 +92,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'client_id': Args.instance.okta_client_id,
                 'response_type': 'code',
                 'response_mode': 'query',
-                'scope': 'openid profile email groups',
+                'scope': 'openid profile email',  # Changed from 'webAccess' to standard OIDC scopes
                 'redirect_uri': Args.instance.okta_redirect_uri,
                 'state': state,
                 'nonce': nonce
@@ -100,24 +100,42 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             
             auth_url = f"{Args.instance.okta_domain}/oauth2/v1/authorize?" + urllib.parse.urlencode(auth_params)
             
+            logger.info(f"Generated OKTA SSO URL: {auth_url}")
+            logger.info(f"Auth params: {auth_params}")
             logger.info(f"Redirecting to OKTA SSO: {auth_url}")
             return redirect(auth_url)
         
         @flask_app.route('/auth/callback')
         def okta_callback():
             """Handle OKTA SSO callback"""
+            # Debug: Log all received parameters
+            logger.info(f"OKTA callback received. All query parameters: {dict(request.args)}")
+            logger.info(f"Request URL: {request.url}")
+            logger.info(f"Request method: {request.method}")
+            
             # Verify state parameter
-            if request.args.get('state') != session.get('oauth_state'):
+            received_state = request.args.get('state')
+            session_state = session.get('oauth_state')
+            logger.info(f"State check - Received: {received_state}, Session: {session_state}")
+            
+            if received_state != session_state:
                 logger.error("Invalid state parameter in OKTA callback")
                 return jsonify({'error': 'Invalid state parameter'}), 400
             
             # Get authorization code
             auth_code = request.args.get('code')
+            logger.info(f"Authorization code received: {auth_code is not None}")
+            
             if not auth_code:
                 error = request.args.get('error', 'unknown_error')
                 error_description = request.args.get('error_description', 'No authorization code received')
                 logger.error(f"OKTA callback error: {error} - {error_description}")
-                return jsonify({'error': error, 'error_description': error_description}), 400
+                logger.error(f"All parameters received: {dict(request.args)}")
+                return jsonify({
+                    'error': error, 
+                    'error_description': error_description,
+                    'received_params': dict(request.args)
+                }), 400
             
             try:
                 # Exchange authorization code for tokens
@@ -191,6 +209,19 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'roles': session.get('user_roles', []),
                 'authenticated': True
             })
+        
+        @flask_app.route('/auth/debug')
+        def debug_auth():
+            """Debug endpoint to check OKTA configuration"""
+            from config.config import Args
+            return jsonify({
+                'okta_domain': Args.instance.okta_domain,
+                'okta_client_id': Args.instance.okta_client_id,
+                'okta_redirect_uri': Args.instance.okta_redirect_uri,
+                'session_keys': list(session.keys()),
+                'oauth_state': session.get('oauth_state'),
+                'oauth_nonce': session.get('oauth_nonce')
+            })
 
     @staticmethod
     def _exchange_code_for_tokens(auth_code: str) -> Optional[Dict[str, str]]:
@@ -200,15 +231,19 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         try:
             token_url = f"{Args.instance.okta_domain}/oauth2/v1/token"
             
+            # Use Basic Auth in header (remove client_id/client_secret from body)
+            credentials = base64.b64encode(
+                f"{Args.instance.okta_client_id}:{Args.instance.okta_client_secret}".encode('utf-8')
+            ).decode('utf-8')
+            
             headers = {
                 'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': f'Basic {credentials}'
             }
             
             data = {
                 'grant_type': 'authorization_code',
-                'client_id': Args.instance.okta_client_id,
-                'client_secret': Args.instance.okta_client_secret,
                 'code': auth_code,
                 'redirect_uri': Args.instance.okta_redirect_uri
             }
