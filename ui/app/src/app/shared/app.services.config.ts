@@ -1,9 +1,11 @@
-export const SERVICE_CONFIG ={ 'AchAuthToken': { 'path': '/AchAuthToken' }
+export const SERVICE_CONFIG ={ 'ASSIGNEDMASHGIACHTB': { 'path': '/ASSIGNEDMASHGIACHTB' }
+,'AchAuthToken': { 'path': '/AchAuthToken' }
 ,'AchPlaidLambdaResponse': { 'path': '/AchPlaidLambdaResponse' }
 ,'AchStripePayment': { 'path': '/AchStripePayment' }
 ,'AchStripePaymentDetail': { 'path': '/AchStripePaymentDetail' }
 ,'BarCode': { 'path': '/BarCode' }
 ,'Billing': { 'path': '/Billing' }
+,'CODETB': { 'path': '/CODETB' }
 ,'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB' }
 ,'COMPANYCERTDETAIL': { 'path': '/COMPANYCERTDETAIL' }
 ,'COMPANYCOMMENT': { 'path': '/COMPANYCOMMENT' }
@@ -46,6 +48,8 @@ export const SERVICE_CONFIG ={ 'AchAuthToken': { 'path': '/AchAuthToken' }
 ,'PLANTFEESTRUCTURE': { 'path': '/PLANTFEESTRUCTURE' }
 ,'PLANTFEESTRUCTUREOUT': { 'path': '/PLANTFEESTRUCTUREOUT' }
 ,'PLANTHOLDTB': { 'path': '/PLANTHOLDTB' }
+,'PLANTOTHERNAME': { 'path': '/PLANTOTHERNAME' }
+,'PLANTSTATUSTB': { 'path': '/PLANTSTATUSTB' }
 ,'PLANTTB': { 'path': '/PLANTTB' }
 ,'PRIVATELABELBILL': { 'path': '/PRIVATELABELBILL' }
 ,'PrivateLabelTemplate': { 'path': '/PrivateLabelTemplate' }

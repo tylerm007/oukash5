@@ -277,8 +277,8 @@ t_CODE_TB_history_temporal = Table(
     Column('ACTIVE', Integer),
     Column('AdditionalParameters', String(50)),
     Column('IsDefaultValue', Boolean),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('CODE_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -318,8 +318,8 @@ t_COMPANY_ADDRESS_TB_history_temporal = Table(
     Column('COUNTRY', String(25)),
     Column('TIMESTAMP', BINARY(8)),
     Column('ACTIVE', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('COMPANY_ADDRESS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -378,8 +378,8 @@ t_COMPANY_FEE_STRUCTURE_history_temporal = Table(
     Column('BILL_SPEC_PROD_AMTx', String(20)),
     Column('BILL_PASSOVER_TYPEx', String(20)),
     Column('BILL_PASSOVER_AMTx', String(20)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('LockPerDistributorRate', Boolean, nullable=False),
     Column('PRIVATE_LABEL_COMMENT', String(500)),
@@ -401,8 +401,8 @@ t_COMPANY_HOLD_TB_history_temporal = Table(
     Column('END_REASON', String(100)),
     Column('TIMESTAMP', BINARY(8)),
     Column('ACTIVE', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('XAKCOMPANY_HOLD_1', 'COMPANY_ID', 'ID'),
     Index('COMPANY_HOLD_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
@@ -424,8 +424,8 @@ t_COMPANY_STATUS_TB_history_temporal = Table(
     Column('END_REASON', String(100)),
     Column('ACTIVE', Integer),
     Column('DateDone', DateTime),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('COMPANY_STATUS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -465,8 +465,8 @@ t_COMPANY_TB_history_temporal = Table(
     Column('PrivateLabelPOexpiry', Date),
     Column('VisitPO', String(75)),
     Column('VisitPOexpiry', Date),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('CATEGORY', String(50)),
     Column('OLDCOMPANYTYPE', String(50)),
@@ -494,8 +494,8 @@ t_CO_PRIVATE_LABEL_FEE_DETAIL_history_temporal = Table(
     Column('PL_DETAIL_DATE', DateTime),
     Column('PL_DETAIL_PERSON_ID', String(20), nullable=False),
     Column('PL_DETAIL_COMMENT', String(255)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('CO_PRIVATE_LABEL_FEE_DETAIL_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -613,8 +613,8 @@ t_CompanyPlantOptions_history_temporal = Table(
     Column('glApproved', String(1)),
     Column('ModifiedBy', String(250)),
     Column('ModifiedDate', DateTime),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('CompanyPlantOptions_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -628,8 +628,8 @@ t_FormulaComponents_history_temporal = Table(
     Column('ComponentLabelID', Integer),
     Column('Component', String(50), nullable=False),
     Column('ComponentIDType', String(50), nullable=False),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('FormulaComponents_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -654,8 +654,8 @@ t_INVOICE_FEES_DETAIL_history_temporal = Table(
     Column('TIMESTAMP', BINARY(8)),
     Column('ownsID', Integer),
     Column('voided', Boolean, nullable=False),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('INVOICE_FEES_DETAIL_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -711,8 +711,8 @@ t_INVOICE_FEES_history_temporal = Table(
     Column('DeliveryMethod', String(30)),
     Column('DeliveryDate', Date),
     Column('OriginalInvoiceAmount', MONEY),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('achPaid', Boolean, nullable=False),
     Column('BatchId', Integer),
@@ -742,8 +742,8 @@ t_MERCH_COMMENT_history_temporal = Table(
     Column('COMMENT_ID', Integer, nullable=False),
     Column('TIMESTAMP', BINARY(8)),
     Column('CommentType', String(20)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('MERCH_COMMENT_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -789,8 +789,8 @@ t_MERCH_TB_history_temporal = Table(
     Column('TransferredTo', Boolean, nullable=False),
     Column('TransferredMerch', Integer),
     Column('Special_Status', String(255)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('idx_NCI_status_dpm', 'STATUS', 'DPM'),
     Index('idx_NCI_id_status_dpm', 'MERCHANDISE_ID', 'STATUS', 'DPM'),
@@ -854,8 +854,8 @@ t_OWNS_TB_history_temporal = Table(
     Column('Override', Boolean, nullable=False),
     Column('VisitPO', String(75)),
     Column('VisitPOexpiry', Date),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('BoilerplateInvoiceComment', String(collation='SQL_Latin1_General_CP1_CI_AS')),
     Column('IsCertBillingOverride', Boolean, nullable=False),
@@ -886,8 +886,8 @@ t_PENDING_INFO_TB_history_temporal = Table(
     Column('PRODATE', String(10)),
     Column('CONTRACTFEE', String(25)),
     Column('CONTRACTEXPENSE', String(25)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PENDING_INFO_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -908,13 +908,13 @@ t_PERSON_ADDRESS_TB_history_temporal = Table(
     Column('ZIP', String(15)),
     Column('COUNTRY', String(25)),
     Column('ACTIVE', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PERSON_ADDRESS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
 
-'''
+
 class PERSONJOBSTATUSTB(Base):  # type: ignore
     __tablename__ = 'PERSON_JOB_STATUS_TB'
     _s_collection_name = 'PERSONJOBSTATUSTB'  # type: ignore
@@ -942,12 +942,12 @@ class PERSONJOBTB(Base):  # type: ignore
     __tablename__ = 'PERSON_JOB_TB'
     _s_collection_name = 'PERSONJOBTB'  # type: ignore
     __table_args__ = (
-        Index('personid', 'PERSON_ID', 'PERSON_JOB_ID),
+        Index('personid', 'PERSON_ID', 'PERSON_JOB_ID'),
         Index('PRSNJOB1', 'PERSON_JOB_ID', 'PERSON_ID', unique=True)
     )
 
     PERSON_JOB_ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PERSON_ID = Column(ForeignKey('PERSON_TB.PERSON_ID), nullable=False)
+    PERSON_ID = Column(ForeignKey('PERSON_TB.PERSON_ID'), nullable=False)
     FUNCTION = Column(String(40), nullable=False)
     EMPLOYER_ID = Column(Integer)
     TITLE = Column(String(40))
@@ -956,9 +956,9 @@ class PERSONJOBTB(Base):  # type: ignore
     ACTIVE = Column(Integer)
     STATUS = Column(String(40))
     ACCT_PAYROLL_NUM = Column(String(20))
-    OUDirectRFRTerminationHold = Column(String(1), server_default=text("(')"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    OUDirectRFRTerminationHold = Column(String(1), server_default=text("('')"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     TeamId = Column(Integer, index=True)
     StatusEffectiveStartDate = Column(DateTime)
@@ -992,8 +992,8 @@ t_PERSON_JOB_TB_history_temporal = Table(
     Column('STATUS', String(40)),
     Column('ACCT_PAYROLL_NUM', String(20)),
     Column('OUDirectRFRTerminationHold', String(1)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('TeamId', Integer),
     Column('StatusEffectiveStartDate', DateTime),
@@ -1005,27 +1005,27 @@ class PERSONTB(Base):  # type: ignore
     __tablename__ = 'PERSON_TB'
     _s_collection_name = 'PERSONTB'  # type: ignore
     __table_args__ = (
-        Index('ix_PERSON_TB_ACTIVE_KashLogIn', 'ACTIVE', 'KashLogIn),
+        Index('ix_PERSON_TB_ACTIVE_KashLogIn', 'ACTIVE', 'KashLogIn'),
     )
 
     PERSON_ID = Column(Integer, server_default=text("0"), primary_key=True)
     FIRST = Column(String(100))
     LAST = Column(String(100))
-    MIDDLE = Column(String(50), server_default=text("(')"))
-    PREFIX = Column(String(50), server_default=text("(')"))
+    MIDDLE = Column(String(50), server_default=text("('')"))
+    PREFIX = Column(String(50), server_default=text("('')"))
     VENDOR_ID = Column(Integer)
     SUFFIX = Column(String(12))
     HIRE_DATE = Column(DateTime)
     SSN = Column(String(11))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    SENDTICKETTO = Column(String(255), server_default=text("(')"))
+    SENDTICKETTO = Column(String(255), server_default=text("('')"))
     ACCTS_PAY_NUM = Column(String(30))
     MaxPay = Column(SMALLMONEY, server_default=text("((500))"))
     MileageRate = Column(SMALLMONEY)
     WebAccess = Column(String(5))
     GroupLeader = Column(String(40), index=True)
-    AdministrativeAssistant = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID))
+    AdministrativeAssistant = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
     KashLogIn = Column(String(75))
     IsGroupLeader = Column(String(1))
     HiddenSSN = Column(String(50), server_default=text("((0))"))
@@ -1033,8 +1033,8 @@ class PERSONTB(Base):  # type: ignore
     Password = Column(String(30))
     PasswordQuestion = Column(String(500))
     PasswordAnswer = Column(String(500))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     IncludeInIngWFAssignmentList = Column(Boolean)
     TempRfr = Column(Boolean, server_default=text("((0))"), nullable=False)
@@ -1078,8 +1078,8 @@ t_PERSON_TB_history_temporal = Table(
     Column('Password', String(30)),
     Column('PasswordQuestion', String(500)),
     Column('PasswordAnswer', String(500)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('IncludeInIngWFAssignmentList', Boolean),
     Column('TempRfr', Boolean, nullable=False),
@@ -1145,8 +1145,8 @@ t_PLANT_ADDRESS_TB_history_temporal = Table(
     Column('TIMESTAMP', BINARY(8)),
     Column('ACTIVE', Integer),
     Column('COMPANY_ID', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PLANT_ADDRESS_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -1182,8 +1182,8 @@ t_PLANT_FEE_STRUCTURE_OUT_history_temporal = Table(
     Column('OUT_PASSOVER_RATE_FEE3', SMALLMONEY),
     Column('OUT_PASSOVER_FOR_FEE3', Integer),
     Column('OUT_PASSOVER_OVERNIGHTPAY', MONEY),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PLANT_FEE_STRUCTURE_OUT_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -1292,8 +1292,8 @@ t_PLANT_FEE_STRUCTURE_history_temporal = Table(
     Column('OUT_PASSOVER_RATE_OVERNIGHTPAY', MONEY),
     Column('PERSON_JOB_ID', Integer),
     Column('OwnsID', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PLANT_FEE_STRUCTURE_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -1315,11 +1315,11 @@ t_PLANT_HOLD_TB_history_temporal = Table(
     Column('TIMESTAMP', BINARY(8)),
     Column('ACTIVE', Integer),
     Column('OwnsID', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('PLANT_HOLD_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime'),
-    Index('idx_Comp_Plant', 'COMPANY_ID', 'PLANT_ID)
+    Index('idx_Comp_Plant', 'COMPANY_ID', 'PLANT_ID')
 )
 
 
@@ -1341,8 +1341,8 @@ t_PLANT_TB_history_temporal = Table(
     Column('OtherCertification', String(500)),
     Column('PrimaryCompany', Integer),
     Column('DesignatedRFR', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('MaxOnSiteVisits', SmallInteger, nullable=False),
     Column('MaxVirtualVisits', SmallInteger, nullable=False),
@@ -1366,8 +1366,8 @@ t_PRIVATE_LABEL_BILL_history_temporal = Table(
     Column('LAST_BIILED', DateTime),
     Column('AGREEMENT_RECEIVED_DATE', DateTime),
     Column('CHANGESET_ID', Integer, index=True),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Index('PRIVATE_LABEL_BILL_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
 
@@ -1412,8 +1412,8 @@ t_ProductJobLineItems_history_temporal = Table(
     Column('DistributorContactName', String(100)),
     Column('DistributorContactEmail', String(100)),
     Column('DistributorContactPhone', String(100)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('coPackProductPL', Boolean, nullable=False),
     Column('barcodes', String(collation='SQL_Latin1_General_CP1_CI_AS')),
@@ -1436,8 +1436,8 @@ t_ProductJobs_history_temporal = Table(
     Column('Source', String(100)),
     Column('ImportSource', String(250)),
     Column('jobid', String(34)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('ActualLogin', String(100)),
     Index('ProductJobs_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
@@ -1474,8 +1474,8 @@ t_RC_TB_history_temporal = Table(
     Column('ACTIVE', Integer),
     Column('EnteredBy', String(75)),
     Column('EnteredOn', Date),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('RC_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -1537,8 +1537,8 @@ t_USED_IN1_TB_history_temporal = Table(
     Column('LocReceivedStatus', Integer),
     Column('InternalCode', String(50)),
     Column('LabelID', Integer),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Index('USED_IN1_TB_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime')
 )
@@ -1548,7 +1548,7 @@ class VISITSCOMMENT(Base):  # type: ignore
     __tablename__ = 'VISITS_COMMENT'
     _s_collection_name = 'VISITSCOMMENT'  # type: ignore
     __table_args__ = (
-        Index('VisitIDID', 'VISIT_REC_ID', 'ID', 'COMMENT_TYPE),
+        Index('VisitIDID', 'VISIT_REC_ID', 'ID', 'COMMENT_TYPE'),
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
@@ -1652,8 +1652,8 @@ t_VISITS_history_temporal = Table(
     Column('CreatedDate', DateTime),
     Column('PurchaseOrder', String(75)),
     Column('OnHoldModifiedBy', String(100)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('TeamId', Integer),
     Column('MainVisit', Integer),
@@ -1667,17 +1667,17 @@ t_companycontacts_tb_history_temporal = Table(
     Column('ccID', Integer, nullable=False, index=True),
     Column('Company_ID', Integer),
     Column('CompanyTitle', String(50)),
-    Column('PrimaryCT', String(1), server_default=text("('N)"), nullable=False),
-    Column('BillingCT', String(1), server_default=text("('N)"), nullable=False),
-    Column('WebCT', String(1), server_default=text("('N)"), nullable=False),
-    Column('OtherCT', String(1), server_default=text("('N)"), nullable=False),
+    Column('PrimaryCT', String(1), server_default=text("('N')"), nullable=False),
+    Column('BillingCT', String(1), server_default=text("('N')"), nullable=False),
+    Column('WebCT', String(1), server_default=text("('N')"), nullable=False),
+    Column('OtherCT', String(1), server_default=text("('N')"), nullable=False),
     Column('EnteredBy', String(50)),
     Column('DateEntered', SMALLDATETIME),
     Column('ModifiedBy', String(50)),
     Column('DateModified', DateTime),
     Column('Active', SmallInteger),
-    Column('StatementType', String(1), server_default=text("('N)"), nullable=False),
-    Column('InvoiceType', String(1), server_default=text("('N)"), nullable=False),
+    Column('StatementType', String(1), server_default=text("('N')"), nullable=False),
+    Column('InvoiceType', String(1), server_default=text("('N')"), nullable=False),
     Column('UserVendorID', String(200)),
     Column('UsedInComment', String(500)),
     Column('ContactID', Integer, nullable=False),
@@ -1685,8 +1685,8 @@ t_companycontacts_tb_history_temporal = Table(
     Column('EIREmail', String(1)),
     Column('ScheduleBEmail', String(1)),
     Column('FormulaEmail', String(1)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('PoCT', Boolean, nullable=False),
     Column('CopackerCT', Boolean, server_default=text("((0))"), nullable=False),
@@ -1742,8 +1742,8 @@ t_label_tb_history_temporal = Table(
     Column('COMMENT', String(1000)),
     Column('DisplayNewlyCertifiedOnWeb', String(1)),
     Column('Status', String(25)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('LastChangeDate', DateTime),
     Column('LastChangeReason', String(100)),
@@ -1754,8 +1754,8 @@ t_label_tb_history_temporal = Table(
     Column('IsDairyEquipment', Boolean, nullable=False),
     Column('NameNum', String(251)),
     Index('label_tb_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime'),
-    Index('idx_NCI_id,mid,label', 'ID', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM),
-    Index('idx_NCI_label_grp', 'GRP', 'LABEL_SEQ_NUM)
+    Index('idx_NCI_id,mid,label', 'ID', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM'),
+    Index('idx_NCI_label_grp', 'GRP', 'LABEL_SEQ_NUM')
 )
 
 
@@ -1798,13 +1798,13 @@ t_produced_in1_tb_history_temporal = Table(
     Column('FormulaSubmissionPlantID', Integer),
     Column('ProductPlantsID', Integer),
     Column('BatchSheetName', String(40)),
-    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False),
-    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False),
+    Column('ValidFromTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False),
+    Column('ValidToTime', DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False),
     Column('CHANGESET_ID', Integer, index=True),
     Column('LatestPesachSeason', Integer),
-    Index('produced_in1_tb_history_temporal_STATUS_LABELID_INDEX', 'STATUS', 'LabelID),
+    Index('produced_in1_tb_history_temporal_STATUS_LABELID_INDEX', 'STATUS', 'LabelID'),
     Index('produced_in1_tb_history_temporal_TIME_INDEX', 'ValidFromTime', 'ValidToTime'),
-    Index('produced_in1_tb_history_temporal_ID_ACTIVE_INDEX', 'ID', 'ACTIVE)
+    Index('produced_in1_tb_history_temporal_ID_ACTIVE_INDEX', 'ID', 'ACTIVE')
 )
 
 
@@ -1817,14 +1817,14 @@ class CODETB(Base):  # type: ignore
     FIELD_NAME = Column(String(100), nullable=False)
     VALUE_SEQ_NUM = Column(SmallInteger)
     FIELD_VALUE = Column(String(500), nullable=False)
-    VALUE_DESCRIPTION = Column(String(255), server_default=text("(')"))
+    VALUE_DESCRIPTION = Column(String(255), server_default=text("('')"))
     PERSON_ID = Column(String(50))
     TIMESTAMP = Column(DateTime)
     ACTIVE = Column(Integer, server_default=text("((1))"))
     AdditionalParameters = Column(String(50))
     IsDefaultValue = Column(Boolean, server_default=text("((0))"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -1837,13 +1837,13 @@ class COMPANYTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_TB'
     _s_collection_name = 'COMPANYTB'  # type: ignore
     __table_args__ = (
-        Index('idxRC', 'STATUS', 'ACTIVE', 'COMPANY_ID),
-        Index('CompStatus', 'STATUS', 'ACTIVE', 'AcquiredFrom)
+        Index('idxRC', 'STATUS', 'ACTIVE', 'COMPANY_ID'),
+        Index('CompStatus', 'STATUS', 'ACTIVE', 'AcquiredFrom')
     )
 
     COMPANY_ID = Column(Integer, server_default=text("0"), primary_key=True)
     NAME = Column(String(120), nullable=False)
-    LIST = Column(String(1), server_default=text("('Y)"))
+    LIST = Column(String(1), server_default=text("('Y')"))
     GP_NOTIFY = Column(TINYINT, server_default=text("((0))"))
     PRODUCER = Column(Boolean)
     MARKETER = Column(Boolean)
@@ -1853,8 +1853,8 @@ class COMPANYTB(Base):  # type: ignore
     COPACKER = Column(String(1))
     JEWISH_OWNED = Column(String(1))
     CORPORATE = Column(String(1))
-    COMPANY_TYPE = Column(String(30), server_default=text("(')"))
-    INVOICE_TYPE = Column(String(20), server_default=text("('Company Summary)"))
+    COMPANY_TYPE = Column(String(30), server_default=text("('')"))
+    INVOICE_TYPE = Column(String(20), server_default=text("('Company Summary')"))
     INVOICE_FREQUENCY = Column(String(20))
     INVOICE_DTL = Column(String(20))
     TIMESTAMP = Column(BINARY(8))
@@ -1866,15 +1866,15 @@ class COMPANYTB(Base):  # type: ignore
     ACTIVE = Column(Integer)
     AcquiredFrom = Column(String(50))
     UID = Column(String(50))
-    MoveToGP = Column(String(1), server_default=text("('N)"))
-    DefaultPO = Column(String(75), server_default=text("(')"))
+    MoveToGP = Column(String(1), server_default=text("('N')"))
+    DefaultPO = Column(String(75), server_default=text("('')"))
     POexpiry = Column(Date)
-    PrivateLabelPO = Column(String(50), server_default=text("(')"))
+    PrivateLabelPO = Column(String(50), server_default=text("('')"))
     PrivateLabelPOexpiry = Column(Date)
-    VisitPO = Column(String(75), server_default=text("(')"))
+    VisitPO = Column(String(75), server_default=text("('')"))
     VisitPOexpiry = Column(Date)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     CATEGORY = Column(String(50))
     OLDCOMPANYTYPE = Column(String(50))
@@ -1944,9 +1944,9 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
     __tablename__ = 'INVOICE_FEES_DETAIL'
     _s_collection_name = 'INVOICEFEESDETAIL'  # type: ignore
     __table_args__ = (
-        Index('invoiceIdVisitID', 'INVOICE_ID', 'VISIT_ID),
-        Index('XPK_INVOICE_FEES_DET', 'INVOICE_ID', 'INVOICE_LINE),
-        Index('infd', 'INVOICE_ID', 'PERIOD_START_DATE)
+        Index('invoiceIdVisitID', 'INVOICE_ID', 'VISIT_ID'),
+        Index('XPK_INVOICE_FEES_DET', 'INVOICE_ID', 'INVOICE_LINE'),
+        Index('infd', 'INVOICE_ID', 'PERIOD_START_DATE')
     )
 
     ID = Column(Integer, primary_key=True)
@@ -1966,8 +1966,8 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
     TIMESTAMP = Column(BINARY(8))
     ownsID = Column(Integer)
     voided = Column(Boolean, server_default=text("((0))"), nullable=False)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     allow_client_generated_ids = True
 
@@ -1985,9 +1985,9 @@ class MERCHCOMMENT(Base):  # type: ignore
     MERCHANDISE_ID = Column(Integer, nullable=False, index=True)
     COMMENT_ID = Column(Integer, nullable=False, index=True)
     TIMESTAMP = Column(BINARY(8))
-    CommentType = Column(String(20), server_default=text("('CNTA)"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    CommentType = Column(String(20), server_default=text("('CNTA')"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2000,51 +2000,51 @@ class MERCHTB(Base):  # type: ignore
     __tablename__ = 'MERCH_TB'
     _s_collection_name = 'MERCHTB'  # type: ignore
     __table_args__ = (
-        Index('ix_MERCH_TB_ACTIVE_Reviewed_includes', 'ACTIVE', 'Reviewed),
+        Index('ix_MERCH_TB_ACTIVE_Reviewed_includes', 'ACTIVE', 'Reviewed'),
         Index('idx_MerchandiseID_Active', 'MERCHANDISE_ID', 'ACTIVE', unique=True),
-        Index('idxSymbol', 'Symbol', 'MERCHANDISE_ID', 'ACTIVE)
+        Index('idxSymbol', 'Symbol', 'MERCHANDISE_ID', 'ACTIVE')
     )
 
     MERCHANDISE_ID = Column(Integer, server_default=text("0"), primary_key=True)
     NAME = Column(String(225), nullable=False)
-    AS_STIPULATED = Column(String(1), server_default=text("('N)"))
-    STIPULATION = Column(String(1000), server_default=text("(')"))
-    CONFIDENTIAL = Column(String(1), server_default=text("('N)"))
+    AS_STIPULATED = Column(String(1), server_default=text("('N')"))
+    STIPULATION = Column(String(1000), server_default=text("('')"))
+    CONFIDENTIAL = Column(String(1), server_default=text("('N')"))
     RETAIL = Column(String(1))
     FOODSERVICE = Column(String(1))
     CONSUMER = Column(String(1))
     INDUSTRIAL = Column(String(1))
-    INSTITUTIONAL = Column(String(1), server_default=text("('N)"))
-    OUP_REQUIRED = Column(String(2), server_default=text("('N)"))
+    INSTITUTIONAL = Column(String(1), server_default=text("('N')"))
+    OUP_REQUIRED = Column(String(2), server_default=text("('N')"))
     GENERIC = Column(String(1))
     SPECIFIED_SOURCE = Column(String(1))
     SPECIFIED_SYMBOL = Column(String(1))
     DESCRIPTION = Column(String(80))
     DPM = Column(String(20))
-    PESACH = Column(String(1), server_default=text("('N)"))
+    PESACH = Column(String(1), server_default=text("('N')"))
     COMMENT = Column(String(250))
     ACTIVE = Column(Integer)
     CONFIDENTIAL_TEXT = Column(String(500))
     GROUP_COMMENT = Column(String(100))
     STATUS = Column(String(25))
-    LOC_CATEGORY = Column(String(80), server_default=text("(')"))
+    LOC_CATEGORY = Column(String(80), server_default=text("('')"))
     LOC_SELECTED = Column(String(80))
     COMMENTS_SCHED_B = Column(String(250))
-    PROD_NUM = Column(String(25), server_default=text("(')"))
-    INTERMEDIATE_MIX = Column(String(1), server_default=text("('N)"))
+    PROD_NUM = Column(String(25), server_default=text("('')"))
+    INTERMEDIATE_MIX = Column(String(1), server_default=text("('N')"))
     ALTERNATE_NAME = Column(String(80))
     BrochoCode = Column(SmallInteger, server_default=text("((0))"))
     Brocho2Code = Column(SmallInteger, server_default=text("((0))"))
-    CAS = Column(String(30), server_default=text("(')"))
-    Symbol = Column(String(50), server_default=text("(')"))
+    CAS = Column(String(30), server_default=text("('')"))
+    Symbol = Column(String(50), server_default=text("('')"))
     LOC = Column(Date)
-    UKDdisplay = Column(String(1), server_default=text("('Y)"))
+    UKDdisplay = Column(String(1), server_default=text("('Y')"))
     Reviewed = Column(Boolean)
     TransferredTo = Column(Boolean, server_default=text("((0))"), nullable=False)
     TransferredMerch = Column(Integer)
     Special_Status = Column(String(255))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2064,7 +2064,7 @@ class PERSONADDRESSTB(Base):  # type: ignore
     _s_collection_name = 'PERSONADDRESSTB'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PERSON_ID = Column(ForeignKey('PERSON_TB.PERSON_ID), nullable=False, index=True)
+    PERSON_ID = Column(ForeignKey('PERSON_TB.PERSON_ID'), nullable=False, index=True)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(20))
     ATTN = Column(String(40))
@@ -2074,10 +2074,10 @@ class PERSONADDRESSTB(Base):  # type: ignore
     CITY = Column(String(40))
     STATE = Column(String(25))
     ZIP = Column(String(15))
-    COUNTRY = Column(String(25), server_default=text("(')"))
+    COUNTRY = Column(String(25), server_default=text("('')"))
     ACTIVE = Column(Integer)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2091,7 +2091,7 @@ class AchAuthToken(Base):  # type: ignore
     __tablename__ = 'AchAuthToken'
     _s_collection_name = 'AchAuthToken'  # type: ignore
 
-    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     userLogin = Column(String(100), nullable=False)
     link_session_id = Column(String(100), nullable=False)
     public_token = Column(String(100), nullable=False)
@@ -2119,7 +2119,7 @@ class AchPlaidLambdaResponse(Base):  # type: ignore
     _s_collection_name = 'AchPlaidLambdaResponse'  # type: ignore
 
     Id = Column(Integer, server_default=text("0"), primary_key=True)
-    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     userLogin = Column(String(100), nullable=False)
     stripe_bank_account_token = Column(String(100), nullable=False)
     access_token = Column(String(100))
@@ -2143,7 +2143,7 @@ class AchStripePayment(Base):  # type: ignore
     _s_collection_name = 'AchStripePayment'  # type: ignore
 
     Id = Column(Integer, server_default=text("0"), primary_key=True)
-    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     UserLogin = Column(String(100))
     Amount = Column(BigInteger)
     Currency = Column(String(100))
@@ -2173,7 +2173,7 @@ class BarCode(Base):  # type: ignore
     _s_collection_name = 'BarCode'  # type: ignore
 
     Id = Column(String(255), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -2188,25 +2188,25 @@ class COMPANYADDRESSTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_ADDRESS_TB'
     _s_collection_name = 'COMPANYADDRESSTB'  # type: ignore
     __table_args__ = (
-        Index('compaddress2', 'COMPANY_ID', 'ADDRESS_SEQ_NUM', 'ACTIVE),
+        Index('compaddress2', 'COMPANY_ID', 'ADDRESS_SEQ_NUM', 'ACTIVE'),
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40))
     ATTN = Column(String(40))
-    STREET1 = Column(String(60), server_default=text("(')"))
-    STREET2 = Column(String(60), server_default=text("(')"))
+    STREET1 = Column(String(60), server_default=text("('')"))
+    STREET2 = Column(String(60), server_default=text("('')"))
     STREET3 = Column(String(60))
-    CITY = Column(String(40), server_default=text("(')"))
-    STATE = Column(String(25), server_default=text("(')"))
+    CITY = Column(String(40), server_default=text("('')"))
+    STATE = Column(String(25), server_default=text("('')"))
     ZIP = Column(String(18))
-    COUNTRY = Column(String(25), server_default=text("(')"))
+    COUNTRY = Column(String(25), server_default=text("('')"))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2221,7 +2221,7 @@ class COMPANYCERTDETAIL(Base):  # type: ignore
     _s_collection_name = 'COMPANYCERTDETAIL'  # type: ignore
 
     ID = Column(Integer, primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMPANY_FEE_ID = Column(Integer, nullable=False, index=True)
     CERT_DETAIL_SEQ_NUM = Column(SmallInteger, nullable=False)
     CERT_DETAIL_DESCRIPTION = Column(String(80))
@@ -2246,7 +2246,7 @@ class COMPANYCOMMENT(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMMENT_ID = Column(Integer, nullable=False)
     TIMESTAMP = Column(BINARY(8))
 
@@ -2265,7 +2265,7 @@ class COMPANYFEECOMMENT(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMMENT_ID = Column(Integer, nullable=False)
     TIMESTAMP = Column(BINARY(8))
     CHANGESET_ID = Column(Integer)
@@ -2281,11 +2281,11 @@ class COMPANYFEESTRUCTURE(Base):  # type: ignore
     __tablename__ = 'COMPANY_FEE_STRUCTURE'
     _s_collection_name = 'COMPANYFEESTRUCTURE'  # type: ignore
     __table_args__ = (
-        Index('XPKCOMPANY_FEE_STRUCTURE', 'COMPANY_ID', 'COMPANY_FEE_ID),
+        Index('XPKCOMPANY_FEE_STRUCTURE', 'COMPANY_ID', 'COMPANY_FEE_ID'),
     )
 
     ID = Column(Integer, primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMPANY_FEE_ID = Column(SmallInteger, server_default=text("((1))"), nullable=False)
     EFFECTIVE_DATE = Column(DateTime)
     APPROVAL = Column(String(1), nullable=False)
@@ -2335,8 +2335,8 @@ class COMPANYFEESTRUCTURE(Base):  # type: ignore
     BILL_SPEC_PROD_AMTx = Column(String(20))
     BILL_PASSOVER_TYPEx = Column(String(20))
     BILL_PASSOVER_AMTx = Column(String(20))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     LockPerDistributorRate = Column(Boolean, server_default=text("((0))"), nullable=False)
     PRIVATE_LABEL_COMMENT = Column(String(500))
@@ -2358,7 +2358,7 @@ class COMPANYHOLDTB(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMPANY_SEQ_NUM = Column(SmallInteger, nullable=False)
     HOLD_TYPE = Column(String(4))
     START_PERSON_ID = Column(String(20), nullable=False)
@@ -2369,8 +2369,8 @@ class COMPANYHOLDTB(Base):  # type: ignore
     END_REASON = Column(String(100))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2389,7 +2389,7 @@ class COMPANYOTHERNAME(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     ALIAS_ID = Column(Integer)
     LEGAL_NAME = Column(Boolean)
     DBA = Column(Boolean)
@@ -2411,7 +2411,7 @@ class COMPANYSTATUSTB(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), ForeignKey('COMPANY_TB.COMPANY_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), ForeignKey('COMPANY_TB.COMPANY_ID'))
     ROLE = Column(String(1))
     STATUS = Column(String(40))
     ACTIVE_FLAG = Column(Boolean)
@@ -2423,8 +2423,8 @@ class COMPANYSTATUSTB(Base):  # type: ignore
     END_REASON = Column(String(100))
     ACTIVE = Column(Integer)
     DateDone = Column(DateTime, server_default=text("(getdate())"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2440,7 +2440,7 @@ class COPRIVATELABELFEEDETAIL(Base):  # type: ignore
     _s_collection_name = 'COPRIVATELABELFEEDETAIL'  # type: ignore
 
     ID = Column(Integer, primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMPANY_FEE_ID = Column(Integer, nullable=False, index=True)
     PL_DETAIL_SEQ_NUM = Column(SmallInteger, nullable=False)
     PL_DETAIL_DESCRIPTION = Column(String(80))
@@ -2448,8 +2448,8 @@ class COPRIVATELABELFEEDETAIL(Base):  # type: ignore
     PL_DETAIL_DATE = Column(DateTime)
     PL_DETAIL_PERSON_ID = Column(String(20), nullable=False)
     PL_DETAIL_COMMENT = Column(String(255))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     allow_client_generated_ids = True
 
@@ -2465,11 +2465,11 @@ class CoPackerFacility(Base):  # type: ignore
     _s_collection_name = 'CoPackerFacility'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    CompanyId = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    CompanyId = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     WebsiteURL = Column(String(500))
     Description = Column(String(500))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer)
 
     # parent relationships (access parent)
@@ -2487,7 +2487,7 @@ class FormulaProduct(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     FormulaID = Column(Integer, nullable=False)
-    Merchandise_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID), nullable=False)
+    Merchandise_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), nullable=False)
 
     # parent relationships (access parent)
     MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("FormulaProductList"))
@@ -2502,7 +2502,7 @@ class MERCHOTHERNAME(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     ALIAS_ID = Column(Integer, index=True)
-    MERCHANDISE_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID), index=True)
+    MERCHANDISE_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), index=True)
     TYPE = Column(String(40))
     TIMESTAMP = Column(BINARY(8))
     allow_client_generated_ids = True
@@ -2526,7 +2526,7 @@ class MiniCRMAction(Base):  # type: ignore
     ActivityDate = Column(DateTime)
     Modality = Column(String(250))
     ContactId = Column(Integer, nullable=False)
-    CompanyId = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    CompanyId = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     Result = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     ReminderDate = Column(DateTime)
     Comment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
@@ -2550,7 +2550,7 @@ class PLANTTB(Base):  # type: ignore
     GP_NOTIFY = Column(Boolean)
     MULTILINES = Column(String(1))
     PASSOVER = Column(String(1))
-    SPECIAL_PROD = Column(String(1), server_default=text("('N)"), nullable=False)
+    SPECIAL_PROD = Column(String(1), server_default=text("('N')"), nullable=False)
     JEWISH_OWNED = Column(String(1))
     PLANT_TYPE = Column(String(50))
     PLANT_DIRECTIONS = Column(String(800))
@@ -2559,10 +2559,10 @@ class PLANTTB(Base):  # type: ignore
     PlantUID = Column(String(75))
     DoNotAttach = Column(String(1))
     OtherCertification = Column(String(500))
-    PrimaryCompany = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
-    DesignatedRFR = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID), ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    PrimaryCompany = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
+    DesignatedRFR = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'), ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     MaxOnSiteVisits = Column(SmallInteger, server_default=text("((0))"), nullable=False)
     MaxVirtualVisits = Column(SmallInteger, server_default=text("((0))"), nullable=False)
@@ -2597,7 +2597,7 @@ class PrivateLabelTemplate(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     Template = Column(LargeBinary)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     AddedBy = Column(String(30))
     DateAdded = Column(DateTime)
     allow_client_generated_ids = True
@@ -2615,7 +2615,7 @@ class ProductJob(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     SubmissionDate = Column(SMALLDATETIME, server_default=text("(getdate())"))
-    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     RequestedBy = Column(String(50), server_default=text("(suser_name())"))
     RequestType = Column(String(50))
     JobComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
@@ -2624,8 +2624,8 @@ class ProductJob(Base):  # type: ignore
     Source = Column(String(100))
     ImportSource = Column(String(250))
     jobid = Column(String(34), Computed("(case when [requesttype]='Formula' then CONVERT([varchar],[ID],(0))+'-002' when [ImportSource]='ProductImport' then CONVERT([varchar],[ID],(0))+'-003' else CONVERT([varchar],[ID],(0))+'-001' end)", persisted=False), index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     ActualLogin = Column(String(100))
 
@@ -2640,12 +2640,12 @@ class RCTB(Base):  # type: ignore
     __tablename__ = 'RC_TB'
     _s_collection_name = 'RCTB'  # type: ignore
     __table_args__ = (
-        Index('ByRC', 'COMPANY_ID', 'PERSON_JOB_ID),
+        Index('ByRC', 'COMPANY_ID', 'PERSON_JOB_ID'),
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID), nullable=False, index=True)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'), nullable=False, index=True)
     START_DATE = Column(DateTime)
     END_DATE = Column(DateTime)
     NCRC = Column(String(1), nullable=False)
@@ -2653,8 +2653,8 @@ class RCTB(Base):  # type: ignore
     ACTIVE = Column(Integer)
     EnteredBy = Column(String(75), server_default=text("(suser_sname())"))
     EnteredOn = Column(Date, server_default=text("(getdate())"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2670,7 +2670,7 @@ class StripeCustomer(Base):  # type: ignore
     _s_collection_name = 'StripeCustomer'  # type: ignore
 
     Id = Column(Integer, server_default=text("0"), primary_key=True)
-    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    company_id = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     userLogin = Column(String(100), nullable=False)
     customerId = Column(String(100))
     ValidFromTime = Column(DATETIME2, nullable=False)
@@ -2692,11 +2692,11 @@ class YoshonInfo(Base):  # type: ignore
     Description = Column(String(200))
     Comment = Column(String(5000))
     Value = Column(String(500))
-    MerchId = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID), nullable=False)
+    MerchId = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), nullable=False)
     OuCertified = Column(Boolean, server_default=text("((0))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     ValidFromTime = Column(DATETIME2, server_default=text("(sysutcdatetime())"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'9999-12-31 23:59:59.9999999'))"), nullable=False)
 
     # parent relationships (access parent)
     Merch : Mapped["MERCHTB"] = relationship(back_populates=("YoshonInfoList"))
@@ -2713,28 +2713,28 @@ class CompanycontactsTb(Base):  # type: ignore
     )
 
     ccID = Column(Integer, server_default=text("0"), primary_key=True)
-    Company_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), index=True)
+    Company_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), index=True)
     CompanyTitle = Column(String(50))
-    PrimaryCT = Column(String(1), server_default=text("('N)"), nullable=False)
-    BillingCT = Column(String(1), server_default=text("('N)"), nullable=False)
-    WebCT = Column(String(1), server_default=text("('N)"), nullable=False)
-    OtherCT = Column(String(1), server_default=text("('N)"), nullable=False)
+    PrimaryCT = Column(String(1), server_default=text("('N')"), nullable=False)
+    BillingCT = Column(String(1), server_default=text("('N')"), nullable=False)
+    WebCT = Column(String(1), server_default=text("('N')"), nullable=False)
+    OtherCT = Column(String(1), server_default=text("('N')"), nullable=False)
     EnteredBy = Column(String(50), server_default=text("(suser_sname())"))
     DateEntered = Column(SMALLDATETIME, server_default=text("(getdate())"))
     ModifiedBy = Column(String(50))
     DateModified = Column(DateTime)
     Active = Column(SmallInteger)
-    StatementType = Column(String(1), server_default=text("('N)"), nullable=False)
-    InvoiceType = Column(String(1), server_default=text("('N)"), nullable=False)
-    UserVendorID = Column(String(200), server_default=text("(')"))
-    UsedInComment = Column(String(500), server_default=text("(')"))
+    StatementType = Column(String(1), server_default=text("('N')"), nullable=False)
+    InvoiceType = Column(String(1), server_default=text("('N')"), nullable=False)
+    UserVendorID = Column(String(200), server_default=text("('')"))
+    UsedInComment = Column(String(500), server_default=text("('')"))
     ContactID = Column(Integer, nullable=False)
     LOAtype = Column(String(1))
     EIREmail = Column(String(1))
     ScheduleBEmail = Column(String(1))
     FormulaEmail = Column(String(1))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     PoCT = Column(Boolean, server_default=text("((0))"), nullable=False)
     CopackerCT = Column(Boolean, server_default=text("((0))"), nullable=False)
@@ -2751,36 +2751,36 @@ class LabelTb(Base):  # type: ignore
     __tablename__ = 'label_tb'
     _s_collection_name = 'LabelTb'  # type: ignore
     __table_args__ = (
-        Index('<idxLBL', 'ACTIVE', 'SRC_MAR_ID),
-        Index('idx_test', 'LABEL_SEQ_NUM', 'ACTIVE),
-        Index('ix_label_tb_ACTIVE_LABEL_SEQ_NUM_AgencyID_includes', 'ACTIVE', 'LABEL_SEQ_NUM', 'AgencyID),
-        Index('labelidx4', 'SRC_MAR_ID', 'ID),
-        Index('cidxLBL', 'ACTIVE', 'SRC_MAR_ID),
-        Index('LabelMerchStat', 'MERCHANDISE_ID', 'ACTIVE),
-        Index('idxlabelmidbrnd', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM),
-        Index('ix_label_tb_ACTIVE_LABEL_SEQ_NUM_includes', 'ACTIVE', 'LABEL_SEQ_NUM),
-        Index('MerchLSN', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM', 'LABEL_TYPE', 'SRC_MAR_ID', 'ACTIVE', 'BRAND_NAME', 'AgencyID', 'SEAL_SIGN', 'NUM_NAME', 'BLK),
-        Index('CompListWithLOC', 'ACTIVE', 'LABEL_SEQ_NUM),
-        Index('ix_label_tb_ACTIVE_LABEL_TYPE_includes', 'ACTIVE', 'LABEL_TYPE),
-        Index('MerchSrc', 'MERCHANDISE_ID', 'SRC_MAR_ID', 'ACTIVE', 'LABEL_SEQ_NUM', 'GRP),
-        Index('idxLSNAgencyIDBLKBrandConfConsGRPetc', 'ACTIVE', 'LABEL_SEQ_NUM),
-        Index('ix_label_tb_LOChold_ACTIVE_AgencyID_LOCholdDate', 'LOChold', 'ACTIVE', 'AgencyID', 'LOCholdDate),
-        Index('IDX_NUM', 'LABEL_NUM', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM', 'SRC_MAR_ID', 'LABEL_TYPE', 'LOChold),
-        Index('IX_Label_OrderAndFilter', 'LABEL_NAME', 'BRAND_NAME', 'LABEL_SEQ_NUM),
-        Index('ix_label_tb_ACTIVE_BRAND_NAME_includes', 'ACTIVE', 'BRAND_NAME)
+        Index('<idxLBL', 'ACTIVE', 'SRC_MAR_ID'),
+        Index('idx_test', 'LABEL_SEQ_NUM', 'ACTIVE'),
+        Index('ix_label_tb_ACTIVE_LABEL_SEQ_NUM_AgencyID_includes', 'ACTIVE', 'LABEL_SEQ_NUM', 'AgencyID'),
+        Index('labelidx4', 'SRC_MAR_ID', 'ID'),
+        Index('cidxLBL', 'ACTIVE', 'SRC_MAR_ID'),
+        Index('LabelMerchStat', 'MERCHANDISE_ID', 'ACTIVE'),
+        Index('idxlabelmidbrnd', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM'),
+        Index('ix_label_tb_ACTIVE_LABEL_SEQ_NUM_includes', 'ACTIVE', 'LABEL_SEQ_NUM'),
+        Index('MerchLSN', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM', 'LABEL_TYPE', 'SRC_MAR_ID', 'ACTIVE', 'BRAND_NAME', 'AgencyID', 'SEAL_SIGN', 'NUM_NAME', 'BLK'),
+        Index('CompListWithLOC', 'ACTIVE', 'LABEL_SEQ_NUM'),
+        Index('ix_label_tb_ACTIVE_LABEL_TYPE_includes', 'ACTIVE', 'LABEL_TYPE'),
+        Index('MerchSrc', 'MERCHANDISE_ID', 'SRC_MAR_ID', 'ACTIVE', 'LABEL_SEQ_NUM', 'GRP'),
+        Index('idxLSNAgencyIDBLKBrandConfConsGRPetc', 'ACTIVE', 'LABEL_SEQ_NUM'),
+        Index('ix_label_tb_LOChold_ACTIVE_AgencyID_LOCholdDate', 'LOChold', 'ACTIVE', 'AgencyID', 'LOCholdDate'),
+        Index('IDX_NUM', 'LABEL_NUM', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM', 'SRC_MAR_ID', 'LABEL_TYPE', 'LOChold'),
+        Index('IX_Label_OrderAndFilter', 'LABEL_NAME', 'BRAND_NAME', 'LABEL_SEQ_NUM'),
+        Index('ix_label_tb_ACTIVE_BRAND_NAME_includes', 'ACTIVE', 'BRAND_NAME')
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True, unique=True)
-    MERCHANDISE_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID), nullable=False)
+    MERCHANDISE_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), nullable=False)
     LABEL_SEQ_NUM = Column(SmallInteger, nullable=False)
     SYMBOL = Column(String(20))
     INSTITUTIONAL = Column(String(1))
     BLK = Column(String(1), Computed("(case when [GRP]='5' OR [GRP]='4' then 'Y' else 'N' end)", persisted=False), nullable=False)
-    SEAL_SIGN = Column(String(30), server_default=text("('{NONE})"))
+    SEAL_SIGN = Column(String(30), server_default=text("('{NONE}')"))
     GRP = Column(String(10), server_default=text("((3))"))
     SEAL_SIGN_FLAG = Column(String(1))
     BRAND_NAME = Column(String(100), index=True)
-    SRC_MAR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    SRC_MAR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     LABEL_NAME = Column(String(225), index=True)
     INDUSTRIAL = Column(String(1))
     CONSUMER = Column(String(1))
@@ -2794,17 +2794,17 @@ class LabelTb(Base):  # type: ignore
     CREATED_BY = Column(String(100), server_default=text("(suser_sname())"))
     MODIFIED_BY = Column(String(100), server_default=text("(suser_sname())"))
     LABEL_NUM = Column(String(25))
-    NUM_NAME = Column(String(251), Computed("(case when [LABEL_NUM] IS NULL OR [LABEL_NUM]='' then [LABEL_NAME] else ([LABEL_NUM]+' )+[LABEL_NAME] end)", persisted=False), index=True)
+    NUM_NAME = Column(String(251), Computed("(case when [LABEL_NUM] IS NULL OR [LABEL_NUM]='' then [LABEL_NAME] else ([LABEL_NUM]+' ')+[LABEL_NAME] end)", persisted=False), index=True)
     Confidential = Column(String(1))
     AgencyID = Column(String(50), unique=True)
     LOChold = Column(String(1))
     LOCholdDate = Column(DateTime)
-    PassoverSpecialProduction = Column(String(1), server_default=text("('N)"))
-    COMMENT = Column(String(1000), server_default=text("(')"))
-    DisplayNewlyCertifiedOnWeb = Column(String(1), server_default=text("('N)"))
+    PassoverSpecialProduction = Column(String(1), server_default=text("('N')"))
+    COMMENT = Column(String(1000), server_default=text("('')"))
+    DisplayNewlyCertifiedOnWeb = Column(String(1), server_default=text("('N')"))
     Status = Column(String(25))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     LastChangeDate = Column(DateTime)
     LastChangeReason = Column(String(100))
@@ -2813,7 +2813,7 @@ class LabelTb(Base):  # type: ignore
     TransferredFromAgencyId = Column(String(50))
     Kitniyot = Column(Boolean)
     IsDairyEquipment = Column(Boolean, server_default=text("((0))"), nullable=False)
-    NameNum = Column(String(251), Computed("(ltrim(isnull(concat(nullif([Label_Name],'),case when [Label_Name]<>'' AND [Label_Num]<>'' then ' '+[Label_Num] else [Label_Num] end),')))", persisted=False))
+    NameNum = Column(String(251), Computed("(ltrim(isnull(concat(nullif([Label_Name],''),case when [Label_Name]<>'' AND [Label_Num]<>'' then ' '+[Label_Num] else [Label_Num] end),'')))", persisted=False))
 
     # parent relationships (access parent)
     MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("LabelTbList"))
@@ -2837,7 +2837,7 @@ class AchStripePaymentDetail(Base):  # type: ignore
     _s_collection_name = 'AchStripePaymentDetail'  # type: ignore
 
     Id = Column(Integer, server_default=text("0"), primary_key=True)
-    AchStripePaymentId = Column(ForeignKey('AchStripePayment.Id), nullable=False)
+    AchStripePaymentId = Column(ForeignKey('AchStripePayment.Id'), nullable=False)
     DocumentNumber = Column(String(100))
     Amount : DECIMAL = Column(DECIMAL(12, 2))
     TransactionBalance : DECIMAL = Column(DECIMAL(12, 2))
@@ -2857,12 +2857,12 @@ class CoPackerFacilitiesCategory(Base):  # type: ignore
     _s_collection_name = 'CoPackerFacilitiesCategory'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    CoPackerId = Column(ForeignKey('CoPackerFacilities.ID), nullable=False)
+    CoPackerId = Column(ForeignKey('CoPackerFacilities.ID'), nullable=False)
     Category = Column(String(500), nullable=False)
     CategoryParent = Column(String(500), Computed("(case when [category] like '%-%' then left([category],charindex('-',[category])-(1)) else [category] end)", persisted=False))
     CategoryChild = Column(String(500), Computed("(case when [category] like '%-%' then substring([category],charindex('-',[category])+(1),len([category])-charindex('-',[category])) else '' end)", persisted=False))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer)
 
     # parent relationships (access parent)
@@ -2877,14 +2877,14 @@ class CoPackerFacilitiesLocation(Base):  # type: ignore
     _s_collection_name = 'CoPackerFacilitiesLocation'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    CoPackerId = Column(ForeignKey('CoPackerFacilities.ID), nullable=False)
+    CoPackerId = Column(ForeignKey('CoPackerFacilities.ID'), nullable=False)
     Location = Column(String(500), nullable=False)
     LocationCity = Column(String(200))
     LocationState = Column(String(200))
     LocationProvince = Column(String(200))
     LocationCountry = Column(String(200))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer)
 
     # parent relationships (access parent)
@@ -2900,12 +2900,12 @@ class FormulaComponent(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     FormulaID = Column(Integer, nullable=False)
-    ComponentMerchID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID))
-    ComponentLabelID = Column(ForeignKey('label_tb.ID))
+    ComponentMerchID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'))
+    ComponentLabelID = Column(ForeignKey('label_tb.ID'))
     Component = Column(String(50), nullable=False)
     ComponentIDType = Column(String(50), nullable=False)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -2924,7 +2924,7 @@ class INVOICEFEE(Base):  # type: ignore
     )
 
     INVOICE_ID = Column(Integer, primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False, index=True)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False, index=True)
     TYPE = Column(String(4), nullable=False, index=True)
     INVOICE_TYPE = Column(String(20))
     INVOICE_DATE = Column(DateTime, index=True)
@@ -2938,7 +2938,7 @@ class INVOICEFEE(Base):  # type: ignore
     CHECK_DATE = Column(DateTime)
     CHECK_RECEIVED = Column(DateTime)
     BILL_TO_CO_ID = Column(Integer)
-    BILL_TO_PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), index=True)
+    BILL_TO_PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), index=True)
     OK_TO_POST = Column(String(1))
     WHO = Column(String(40))
     REPLACEMENT_FOR = Column(Integer)
@@ -2952,12 +2952,12 @@ class INVOICEFEE(Base):  # type: ignore
     ID = Column(Integer)
     COMMENT = Column(String(255))
     INVOICE_LEVEL = Column(Integer)
-    PurchaseOrder = Column(String(75), server_default=text("(')"))
-    DeliveryMethod = Column(String(30), server_default=text("(')"))
+    PurchaseOrder = Column(String(75), server_default=text("('')"))
+    DeliveryMethod = Column(String(30), server_default=text("('')"))
     DeliveryDate = Column(Date)
     OriginalInvoiceAmount = Column(MONEY)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     achPaid = Column(Boolean, server_default=text("((0))"), nullable=False)
     BatchId = Column(Integer)
@@ -2980,10 +2980,10 @@ class LabelComment(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), nullable=False)
     CommentID = Column(Integer, primary_key=True)
-    LabelId = Column(ForeignKey('label_tb.ID), nullable=False, index=True)
+    LabelId = Column(ForeignKey('label_tb.ID'), nullable=False, index=True)
     CHANGESET_ID = Column(Integer, index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'9999-12-31 23:59:59.9999999'))"), nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -2997,7 +2997,7 @@ class LabelOption(Base):  # type: ignore
     __tablename__ = 'LabelOptions'
     _s_collection_name = 'LabelOption'  # type: ignore
 
-    LabelID = Column(ForeignKey('label_tb.ID), ForeignKey('label_tb.ID), primary_key=True)
+    LabelID = Column(ForeignKey('label_tb.ID'), ForeignKey('label_tb.ID'), primary_key=True)
     IncludeInParentCompanyLOC = Column(String(1))
     allow_client_generated_ids = True
 
@@ -3013,13 +3013,13 @@ class OWNSTB(Base):  # type: ignore
     __tablename__ = 'OWNS_TB'
     _s_collection_name = 'OWNSTB'  # type: ignore
     __table_args__ = (
-        Index('setupby', 'STATUS', 'ACTIVE),
-        Index('XOWNS', 'PLANT_ID', 'STATUS', 'ID', 'ACTIVE', 'Setup_By),
+        Index('setupby', 'STATUS', 'ACTIVE'),
+        Index('XOWNS', 'PLANT_ID', 'STATUS', 'ID', 'ACTIVE', 'Setup_By'),
         Index('idxCompID', 'COMPANY_ID', 'ACTIVE', 'PLANT_ID', unique=True)
     )
 
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False)
     START_DATE = Column(DateTime)
     END_DATE = Column(DateTime)
     TYPE = Column(String(10))
@@ -3033,25 +3033,25 @@ class OWNSTB(Base):  # type: ignore
     STATUS = Column(String(40))
     ID = Column(Integer, server_default=text("0"), primary_key=True, unique=True)
     ACTIVE = Column(Integer)
-    Setup_By = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID))
+    Setup_By = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
     AcquiredFrom = Column(String(50))
-    NoRFRneeded = Column(String(1), server_default=text("('N)"), nullable=False)
+    NoRFRneeded = Column(String(1), server_default=text("('N')"), nullable=False)
     LOCtext = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
-    MoveToGP = Column(String(1), server_default=text("('N)"))
-    DefaultPO = Column(String(75), server_default=text("(')"))
-    VisitBilling = Column(String(10), server_default=text("(')"))
-    PlantName = Column(String(100), server_default=text("(')"))
-    ShareAB = Column(String(1), server_default=text("('N)"))
+    MoveToGP = Column(String(1), server_default=text("('N')"))
+    DefaultPO = Column(String(75), server_default=text("('')"))
+    VisitBilling = Column(String(10), server_default=text("('')"))
+    PlantName = Column(String(100), server_default=text("('')"))
+    ShareAB = Column(String(1), server_default=text("('N')"))
     POexpiry = Column(Date)
     BillingName = Column(String(100))
-    PLANT_BILL_TO_NAME = Column(String(80), server_default=text("(')"))
+    PLANT_BILL_TO_NAME = Column(String(80), server_default=text("('')"))
     AutoCertification = Column(Boolean, server_default=text("((0))"), nullable=False)
     primaryCompany = Column(Integer)
     Override = Column(Boolean, server_default=text("((0))"), nullable=False)
-    VisitPO = Column(String(75), server_default=text("(')"))
+    VisitPO = Column(String(75), server_default=text("('')"))
     VisitPOexpiry = Column(Date)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     BoilerplateInvoiceComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     IsCertBillingOverride = Column(Boolean, server_default=text("((0))"), nullable=False)
@@ -3079,7 +3079,7 @@ class PENDINGINFOTB(Base):  # type: ignore
     __tablename__ = 'PENDING_INFO_TB'
     _s_collection_name = 'PENDINGINFOTB'  # type: ignore
     __table_args__ = (
-        Index('idx_CompanyID_PlantID', 'COMPANY_ID', 'PLANT_ID),
+        Index('idx_CompanyID_PlantID', 'COMPANY_ID', 'PLANT_ID'),
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
@@ -3094,8 +3094,8 @@ class PENDINGINFOTB(Base):  # type: ignore
     ANNUALFEE = Column(String(25))
     ANNUALEXPENSES = Column(String(25))
     CINVOICEDATE = Column(String(10))
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
     ACTIVE = Column(Integer)
     IINVOICEAMOUNT = Column(String(25))
     PROEXPENSES = Column(String(25))
@@ -3103,8 +3103,8 @@ class PENDINGINFOTB(Base):  # type: ignore
     PRODATE = Column(String(10))
     CONTRACTFEE = Column(String(25))
     CONTRACTEXPENSE = Column(String(25))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3120,22 +3120,22 @@ class PLANTADDRESSTB(Base):  # type: ignore
     _s_collection_name = 'PLANTADDRESSTB'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), nullable=False, index=True)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False, index=True)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40), nullable=False)
     ATTN = Column(String(40))
-    STREET1 = Column(String(60), server_default=text("(')"))
+    STREET1 = Column(String(60), server_default=text("('')"))
     STREET2 = Column(String(60))
     STREET3 = Column(String(60))
-    CITY = Column(String(40), server_default=text("(')"))
-    STATE = Column(String(25), server_default=text("(')"))
+    CITY = Column(String(40), server_default=text("('')"))
+    STATE = Column(String(25), server_default=text("('')"))
     ZIP = Column(String(25))
-    COUNTRY = Column(String(25), server_default=text("(')"))
+    COUNTRY = Column(String(25), server_default=text("('')"))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3150,12 +3150,12 @@ class PLANTCERTDETAIL(Base):  # type: ignore
     __tablename__ = 'PLANT_CERT_DETAIL'
     _s_collection_name = 'PLANTCERTDETAIL'  # type: ignore
     __table_args__ = (
-        Index('IX_PLANT_CERT_DETAIL', 'COMPANY_ID', 'PLANT_ID', 'COMPANY_FEE_ID),
+        Index('IX_PLANT_CERT_DETAIL', 'COMPANY_ID', 'PLANT_ID', 'COMPANY_FEE_ID'),
     )
 
     ID = Column(Integer, primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False)
     COMPANY_FEE_ID = Column(Integer, nullable=False)
     CERT_DETAIL_SEQ_NUM = Column(SmallInteger, nullable=False)
     CERT_DETAIL_DESCRIPTION = Column(String(80))
@@ -3181,8 +3181,8 @@ class PLANTCOMMENT(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMMENT_ID = Column(Integer, nullable=False)
     TIMESTAMP = Column(BINARY(8))
 
@@ -3202,8 +3202,8 @@ class PLANTFEECOMMENT(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
     PLANT_FEE_ID = Column(Integer)
     COMMENT_ID = Column(Integer, nullable=False)
     Type = Column(String(25))
@@ -3231,8 +3231,8 @@ class PLANTFEESTRUCTUREOUT(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     PERSON_JOB_ID = Column(Integer)
     OUT_VISIT_FEE_TYPEx = Column(String(20))
     OUT_VISIT_FEEx = Column(MONEY)
@@ -3258,8 +3258,8 @@ class PLANTFEESTRUCTUREOUT(Base):  # type: ignore
     OUT_PASSOVER_RATE_FEE3 = Column(SMALLMONEY)
     OUT_PASSOVER_FOR_FEE3 = Column(Integer)
     OUT_PASSOVER_OVERNIGHTPAY = Column(MONEY)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3275,11 +3275,11 @@ class PLANTOTHERNAME(Base):  # type: ignore
     __tablename__ = 'PLANT_OTHER_NAMES'
     _s_collection_name = 'PLANTOTHERNAME'  # type: ignore
     __table_args__ = (
-        Index('XPKPLANT_OTHER_NAMES', 'PLANT_ID', 'ALIAS_ID),
+        Index('XPKPLANT_OTHER_NAMES', 'PLANT_ID', 'ALIAS_ID'),
     )
 
     ID = Column(Integer)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
     ALIAS_ID = Column(Integer, primary_key=True)
     TIMESTAMP = Column(BINARY(8))
     allow_client_generated_ids = True
@@ -3299,20 +3299,20 @@ class PRIVATELABELBILL(Base):  # type: ignore
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    SRC_MAR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    SRC_MAR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     MAN_ENTERED = Column(Boolean, nullable=False)
     DATE_UPDATE = Column(DateTime)
     PRIV_LABEL_FEE = Column(MONEY)
-    BILL_TO_CO_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), index=True)
-    BILL_TO_PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID))
+    BILL_TO_CO_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), index=True)
+    BILL_TO_PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
     PRO_RATED = Column(MONEY)
     TIMESTAMP = Column(BINARY(8))
     LAST_BIILED = Column(DateTime)
     AGREEMENT_RECEIVED_DATE = Column(DateTime)
     CHANGESET_ID = Column(Integer, index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
 
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(foreign_keys='[PRIVATELABELBILL.BILL_TO_CO_ID]', back_populates=("PRIVATELABELBILLList"))
@@ -3328,21 +3328,21 @@ class VISIT(Base):  # type: ignore
     __tablename__ = 'VISITS'
     _s_collection_name = 'VISIT'  # type: ignore
     __table_args__ = (
-        Index('GroupTicketsNew', 'MainVisit', 'VISIT_ID),
-        Index('TripDate', 'TRIP_ID', 'ACTUAL_VISIT_DATE),
-        Index('tripID', 'VISIT_ID', 'TRIP_ID),
-        Index('apBatch', 'AP_BATCH', 'VISIT_ID),
-        Index('GroupTickets', 'VISIT_PURPOSE', 'VISIT_ID)
+        Index('GroupTicketsNew', 'MainVisit', 'VISIT_ID'),
+        Index('TripDate', 'TRIP_ID', 'ACTUAL_VISIT_DATE'),
+        Index('tripID', 'VISIT_ID', 'TRIP_ID'),
+        Index('apBatch', 'AP_BATCH', 'VISIT_ID'),
+        Index('GroupTickets', 'VISIT_PURPOSE', 'VISIT_ID')
     )
 
     VISIT_ID = Column(Integer, server_default=text("0"), primary_key=True)
     ASSIGNMENT_DATE = Column(DateTime, server_default=text("(getdate())"), index=True)
     VISIT_TYPE = Column(String(40), nullable=False)
     VISIT_PURPOSE = Column(String(500))
-    DESTINATION_TYPE = Column(String(1), server_default=text("('P)"), nullable=False)
-    DESTINATION_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), index=True)
-    VISIT_FOR_TYPE = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('C)"))
-    VISIT_FOR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), index=True)
+    DESTINATION_TYPE = Column(String(1), server_default=text("('P')"), nullable=False)
+    DESTINATION_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), index=True)
+    VISIT_FOR_TYPE = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('C')"))
+    VISIT_FOR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), index=True)
     BILL_TO_TYPE = Column(String(1))
     BILL_TO_ID = Column(Integer)
     PERIOD = Column(String(20))
@@ -3350,8 +3350,8 @@ class VISIT(Base):  # type: ignore
     PERIOD_END_DATE = Column(SMALLDATETIME)
     ACTUAL_VISIT_DATE = Column(SMALLDATETIME, index=True)
     ACTUAL_VISIT_DAYS = Column(Float(24), server_default=text("((1))"))
-    ASSIGNED_PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID), nullable=False, index=True)
-    ACTUAL_PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID))
+    ASSIGNED_PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'), nullable=False, index=True)
+    ACTUAL_PERSON_JOB_ID = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
     DEFAULT_BILL_AMOUNT = Column(SMALLMONEY, server_default=text("((0))"))
     DEFAULT_EXPENSES = Column(String(10), server_default=text("((0))"))
     DEFAULT_PAYMENT_AMOUNY = Column(SMALLMONEY, server_default=text("((0))"))
@@ -3366,7 +3366,7 @@ class VISIT(Base):  # type: ignore
     TOTAL_BILLABLE_FEE = Column(SMALLMONEY, server_default=text("((0))"))
     TOTAL_BILLABLE_EXPENSES = Column(SMALLMONEY, server_default=text("((0))"))
     TOTAL_BILLABLE_PAYMENT = Column(SMALLMONEY, server_default=text("((0))"))
-    PAY_TYPE = Column(String(20), server_default=text("('Per Visit)"))
+    PAY_TYPE = Column(String(20), server_default=text("('Per Visit')"))
     PAY_AMOUNT = Column(SMALLMONEY, server_default=text("((0))"))
     PAY_OVERTIME = Column(SMALLMONEY, server_default=text("((0))"))
     PAY_OVERNIGHT = Column(SMALLMONEY, server_default=text("((0))"))
@@ -3412,16 +3412,16 @@ class VISIT(Base):  # type: ignore
     AssignmentID = Column(Integer)
     OnHold = Column(DateTime)
     ProcessedBy = Column(String(50))
-    VisitStatus = Column(String(25), server_default=text("(')"), index=True)
+    VisitStatus = Column(String(25), server_default=text("('')"), index=True)
     CreatedBy = Column(String(100), server_default=text("(suser_sname())"))
     CreatedDate = Column(DateTime, server_default=text("(getdate())"))
     PurchaseOrder = Column(String(75))
     OnHoldModifiedBy = Column(String(100))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     TeamId = Column(Integer)
-    MainVisit = Column(ForeignKey('VISITS.VISIT_ID), index=True)
+    MainVisit = Column(ForeignKey('VISITS.VISIT_ID'), index=True)
     TotalVisitsInTrip = Column(Integer)
 
     # parent relationships (access parent)
@@ -3440,8 +3440,8 @@ class LabelBarcode(Base):  # type: ignore
     __tablename__ = 'label_barcode'
     _s_collection_name = 'LabelBarcode'  # type: ignore
 
-    labelId = Column(ForeignKey('label_tb.ID), primary_key=True, nullable=False)
-    barcodeId = Column(ForeignKey('BarCode.Id), primary_key=True, nullable=False)
+    labelId = Column(ForeignKey('label_tb.ID'), primary_key=True, nullable=False)
+    barcodeId = Column(ForeignKey('BarCode.Id'), primary_key=True, nullable=False)
     type = Column(String(100))
     ValidFromTime = Column(DATETIME2, nullable=False)
     ValidToTime = Column(DATETIME2, nullable=False)
@@ -3469,9 +3469,9 @@ class Billing(Base):  # type: ignore
     ValidFromTime = Column(DATETIME2, nullable=False)
     ValidToTime = Column(DATETIME2, nullable=False)
     CHANGESET_ID = Column(Integer)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
-    OWNS_ID = Column(ForeignKey('OWNS_TB.ID))
-    PFSO_ID = Column(ForeignKey('PLANT_FEE_STRUCTURE_OUT.ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'))
+    PFSO_ID = Column(ForeignKey('PLANT_FEE_STRUCTURE_OUT.ID'))
 
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("BillingList"))
@@ -3487,9 +3487,9 @@ class CompanyPlantOption(Base):  # type: ignore
     _s_collection_name = 'CompanyPlantOption'  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    Company_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
-    Plant_id = Column(ForeignKey('PLANT_TB.PLANT_ID))
-    OwnsID = Column(ForeignKey('OWNS_TB.ID))
+    Company_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
+    Plant_id = Column(ForeignKey('PLANT_TB.PLANT_ID'))
+    OwnsID = Column(ForeignKey('OWNS_TB.ID'))
     OptionName = Column(String(75))
     OptionValue = Column(String(75))
     OptIn = Column(String(1))
@@ -3497,8 +3497,8 @@ class CompanyPlantOption(Base):  # type: ignore
     glApproved = Column(String(1))
     ModifiedBy = Column(String(250), server_default=text("(suser_sname())"))
     ModifiedDate = Column(DateTime, server_default=text("(getdate())"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3520,8 +3520,8 @@ class FormulaSubmissionComponent(Base):  # type: ignore
     RMC = Column(String(500))
     ProductNumber = Column(String(500))
     ComponentName = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
-    ComponentMerchID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID))
-    ComponentLabelID = Column(ForeignKey('label_tb.ID))
+    ComponentMerchID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'))
+    ComponentLabelID = Column(ForeignKey('label_tb.ID'))
     SupplierCode = Column(String(500))
     SupplierName = Column(String(500))
     AgencyName = Column(String(500))
@@ -3561,7 +3561,7 @@ class PLANTFEESTRUCTURE(Base):  # type: ignore
 
     ID = Column(Integer, primary_key=True)
     PLANT_ID = Column(Integer)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     COMPANY_FEE_ID = Column(SmallInteger, server_default=text("((1))"))
     EFFECTIVE_DATE = Column(DateTime)
     APPROVAL = Column(String(1), server_default=text("((0))"))
@@ -3609,7 +3609,7 @@ class PLANTFEESTRUCTURE(Base):  # type: ignore
     IN_BILL_REG_VISIT_AMTx = Column(String(20))
     IN_BILL_SPEC_PROD_TYPEx = Column(String(20))
     IN_BILL_SPEC_PROD_AMTx = Column(String(20))
-    IN_BILL_PASSOVER_TYPEx = Column(String(20), server_default=text("('Percent)"))
+    IN_BILL_PASSOVER_TYPEx = Column(String(20), server_default=text("('Percent')"))
     IN_BILL_PASSOVER_AMTx = Column(String(20), server_default=text("((100))"))
     OUT_CERT_FEE = Column(MONEY)
     OUT_EXPENSE_TYPE = Column(String(15))
@@ -3659,9 +3659,9 @@ class PLANTFEESTRUCTURE(Base):  # type: ignore
     OUT_SPECIAL_PRODN_OVERNIGHTPAY = Column(MONEY)
     OUT_PASSOVER_RATE_OVERNIGHTPAY = Column(MONEY)
     PERSON_JOB_ID = Column(Integer)
-    OwnsID = Column(ForeignKey('OWNS_TB.ID), unique=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    OwnsID = Column(ForeignKey('OWNS_TB.ID'), unique=True)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     allow_client_generated_ids = True
 
@@ -3677,12 +3677,12 @@ class PLANTHOLDTB(Base):  # type: ignore
     __tablename__ = 'PLANT_HOLD_TB'
     _s_collection_name = 'PLANTHOLDTB'  # type: ignore
     __table_args__ = (
-        Index('idx_Comp_Plant', 'COMPANY_ID', 'PLANT_ID),
+        Index('idx_Comp_Plant', 'COMPANY_ID', 'PLANT_ID'),
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), nullable=False)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID), nullable=False)
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
+    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False)
     HOLD_SEQ_NUM = Column(SmallInteger, nullable=False)
     HOLD_TYPE = Column(String(4), nullable=False)
     START_PERSON_ID = Column(String(30), nullable=False)
@@ -3693,9 +3693,9 @@ class PLANTHOLDTB(Base):  # type: ignore
     END_REASON = Column(String(100))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    OwnsID = Column(ForeignKey('OWNS_TB.ID), index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    OwnsID = Column(ForeignKey('OWNS_TB.ID'), index=True)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3711,14 +3711,14 @@ t_PLANT_INSPECTION_TB = Table(
     'PLANT_INSPECTION_TB', metadata,
     Column('COMPANY_ID', Integer, nullable=False),
     Column('PLANT_ID', Integer, nullable=False),
-    Column('OWNS_ID', ForeignKey('OWNS_TB.ID)),
+    Column('OWNS_ID', ForeignKey('OWNS_TB.ID')),
     Column('QUESTION_ID', Float(24), nullable=False),
     Column('DESCRIPTION', String(255)),
     Column('WHO', String(40)),
     Column('DATE_POSTED', DateTime),
     Column('ID', Integer, nullable=False),
     Column('ACTIVE', Integer),
-    Index('PLANT_INSPECTION_1', 'COMPANY_ID', 'PLANT_ID', 'ID)
+    Index('PLANT_INSPECTION_1', 'COMPANY_ID', 'PLANT_ID', 'ID')
 )
 
 
@@ -3726,8 +3726,8 @@ class PLANTSTATUSTB(Base):  # type: ignore
     __tablename__ = 'PLANT_STATUS_TB'
     _s_collection_name = 'PLANTSTATUSTB'  # type: ignore
     __table_args__ = (
-        Index('PlantCompanyStatusSeqNum', 'OwnsID', 'COMPANY_ID', 'PLANT_ID', 'ACTIVE),
-        Index('ID', 'COMPANY_ID', 'PLANT_ID', 'ID),
+        Index('PlantCompanyStatusSeqNum', 'OwnsID', 'COMPANY_ID', 'PLANT_ID', 'ACTIVE'),
+        Index('ID', 'COMPANY_ID', 'PLANT_ID', 'ID'),
         Index('XPKPLANT_STATUS', 'ID', 'COMPANY_ID', 'PLANT_ID', 'STATUS', 'START_DATE', 'ACTIVE', 'DateDone', 'OwnsID', unique=True)
     )
 
@@ -3737,16 +3737,16 @@ class PLANTSTATUSTB(Base):  # type: ignore
     ROLE = Column(String(1))
     STATUS = Column(String(25), nullable=False)
     START_DATE = Column(DateTime)
-    START_PERSON_ID = Column(String(20), server_default=text("(')"), nullable=False)
+    START_PERSON_ID = Column(String(20), server_default=text("('')"), nullable=False)
     START_REASON = Column(String(120))
     END_DATE = Column(DateTime)
     END_PERSON_ID = Column(String(80))
     END_REASON = Column(String(80))
     ACTIVE = Column(Integer)
     DateDone = Column(SMALLDATETIME, server_default=text("(getdate())"))
-    OwnsID = Column(ForeignKey('OWNS_TB.ID), server_default=text("((0))"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    OwnsID = Column(ForeignKey('OWNS_TB.ID'), server_default=text("((0))"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3765,8 +3765,8 @@ class PurchaseOrder(Base):  # type: ignore
     PO = Column(String(255))
     Expires = Column(DATETIME2)
     FeeType = Column(String(255), nullable=False)
-    OWNS_ID = Column(ForeignKey('OWNS_TB.ID))
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     Required = Column(Boolean, server_default=text("((0))"), nullable=False)
     Inherits = Column(Boolean, server_default=text("((0))"), nullable=False)
     ValidFromTime = Column(DATETIME2, nullable=False)
@@ -3791,8 +3791,8 @@ class ThirdPartyBillingCompany(Base):  # type: ignore
     Account = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     Comments = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     DeliveryNote = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
-    OWNS_ID = Column(ForeignKey('OWNS_TB.ID))
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID))
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     ValidFromTime = Column(DATETIME2, nullable=False)
     ValidToTime = Column(DATETIME2, nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
@@ -3809,10 +3809,10 @@ class USEDIN1TB(Base):  # type: ignore
     __tablename__ = 'USED_IN1_TB'
     _s_collection_name = 'USEDIN1TB'  # type: ignore
     __table_args__ = (
-        Index('IdxUsedInLabelIdOwnsIdUidActive', 'LabelID', 'OWNS_ID', 'ID', 'ACTIVE),
-        Index('idxLabelID', 'LabelID', 'OWNS_ID),
-        Index('ix_USED_IN1_TB_ACTIVE_LineItem_includes', 'ACTIVE', 'LineItem),
-        Index('idxSubmissionDetail', 'JobID', 'LineItem', 'ACTIVE)
+        Index('IdxUsedInLabelIdOwnsIdUidActive', 'LabelID', 'OWNS_ID', 'ID', 'ACTIVE'),
+        Index('idxLabelID', 'LabelID', 'OWNS_ID'),
+        Index('ix_USED_IN1_TB_ACTIVE_LineItem_includes', 'ACTIVE', 'LineItem'),
+        Index('idxSubmissionDetail', 'JobID', 'LineItem', 'ACTIVE')
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
@@ -3822,25 +3822,25 @@ class USEDIN1TB(Base):  # type: ignore
     END_DATE = Column(DateTime)
     TIMESTAMP = Column(BINARY(8))
     STATUS = Column(String(20))
-    COMMENT = Column(String(255), server_default=text("(')"))
+    COMMENT = Column(String(255), server_default=text("('')"))
     ACTIVE = Column(Integer, index=True)
-    OWNS_ID = Column(ForeignKey('OWNS_TB.ID), index=True)
-    RAW_MATERIAL_CODE = Column(String(500), server_default=text("(')"))
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'), index=True)
+    RAW_MATERIAL_CODE = Column(String(500), server_default=text("('')"))
     ENTERED_BY = Column(String(75), server_default=text("(suser_sname())"))
     Ing_Name_ps = Column(String(75))
     JobID = Column(Integer)
     Comment_NTA = Column(String(255))
     LineItem = Column(SmallInteger, index=True)
-    DoNotDelete = Column(String(1), server_default=text("('N)"))
-    BrokerID = Column(ForeignKey('COMPANY_TB.COMPANY_ID), server_default=text("((0))"))
+    DoNotDelete = Column(String(1), server_default=text("('N')"))
+    BrokerID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), server_default=text("((0))"))
     PreferredBrokerContactID = Column(Integer, server_default=text("((0))"))
     PreferredSourceContactID = Column(Integer, server_default=text("((0))"))
-    PassoverProductionUse = Column(String(15), server_default=text("('Non Passover)"))
+    PassoverProductionUse = Column(String(15), server_default=text("('Non Passover')"))
     LocReceivedStatus = Column(Integer)
     InternalCode = Column(String(50))
-    LabelID = Column(ForeignKey('label_tb.ID), index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    LabelID = Column(ForeignKey('label_tb.ID'), index=True)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -3856,40 +3856,40 @@ class ProducedIn1Tb(Base):  # type: ignore
     __tablename__ = 'produced_in1_tb'
     _s_collection_name = 'ProducedIn1Tb'  # type: ignore
     __table_args__ = (
-        Index('idxPin1ActiveStatusOwns', 'ACTIVE', 'STATUS', 'OWNS_ID),
-        Index('MerchClust', 'ACTIVE', 'LabelID),
-        Index('idxPin1StatusActiveOwns', 'STATUS', 'ACTIVE', 'OWNS_ID),
-        Index('gbg3', 'STATUS', 'ACTIVE),
-        Index('ix_produced_in1_tb_END_DATE_STATUS_ACTIVE_includes', 'END_DATE', 'STATUS', 'ACTIVE),
-        Index('idxPin1StatusActive', 'STATUS', 'ACTIVE),
-        Index('EyePR', 'LabelID', 'STATUS', 'OWNS_ID', 'ACTIVE', 'DIST),
-        Index('idxProducedIn1EndDate', 'END_DATE', 'ACTIVE)
+        Index('idxPin1ActiveStatusOwns', 'ACTIVE', 'STATUS', 'OWNS_ID'),
+        Index('MerchClust', 'ACTIVE', 'LabelID'),
+        Index('idxPin1StatusActiveOwns', 'STATUS', 'ACTIVE', 'OWNS_ID'),
+        Index('gbg3', 'STATUS', 'ACTIVE'),
+        Index('ix_produced_in1_tb_END_DATE_STATUS_ACTIVE_includes', 'END_DATE', 'STATUS', 'ACTIVE'),
+        Index('idxPin1StatusActive', 'STATUS', 'ACTIVE'),
+        Index('EyePR', 'LabelID', 'STATUS', 'OWNS_ID', 'ACTIVE', 'DIST'),
+        Index('idxProducedIn1EndDate', 'END_DATE', 'ACTIVE')
     )
 
     ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
     PROC_LINE_ID = Column(Integer, server_default=text("((1))"))
     START_DATE = Column(DateTime)
     END_DATE = Column(DateTime)
-    REGULAR = Column(String(1), server_default=text("(')"))
+    REGULAR = Column(String(1), server_default=text("('')"))
     SPECIAL = Column(String(1))
     PASSOVER = Column(String(20))
     PRIVATE_LABEL_FEE = Column(SMALLMONEY)
     TIMESTAMP = Column(BINARY(8))
     STATUS = Column(String(20))
-    SPECIAL_STATUS_1 = Column(String(40), server_default=text("(')"))
+    SPECIAL_STATUS_1 = Column(String(40), server_default=text("('')"))
     RC_1 = Column(String(80))
     DATE_1 = Column(DateTime)
-    SPECIAL_STATUS_2 = Column(String(40), server_default=text("(')"))
+    SPECIAL_STATUS_2 = Column(String(40), server_default=text("('')"))
     RC_2 = Column(String(80))
     DATE_2 = Column(DateTime)
-    SPECIAL_STATUS_3 = Column(String(40), server_default=text("(')"))
+    SPECIAL_STATUS_3 = Column(String(40), server_default=text("('')"))
     RC_3 = Column(String(80))
     DATE_3 = Column(DateTime)
-    SPECIAL_STATUS_4 = Column(String(40), server_default=text("(')"))
+    SPECIAL_STATUS_4 = Column(String(40), server_default=text("('')"))
     RC_4 = Column(String(80))
     DATE_4 = Column(DateTime)
     ACTIVE = Column(Integer)
-    OWNS_ID = Column(ForeignKey('OWNS_TB.ID), index=True)
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'), index=True)
     DATE_CERTIFIED = Column(SMALLDATETIME)
     DATE_LAST_REV = Column(SMALLDATETIME)
     CREATE_DATE = Column(DateTime, server_default=text("(getdate())"), index=True)
@@ -3899,12 +3899,12 @@ class ProducedIn1Tb(Base):  # type: ignore
     DIST = Column(Boolean)
     MEHADRIN = Column(Boolean)
     LOTNUM = Column(String(500))
-    LabelID = Column(ForeignKey('label_tb.ID))
-    FormulaSubmissionPlantID = Column(ForeignKey('FormulaSubmissionPlants.ID))
+    LabelID = Column(ForeignKey('label_tb.ID'))
+    FormulaSubmissionPlantID = Column(ForeignKey('FormulaSubmissionPlants.ID'))
     ProductPlantsID = Column(Integer)
     BatchSheetName = Column(String(40))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     LatestPesachSeason = Column(Integer)
 
@@ -3928,11 +3928,11 @@ class ProductJobLineItem(Base):  # type: ignore
     RequestedLabelName = Column(Unicode(225))
     RequestedBrand = Column(Unicode(100))
     RequestedLabelNumber = Column(Unicode(25))
-    WorkflowStatus = Column(String(50), server_default=text("('Open)"))
+    WorkflowStatus = Column(String(50), server_default=text("('Open')"))
     LineItemComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
-    prid = Column(ForeignKey('produced_in1_tb.ID))
-    AssignedTo = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID))
-    ownsID = Column(ForeignKey('OWNS_TB.ID))
+    prid = Column(ForeignKey('produced_in1_tb.ID'))
+    AssignedTo = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
+    ownsID = Column(ForeignKey('OWNS_TB.ID'))
     requestedProductNumber = Column(String(50))
     requestedProductName = Column(String(1000))
     requestedSymbol = Column(String(20))
@@ -3960,8 +3960,8 @@ class ProductJobLineItem(Base):  # type: ignore
     DistributorContactName = Column(String(100))
     DistributorContactEmail = Column(String(100))
     DistributorContactPhone = Column(String(100))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     coPackProductPL = Column(Boolean, server_default=text("((0))"), nullable=False)
     barcodes = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
@@ -3974,29 +3974,3 @@ class ProductJobLineItem(Base):  # type: ignore
     pr : Mapped["ProducedIn1Tb"] = relationship(back_populates=("ProductJobLineItemList"))
 
     # child relationships (access children)
-'''
-
-
-class CODETB(Base):  # type: ignore
-    __tablename__ = 'CODE_TB'
-    _s_collection_name = 'CODETB'  # type: ignore
-
-    CodeId = Column(Integer, server_default=text("0"), primary_key=True)
-    TABLE_NAME = Column(String(100), nullable=False, index=True)
-    FIELD_NAME = Column(String(100), nullable=False)
-    VALUE_SEQ_NUM = Column(SmallInteger)
-    FIELD_VALUE = Column(String(500), nullable=False)
-    VALUE_DESCRIPTION = Column(String(255), server_default=text("(')"))
-    PERSON_ID = Column(String(50))
-    TIMESTAMP = Column(DateTime)
-    ACTIVE = Column(Integer, server_default=text("((1))"))
-    AdditionalParameters = Column(String(50))
-    IsDefaultValue = Column(Boolean, server_default=text("((0))"))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999))"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-

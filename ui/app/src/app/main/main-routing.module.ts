@@ -13,6 +13,8 @@ export const routes: Routes = [
         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
       
     
+        { path: 'ASSIGNEDMASHGIACHTB', loadChildren: () => import('./ASSIGNEDMASHGIACHTB/ASSIGNEDMASHGIACHTB.module').then(m => m.ASSIGNEDMASHGIACHTBModule) },
+    
         { path: 'AchAuthToken', loadChildren: () => import('./AchAuthToken/AchAuthToken.module').then(m => m.AchAuthTokenModule) },
     
         { path: 'AchPlaidLambdaResponse', loadChildren: () => import('./AchPlaidLambdaResponse/AchPlaidLambdaResponse.module').then(m => m.AchPlaidLambdaResponseModule) },
@@ -24,6 +26,8 @@ export const routes: Routes = [
         { path: 'BarCode', loadChildren: () => import('./BarCode/BarCode.module').then(m => m.BarCodeModule) },
     
         { path: 'Billing', loadChildren: () => import('./Billing/Billing.module').then(m => m.BillingModule) },
+    
+        { path: 'CODETB', loadChildren: () => import('./CODETB/CODETB.module').then(m => m.CODETBModule) },
     
         { path: 'COMPANYADDRESSTB', loadChildren: () => import('./COMPANYADDRESSTB/COMPANYADDRESSTB.module').then(m => m.COMPANYADDRESSTBModule) },
     
@@ -108,6 +112,10 @@ export const routes: Routes = [
         { path: 'PLANTFEESTRUCTUREOUT', loadChildren: () => import('./PLANTFEESTRUCTUREOUT/PLANTFEESTRUCTUREOUT.module').then(m => m.PLANTFEESTRUCTUREOUTModule) },
     
         { path: 'PLANTHOLDTB', loadChildren: () => import('./PLANTHOLDTB/PLANTHOLDTB.module').then(m => m.PLANTHOLDTBModule) },
+    
+        { path: 'PLANTOTHERNAME', loadChildren: () => import('./PLANTOTHERNAME/PLANTOTHERNAME.module').then(m => m.PLANTOTHERNAMEModule) },
+    
+        { path: 'PLANTSTATUSTB', loadChildren: () => import('./PLANTSTATUSTB/PLANTSTATUSTB.module').then(m => m.PLANTSTATUSTBModule) },
     
         { path: 'PLANTTB', loadChildren: () => import('./PLANTTB/PLANTTB.module').then(m => m.PLANTTBModule) },
     

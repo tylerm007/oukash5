@@ -1,0 +1,44 @@
+<o-form-layout-manager attr="PLANTOTHERNAME" mode="tab" title="PLANTOTHERNAME">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTOTHERNAMETable" 
+            service="PLANTOTHERNAME" 
+            entity="PLANTOTHERNAME" 
+            title="PLANTOTHERNAME"
+            keys="ALIAS_ID"
+            columns="ID;PLANT_ID;TIMESTAMP;ALIAS_ID" 
+            header-actions="R;D"
+            visible-columns="ID;PLANT_ID;TIMESTAMP;ALIAS_ID"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <!-- o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ALIAS_ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service -->
+</o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ALIAS_ID attr="ALIAS_ID" title="ALIAS_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

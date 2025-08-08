@@ -1,5 +1,7 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
+import { ASSIGNEDMASHGIACHTBCardComponent } from './ASSIGNEDMASHGIACHTB-card/ASSIGNEDMASHGIACHTB-card.component';
+
 import { AchAuthTokenCardComponent } from './AchAuthToken-card/AchAuthToken-card.component';
 
 import { AchPlaidLambdaResponseCardComponent } from './AchPlaidLambdaResponse-card/AchPlaidLambdaResponse-card.component';
@@ -11,6 +13,8 @@ import { AchStripePaymentDetailCardComponent } from './AchStripePaymentDetail-ca
 import { BarCodeCardComponent } from './BarCode-card/BarCode-card.component';
 
 import { BillingCardComponent } from './Billing-card/Billing-card.component';
+
+import { CODETBCardComponent } from './CODETB-card/CODETB-card.component';
 
 import { COMPANYADDRESSTBCardComponent } from './COMPANYADDRESSTB-card/COMPANYADDRESSTB-card.component';
 
@@ -96,6 +100,10 @@ import { PLANTFEESTRUCTUREOUTCardComponent } from './PLANTFEESTRUCTUREOUT-card/P
 
 import { PLANTHOLDTBCardComponent } from './PLANTHOLDTB-card/PLANTHOLDTB-card.component';
 
+import { PLANTOTHERNAMECardComponent } from './PLANTOTHERNAME-card/PLANTOTHERNAME-card.component';
+
+import { PLANTSTATUSTBCardComponent } from './PLANTSTATUSTB-card/PLANTSTATUSTB-card.component';
+
 import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
 
 import { PRIVATELABELBILLCardComponent } from './PRIVATELABELBILL-card/PRIVATELABELBILL-card.component';
@@ -132,7 +140,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
     id: 'data', name: ' data', icon: 'remove_red_eye', opened: true,
     items: [
     
-        { id: 'AchAuthToken', name: 'ACHAUTHTOKEN', icon: 'view_list', route: '/main/AchAuthToken' }
+        { id: 'ASSIGNEDMASHGIACHTB', name: 'ASSIGNEDMASHGIACHTB', icon: 'view_list', route: '/main/ASSIGNEDMASHGIACHTB' }
+    
+        ,{ id: 'AchAuthToken', name: 'ACHAUTHTOKEN', icon: 'view_list', route: '/main/AchAuthToken' }
     
         ,{ id: 'AchPlaidLambdaResponse', name: 'ACHPLAIDLAMBDARESPONSE', icon: 'view_list', route: '/main/AchPlaidLambdaResponse' }
     
@@ -143,6 +153,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
         ,{ id: 'BarCode', name: 'BARCODE', icon: 'view_list', route: '/main/BarCode' }
     
         ,{ id: 'Billing', name: 'BILLING', icon: 'view_list', route: '/main/Billing' }
+    
+        ,{ id: 'CODETB', name: 'CODETB', icon: 'view_list', route: '/main/CODETB' }
     
         ,{ id: 'COMPANYADDRESSTB', name: 'COMPANYADDRESSTB', icon: 'view_list', route: '/main/COMPANYADDRESSTB' }
     
@@ -228,6 +240,10 @@ export const MENU_CONFIG: MenuRootItem[] = [
     
         ,{ id: 'PLANTHOLDTB', name: 'PLANTHOLDTB', icon: 'view_list', route: '/main/PLANTHOLDTB' }
     
+        ,{ id: 'PLANTOTHERNAME', name: 'PLANTOTHERNAME', icon: 'view_list', route: '/main/PLANTOTHERNAME' }
+    
+        ,{ id: 'PLANTSTATUSTB', name: 'PLANTSTATUSTB', icon: 'view_list', route: '/main/PLANTSTATUSTB' }
+    
         ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
     
         ,{ id: 'PRIVATELABELBILL', name: 'PRIVATELABELBILL', icon: 'view_list', route: '/main/PRIVATELABELBILL' }
@@ -266,7 +282,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
 export const MENU_COMPONENTS = [
 
-    AchAuthTokenCardComponent
+    ASSIGNEDMASHGIACHTBCardComponent
+
+    ,AchAuthTokenCardComponent
 
     ,AchPlaidLambdaResponseCardComponent
 
@@ -277,6 +295,8 @@ export const MENU_COMPONENTS = [
     ,BarCodeCardComponent
 
     ,BillingCardComponent
+
+    ,CODETBCardComponent
 
     ,COMPANYADDRESSTBCardComponent
 
@@ -361,6 +381,10 @@ export const MENU_COMPONENTS = [
     ,PLANTFEESTRUCTUREOUTCardComponent
 
     ,PLANTHOLDTBCardComponent
+
+    ,PLANTOTHERNAMECardComponent
+
+    ,PLANTSTATUSTBCardComponent
 
     ,PLANTTBCardComponent
 
