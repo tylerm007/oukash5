@@ -2,6 +2,7 @@
 """
 API Endpoint Testing Script
 Automatically discovers and tests all API endpoints from the database models.
+This only works for GenAI Logic running without security (no Authorization header).
 """
 
 import requests

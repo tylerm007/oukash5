@@ -253,6 +253,93 @@ class OktaToken:
         
         return results
     
+    def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve OKTA user information by email using this OktaToken instance
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            Dictionary containing user info and roles, or None if not found
+        """
+        import os
+        
+        # Get API token from environment
+        api_token = os.getenv('OKTA_API_TOKEN')
+        if not api_token:
+            logging.error("OKTA_API_TOKEN environment variable not set")
+            return None
+        
+        try:
+            # Search for user by email
+            search_url = f"{self.domain}/api/v1/users"
+            headers = {
+                'Authorization': f'SSWS {api_token}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+            
+            params = {
+                'q': email,
+                'limit': 1
+            }
+            
+            response = requests.get(search_url, headers=headers, params=params, timeout=10)
+            
+            if response.status_code != 200:
+                logging.error(f"Failed to search OKTA users: {response.status_code} - {response.text}")
+                return None
+            
+            users = response.json()
+            if not users:
+                logging.warning(f"No OKTA user found with email: {email}")
+                return None
+            
+            user = users[0]
+            user_id = user.get('id')
+            
+            # Get user's groups
+            groups_url = f"{self.domain}/api/v1/users/{user_id}/groups"
+            groups_response = requests.get(groups_url, headers=headers, timeout=10)
+            
+            groups = []
+            if groups_response.status_code == 200:
+                groups_data = groups_response.json()
+                groups = [
+                    {
+                        'id': group.get('id'),
+                        'name': group.get('profile', {}).get('name'),
+                        'description': group.get('profile', {}).get('description'),
+                        'type': group.get('type')
+                    }
+                    for group in groups_data
+                ]
+            
+            # Build user info
+            profile = user.get('profile', {})
+            user_info = {
+                'id': user_id,
+                'email': profile.get('email'),
+                'login': profile.get('login'),
+                'firstName': profile.get('firstName'),
+                'lastName': profile.get('lastName'),
+                'displayName': f"{profile.get('firstName', '')} {profile.get('lastName', '')}".strip(),
+                'status': user.get('status'),
+                'created': user.get('created'),
+                'lastLogin': user.get('lastLogin'),
+                'groups': groups,
+                'roles': groups,
+                'profile': profile,
+                'raw_user_data': user
+            }
+            
+            return user_info
+            
+        except Exception as e:
+            logging.error(f"Error retrieving OKTA user by email {email}: {e}")
+            return None
+    
     def create_web_access_token(self, authorization_code: str) -> Optional[OktaAccessToken]:
         """
         Exchange authorization code for access token

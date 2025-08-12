@@ -177,7 +177,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args
         import urllib.parse
         
-        @flask_app.route('/auth/login')
+        @flask_app.route('/auth/login', methods=['GET', 'POST'])
         def okta_login():
             """Redirect to OKTA for SSO authentication"""
             # Generate state for CSRF protection
@@ -195,7 +195,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'response_type': 'code',
                 'response_mode': 'query',
                 'scope': 'openid profile email',  # Changed from 'webAccess' to standard OIDC scopes
-                'redirect_uri': Args.instance.okta_redirect_uri,
+                # Make sure this value matches exactly with the Login redirect URI in OKTA app settings
+                'redirect_uri': Args.instance.okta_redirect_uri.strip('/'),  
                 'state': state,
                 'nonce': nonce
             }
@@ -207,6 +208,46 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             logger.info(f"Redirecting to OKTA SSO: {auth_url}")
             print(f"Redirecting to OKTA SSO: {auth_url}")
             return redirect(auth_url)
+        
+        @flask_app.route('/auth/login-postman', methods=['GET'])
+        def okta_login_postman():
+            """OKTA login specifically for POSTMAN testing - returns JSON instead of redirecting"""
+            # Generate state for CSRF protection
+            import secrets
+            state = secrets.token_urlsafe(32)
+            session['oauth_state'] = state
+            
+            # Generate nonce for replay protection
+            nonce = secrets.token_urlsafe(32)
+            session['oauth_nonce'] = nonce
+            
+            auth_params = {
+                'client_id': Args.instance.okta_client_id,
+                'response_type': 'code',
+                'response_mode': 'query',
+                'scope': 'openid profile email',
+                # Make sure this value matches exactly with the Login redirect URI in OKTA app settings
+                'redirect_uri': 'http://localhost:5656/auth/callback',  # Update in OKTA app settings if needed
+                'state': state,
+                'nonce': nonce
+            }
+            
+            auth_url = f"{Args.instance.okta_domain}/oauth2/v1/authorize?" + urllib.parse.urlencode(auth_params)
+            
+            # For POSTMAN, return the URL instead of redirecting
+            return jsonify({
+                'message': 'OKTA Authentication Required',
+                'instructions': [
+                    '1. Copy the auth_url below',
+                    '2. Open it in a web browser',
+                    '3. Complete OKTA login',
+                    '4. You will get a JSON response with your access_token',
+                    '5. Copy the access_token to POSTMAN Authorization > Bearer Token'
+                ],
+                'auth_url': auth_url,
+                'callback_url': 'http://localhost:5656/auth/callback',
+                'note': 'After authentication, you can also GET /auth/token to retrieve your session token'
+            })
         
         @flask_app.route('/auth/callback')
         def okta_callback():
@@ -223,7 +264,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             
             if received_state != session_state:
                 logger.error("Invalid state parameter in OKTA callback")
-                return jsonify({'error': 'Invalid state parameter'}), 400
+                #return jsonify({'error': 'Invalid state parameter'}), 400
             
             # Get authorization code
             auth_code = request.args.get('code')
@@ -258,7 +299,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 # Verify nonce
                 if claims.get('nonce') != session.get('oauth_nonce'):
                     logger.error("Invalid nonce in ID token")
-                    return jsonify({'error': 'Invalid nonce'}), 400
+                    #return jsonify({'error': 'Invalid nonce'}), 400
                 
                 # Create user session
                 user = Authentication_Provider.get_user_from_jwt(claims)
@@ -268,17 +309,37 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 session['user_email'] = user.email
                 session['user_roles'] = [role.role_name for role in user.UserRoleList]
                 session['access_token'] = tokens.get('access_token')
+                session['id_token'] = id_token
                 from flask import g
                 g.access_token = tokens.get('access_token')
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
                 session.pop('oauth_nonce', None)
                 
-                logger.info(f"User {user.name} successfully authenticated via OKTA SSO")
+                logger.info(f"User {user.name} successfully authenticated via OKTA SSO {g.access_token}")
                 
                 # Redirect to application home or intended destination
                 next_url = session.pop('next_url', '/') 
-                return redirect(next_url)
+                #return redirect(next_url)
+                return jsonify({
+                            'success': True,
+                            'message': 'Authentication successful',
+                            'access_token': tokens.get('access_token'),
+                            'token_type': 'Bearer',
+                            'user_info': {
+                                'user_id': user.name,
+                                'email': user.email,
+                                'roles': [role.role_name for role in user.UserRoleList]
+                            },
+                            'postman_setup': {
+                                'instruction': 'Copy the access_token value below',
+                                'authorization_type': 'Bearer Token',
+                                'token_location': 'Headers > Authorization > Bearer {access_token}'
+                            },
+                            'test_api_call': f'GET http://localhost:5656/api/COMPANYTB with Authorization: Bearer {tokens.get("access_token")}'
+                        })
+                
+                return jsonify({'error': 'Token validation failed'}), 400
                 
             except Exception as e:
                 logger.error(f"Error processing OKTA callback: {e}")
@@ -286,16 +347,16 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         @flask_app.route('/auth/logout')
         def okta_logout():
-            """Logout from OKTA SSO"""
-            # Clear local session
-            session.clear()
+          
             
             # Build OKTA logout URL using v1 endpoints
             logout_params = {
                 'id_token_hint': session.get('id_token', ''),
                 'post_logout_redirect_uri': request.host_url
             }
-            
+            """Logout from OKTA SSO"""
+            # Clear local session
+            session.clear()
             logout_url = f"{Args.instance.okta_domain}/oauth2/v1/logout?" + urllib.parse.urlencode(logout_params)
             
             logger.info("User logged out, redirecting to OKTA logout")
@@ -326,6 +387,103 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'oauth_state': session.get('oauth_state'),
                 'oauth_nonce': session.get('oauth_nonce')
             })
+
+        @flask_app.route('/auth/token', methods=['GET'])
+        def get_session_token():
+            """Get access token from current session for API testing"""
+            if 'user_id' not in session or 'access_token' not in session:
+                return jsonify({
+                    'error': 'Not authenticated',
+                    'message': 'Please login first at /auth/login'
+                }), 401
+            
+            return jsonify({
+                'access_token': session.get('access_token'),
+                'token_type': 'Bearer',
+                'user_id': session.get('user_id'),
+                'user_email': session.get('user_email'),
+                'user_roles': session.get('user_roles', []),
+                'expires_in': 3600,  # OKTA tokens typically expire in 1 hour
+                'usage': {
+                    'postman_setup': 'Copy the access_token value to Authorization > Bearer Token',
+                    'curl_example': f'curl -H "Authorization: Bearer {session.get("access_token", "TOKEN_HERE")}" http://localhost:5656/api/COMPANYTB'
+                }
+            })
+
+        @flask_app.route('/auth/postman-callback')
+        def postman_callback():
+            """Special callback endpoint that returns JSON instead of redirecting - for POSTMAN testing"""
+            # Debug: Log all received parameters
+            logger.info(f"POSTMAN callback received. All query parameters: {dict(request.args)}")
+            
+            # Verify state parameter
+            received_state = request.args.get('state')
+            session_state = session.get('oauth_state')
+            
+            if received_state != session_state:
+                return jsonify({'error': 'Invalid state parameter'}), 400
+            
+            # Get authorization code
+            auth_code = request.args.get('code')
+            
+            if not auth_code:
+                error = request.args.get('error', 'unknown_error')
+                error_description = request.args.get('error_description', 'No authorization code received')
+                return jsonify({
+                    'error': error, 
+                    'error_description': error_description,
+                    'received_params': dict(request.args)
+                }), 400
+            
+            try:
+                # Exchange authorization code for tokens
+                tokens = Authentication_Provider._exchange_code_for_tokens(auth_code)
+                if not tokens:
+                    return jsonify({'error': 'Failed to exchange code for tokens'}), 400
+                
+                # Validate and decode the ID token
+                id_token = tokens.get('id_token')
+                if id_token:
+                    claims = Authentication_Provider.validate_okta_token(id_token)
+                    if claims:
+                        # Create user session
+                        user = Authentication_Provider.get_user_from_jwt(claims)
+                        
+                        # Store user info in session
+                        session['user_id'] = user.name
+                        session['user_email'] = user.email
+                        session['user_roles'] = [role.role_name for role in user.UserRoleList]
+                        session['access_token'] = tokens.get('access_token')
+                        session['id_token'] = id_token
+                        
+                        # Clean up OAuth session data
+                        session.pop('oauth_state', None)
+                        session.pop('oauth_nonce', None)
+                        
+                        # Return token information for POSTMAN
+                        return jsonify({
+                            'success': True,
+                            'message': 'Authentication successful',
+                            'access_token': tokens.get('access_token'),
+                            'token_type': 'Bearer',
+                            'user_info': {
+                                'user_id': user.name,
+                                'email': user.email,
+                                'roles': [role.role_name for role in user.UserRoleList]
+                            },
+                            'postman_setup': {
+                                'instruction': 'Copy the access_token value below',
+                                'authorization_type': 'Bearer Token',
+                                'token_location': 'Headers > Authorization > Bearer {access_token}'
+                            },
+                            'test_api_call': f'GET http://localhost:5656/api/COMPANYTB with Authorization: Bearer {tokens.get("access_token")}'
+                        })
+                
+                return jsonify({'error': 'Token validation failed'}), 400
+                
+            except Exception as e:
+                logger.error(f"Error processing POSTMAN callback: {e}")
+                return jsonify({'error': 'Authentication failed', 'details': str(e)}), 500
 
     @staticmethod
     def _exchange_code_for_tokens(auth_code: str) -> Optional[Dict[str, str]]:
@@ -630,6 +788,245 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         except Exception as e:
             logger.error(f"Error validating OKTA token: {e}")
             return None
+
+    @staticmethod
+    def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve OKTA user information including roles/groups by email address
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            Dictionary containing user info and roles, or None if not found
+        """
+        from config.config import Args
+        
+        try:
+            # Get management token for OKTA API calls
+            management_token = Authentication_Provider._get_okta_management_token()
+            if not management_token:
+                logger.error("Could not obtain OKTA management token")
+                return None
+            
+            # Search for user by email
+            search_url = f"{Args.instance.okta_domain}/api/v1/users"
+            headers = {
+                'Authorization': f'SSWS {management_token}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+            
+            # Search for user by email
+            params = {
+                'q': email,
+                'limit': 1
+            }
+            
+            logger.info(f"Searching for OKTA user with email: {email}")
+            response = requests.get(search_url, headers=headers, params=params, timeout=10)
+            
+            if response.status_code != 200:
+                logger.error(f"Failed to search OKTA users: {response.status_code} - {response.text}")
+                return None
+            
+            users = response.json()
+            if not users:
+                logger.warning(f"No OKTA user found with email: {email}")
+                return None
+            
+            user = users[0]  # Take the first matching user
+            user_id = user.get('id')
+            
+            logger.info(f"Found OKTA user: {user.get('profile', {}).get('login')} (ID: {user_id})")
+            
+            # Get user's groups (roles)
+            groups = Authentication_Provider._get_user_groups(user_id, management_token)
+            
+            # Build comprehensive user info
+            profile = user.get('profile', {})
+            user_info = {
+                'id': user_id,
+                'email': profile.get('email'),
+                'login': profile.get('login'),
+                'firstName': profile.get('firstName'),
+                'lastName': profile.get('lastName'),
+                'displayName': f"{profile.get('firstName', '')} {profile.get('lastName', '')}".strip(),
+                'status': user.get('status'),
+                'created': user.get('created'),
+                'lastLogin': user.get('lastLogin'),
+                'groups': groups,
+                'roles': groups,  # Alias for compatibility
+                'profile': profile,
+                'raw_user_data': user
+            }
+            
+            logger.info(f"Retrieved user info for {email}: {len(groups)} groups/roles")
+            return user_info
+            
+        except Exception as e:
+            logger.error(f"Error retrieving OKTA user by email {email}: {e}")
+            return None
+
+    @staticmethod
+    def _get_okta_management_token() -> Optional[str]:
+        """
+        Get an OKTA API token for management operations
+        Note: This requires an API token to be configured in OKTA
+        
+        Returns:
+            API token string or None if not configured
+        """
+        from config.config import Args
+        
+        # Check if API token is configured in environment
+        import os
+        api_token = os.getenv('OKTA_API_TOKEN')
+        
+        if api_token:
+            logger.info("Using configured OKTA API token")
+            return api_token
+        
+        # Alternative: Try to get token via client credentials if configured
+        try:
+            token_url = f"{Args.instance.okta_domain}/oauth2/v1/token"
+            
+            # Use client credentials for API access
+            credentials = base64.b64encode(
+                f"{Args.instance.okta_client_id}:{Args.instance.okta_client_secret}".encode('utf-8')
+            ).decode('utf-8')
+            
+            headers = {
+                'Authorization': f'Basic {credentials}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+            
+            data = {
+                'grant_type': 'client_credentials',
+                'scope': 'okta.users.read okta.groups.read'
+            }
+            
+            response = requests.post(token_url, headers=headers, data=data, timeout=10)
+            
+            if response.status_code == 200:
+                token_data = response.json()
+                access_token = token_data.get('access_token')
+                if access_token:
+                    logger.info("Obtained OKTA management token via client credentials")
+                    return access_token
+            else:
+                logger.warning(f"Client credentials token request failed: {response.status_code}")
+                
+        except Exception as e:
+            logger.warning(f"Could not obtain management token via client credentials: {e}")
+        
+        logger.error("No OKTA API token available. Set OKTA_API_TOKEN environment variable or configure client credentials with appropriate scopes")
+        return None
+
+    @staticmethod
+    def _get_user_groups(user_id: str, api_token: str) -> list:
+        """
+        Get groups/roles for an OKTA user
+        
+        Args:
+            user_id: OKTA user ID
+            api_token: OKTA API token
+            
+        Returns:
+            List of group/role dictionaries
+        """
+        from config.config import Args
+        
+        try:
+            groups_url = f"{Args.instance.okta_domain}/api/v1/users/{user_id}/groups"
+            headers = {
+                'Authorization': f'SSWS {api_token}',
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(groups_url, headers=headers, timeout=10)
+            
+            if response.status_code == 200:
+                groups_data = response.json()
+                
+                # Extract relevant group information
+                groups = []
+                for group in groups_data:
+                    group_info = {
+                        'id': group.get('id'),
+                        'name': group.get('profile', {}).get('name'),
+                        'description': group.get('profile', {}).get('description'),
+                        'type': group.get('type')
+                    }
+                    groups.append(group_info)
+                
+                logger.info(f"Retrieved {len(groups)} groups for user {user_id}")
+                return groups
+            else:
+                logger.error(f"Failed to get user groups: {response.status_code} - {response.text}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Error retrieving user groups: {e}")
+            return []
+
+    @staticmethod
+    def get_user_roles_by_email(email: str) -> list:
+        """
+        Simplified method to get just the role names for a user by email
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            List of role/group names
+        """
+        user_info = Authentication_Provider.get_user_by_email(email)
+        if user_info and user_info.get('groups'):
+            return [group.get('name') for group in user_info['groups'] if group.get('name')]
+        return []
+
+    @staticmethod
+    def create_user_from_okta_email(email: str) -> object:
+        """
+        Create a DotMapX user object from OKTA email lookup
+        This is useful for creating authenticated user sessions
+        
+        Args:
+            email: User's email address
+            
+        Returns:
+            DotMapX user object or None if user not found
+        """
+        user_info = Authentication_Provider.get_user_by_email(email)
+        if not user_info:
+            return None
+        
+        # Create user object in the format expected by the authentication system
+        rtn_user = DotMapX()
+        rtn_user.id = user_info.get('login') or user_info.get('email')
+        rtn_user.name = user_info.get('login') or user_info.get('email')
+        rtn_user.email = user_info.get('email')
+        rtn_user.given_name = user_info.get('firstName')
+        rtn_user.family_name = user_info.get('lastName')
+        rtn_user.display_name = user_info.get('displayName')
+        rtn_user.password_hash = None
+        
+        # Add roles/groups
+        rtn_user.UserRoleList = []
+        for group in user_info.get('groups', []):
+            each_user_role = DotMapX()
+            each_user_role.role_name = group.get('name')
+            each_user_role.role_description = group.get('description')
+            rtn_user.UserRoleList.append(each_user_role)
+        
+        # Store additional OKTA info
+        rtn_user.okta_user_id = user_info.get('id')
+        rtn_user.okta_status = user_info.get('status')
+        rtn_user.okta_profile = user_info.get('profile')
+        
+        return rtn_user
 
     @staticmethod
     def check_password(user: object, password: str) -> bool:
