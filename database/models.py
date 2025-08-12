@@ -88,7 +88,7 @@ t_ASSIGNED_MASHGIACH_OLD = Table(
     Column('company_id', Integer, nullable=False)
 )
 
-
+'''
 class ASSIGNEDMASHGIACHTB(Base):  # type: ignore
     __tablename__ = 'ASSIGNED_MASHGIACH_TB'
     _s_collection_name = 'ASSIGNEDMASHGIACHTB'  # type: ignore
@@ -3972,5 +3972,91 @@ class ProductJobLineItem(Base):  # type: ignore
     PERSON_JOB_TB : Mapped["PERSONJOBTB"] = relationship(back_populates=("ProductJobLineItemList"))
     OWNS_TB : Mapped["OWNSTB"] = relationship(back_populates=("ProductJobLineItemList"))
     pr : Mapped["ProducedIn1Tb"] = relationship(back_populates=("ProductJobLineItemList"))
+
+    # child relationships (access children)
+
+'''
+
+
+
+class CODETB(Base):  # type: ignore
+    __tablename__ = 'CODE_TB'
+    _s_collection_name = 'CODETB'  # type: ignore
+
+    CodeId = Column(Integer, server_default=text("0"), primary_key=True)
+    TABLE_NAME = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, index=True)
+    FIELD_NAME = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    VALUE_SEQ_NUM = Column(SmallInteger)
+    FIELD_VALUE = Column(String(500, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    VALUE_DESCRIPTION = Column(String(255, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    PERSON_ID = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    TIMESTAMP = Column(DateTime)
+    ACTIVE = Column(Integer, server_default=text("((1))"))
+    AdditionalParameters = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    IsDefaultValue = Column(Boolean, server_default=text("((0))"))
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+
+
+
+class USEDIN1TB(Base):  # type: ignore
+    __tablename__ = 'USED_IN1_TB'
+    _s_collection_name = 'USEDIN1TB'  # type: ignore
+    __table_args__ = (
+        Index('idxLabelID', 'LabelID', 'OWNS_ID'),
+        Index('ix_USED_IN1_TB_ACTIVE_LineItem_includes', 'ACTIVE', 'LineItem'),
+        Index('idxSubmissionDetail', 'JobID', 'LineItem', 'ACTIVE'),
+        Index('IdxUsedInLabelIdOwnsIdUidActive', 'LabelID', 'OWNS_ID', 'ID', 'ACTIVE')
+    )
+
+    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    BRAND_NAME = Column(String(100, 'SQL_Latin1_General_CP1_CI_AS'))
+    PROC_LINE_ID = Column(Integer)
+    START_DATE = Column(SMALLDATETIME, server_default=text("(getdate())"))
+    END_DATE = Column(DateTime)
+    TIMESTAMP = Column(BINARY(8))
+    STATUS = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'))
+    COMMENT = Column(String(255, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    ACTIVE = Column(Integer, index=True)
+    OWNS_ID = Column(ForeignKey('OWNS_TB.ID'), index=True)
+    RAW_MATERIAL_CODE = Column(String(500, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    ENTERED_BY = Column(String(75, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("(suser_sname())"))
+    Ing_Name_ps = Column(String(75, 'SQL_Latin1_General_CP1_CI_AS'))
+    JobID = Column(Integer)
+    Comment_NTA = Column(String(255, 'SQL_Latin1_General_CP1_CI_AS'))
+    LineItem = Column(SmallInteger, index=True)
+    DoNotDelete = Column(String(1, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('N')"))
+    BrokerID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), server_default=text("((0))"))
+    PreferredBrokerContactID = Column(Integer, server_default=text("((0))"))
+    PreferredSourceContactID = Column(Integer, server_default=text("((0))"))
+    PassoverProductionUse = Column(String(15, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('Non Passover')"))
+    LocReceivedStatus = Column(Integer)
+    InternalCode = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    LabelID = Column(ForeignKey('label_tb.ID'), index=True)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+
+
+
+class VISITSCOMMENT(Base):  # type: ignore
+    __tablename__ = 'VISITS_COMMENT'
+    _s_collection_name = 'VISITSCOMMENT'  # type: ignore
+    __table_args__ = (
+        Index('VisitIDID', 'VISIT_REC_ID', 'ID', 'COMMENT_TYPE'),
+    )
+
+    ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
+    VISIT_REC_ID = Column(Integer, nullable=False, index=True)
+    COMMENT_TYPE = Column(String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    COMMENT = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
+    WHO = Column(String(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("(suser_sname())"))
+    DATE_ENTERED = Column(DateTime, server_default=text("(getdate())"))
+    CHANGESET_ID = Column(Integer, index=True)
+    ValidFromTime = Column(DATETIME2, server_default=text("(sysutcdatetime())"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2],'9999-12-31 23:59:59.9999999',(0)))"), nullable=False)
+
+    # parent relationships (access parent)
 
     # child relationships (access children)

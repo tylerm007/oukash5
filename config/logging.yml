@@ -78,7 +78,7 @@ loggers:
         propagate: no
 
     security.declare_security:   
-#        level: DEBUG
+        level: INFO
         handlers: [console]
         propagate: no
 
@@ -98,7 +98,7 @@ loggers:
         propagate: no
 
     security.system.authentication:   
-#        level: DEBUG
+        level: INFO
         handlers: [console]
         propagate: no
 
@@ -108,6 +108,11 @@ loggers:
         propagate: no
 
     security.authentication_provider.sql.auth_provider:   
+        level: INFO
+        handlers: [console]
+        propagate: no
+
+    security.authentication_provider.okta.auth_provider:   
         level: INFO
         handlers: [console]
         propagate: no

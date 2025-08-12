@@ -1,0 +1,260 @@
+{
+  "info": {
+    "name": "OKTA API Logic Server",
+    "description": "Collection for testing API Logic Server with OKTA authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// Check if we have a valid access token",
+          "const token = pm.collectionVariables.get('access_token');",
+          "const tokenExpiry = pm.collectionVariables.get('token_expiry');",
+          "const now = new Date().getTime();",
+          "",
+          "if (!token || (tokenExpiry && now > tokenExpiry)) {",
+          "    console.log('No valid access token found. Please authenticate first.');",
+          "    console.log('Run the \"1. Get Auth URL\" request to start authentication.');",
+          "}"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5656",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_expiry",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1. Get Auth URL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    console.log('='.repeat(60));",
+                  "    console.log('OKTA AUTHENTICATION STEPS:');",
+                  "    console.log('='.repeat(60));",
+                  "    console.log('1. Copy this URL and open in browser:');",
+                  "    console.log(response.auth_url);",
+                  "    console.log('');",
+                  "    console.log('2. Complete OKTA login in browser');",
+                  "    console.log('3. Browser will show JSON with access_token');",
+                  "    console.log('4. Run \"2. Set Token from Session\" request');",
+                  "    console.log('   OR manually set access_token variable');",
+                  "    console.log('='.repeat(60));",
+                  "    ",
+                  "    // Store the auth URL for reference",
+                  "    pm.collectionVariables.set('auth_url', response.auth_url);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/login-postman",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login-postman"]
+            },
+            "description": "Get OKTA authentication URL. Copy the URL from response and open in browser."
+          }
+        },
+        {
+          "name": "2. Set Token from Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    ",
+                  "    // Store the access token",
+                  "    pm.collectionVariables.set('access_token', response.access_token);",
+                  "    pm.collectionVariables.set('user_id', response.user_id);",
+                  "    ",
+                  "    // Set expiry (1 hour from now)",
+                  "    const expiry = new Date();",
+                  "    expiry.setHours(expiry.getHours() + 1);",
+                  "    pm.collectionVariables.set('token_expiry', expiry.getTime());",
+                  "    ",
+                  "    console.log('✅ Access token set successfully!');",
+                  "    console.log('User ID:', response.user_id);",
+                  "    console.log('Email:', response.user_email);",
+                  "    console.log('Roles:', response.user_roles);",
+                  "    console.log('Token expires in 1 hour');",
+                  "    console.log('');",
+                  "    console.log('You can now run API requests! 🚀');",
+                  "} else {",
+                  "    console.log('❌ Authentication required');",
+                  "    console.log('Please run \"1. Get Auth URL\" first and complete browser login');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/token",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token"]
+            },
+            "description": "Get access token from current session after browser login"
+          }
+        },
+        {
+          "name": "3. Check Auth Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/user",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user"]
+            },
+            "description": "Check current authentication status"
+          }
+        }
+      ],
+      "description": "Authentication endpoints for OKTA login"
+    },
+    {
+      "name": "API Calls",
+      "item": [
+        {
+          "name": "Test API - Company List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('✅ API call successful!');",
+                  "    const response = pm.response.json();",
+                  "    if (response.data && Array.isArray(response.data)) {",
+                  "        console.log(`Found ${response.data.length} companies`);",
+                  "    }",
+                  "} else if (pm.response.code === 401) {",
+                  "    console.log('❌ Authentication required');",
+                  "    console.log('Please run the authentication flow first');",
+                  "} else if (pm.response.code === 422) {",
+                  "    console.log('❌ Token validation failed');",
+                  "    console.log('Token may be expired or invalid');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/COMPANYTB",
+              "host": ["{{base_url}}"],
+              "path": ["api", "COMPANYTB"]
+            },
+            "description": "Test API call to get company data"
+          }
+        },
+        {
+          "name": "Test API - Specific Company",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/COMPANYTB/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "COMPANYTB", "1"]
+            },
+            "description": "Get specific company by ID"
+          }
+        }
+      ],
+      "description": "API endpoints that require authentication"
+    },
+    {
+      "name": "Manual Token Setup",
+      "item": [
+        {
+          "name": "Set Access Token Manually",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Prompt for manual token entry",
+                  "const token = pm.globals.get('manual_token');",
+                  "if (token) {",
+                  "    pm.collectionVariables.set('access_token', token);",
+                  "    pm.globals.unset('manual_token');",
+                  "    console.log('✅ Manual token set from global variable');",
+                  "} else {",
+                  "    console.log('ℹ️  To set token manually:');",
+                  "    console.log('1. Set global variable: manual_token = your_access_token');",
+                  "    console.log('2. Or directly set collection variable: access_token');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/user",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "user"]
+            },
+            "description": "Helper request to set access token manually"
+          }
+        }
+      ],
+      "description": "Manual token setup for advanced users"
+    }
+  ]
+}
