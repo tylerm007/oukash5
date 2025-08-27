@@ -227,7 +227,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'response_mode': 'query',
                 'scope': 'openid profile email',
                 # Make sure this value matches exactly with the Login redirect URI in OKTA app settings
-                'redirect_uri': 'http://localhost:5656/auth/callback',  # Update in OKTA app settings if needed
+                'redirect_uri': Args.instance.okta_redirect_uri.strip('/'),  # Update in OKTA app settings if needed
                 'state': state,
                 'nonce': nonce
             }

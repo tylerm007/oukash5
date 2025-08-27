@@ -4060,3 +4060,45 @@ class VISITSCOMMENT(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
+
+class CompanyApplication(Base):  # type: ignore
+    __tablename__ = 'CompanyApplicationWebRequestFromAPI'
+    _s_collection_name = 'CompanyApplicationWebRequestFromAPI'  # type: ignore
+
+    ID = Column(Integer, server_default=text("0"), primary_key=True, nullable=False)
+    PreviousCertification = Column(NCHAR(1, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("N"))
+    OUCertified = Column(NCHAR(1, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("N"))
+    CurrentlyCertified = Column(NCHAR(1, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("N"))
+    CompanyID = Column(Integer, server_default=text("((0))"), index=True)
+    CompanyName = Column(Unicode(120, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    PlantName = Column(Unicode(120, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Street1 = Column(Unicode(60, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Street2 = Column(Unicode(60, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    City = Column(Unicode(40, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    State = Column(Unicode(25, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Zip = Column(Unicode(18, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Country = Column(Unicode(25, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    title = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    FirstName = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    LastName = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    email = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    phone = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    NatureOfProducts = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    HowHeardAboutUs = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Comments = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    Description = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    OtherCertification = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    gclid = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    utm_source = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    utm_medium = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    utm_campaign = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), server_default=text("('')"))
+    dateSubmitted = Column(DateTime, server_default=text("(getdate())"))
+    Utm_Term = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    Version = Column(Unicode(60, 'SQL_Latin1_General_CP1_CI_AS'))
+    Language = Column(Unicode(60, 'SQL_Latin1_General_CP1_CI_AS'))
+    Oukosher_source = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    JotFormSubmissionID = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
