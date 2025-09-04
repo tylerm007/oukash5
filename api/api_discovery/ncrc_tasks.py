@@ -1,7 +1,7 @@
 from datetime import datetime
 import re
 from tracemalloc import start
-from database.models import LaneDefinition, ProcessDefinition, ProcessInstance, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
+from database.models import LaneDefinition, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -32,10 +32,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         data = request.args if request.args else {}
         filter = data.get('filter', {})
-        limit = data.get('page[limit]', 10)
-        offset = data.get('page[offset]', 0)
+        limit = int(data.get('page[limit]', 10))
+        offset = int(data.get('page[offset]', 0))
         result = []
-        applications = WFApplication.query.all() #limit(limit).offset(offset).all() # to do add filter
+        applications = WFApplication.query.order_by(WFApplication.CreatedDate.desc()).limit(limit).offset(offset).all() # to do add filter
         for app in applications:
             app_dict = app.to_dict()
             company_app = CompanyApplication.query.filter_by(ID=app_dict.get("ApplicationNumber")).first()
@@ -95,7 +95,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_row["aiSuggestions"] = {}
             app_row["plantHistory"] = {}
             app_row["relatedTasks"] = {}
-            app_row["task_messages"] = {}
+            #task_messages = TaskComment.query.filter_by(ApplicationId=application_id).order_by(TaskComment.CreatedOn.desc()).limit(5).all()
+            app_row["task_messages"] ={}# {msg.CreatedOn: msg.to_dict() for msg in task_messages}
             result.append(app_row)
         return jsonify({"status": "ok", "data": result}), 200
 
