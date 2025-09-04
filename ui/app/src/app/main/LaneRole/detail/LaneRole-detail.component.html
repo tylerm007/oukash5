@@ -1,0 +1,90 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="RoleDescription" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="LaneRole_form_edit" 
+        service="LaneRole" 
+        entity="LaneRole" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="RoleCode" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #RoleDescription attr="RoleDescription" label=" Role Description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #RoleCode attr="RoleCode" label="RoleCode" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="LANEDEFINITION-LaneRole">
+    <div layout-padding>
+      <o-table 
+        attr="LaneDefinitionTable" 
+        service="LaneDefinition" 
+        entity="LaneDefinition" 
+        keys="LaneId"
+        parent-keys="LaneRole:RoleCode"
+        columns="LaneName;LaneRole;ProcessId;LaneDescription;EstimatedDurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;LaneId"  
+        horizontal-scroll="yes"
+        detail-form-route="LaneDefinition" 
+        edit-form-route="LaneDefinition"
+        visible-columns="LaneName;LaneRole;ProcessId;LaneDescription;EstimatedDurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;LaneId"  
+        sort-columns="LaneName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #LaneName attr="LaneName" title=" Lane Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #LaneRole attr="LaneRole" title="LaneRole" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="ProcessId" title="Process">
+    <o-table-cell-renderer-service attr="ProcessId" 
+        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
+        parent-keys="RoleCode:ProcessId"
+        value-column="ProcessName" keys="ProcessId"
+        visible-columns="ProcessName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #LaneDescription attr="LaneDescription" title="LaneDescription" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #EstimatedDurationDays attr="EstimatedDurationDays" title="EstimatedDurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #LaneId attr="LaneId" title="LaneId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

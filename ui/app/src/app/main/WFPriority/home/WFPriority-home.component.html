@@ -1,0 +1,33 @@
+<o-form-layout-manager attr="WFPriority" mode="tab" title="WFPRIORITY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFPriorityTable" 
+            service="WFPriority" 
+            entity="WFPriority" 
+            title="WFPRIORITY"
+            keys="PriorityCode"
+            columns="PriorityDescription;PriorityCode" 
+            header-actions="R;D"
+            visible-columns="PriorityDescription;PriorityCode"  
+            sort-columns="PriorityDescription" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #PriorityDescription attr="PriorityDescription" title=" Priority Description" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #PriorityCode attr="PriorityCode" title="PriorityCode" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

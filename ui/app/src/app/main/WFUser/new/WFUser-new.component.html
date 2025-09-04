@@ -1,0 +1,47 @@
+<o-form #WFUserForm attr="WFUser_form_insert" service="WFUser" entity="WFUser"
+keys="UserID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #Username attr="Username" label=" Username" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="Role"
+        service="WFRole" 
+        entity="WFRoleType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="UserRole" 
+        value-column-type="VARCHAR"  
+        keys="UserRole" 
+        columns="UserRole;Role;UserRole" 
+        title="Role"
+        visible-columns="UserRole;UserRole" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #FullName attr="FullName" label="FullName" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Email attr="Email" label="Email" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #LastLoginDate attr="LastLoginDate" value-type="string" label="LastLoginDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #UserID attr="UserID" label="UserID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

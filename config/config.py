@@ -130,7 +130,9 @@ class Config:
 
     # Database
     db_path = str(project_path.joinpath('database/db.sqlite'))
-    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    #SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://sa:Posey3861@localhost:1433/dashboard?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    SQLALCHEMY_DATABASE_OU_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
     # override SQLALCHEMY_DATABASE_URI here as required
 
     # Python 3.13+ compatibility: Convert PostgreSQL URLs to use psycopg3
@@ -185,7 +187,7 @@ class Config:
     ''' OKTA OAuth redirect URI '''
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
-    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER')  # type: ignore # type: str
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED','false').lower()  # type: ignore # type: str
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC

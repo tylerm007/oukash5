@@ -1,0 +1,48 @@
+<o-form-layout-manager attr="ValidationRule" mode="tab" title="VALIDATIONRULE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ValidationRuleTable" 
+            service="ValidationRule" 
+            entity="ValidationRule" 
+            title="VALIDATIONRULE"
+            keys="ValidationId"
+            columns="ValidationName;Category;RuleType;ValidationQuery;ErrorMessage;IsActive;CreatedDate;ValidationId" 
+            header-actions="R;D"
+            visible-columns="ValidationName;Category;RuleType;ValidationQuery;ErrorMessage;IsActive;CreatedDate;ValidationId"  
+            sort-columns="ValidationName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ValidationName attr="ValidationName" title=" Validation Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Category attr="Category" title="Category" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #RuleType attr="RuleType" title="RuleType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidationQuery attr="ValidationQuery" title="ValidationQuery" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsActive" title="IsActive">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #ValidationId attr="ValidationId" title="ValidationId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

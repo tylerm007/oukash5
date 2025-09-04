@@ -1,0 +1,84 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="UserRole" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="WFRole_form_edit" 
+        service="WFRole" 
+        entity="WFRole" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="UserRole" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #UserRole attr="UserRole" label=" User Role" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #Role attr="Role" label="Role" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="WFUSER-Role">
+    <div layout-padding>
+      <o-table 
+        attr="WFUserTable" 
+        service="WFUser" 
+        entity="WFUser" 
+        keys="UserID"
+        parent-keys="Role:UserRole"
+        columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID"  
+        horizontal-scroll="yes"
+        detail-form-route="WFUser" 
+        edit-form-route="WFUser"
+        visible-columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID"  
+        sort-columns="Username" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #Username attr="Username" title=" Username" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #FullName attr="FullName" title="FullName" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Email attr="Email" title="Email" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="IsActive" title="IsActive">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #LastLoginDate attr="LastLoginDate" title="LastLoginDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #UserID attr="UserID" title="UserID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

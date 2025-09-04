@@ -1,0 +1,39 @@
+<o-form-layout-manager attr="Sysdiagram" mode="dialog" title="SYSDIAGRAM">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="SysdiagramTable" 
+            service="Sysdiagram" 
+            entity="Sysdiagram" 
+            title="SYSDIAGRAM"
+            keys="diagram_id"
+            columns="name;version;definition;principal_id;diagram_id" 
+            header-actions="R;D"
+            visible-columns="name;version;definition;principal_id;diagram_id"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #version attr="version" title="version" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #definition attr="definition" title="definition" type="BLOB" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #principal_id attr="principal_id" title="principal_id" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #diagram_id attr="diagram_id" title="diagram_id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,417 +1,293 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
-import { ASSIGNEDMASHGIACHTBCardComponent } from './ASSIGNEDMASHGIACHTB-card/ASSIGNEDMASHGIACHTB-card.component';
+import { LaneDefinitionCardComponent } from './LaneDefinition-card/LaneDefinition-card.component';
 
-import { AchAuthTokenCardComponent } from './AchAuthToken-card/AchAuthToken-card.component';
+import { LaneRoleCardComponent } from './LaneRole-card/LaneRole-card.component';
 
-import { AchPlaidLambdaResponseCardComponent } from './AchPlaidLambdaResponse-card/AchPlaidLambdaResponse-card.component';
+import { ProcessDefinitionCardComponent } from './ProcessDefinition-card/ProcessDefinition-card.component';
 
-import { AchStripePaymentCardComponent } from './AchStripePayment-card/AchStripePayment-card.component';
+import { ProcessInstanceCardComponent } from './ProcessInstance-card/ProcessInstance-card.component';
 
-import { AchStripePaymentDetailCardComponent } from './AchStripePaymentDetail-card/AchStripePaymentDetail-card.component';
+import { ProcessMessageCardComponent } from './ProcessMessage-card/ProcessMessage-card.component';
 
-import { BarCodeCardComponent } from './BarCode-card/BarCode-card.component';
+import { ProcessMessageTypeCardComponent } from './ProcessMessageType-card/ProcessMessageType-card.component';
 
-import { BillingCardComponent } from './Billing-card/Billing-card.component';
-
-import { CODETBCardComponent } from './CODETB-card/CODETB-card.component';
-
-import { COMPANYADDRESSTBCardComponent } from './COMPANYADDRESSTB-card/COMPANYADDRESSTB-card.component';
-
-import { COMPANYCERTDETAILCardComponent } from './COMPANYCERTDETAIL-card/COMPANYCERTDETAIL-card.component';
-
-import { COMPANYCOMMENTCardComponent } from './COMPANYCOMMENT-card/COMPANYCOMMENT-card.component';
-
-import { COMPANYFEECOMMENTCardComponent } from './COMPANYFEECOMMENT-card/COMPANYFEECOMMENT-card.component';
-
-import { COMPANYFEESTRUCTURECardComponent } from './COMPANYFEESTRUCTURE-card/COMPANYFEESTRUCTURE-card.component';
-
-import { COMPANYHOLDTBCardComponent } from './COMPANYHOLDTB-card/COMPANYHOLDTB-card.component';
-
-import { COMPANYOTHERNAMECardComponent } from './COMPANYOTHERNAME-card/COMPANYOTHERNAME-card.component';
-
-import { COMPANYSTATUSTBCardComponent } from './COMPANYSTATUSTB-card/COMPANYSTATUSTB-card.component';
 
 import { COMPANYTBCardComponent } from './COMPANYTB-card/COMPANYTB-card.component';
+import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPriority-card.component';
 
-import { COPRIVATELABELFEEDETAILCardComponent } from './COPRIVATELABELFEEDETAIL-card/COPRIVATELABELFEEDETAIL-card.component';
+import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-card.component';
 
-import { CoPackerFacilitiesCategoryCardComponent } from './CoPackerFacilitiesCategory-card/CoPackerFacilitiesCategory-card.component';
+import { StageInstanceCardComponent } from './StageInstance-card/StageInstance-card.component';
 
-import { CoPackerFacilitiesLocationCardComponent } from './CoPackerFacilitiesLocation-card/CoPackerFacilitiesLocation-card.component';
+import { StageStatusCardComponent } from './StageStatus-card/StageStatus-card.component';
 
-import { CoPackerFacilityCardComponent } from './CoPackerFacility-card/CoPackerFacility-card.component';
+import { SysdiagramCardComponent } from './Sysdiagram-card/Sysdiagram-card.component';
 
-import { CompanyPlantOptionCardComponent } from './CompanyPlantOption-card/CompanyPlantOption-card.component';
+import { TaskCategoryCardComponent } from './TaskCategory-card/TaskCategory-card.component';
 
-import { CompanycontactsTbCardComponent } from './CompanycontactsTb-card/CompanycontactsTb-card.component';
+import { TaskCommentCardComponent } from './TaskComment-card/TaskComment-card.component';
 
-import { FormulaComponentCardComponent } from './FormulaComponent-card/FormulaComponent-card.component';
+import { TaskCommentTypeCardComponent } from './TaskCommentType-card/TaskCommentType-card.component';
 
-import { FormulaProductCardComponent } from './FormulaProduct-card/FormulaProduct-card.component';
+import { TaskDefinitionCardComponent } from './TaskDefinition-card/TaskDefinition-card.component';
 
-import { FormulaSubmissionComponentCardComponent } from './FormulaSubmissionComponent-card/FormulaSubmissionComponent-card.component';
+import { TaskFlowCardComponent } from './TaskFlow-card/TaskFlow-card.component';
 
-import { FormulaSubmissionPlantCardComponent } from './FormulaSubmissionPlant-card/FormulaSubmissionPlant-card.component';
+import { TaskInstanceCardComponent } from './TaskInstance-card/TaskInstance-card.component';
 
-import { INVOICEFEECardComponent } from './INVOICEFEE-card/INVOICEFEE-card.component';
+import { TaskStatusCardComponent } from './TaskStatus-card/TaskStatus-card.component';
 
-import { INVOICEFEESDETAILCardComponent } from './INVOICEFEESDETAIL-card/INVOICEFEESDETAIL-card.component';
+import { TaskTypeCardComponent } from './TaskType-card/TaskType-card.component';
 
-import { LabelBarcodeCardComponent } from './LabelBarcode-card/LabelBarcode-card.component';
+import { ValidationResultCardComponent } from './ValidationResult-card/ValidationResult-card.component';
 
-import { LabelCommentCardComponent } from './LabelComment-card/LabelComment-card.component';
+import { ValidationRuleCardComponent } from './ValidationRule-card/ValidationRule-card.component';
 
-import { LabelOptionCardComponent } from './LabelOption-card/LabelOption-card.component';
+import { WFActivityLogCardComponent } from './WFActivityLog-card/WFActivityLog-card.component';
 
-import { LabelTbCardComponent } from './LabelTb-card/LabelTb-card.component';
+import { WFActivityStatusCardComponent } from './WFActivityStatus-card/WFActivityStatus-card.component';
 
-import { MERCHCOMMENTCardComponent } from './MERCHCOMMENT-card/MERCHCOMMENT-card.component';
+import { WFApplicationCardComponent } from './WFApplication-card/WFApplication-card.component';
 
-import { MERCHOTHERNAMECardComponent } from './MERCHOTHERNAME-card/MERCHOTHERNAME-card.component';
+import { WFApplicationCommentCardComponent } from './WFApplicationComment-card/WFApplicationComment-card.component';
 
-import { MERCHTBCardComponent } from './MERCHTB-card/MERCHTB-card.component';
+import { WFApplicationMessageCardComponent } from './WFApplicationMessage-card/WFApplicationMessage-card.component';
 
-import { MiniCRMActionCardComponent } from './MiniCRMAction-card/MiniCRMAction-card.component';
+import { WFApplicationStatusCardComponent } from './WFApplicationStatus-card/WFApplicationStatus-card.component';
 
-import { OWNSTBCardComponent } from './OWNSTB-card/OWNSTB-card.component';
+import { WFCompanyCardComponent } from './WFCompany-card/WFCompany-card.component';
 
-import { PENDINGINFOTBCardComponent } from './PENDINGINFOTB-card/PENDINGINFOTB-card.component';
+import { WFContactCardComponent } from './WFContact-card/WFContact-card.component';
 
-import { PERSONADDRESSTBCardComponent } from './PERSONADDRESSTB-card/PERSONADDRESSTB-card.component';
+import { WFDashboardCardComponent } from './WFDashboard-card/WFDashboard-card.component';
 
-import { PERSONJOBSTATUSTBCardComponent } from './PERSONJOBSTATUSTB-card/PERSONJOBSTATUSTB-card.component';
-
-import { PERSONJOBTBCardComponent } from './PERSONJOBTB-card/PERSONJOBTB-card.component';
-
-import { PERSONTBCardComponent } from './PERSONTB-card/PERSONTB-card.component';
-
-import { PLANTADDRESSTBCardComponent } from './PLANTADDRESSTB-card/PLANTADDRESSTB-card.component';
-
-import { PLANTCERTDETAILCardComponent } from './PLANTCERTDETAIL-card/PLANTCERTDETAIL-card.component';
-
-import { PLANTCOMMENTCardComponent } from './PLANTCOMMENT-card/PLANTCOMMENT-card.component';
-
-import { PLANTFEECOMMENTCardComponent } from './PLANTFEECOMMENT-card/PLANTFEECOMMENT-card.component';
-
-import { PLANTFEESTRUCTURECardComponent } from './PLANTFEESTRUCTURE-card/PLANTFEESTRUCTURE-card.component';
-
-import { PLANTFEESTRUCTUREOUTCardComponent } from './PLANTFEESTRUCTUREOUT-card/PLANTFEESTRUCTUREOUT-card.component';
-
-import { PLANTHOLDTBCardComponent } from './PLANTHOLDTB-card/PLANTHOLDTB-card.component';
-
-import { PLANTOTHERNAMECardComponent } from './PLANTOTHERNAME-card/PLANTOTHERNAME-card.component';
-
-import { PLANTSTATUSTBCardComponent } from './PLANTSTATUSTB-card/PLANTSTATUSTB-card.component';
+import { WFFileCardComponent } from './WFFile-card/WFFile-card.component';
 
 import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
+import { WFFileTypeCardComponent } from './WFFileType-card/WFFileType-card.component';
 
-import { PRIVATELABELBILLCardComponent } from './PRIVATELABELBILL-card/PRIVATELABELBILL-card.component';
+import { WFIngredientCardComponent } from './WFIngredient-card/WFIngredient-card.component';
 
-import { PrivateLabelTemplateCardComponent } from './PrivateLabelTemplate-card/PrivateLabelTemplate-card.component';
+import { WFPlantCardComponent } from './WFPlant-card/WFPlant-card.component';
 
-import { ProducedIn1TbCardComponent } from './ProducedIn1Tb-card/ProducedIn1Tb-card.component';
+import { WFPriorityCardComponent } from './WFPriority-card/WFPriority-card.component';
 
-import { ProductJobCardComponent } from './ProductJob-card/ProductJob-card.component';
+import { WFProductCardComponent } from './WFProduct-card/WFProduct-card.component';
 
-import { ProductJobLineItemCardComponent } from './ProductJobLineItem-card/ProductJobLineItem-card.component';
+import { WFQuoteCardComponent } from './WFQuote-card/WFQuote-card.component';
 
-import { PurchaseOrderCardComponent } from './PurchaseOrder-card/PurchaseOrder-card.component';
+import { WFQuoteItemCardComponent } from './WFQuoteItem-card/WFQuoteItem-card.component';
 
-import { RCTBCardComponent } from './RCTB-card/RCTB-card.component';
+import { WFQuoteStatusCardComponent } from './WFQuoteStatus-card/WFQuoteStatus-card.component';
 
-import { StripeCustomerCardComponent } from './StripeCustomer-card/StripeCustomer-card.component';
+import { WFRoleCardComponent } from './WFRole-card/WFRole-card.component';
 
-import { ThirdPartyBillingCompanyCardComponent } from './ThirdPartyBillingCompany-card/ThirdPartyBillingCompany-card.component';
+import { WFUserCardComponent } from './WFUser-card/WFUser-card.component';
 
-import { USEDIN1TBCardComponent } from './USEDIN1TB-card/USEDIN1TB-card.component';
-
-import { VISITCardComponent } from './VISIT-card/VISIT-card.component';
-
-import { VISITSCOMMENTCardComponent } from './VISITSCOMMENT-card/VISITSCOMMENT-card.component';
-
-import { YoshonInfoCardComponent } from './YoshonInfo-card/YoshonInfo-card.component';
+import { WorkflowHistoryCardComponent } from './WorkflowHistory-card/WorkflowHistory-card.component';
 
 
 export const MENU_CONFIG: MenuRootItem[] = [
     { id: 'home', name: 'HOME', icon: 'home', route: '/main/home' },
-    
+
+
     {
-    id: 'data', name: ' data', icon: 'remove_red_eye', opened: true,
-    items: [
-    
-        { id: 'ASSIGNEDMASHGIACHTB', name: 'ASSIGNEDMASHGIACHTB', icon: 'view_list', route: '/main/ASSIGNEDMASHGIACHTB' }
-    
-        ,{ id: 'AchAuthToken', name: 'ACHAUTHTOKEN', icon: 'view_list', route: '/main/AchAuthToken' }
-    
-        ,{ id: 'AchPlaidLambdaResponse', name: 'ACHPLAIDLAMBDARESPONSE', icon: 'view_list', route: '/main/AchPlaidLambdaResponse' }
-    
-        ,{ id: 'AchStripePayment', name: 'ACHSTRIPEPAYMENT', icon: 'view_list', route: '/main/AchStripePayment' }
-    
-        ,{ id: 'AchStripePaymentDetail', name: 'ACHSTRIPEPAYMENTDETAIL', icon: 'view_list', route: '/main/AchStripePaymentDetail' }
-    
-        ,{ id: 'BarCode', name: 'BARCODE', icon: 'view_list', route: '/main/BarCode' }
-    
-        ,{ id: 'Billing', name: 'BILLING', icon: 'view_list', route: '/main/Billing' }
-    
-        ,{ id: 'CODETB', name: 'CODETB', icon: 'view_list', route: '/main/CODETB' }
-    
-        ,{ id: 'COMPANYADDRESSTB', name: 'COMPANYADDRESSTB', icon: 'view_list', route: '/main/COMPANYADDRESSTB' }
-    
-        ,{ id: 'COMPANYCERTDETAIL', name: 'COMPANYCERTDETAIL', icon: 'view_list', route: '/main/COMPANYCERTDETAIL' }
-    
-        ,{ id: 'COMPANYCOMMENT', name: 'COMPANYCOMMENT', icon: 'view_list', route: '/main/COMPANYCOMMENT' }
-    
-        ,{ id: 'COMPANYFEECOMMENT', name: 'COMPANYFEECOMMENT', icon: 'view_list', route: '/main/COMPANYFEECOMMENT' }
-    
-        ,{ id: 'COMPANYFEESTRUCTURE', name: 'COMPANYFEESTRUCTURE', icon: 'view_list', route: '/main/COMPANYFEESTRUCTURE' }
-    
-        ,{ id: 'COMPANYHOLDTB', name: 'COMPANYHOLDTB', icon: 'view_list', route: '/main/COMPANYHOLDTB' }
-    
-        ,{ id: 'COMPANYOTHERNAME', name: 'COMPANYOTHERNAME', icon: 'view_list', route: '/main/COMPANYOTHERNAME' }
-    
-        ,{ id: 'COMPANYSTATUSTB', name: 'COMPANYSTATUSTB', icon: 'view_list', route: '/main/COMPANYSTATUSTB' }
-    
-        ,{ id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
-    
-        ,{ id: 'COPRIVATELABELFEEDETAIL', name: 'COPRIVATELABELFEEDETAIL', icon: 'view_list', route: '/main/COPRIVATELABELFEEDETAIL' }
-    
-        ,{ id: 'CoPackerFacilitiesCategory', name: 'COPACKERFACILITIESCATEGORY', icon: 'view_list', route: '/main/CoPackerFacilitiesCategory' }
-    
-        ,{ id: 'CoPackerFacilitiesLocation', name: 'COPACKERFACILITIESLOCATION', icon: 'view_list', route: '/main/CoPackerFacilitiesLocation' }
-    
-        ,{ id: 'CoPackerFacility', name: 'COPACKERFACILITY', icon: 'view_list', route: '/main/CoPackerFacility' }
-    
-        ,{ id: 'CompanyPlantOption', name: 'COMPANYPLANTOPTION', icon: 'view_list', route: '/main/CompanyPlantOption' }
-    
-        ,{ id: 'CompanycontactsTb', name: 'COMPANYCONTACTSTB', icon: 'view_list', route: '/main/CompanycontactsTb' }
-    
-        ,{ id: 'FormulaComponent', name: 'FORMULACOMPONENT', icon: 'view_list', route: '/main/FormulaComponent' }
-    
-        ,{ id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
-    
-        ,{ id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
-    
-        ,{ id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
-    
-        ,{ id: 'INVOICEFEE', name: 'INVOICEFEE', icon: 'view_list', route: '/main/INVOICEFEE' }
-    
-        ,{ id: 'INVOICEFEESDETAIL', name: 'INVOICEFEESDETAIL', icon: 'view_list', route: '/main/INVOICEFEESDETAIL' }
-    
-        ,{ id: 'LabelBarcode', name: 'LABELBARCODE', icon: 'view_list', route: '/main/LabelBarcode' }
-    
-        ,{ id: 'LabelComment', name: 'LABELCOMMENT', icon: 'view_list', route: '/main/LabelComment' }
-    
-        ,{ id: 'LabelOption', name: 'LABELOPTION', icon: 'view_list', route: '/main/LabelOption' }
-    
-        ,{ id: 'LabelTb', name: 'LABELTB', icon: 'view_list', route: '/main/LabelTb' }
-    
-        ,{ id: 'MERCHCOMMENT', name: 'MERCHCOMMENT', icon: 'view_list', route: '/main/MERCHCOMMENT' }
-    
-        ,{ id: 'MERCHOTHERNAME', name: 'MERCHOTHERNAME', icon: 'view_list', route: '/main/MERCHOTHERNAME' }
-    
-        ,{ id: 'MERCHTB', name: 'MERCHTB', icon: 'view_list', route: '/main/MERCHTB' }
-    
-        ,{ id: 'MiniCRMAction', name: 'MINICRMACTION', icon: 'view_list', route: '/main/MiniCRMAction' }
-    
-        ,{ id: 'OWNSTB', name: 'OWNSTB', icon: 'view_list', route: '/main/OWNSTB' }
-    
-        ,{ id: 'PENDINGINFOTB', name: 'PENDINGINFOTB', icon: 'view_list', route: '/main/PENDINGINFOTB' }
-    
-        ,{ id: 'PERSONADDRESSTB', name: 'PERSONADDRESSTB', icon: 'view_list', route: '/main/PERSONADDRESSTB' }
-    
-        ,{ id: 'PERSONJOBSTATUSTB', name: 'PERSONJOBSTATUSTB', icon: 'view_list', route: '/main/PERSONJOBSTATUSTB' }
-    
-        ,{ id: 'PERSONJOBTB', name: 'PERSONJOBTB', icon: 'view_list', route: '/main/PERSONJOBTB' }
-    
-        ,{ id: 'PERSONTB', name: 'PERSONTB', icon: 'view_list', route: '/main/PERSONTB' }
-    
-        ,{ id: 'PLANTADDRESSTB', name: 'PLANTADDRESSTB', icon: 'view_list', route: '/main/PLANTADDRESSTB' }
-    
-        ,{ id: 'PLANTCERTDETAIL', name: 'PLANTCERTDETAIL', icon: 'view_list', route: '/main/PLANTCERTDETAIL' }
-    
-        ,{ id: 'PLANTCOMMENT', name: 'PLANTCOMMENT', icon: 'view_list', route: '/main/PLANTCOMMENT' }
-    
-        ,{ id: 'PLANTFEECOMMENT', name: 'PLANTFEECOMMENT', icon: 'view_list', route: '/main/PLANTFEECOMMENT' }
-    
-        ,{ id: 'PLANTFEESTRUCTURE', name: 'PLANTFEESTRUCTURE', icon: 'view_list', route: '/main/PLANTFEESTRUCTURE' }
-    
-        ,{ id: 'PLANTFEESTRUCTUREOUT', name: 'PLANTFEESTRUCTUREOUT', icon: 'view_list', route: '/main/PLANTFEESTRUCTUREOUT' }
-    
-        ,{ id: 'PLANTHOLDTB', name: 'PLANTHOLDTB', icon: 'view_list', route: '/main/PLANTHOLDTB' }
-    
-        ,{ id: 'PLANTOTHERNAME', name: 'PLANTOTHERNAME', icon: 'view_list', route: '/main/PLANTOTHERNAME' }
-    
-        ,{ id: 'PLANTSTATUSTB', name: 'PLANTSTATUSTB', icon: 'view_list', route: '/main/PLANTSTATUSTB' }
-    
-        ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
-    
-        ,{ id: 'PRIVATELABELBILL', name: 'PRIVATELABELBILL', icon: 'view_list', route: '/main/PRIVATELABELBILL' }
-    
-        ,{ id: 'PrivateLabelTemplate', name: 'PRIVATELABELTEMPLATE', icon: 'view_list', route: '/main/PrivateLabelTemplate' }
-    
-        ,{ id: 'ProducedIn1Tb', name: 'PRODUCEDIN1TB', icon: 'view_list', route: '/main/ProducedIn1Tb' }
-    
-        ,{ id: 'ProductJob', name: 'PRODUCTJOB', icon: 'view_list', route: '/main/ProductJob' }
-    
-        ,{ id: 'ProductJobLineItem', name: 'PRODUCTJOBLINEITEM', icon: 'view_list', route: '/main/ProductJobLineItem' }
-    
-        ,{ id: 'PurchaseOrder', name: 'PURCHASEORDER', icon: 'view_list', route: '/main/PurchaseOrder' }
-    
-        ,{ id: 'RCTB', name: 'RCTB', icon: 'view_list', route: '/main/RCTB' }
-    
-        ,{ id: 'StripeCustomer', name: 'STRIPECUSTOMER', icon: 'view_list', route: '/main/StripeCustomer' }
-    
-        ,{ id: 'ThirdPartyBillingCompany', name: 'THIRDPARTYBILLINGCOMPANY', icon: 'view_list', route: '/main/ThirdPartyBillingCompany' }
-    
-        ,{ id: 'USEDIN1TB', name: 'USEDIN1TB', icon: 'view_list', route: '/main/USEDIN1TB' }
-    
-        ,{ id: 'VISIT', name: 'VISIT', icon: 'view_list', route: '/main/VISIT' }
-    
-        ,{ id: 'VISITSCOMMENT', name: 'VISITSCOMMENT', icon: 'view_list', route: '/main/VISITSCOMMENT' }
-    
-        ,{ id: 'YoshonInfo', name: 'YOSHONINFO', icon: 'view_list', route: '/main/YoshonInfo' }
-    
-    ] 
-},
-    
-    { id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings'}
-    ,{ id: 'about', name: 'About', icon: 'info', route: '/main/about'}
-    ,{ id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }
+        id: 'application', name: 'Application', icon: 'edit_square', opened: false,
+        items: [
+
+            { id: 'WFApplication', name: 'Application', icon: 'view_list', route: '/main/WFApplication' }
+                        
+            , { id: 'WFCompany', name: 'Company', icon: 'view_list', route: '/main/WFCompany' }
+
+            , { id: 'WFContact', name: 'Contact', icon: 'view_list', route: '/main/WFContact' }
+
+             , { id: 'WFPlant', name: 'Plant', icon: 'view_list', route: '/main/WFPlant' }
+
+             , { id: 'WFProduct', name: 'Product', icon: 'view_list', route: '/main/WFProduct' }
+
+            , { id: 'WFIngredient', name: 'Ingredients', icon: 'view_list', route: '/main/WFIngredient' }
+
+            , { id: 'WFQuote', name: 'Quote', icon: 'view_list', route: '/main/WFQuote' }
+
+            , { id: 'WFQuoteItem', name: 'Quote Item', icon: 'view_list', route: '/main/WFQuoteItem' }
+
+            , { id: 'WFFile', name: 'Files', icon: 'view_list', route: '/main/WFFile' }
+
+            , { id: 'WFApplicationComment', name: 'Application Comment', icon: 'view_list', route: '/main/WFApplicationComment' }
+
+            , { id: 'WFApplicationMessage', name: 'Application Message', icon: 'view_list', route: '/main/WFApplicationMessage' }
+
+            , { id: 'WFApplicationStatus', name: 'Application Status', icon: 'view_list', route: '/main/WFApplicationStatus' }
+
+            , { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
+
+            , { id: 'WFActivityLog', name: 'Activity Log', icon: 'view_list', route: '/main/WFActivityLog' }
+
+            , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
+
+            , { id: 'WFUser', name: 'User', icon: 'view_list', route: '/main/WFUser' }
+        ]
+    },
+    {
+        id: 'data', name: ' WorkFlow Definition', icon: 'remove_red_eye', opened: false,
+        items: [
+
+           // { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
+          
+             { id: 'ProcessDefinition', name: 'Process Definition', icon: 'view_list', route: '/main/ProcessDefinition' }
+            , { id: 'LaneDefinition', name: 'Lane Definition', icon: 'view_list', route: '/main/LaneDefinition' }
+            , { id: 'TaskDefinition', name: 'Task Definition', icon: 'view_list', route: '/main/TaskDefinition' }
+            , { id: 'TaskFlow', name: 'Task Flow', icon: 'view_list', route: '/main/TaskFlow' }
+
+            // ,{ id: 'ValidationResult', name: 'VALIDATIONRESULT', icon: 'view_list', route: '/main/ValidationResult' }
+            //,{ id: 'ValidationRule', name: 'VALIDATIONRULE', icon: 'view_list', route: '/main/ValidationRule' }
+        ]
+    },
+    {
+        id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
+        items: [
+                {id:'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard'}
+            , { id: 'ProcessInstance', name: 'Process Instance', icon: 'view_list', route: '/main/ProcessInstance' }
+            , { id: 'StageInstance', name: 'Stage Instance', icon: 'view_list', route: '/main/StageInstance' }
+            , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
+            , { id: 'WorkflowHistory', name: 'Workflow History', icon: 'view_list', route: '/main/WorkflowHistory' }            
+            , { id: 'ProcessMessage', name: 'Process Message', icon: 'view_list', route: '/main/ProcessMessage' }
+            , { id: 'TaskComment', name: 'Task Comment', icon: 'view_list', route: '/main/TaskComment' }
+        ]
+    },
+    {
+        id: 'lookup', name: ' Lookup Tables', icon: 'remove_red_eye', opened: false,
+        items: [
+            { id: 'ProcessMessageType', name: 'Process Message Type', icon: 'view_list', route: '/main/ProcessMessageType' }
+            
+            , { id: 'LaneRole', name: 'Lane Role', icon: 'view_list', route: '/main/LaneRole' }
+
+            , { id: 'WFActivityStatus', name: 'WF Activity Status', icon: 'view_list', route: '/main/WFActivityStatus' }
+
+            , { id: 'ProcessPriority', name: 'Process Priority', icon: 'view_list', route: '/main/ProcessPriority' }
+
+            , { id: 'ProcessStatus', name: 'Process Status', icon: 'view_list', route: '/main/ProcessStatus' }
+
+            , { id: 'TaskStatus', name: 'Task Status', icon: 'view_list', route: '/main/TaskStatus' }
+
+            , { id: 'TaskType', name: 'Task Type', icon: 'view_list', route: '/main/TaskType' }
+
+            , { id: 'StageStatus', name: 'Stage Status', icon: 'view_list', route: '/main/StageStatus' }
+
+            , { id: 'WFQuoteStatus', name: 'WF Quote Status', icon: 'view_list', route: '/main/WFQuoteStatus' }
+
+            //,{ id: 'Sysdiagram', name: 'SYSDIAGRAM', icon: 'view_list', route: '/main/Sysdiagram' }
+
+            , { id: 'TaskCategory', name: 'Task Category', icon: 'view_list', route: '/main/TaskCategory' }
+
+            , { id: 'WFFileType', name: 'WF File Type', icon: 'view_list', route: '/main/WFFileType' }
+
+
+            , { id: 'TaskCommentType', name: 'Task Comment Type', icon: 'view_list', route: '/main/TaskCommentType' }
+
+            , { id: 'WFPriority', name: 'WF Priority', icon: 'view_list', route: '/main/WFPriority' }
+        ]
+    },
+    
+    {id: 'legacy', name: ' Legacy Tables', icon: 'remove_red_eye', opened: false,
+        items: [
+	        { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
+            ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
+    
+        ]
+    },
+    { id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings' }
+    , { id: 'about', name: 'About', icon: 'info', route: '/main/about' }
+    , { id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }
 ];
 
 export const MENU_COMPONENTS = [
 
-    ASSIGNEDMASHGIACHTBCardComponent
+    LaneDefinitionCardComponent
 
-    ,AchAuthTokenCardComponent
+    , LaneRoleCardComponent
 
-    ,AchPlaidLambdaResponseCardComponent
+    , ProcessDefinitionCardComponent
 
-    ,AchStripePaymentCardComponent
+    , ProcessInstanceCardComponent
 
-    ,AchStripePaymentDetailCardComponent
-
-    ,BarCodeCardComponent
-
-    ,BillingCardComponent
-
-    ,CODETBCardComponent
-
-    ,COMPANYADDRESSTBCardComponent
-
-    ,COMPANYCERTDETAILCardComponent
-
-    ,COMPANYCOMMENTCardComponent
-
-    ,COMPANYFEECOMMENTCardComponent
-
-    ,COMPANYFEESTRUCTURECardComponent
-
-    ,COMPANYHOLDTBCardComponent
-
-    ,COMPANYOTHERNAMECardComponent
-
-    ,COMPANYSTATUSTBCardComponent
+    , ProcessMessageCardComponent
 
     ,COMPANYTBCardComponent
+    , ProcessMessageTypeCardComponent
 
-    ,COPRIVATELABELFEEDETAILCardComponent
+    , ProcessPriorityCardComponent
 
-    ,CoPackerFacilitiesCategoryCardComponent
+    , ProcessStatusCardComponent
 
-    ,CoPackerFacilitiesLocationCardComponent
+    , StageInstanceCardComponent
 
-    ,CoPackerFacilityCardComponent
+    , StageStatusCardComponent
 
-    ,CompanyPlantOptionCardComponent
+    , SysdiagramCardComponent
 
-    ,CompanycontactsTbCardComponent
+    , TaskCategoryCardComponent
 
-    ,FormulaComponentCardComponent
+    , TaskCommentCardComponent
 
-    ,FormulaProductCardComponent
+    , TaskCommentTypeCardComponent
 
-    ,FormulaSubmissionComponentCardComponent
+    , TaskDefinitionCardComponent
 
-    ,FormulaSubmissionPlantCardComponent
+    , TaskFlowCardComponent
 
-    ,INVOICEFEECardComponent
+    , TaskInstanceCardComponent
 
-    ,INVOICEFEESDETAILCardComponent
+    , TaskStatusCardComponent
 
-    ,LabelBarcodeCardComponent
+    , TaskTypeCardComponent
 
-    ,LabelCommentCardComponent
+    , ValidationResultCardComponent
 
-    ,LabelOptionCardComponent
+    , ValidationRuleCardComponent
 
-    ,LabelTbCardComponent
+    , WFActivityLogCardComponent
 
-    ,MERCHCOMMENTCardComponent
+    , WFActivityStatusCardComponent
 
-    ,MERCHOTHERNAMECardComponent
+    , WFApplicationCardComponent
 
-    ,MERCHTBCardComponent
+    , WFApplicationCommentCardComponent
 
-    ,MiniCRMActionCardComponent
+    , WFApplicationMessageCardComponent
 
-    ,OWNSTBCardComponent
+    , WFApplicationStatusCardComponent
 
-    ,PENDINGINFOTBCardComponent
+    , WFCompanyCardComponent
 
-    ,PERSONADDRESSTBCardComponent
+    , WFContactCardComponent
 
-    ,PERSONJOBSTATUSTBCardComponent
-
-    ,PERSONJOBTBCardComponent
-
-    ,PERSONTBCardComponent
-
-    ,PLANTADDRESSTBCardComponent
-
-    ,PLANTCERTDETAILCardComponent
-
-    ,PLANTCOMMENTCardComponent
-
-    ,PLANTFEECOMMENTCardComponent
-
-    ,PLANTFEESTRUCTURECardComponent
-
-    ,PLANTFEESTRUCTUREOUTCardComponent
-
-    ,PLANTHOLDTBCardComponent
-
-    ,PLANTOTHERNAMECardComponent
-
-    ,PLANTSTATUSTBCardComponent
+    , WFDashboardCardComponent
 
     ,PLANTTBCardComponent
+    , WFFileCardComponent
 
-    ,PRIVATELABELBILLCardComponent
+    , WFFileTypeCardComponent
 
-    ,PrivateLabelTemplateCardComponent
+    , WFIngredientCardComponent
 
-    ,ProducedIn1TbCardComponent
+    , WFPlantCardComponent
 
-    ,ProductJobCardComponent
+    , WFPriorityCardComponent
 
-    ,ProductJobLineItemCardComponent
+    , WFProductCardComponent
 
-    ,PurchaseOrderCardComponent
+    , WFQuoteCardComponent
 
-    ,RCTBCardComponent
+    , WFQuoteItemCardComponent
 
-    ,StripeCustomerCardComponent
+    , WFQuoteStatusCardComponent
 
-    ,ThirdPartyBillingCompanyCardComponent
+    , WFRoleCardComponent
 
-    ,USEDIN1TBCardComponent
+    , WFUserCardComponent
 
-    ,VISITCardComponent
-
-    ,VISITSCOMMENTCardComponent
-
-    ,YoshonInfoCardComponent
+    , WorkflowHistoryCardComponent
 
 ];

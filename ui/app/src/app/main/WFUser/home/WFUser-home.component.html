@@ -1,0 +1,48 @@
+<o-form-layout-manager attr="WFUser" mode="tab" title="WFUSER">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFUserTable" 
+            service="WFUser" 
+            entity="WFUser" 
+            title="WFUSER"
+            keys="UserID"
+            columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID" 
+            header-actions="R;D"
+            visible-columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID"  
+            sort-columns="Username" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Username attr="Username" title=" Username" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #FullName attr="FullName" title="FullName" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Email attr="Email" title="Email" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsActive" title="IsActive">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #LastLoginDate attr="LastLoginDate" title="LastLoginDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #UserID attr="UserID" title="UserID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,95 @@
+<o-form #WFApplicationForm attr="WFApplication_form_insert" service="WFApplication" entity="WFApplication"
+keys="ApplicationID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #ApplicationID attr="ApplicationID" label=" Application I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="Priority"
+        service="WFPriority" 
+        entity="WFPriorityType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PriorityCode" 
+        value-column-type="VARCHAR"  
+        keys="PriorityCode" 
+        columns="PriorityCode;Priority;PriorityDescription" 
+        title="Priority"
+        visible-columns="PriorityCode;PriorityDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="Status"
+        service="WFApplicationStatus" 
+        entity="WFApplicationStatusType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="StatusCode" 
+        value-column-type="VARCHAR"  
+        keys="StatusCode" 
+        columns="StatusCode;Status;StatusDescription" 
+        title="Status"
+        visible-columns="StatusCode;StatusDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="WFDashboardID"
+        service="WFDashboard" 
+        entity="WFDashboardType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ID" 
+        value-column-type="INTEGER"  
+        keys="ID" 
+        columns="ID;WFDashboardID;ID" 
+        title="WFDashboardID"
+        visible-columns="ID;ID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #ApplicationNumber attr="ApplicationNumber" label="ApplicationNumber" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-date-input #SubmissionDate attr="SubmissionDate" value-type="string" label="SubmissionDate" enabled="yes" required="yes" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #AssignedTo attr="AssignedTo" label="AssignedTo" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #AssignedBy attr="AssignedBy" label="AssignedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #AssignedDate attr="AssignedDate" value-type="string" label="AssignedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #CompanyID attr="CompanyID" label="CompanyID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-integer-input #PlantID attr="PlantID" label="PlantID" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

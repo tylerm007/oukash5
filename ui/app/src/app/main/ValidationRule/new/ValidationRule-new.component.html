@@ -1,0 +1,30 @@
+<o-form #ValidationRuleForm attr="ValidationRule_form_insert" service="ValidationRule" entity="ValidationRule"
+keys="ValidationId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #ValidationName attr="ValidationName" label=" Validation Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Category attr="Category" label="Category" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #RuleType attr="RuleType" label="RuleType" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ValidationQuery attr="ValidationQuery" label="ValidationQuery" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ErrorMessage attr="ErrorMessage" label="ErrorMessage" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #ValidationId attr="ValidationId" label="ValidationId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

@@ -1,0 +1,33 @@
+<o-form-layout-manager attr="TaskCategory" mode="tab" title="TASKCATEGORY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="TaskCategoryTable" 
+            service="TaskCategory" 
+            entity="TaskCategory" 
+            title="TASKCATEGORY"
+            keys="TaskCategoryCode"
+            columns="TaskCategoryDescription;TaskCategoryCode" 
+            header-actions="R;D"
+            visible-columns="TaskCategoryDescription;TaskCategoryCode"  
+            sort-columns="TaskCategoryDescription" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #TaskCategoryDescription attr="TaskCategoryDescription" title=" Task Category Description" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #TaskCategoryCode attr="TaskCategoryCode" title="TaskCategoryCode" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

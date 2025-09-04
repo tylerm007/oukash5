@@ -1,0 +1,95 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="MessageTypeDescription" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="ProcessMessageType_form_edit" 
+        service="ProcessMessageType" 
+        entity="ProcessMessageType" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="MessageTypeCode" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #MessageTypeDescription attr="MessageTypeDescription" label=" Message Type Description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #MessageTypeCode attr="MessageTypeCode" label="MessageTypeCode" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="PROCESSMESSAGE-MessageType">
+    <div layout-padding>
+      <o-table 
+        attr="ProcessMessageTable" 
+        service="ProcessMessage" 
+        entity="ProcessMessage" 
+        keys="MessageId"
+        parent-keys="MessageType:MessageTypeCode"
+        columns="MessageId;InstanceId;MessageType;FromUser;ToUser;ToRole;Subject;MessageBody;SentDate;ReadDate;IsRead"  
+        horizontal-scroll="yes"
+        detail-form-route="ProcessMessage" 
+        edit-form-route="ProcessMessage"
+        visible-columns="MessageId;InstanceId;MessageType;FromUser;ToUser;ToRole;Subject;MessageBody;SentDate;ReadDate;IsRead"  
+        sort-columns="MessageId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #MessageId attr="MessageId" title=" Message Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="InstanceId" title="Instance">
+    <o-table-cell-renderer-service attr="InstanceId" 
+        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
+        parent-keys="MessageTypeCode:InstanceId"
+        value-column="InstanceId" keys="InstanceId"
+        visible-columns="InstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ToRole attr="ToRole" title="ToRole" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #Subject attr="Subject" title="Subject" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #MessageBody attr="MessageBody" title="MessageBody" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #ReadDate attr="ReadDate" title="ReadDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column attr="IsRead" title="IsRead">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

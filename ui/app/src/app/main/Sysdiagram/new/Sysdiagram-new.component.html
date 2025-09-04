@@ -1,0 +1,24 @@
+<o-form #SysdiagramForm attr="Sysdiagram_form_insert" service="Sysdiagram" entity="Sysdiagram"
+keys="diagram_id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #name attr="name" label=" name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #version attr="version" label="version" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-textarea-input #definition attr="definition"  label="definition" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+        <o-integer-input #principal_id attr="principal_id" label="principal_id" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-integer-input #diagram_id attr="diagram_id" label="diagram_id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

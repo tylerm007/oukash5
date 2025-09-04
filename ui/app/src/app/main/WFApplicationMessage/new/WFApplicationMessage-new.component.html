@@ -1,0 +1,47 @@
+<o-form #WFApplicationMessageForm attr="WFApplicationMessage_form_insert" service="WFApplicationMessage" entity="WFApplicationMessage"
+keys="MessageID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #MessageID attr="MessageID" label=" Message I D" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="ApplicationID"
+        service="WFApplication" 
+        entity="WFApplicationType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ApplicationID" 
+        value-column-type="INTEGER"  
+        keys="ApplicationID" 
+        columns="ApplicationID;ApplicationID;ApplicationID" 
+        title="ApplicationID"
+        visible-columns="ApplicationID;ApplicationID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #FromUser attr="FromUser" label="FromUser" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ToUser attr="ToUser" label="ToUser" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MessageText attr="MessageText" label="MessageText" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #MessageType attr="MessageType" label="MessageType" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #Priority attr="Priority" label="Priority" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #SentDate attr="SentDate" value-type="string" label="SentDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

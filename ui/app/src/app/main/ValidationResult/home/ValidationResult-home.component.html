@@ -1,0 +1,69 @@
+<o-form-layout-manager attr="ValidationResult" mode="tab" title="VALIDATIONRESULT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ValidationResultTable" 
+            service="ValidationResult" 
+            entity="ValidationResult" 
+            title="VALIDATIONRESULT"
+            keys="ValidationResultId"
+            columns="ValidationResultId;InstanceId;TaskInstanceId;ValidationId;ValidationMessage;ValidationDate;ValidatedBy;IsValid" 
+            header-actions="R;D"
+            visible-columns="ValidationResultId;InstanceId;TaskInstanceId;ValidationId;ValidationMessage;ValidationDate;ValidatedBy;IsValid"  
+            sort-columns="ValidationResultId" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ValidationResultId attr="ValidationResultId" title=" Validation Result Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="InstanceId" title="Instance">
+    <o-table-cell-renderer-service attr="InstanceId" 
+        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
+        parent-keys="ValidationResultId:InstanceId"
+        value-column="InstanceId" keys="InstanceId"
+        visible-columns="InstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="TaskInstanceId" title="TaskInstance">
+    <o-table-cell-renderer-service attr="TaskInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="ValidationResultId:TaskInstanceId"
+        value-column="TaskInstanceId" keys="TaskInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ValidationId" title="Validation">
+    <o-table-cell-renderer-service attr="ValidationId" 
+        service="ValidationRule" entity="ValidationRuleType" columns="ValidationId;ValidationName"
+        parent-keys="ValidationResultId:ValidationId"
+        value-column="ValidationName" keys="ValidationId"
+        visible-columns="ValidationName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #ValidationMessage attr="ValidationMessage" title="ValidationMessage" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidationDate attr="ValidationDate" title="ValidationDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #ValidatedBy attr="ValidatedBy" title="ValidatedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsValid" title="IsValid">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

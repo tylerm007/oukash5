@@ -1,3 +1,4 @@
+from multiprocessing import process
 import datetime, os
 from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
@@ -10,6 +11,7 @@ from security.system.authorization import Grant, Security
 from logic.load_verify_rules import load_verify_rules
 import integration.kafka.kafka_producer as kafka_producer
 import logging
+from config.config import Config
 
 app_logger = logging.getLogger(__name__)
 
@@ -51,23 +53,23 @@ def declare_logic():
             opt_locking.opt_lock_patch(logic_row=logic_row)
 
         Grant.process_updates(logic_row=logic_row)
-
         did_stamping = False
-        if enable_stamping := False:  # #als:  DATE / USER STAMPING
+        enable_stamping = True
+        if enable_stamping:  # #als:  DATE / USER STAMPING
             row = logic_row.row
-            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
-                row.CreatedOn = datetime.datetime.now()
+            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedDate"):
+                row.CreatedDate = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
                 row.CreatedBy = Security.current_user().id
                 #    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
-            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedOn"):
-                row.UpdatedOn = datetime.datetime.now()
+            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "ModifiedDate"):
+                row.ModifiedDate = datetime.datetime.now()
                 did_stamping = True
-            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedBy"):
-                row.UpdatedBy = Security.current_user().id  \
-                    if Config.SECURITY_ENABLED == True else 'public'
+            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "ModifiedBy"):
+                row.ModifiedBy = "admin"# Security.current_user().id  \
+                    #if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if did_stamping:
                 logic_row.log("early_row_event_all_classes - handle_all did stamping")     
@@ -77,5 +79,68 @@ def declare_logic():
     from api.system import api_utils
     # api_utils.rules_report()
 
+    def test_state_change(row: models.TaskInstance, old_row: models.TaskInstance, logic_row:LogicRow):
+        '''
+        Only validate state change (update) if the status is changing using TaskFlow
+        PEND -> NEW
+        NEW -> INP
+        INP -> COMP
+        '''
+        if logic_row.ins_upd_dlt == 'upd' and row.Status != old_row.Status:
+            pass
+
+            next_tasks = row.ToTaskTaskFlowList
+            for task in next_tasks:
+                if task.ToTaskId == row.TaskId and task.Condition in (None, '', '1=1', 'True'):
+                    return
+            pass
+        return True
+    
+    #Rule.constraint(validate=models.TaskInstance,calling=test_state_change,error_msg="TaskInstance Status can only change forward")
+    '''
+    def start_workflow(logic_row: LogicRow):
+        """
+        Start the workflow for a New Application 
+        """
+        if logic_row.ins_upd_dlt != 'ins':
+            return
+        from api.api_discovery.workflow import _start_workflow as start_workflow_function
+        process_name = "Application Workflow"
+        application_id = logic_row.row.ApplicationId
+        started_by = logic_row.row.StartedBy
+        priority = logic_row.row.Priority
+        start_workflow_function(process_name=process_name, application_id=application_id, started_by=started_by, priority=priority)
+        
+        
+    Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
+
+    
+ 
+    '''
+    def update_status(row: models.StageInstance, old_row: models.StageInstance , logic_row:LogicRow):
+        """
+        Update the status of the workflow application
+        """
+        if logic_row.ins_upd_dlt != 'upd':
+            return
+        if row.CompletedCount == row.TotalCount:
+            row.status == 'Completed'
+            row.completed_at = datetime.datetime.now()
+        elif row.TotalCount != old_row.TotalCount and row.CompletedCount < row.TotalCount:
+            row.status == 'Running'
+            row.started_at = datetime.datetime.now()
+    
+    Rule.row_event(on_class=models.StageInstance, calling=update_status)
+    #WF Application Dashboard
+    '''
+    Rule.count(derive=models.WFDashboard.count_completed,as_count_of=models.WFApplication, where="Status == 'Completed'")
+    Rule.count(derive=models.WFDashboard.count_in_progress,as_count_of=models.WFApplication, where="Status == 'Running'")
+    Rule.count(derive=models.WFDashboard.count_new,as_count_of=models.WFApplication, where="Status == 'Pending'")
+    Rule.count(derive=models.WFDashboard.count_withdrawn,as_count_of=models.WFApplication, where="Status == 'Failed'")
+    Rule.count(derive=models.WFDashboard.total_count,as_count_of=models.WFApplication)
+   
+    Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
+    Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
+    '''
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 

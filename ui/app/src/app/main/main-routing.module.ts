@@ -13,137 +13,95 @@ export const routes: Routes = [
         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
       
     
-        { path: 'ASSIGNEDMASHGIACHTB', loadChildren: () => import('./ASSIGNEDMASHGIACHTB/ASSIGNEDMASHGIACHTB.module').then(m => m.ASSIGNEDMASHGIACHTBModule) },
+        { path: 'LaneDefinition', loadChildren: () => import('./LaneDefinition/LaneDefinition.module').then(m => m.LaneDefinitionModule) },
     
-        { path: 'AchAuthToken', loadChildren: () => import('./AchAuthToken/AchAuthToken.module').then(m => m.AchAuthTokenModule) },
+        { path: 'LaneRole', loadChildren: () => import('./LaneRole/LaneRole.module').then(m => m.LaneRoleModule) },
     
-        { path: 'AchPlaidLambdaResponse', loadChildren: () => import('./AchPlaidLambdaResponse/AchPlaidLambdaResponse.module').then(m => m.AchPlaidLambdaResponseModule) },
+        { path: 'ProcessDefinition', loadChildren: () => import('./ProcessDefinition/ProcessDefinition.module').then(m => m.ProcessDefinitionModule) },
     
-        { path: 'AchStripePayment', loadChildren: () => import('./AchStripePayment/AchStripePayment.module').then(m => m.AchStripePaymentModule) },
+        { path: 'ProcessInstance', loadChildren: () => import('./ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule) },
     
-        { path: 'AchStripePaymentDetail', loadChildren: () => import('./AchStripePaymentDetail/AchStripePaymentDetail.module').then(m => m.AchStripePaymentDetailModule) },
+        { path: 'ProcessMessage', loadChildren: () => import('./ProcessMessage/ProcessMessage.module').then(m => m.ProcessMessageModule) },
     
-        { path: 'BarCode', loadChildren: () => import('./BarCode/BarCode.module').then(m => m.BarCodeModule) },
+        { path: 'ProcessMessageType', loadChildren: () => import('./ProcessMessageType/ProcessMessageType.module').then(m => m.ProcessMessageTypeModule) },
     
-        { path: 'Billing', loadChildren: () => import('./Billing/Billing.module').then(m => m.BillingModule) },
-    
-        { path: 'CODETB', loadChildren: () => import('./CODETB/CODETB.module').then(m => m.CODETBModule) },
-    
-        { path: 'COMPANYADDRESSTB', loadChildren: () => import('./COMPANYADDRESSTB/COMPANYADDRESSTB.module').then(m => m.COMPANYADDRESSTBModule) },
-    
-        { path: 'COMPANYCERTDETAIL', loadChildren: () => import('./COMPANYCERTDETAIL/COMPANYCERTDETAIL.module').then(m => m.COMPANYCERTDETAILModule) },
-    
-        { path: 'COMPANYCOMMENT', loadChildren: () => import('./COMPANYCOMMENT/COMPANYCOMMENT.module').then(m => m.COMPANYCOMMENTModule) },
-    
-        { path: 'COMPANYFEECOMMENT', loadChildren: () => import('./COMPANYFEECOMMENT/COMPANYFEECOMMENT.module').then(m => m.COMPANYFEECOMMENTModule) },
-    
-        { path: 'COMPANYFEESTRUCTURE', loadChildren: () => import('./COMPANYFEESTRUCTURE/COMPANYFEESTRUCTURE.module').then(m => m.COMPANYFEESTRUCTUREModule) },
-    
-        { path: 'COMPANYHOLDTB', loadChildren: () => import('./COMPANYHOLDTB/COMPANYHOLDTB.module').then(m => m.COMPANYHOLDTBModule) },
-    
-        { path: 'COMPANYOTHERNAME', loadChildren: () => import('./COMPANYOTHERNAME/COMPANYOTHERNAME.module').then(m => m.COMPANYOTHERNAMEModule) },
-    
-        { path: 'COMPANYSTATUSTB', loadChildren: () => import('./COMPANYSTATUSTB/COMPANYSTATUSTB.module').then(m => m.COMPANYSTATUSTBModule) },
     
         { path: 'COMPANYTB', loadChildren: () => import('./COMPANYTB/COMPANYTB.module').then(m => m.COMPANYTBModule) },
     
-        { path: 'COPRIVATELABELFEEDETAIL', loadChildren: () => import('./COPRIVATELABELFEEDETAIL/COPRIVATELABELFEEDETAIL.module').then(m => m.COPRIVATELABELFEEDETAILModule) },
+        { path: 'ProcessPriority', loadChildren: () => import('./ProcessPriority/ProcessPriority.module').then(m => m.ProcessPriorityModule) },
     
-        { path: 'CoPackerFacilitiesCategory', loadChildren: () => import('./CoPackerFacilitiesCategory/CoPackerFacilitiesCategory.module').then(m => m.CoPackerFacilitiesCategoryModule) },
+        { path: 'ProcessStatus', loadChildren: () => import('./ProcessStatus/ProcessStatus.module').then(m => m.ProcessStatusModule) },
     
-        { path: 'CoPackerFacilitiesLocation', loadChildren: () => import('./CoPackerFacilitiesLocation/CoPackerFacilitiesLocation.module').then(m => m.CoPackerFacilitiesLocationModule) },
+        { path: 'StageInstance', loadChildren: () => import('./StageInstance/StageInstance.module').then(m => m.StageInstanceModule) },
     
-        { path: 'CoPackerFacility', loadChildren: () => import('./CoPackerFacility/CoPackerFacility.module').then(m => m.CoPackerFacilityModule) },
+        { path: 'StageStatus', loadChildren: () => import('./StageStatus/StageStatus.module').then(m => m.StageStatusModule) },
     
-        { path: 'CompanyPlantOption', loadChildren: () => import('./CompanyPlantOption/CompanyPlantOption.module').then(m => m.CompanyPlantOptionModule) },
+        { path: 'Sysdiagram', loadChildren: () => import('./Sysdiagram/Sysdiagram.module').then(m => m.SysdiagramModule) },
     
-        { path: 'CompanycontactsTb', loadChildren: () => import('./CompanycontactsTb/CompanycontactsTb.module').then(m => m.CompanycontactsTbModule) },
+        { path: 'TaskCategory', loadChildren: () => import('./TaskCategory/TaskCategory.module').then(m => m.TaskCategoryModule) },
     
-        { path: 'FormulaComponent', loadChildren: () => import('./FormulaComponent/FormulaComponent.module').then(m => m.FormulaComponentModule) },
+        { path: 'TaskComment', loadChildren: () => import('./TaskComment/TaskComment.module').then(m => m.TaskCommentModule) },
     
-        { path: 'FormulaProduct', loadChildren: () => import('./FormulaProduct/FormulaProduct.module').then(m => m.FormulaProductModule) },
+        { path: 'TaskCommentType', loadChildren: () => import('./TaskCommentType/TaskCommentType.module').then(m => m.TaskCommentTypeModule) },
     
-        { path: 'FormulaSubmissionComponent', loadChildren: () => import('./FormulaSubmissionComponent/FormulaSubmissionComponent.module').then(m => m.FormulaSubmissionComponentModule) },
+        { path: 'TaskDefinition', loadChildren: () => import('./TaskDefinition/TaskDefinition.module').then(m => m.TaskDefinitionModule) },
     
-        { path: 'FormulaSubmissionPlant', loadChildren: () => import('./FormulaSubmissionPlant/FormulaSubmissionPlant.module').then(m => m.FormulaSubmissionPlantModule) },
+        { path: 'TaskFlow', loadChildren: () => import('./TaskFlow/TaskFlow.module').then(m => m.TaskFlowModule) },
     
-        { path: 'INVOICEFEE', loadChildren: () => import('./INVOICEFEE/INVOICEFEE.module').then(m => m.INVOICEFEEModule) },
+        { path: 'TaskInstance', loadChildren: () => import('./TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule) },
     
-        { path: 'INVOICEFEESDETAIL', loadChildren: () => import('./INVOICEFEESDETAIL/INVOICEFEESDETAIL.module').then(m => m.INVOICEFEESDETAILModule) },
+        { path: 'TaskStatus', loadChildren: () => import('./TaskStatus/TaskStatus.module').then(m => m.TaskStatusModule) },
     
-        { path: 'LabelBarcode', loadChildren: () => import('./LabelBarcode/LabelBarcode.module').then(m => m.LabelBarcodeModule) },
+        { path: 'TaskType', loadChildren: () => import('./TaskType/TaskType.module').then(m => m.TaskTypeModule) },
     
-        { path: 'LabelComment', loadChildren: () => import('./LabelComment/LabelComment.module').then(m => m.LabelCommentModule) },
+        { path: 'ValidationResult', loadChildren: () => import('./ValidationResult/ValidationResult.module').then(m => m.ValidationResultModule) },
     
-        { path: 'LabelOption', loadChildren: () => import('./LabelOption/LabelOption.module').then(m => m.LabelOptionModule) },
+        { path: 'ValidationRule', loadChildren: () => import('./ValidationRule/ValidationRule.module').then(m => m.ValidationRuleModule) },
     
-        { path: 'LabelTb', loadChildren: () => import('./LabelTb/LabelTb.module').then(m => m.LabelTbModule) },
+        { path: 'WFActivityLog', loadChildren: () => import('./WFActivityLog/WFActivityLog.module').then(m => m.WFActivityLogModule) },
     
-        { path: 'MERCHCOMMENT', loadChildren: () => import('./MERCHCOMMENT/MERCHCOMMENT.module').then(m => m.MERCHCOMMENTModule) },
+        { path: 'WFActivityStatus', loadChildren: () => import('./WFActivityStatus/WFActivityStatus.module').then(m => m.WFActivityStatusModule) },
     
-        { path: 'MERCHOTHERNAME', loadChildren: () => import('./MERCHOTHERNAME/MERCHOTHERNAME.module').then(m => m.MERCHOTHERNAMEModule) },
+        { path: 'WFApplication', loadChildren: () => import('./WFApplication/WFApplication.module').then(m => m.WFApplicationModule) },
     
-        { path: 'MERCHTB', loadChildren: () => import('./MERCHTB/MERCHTB.module').then(m => m.MERCHTBModule) },
+        { path: 'WFApplicationComment', loadChildren: () => import('./WFApplicationComment/WFApplicationComment.module').then(m => m.WFApplicationCommentModule) },
     
-        { path: 'MiniCRMAction', loadChildren: () => import('./MiniCRMAction/MiniCRMAction.module').then(m => m.MiniCRMActionModule) },
+        { path: 'WFApplicationMessage', loadChildren: () => import('./WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule) },
     
-        { path: 'OWNSTB', loadChildren: () => import('./OWNSTB/OWNSTB.module').then(m => m.OWNSTBModule) },
+        { path: 'WFApplicationStatus', loadChildren: () => import('./WFApplicationStatus/WFApplicationStatus.module').then(m => m.WFApplicationStatusModule) },
     
-        { path: 'PENDINGINFOTB', loadChildren: () => import('./PENDINGINFOTB/PENDINGINFOTB.module').then(m => m.PENDINGINFOTBModule) },
+        { path: 'WFCompany', loadChildren: () => import('./WFCompany/WFCompany.module').then(m => m.WFCompanyModule) },
     
-        { path: 'PERSONADDRESSTB', loadChildren: () => import('./PERSONADDRESSTB/PERSONADDRESSTB.module').then(m => m.PERSONADDRESSTBModule) },
+        { path: 'WFContact', loadChildren: () => import('./WFContact/WFContact.module').then(m => m.WFContactModule) },
     
-        { path: 'PERSONJOBSTATUSTB', loadChildren: () => import('./PERSONJOBSTATUSTB/PERSONJOBSTATUSTB.module').then(m => m.PERSONJOBSTATUSTBModule) },
+        { path: 'WFDashboard', loadChildren: () => import('./WFDashboard/WFDashboard.module').then(m => m.WFDashboardModule) },
     
-        { path: 'PERSONJOBTB', loadChildren: () => import('./PERSONJOBTB/PERSONJOBTB.module').then(m => m.PERSONJOBTBModule) },
+        { path: 'WFFile', loadChildren: () => import('./WFFile/WFFile.module').then(m => m.WFFileModule) },
     
-        { path: 'PERSONTB', loadChildren: () => import('./PERSONTB/PERSONTB.module').then(m => m.PERSONTBModule) },
+        { path: 'WFFileType', loadChildren: () => import('./WFFileType/WFFileType.module').then(m => m.WFFileTypeModule) },
     
-        { path: 'PLANTADDRESSTB', loadChildren: () => import('./PLANTADDRESSTB/PLANTADDRESSTB.module').then(m => m.PLANTADDRESSTBModule) },
-    
-        { path: 'PLANTCERTDETAIL', loadChildren: () => import('./PLANTCERTDETAIL/PLANTCERTDETAIL.module').then(m => m.PLANTCERTDETAILModule) },
-    
-        { path: 'PLANTCOMMENT', loadChildren: () => import('./PLANTCOMMENT/PLANTCOMMENT.module').then(m => m.PLANTCOMMENTModule) },
-    
-        { path: 'PLANTFEECOMMENT', loadChildren: () => import('./PLANTFEECOMMENT/PLANTFEECOMMENT.module').then(m => m.PLANTFEECOMMENTModule) },
-    
-        { path: 'PLANTFEESTRUCTURE', loadChildren: () => import('./PLANTFEESTRUCTURE/PLANTFEESTRUCTURE.module').then(m => m.PLANTFEESTRUCTUREModule) },
-    
-        { path: 'PLANTFEESTRUCTUREOUT', loadChildren: () => import('./PLANTFEESTRUCTUREOUT/PLANTFEESTRUCTUREOUT.module').then(m => m.PLANTFEESTRUCTUREOUTModule) },
-    
-        { path: 'PLANTHOLDTB', loadChildren: () => import('./PLANTHOLDTB/PLANTHOLDTB.module').then(m => m.PLANTHOLDTBModule) },
-    
-        { path: 'PLANTOTHERNAME', loadChildren: () => import('./PLANTOTHERNAME/PLANTOTHERNAME.module').then(m => m.PLANTOTHERNAMEModule) },
-    
-        { path: 'PLANTSTATUSTB', loadChildren: () => import('./PLANTSTATUSTB/PLANTSTATUSTB.module').then(m => m.PLANTSTATUSTBModule) },
     
         { path: 'PLANTTB', loadChildren: () => import('./PLANTTB/PLANTTB.module').then(m => m.PLANTTBModule) },
     
-        { path: 'PRIVATELABELBILL', loadChildren: () => import('./PRIVATELABELBILL/PRIVATELABELBILL.module').then(m => m.PRIVATELABELBILLModule) },
+        { path: 'WFIngredient', loadChildren: () => import('./WFIngredient/WFIngredient.module').then(m => m.WFIngredientModule) },
     
-        { path: 'PrivateLabelTemplate', loadChildren: () => import('./PrivateLabelTemplate/PrivateLabelTemplate.module').then(m => m.PrivateLabelTemplateModule) },
+        { path: 'WFPlant', loadChildren: () => import('./WFPlant/WFPlant.module').then(m => m.WFPlantModule) },
     
-        { path: 'ProducedIn1Tb', loadChildren: () => import('./ProducedIn1Tb/ProducedIn1Tb.module').then(m => m.ProducedIn1TbModule) },
+        { path: 'WFPriority', loadChildren: () => import('./WFPriority/WFPriority.module').then(m => m.WFPriorityModule) },
     
-        { path: 'ProductJob', loadChildren: () => import('./ProductJob/ProductJob.module').then(m => m.ProductJobModule) },
+        { path: 'WFProduct', loadChildren: () => import('./WFProduct/WFProduct.module').then(m => m.WFProductModule) },
     
-        { path: 'ProductJobLineItem', loadChildren: () => import('./ProductJobLineItem/ProductJobLineItem.module').then(m => m.ProductJobLineItemModule) },
+        { path: 'WFQuote', loadChildren: () => import('./WFQuote/WFQuote.module').then(m => m.WFQuoteModule) },
     
-        { path: 'PurchaseOrder', loadChildren: () => import('./PurchaseOrder/PurchaseOrder.module').then(m => m.PurchaseOrderModule) },
+        { path: 'WFQuoteItem', loadChildren: () => import('./WFQuoteItem/WFQuoteItem.module').then(m => m.WFQuoteItemModule) },
     
-        { path: 'RCTB', loadChildren: () => import('./RCTB/RCTB.module').then(m => m.RCTBModule) },
+        { path: 'WFQuoteStatus', loadChildren: () => import('./WFQuoteStatus/WFQuoteStatus.module').then(m => m.WFQuoteStatusModule) },
     
-        { path: 'StripeCustomer', loadChildren: () => import('./StripeCustomer/StripeCustomer.module').then(m => m.StripeCustomerModule) },
+        { path: 'WFRole', loadChildren: () => import('./WFRole/WFRole.module').then(m => m.WFRoleModule) },
     
-        { path: 'ThirdPartyBillingCompany', loadChildren: () => import('./ThirdPartyBillingCompany/ThirdPartyBillingCompany.module').then(m => m.ThirdPartyBillingCompanyModule) },
+        { path: 'WFUser', loadChildren: () => import('./WFUser/WFUser.module').then(m => m.WFUserModule) },
     
-        { path: 'USEDIN1TB', loadChildren: () => import('./USEDIN1TB/USEDIN1TB.module').then(m => m.USEDIN1TBModule) },
-    
-        { path: 'VISIT', loadChildren: () => import('./VISIT/VISIT.module').then(m => m.VISITModule) },
-    
-        { path: 'VISITSCOMMENT', loadChildren: () => import('./VISITSCOMMENT/VISITSCOMMENT.module').then(m => m.VISITSCOMMENTModule) },
-    
-        { path: 'YoshonInfo', loadChildren: () => import('./YoshonInfo/YoshonInfo.module').then(m => m.YoshonInfoModule) },
+        { path: 'WorkflowHistory', loadChildren: () => import('./WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule) },
     
     ]
   }

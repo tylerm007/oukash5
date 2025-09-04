@@ -1,0 +1,46 @@
+<o-form-layout-manager attr="WFQuoteItem" mode="tab" title="WFQUOTEITEM">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFQuoteItemTable" 
+            service="WFQuoteItem" 
+            entity="WFQuoteItem" 
+            title="WFQUOTEITEM"
+            keys="QuoteItemID"
+            columns="Description;QuoteID;Amount;SortOrder;QuoteItemID" 
+            header-actions="R;D"
+            visible-columns="Description;QuoteID;Amount;SortOrder;QuoteItemID"  
+            sort-columns="Description" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #Description attr="Description" title=" Description" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="QuoteID" title="QuoteID">
+    <o-table-cell-renderer-service attr="QuoteID" 
+        service="WFQuote" entity="WFQuoteType" columns="QuoteID;QuoteID"
+        parent-keys="QuoteItemID:QuoteID"
+        value-column="QuoteID" keys="QuoteID"
+        visible-columns="QuoteID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Amount attr="Amount" title="Amount" type="currency" editable="no" required="yes" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #SortOrder attr="SortOrder" title="SortOrder" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #QuoteItemID attr="QuoteItemID" title="QuoteItemID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>
