@@ -1,7 +1,7 @@
 from datetime import datetime
 import re
 from tracemalloc import start
-from database.models import LaneDefinition, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
+from database.models import LaneDefinition, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -43,20 +43,32 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 app_logger.warning(f"Legacy Application source not found for application id {app_dict.get('application_id')}")
                 continue
             application_id = app_dict.get("ApplicationID", None)
+            files = WFFile.query.filter_by(ApplicationID=application_id).all()
             app_source = company_app.to_dict() if company_app else {}
+            # Calculate days between CreateDate and ModifiedDate
+            created_date = app_dict.get("CreatedDate")
+            modified_date = app_dict.get("ModifiedDate")
+            days_between = 0
+            if created_date and modified_date:
+                if isinstance(created_date, str):
+                    created_date = datetime.fromisoformat(created_date.replace('Z', '+00:00'))
+                if isinstance(modified_date, str):
+                    modified_date = datetime.fromisoformat(modified_date.replace('Z', '+00:00'))
+                days_between = (modified_date - created_date).days
+            
             app_row = {
                 "id": application_id,
                 "company": app_source.get("CompanyName"),
                 "plant": app_source.get("PlantName"),
-                "region": "NY Metro",
-                "priority": "high",
+                "region": app_source.get("Region"),
+                "priority": app_dict.get("Priority", "Normal"),
                 "status": "contract_sent",
                 "assignedRC": "R. Gorelik",
-                "daysInStage": 3,
-                "overdue": false,
-                "lastUpdate": "2025-08-23",
+                "daysInStage": days_between,
+                "overdue": days_between > 10,
+                "lastUpdate": modified_date,
                 "nextAction": "Follow up on contract",
-                "documents": 12,
+                "documents": len(files) if files else 0,
                 "notes": 3
             }
             
@@ -68,8 +80,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     return jsonify({"status": "error", "message": f"Workflow Process instance not found for application id {application_id}"}), 404
                 stages =  [stage.to_dict() for stage in StageInstance.query.filter_by(ProcessInstanceId=process_instance.InstanceId).all()]
                 app_row["stages"] = {}
-                tasks = []
+
                 for stage in stages:
+                    tasks = []
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
                     for task in task_instances:
                         tasks.append(
