@@ -118,8 +118,6 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
             , { id: 'WFApplicationMessage', name: 'Application Message', icon: 'view_list', route: '/main/WFApplicationMessage' }
 
-            , { id: 'WFApplicationStatus', name: 'Application Status', icon: 'view_list', route: '/main/WFApplicationStatus' }
-
             , { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
 
             , { id: 'WFActivityLog', name: 'Activity Log', icon: 'view_list', route: '/main/WFActivityLog' }
@@ -160,21 +158,14 @@ export const MENU_CONFIG: MenuRootItem[] = [
         id: 'lookup', name: ' Lookup Tables', icon: 'remove_red_eye', opened: false,
         items: [
             { id: 'ProcessMessageType', name: 'Process Message Type', icon: 'view_list', route: '/main/ProcessMessageType' }
-            
             , { id: 'LaneRole', name: 'Lane Role', icon: 'view_list', route: '/main/LaneRole' }
-
+            , { id: 'WFApplicationStatus', name: 'Application Status', icon: 'view_list', route: '/main/WFApplicationStatus' }
             , { id: 'WFActivityStatus', name: 'WF Activity Status', icon: 'view_list', route: '/main/WFActivityStatus' }
-
             , { id: 'ProcessPriority', name: 'Process Priority', icon: 'view_list', route: '/main/ProcessPriority' }
-
             , { id: 'ProcessStatus', name: 'Process Status', icon: 'view_list', route: '/main/ProcessStatus' }
-
             , { id: 'TaskStatus', name: 'Task Status', icon: 'view_list', route: '/main/TaskStatus' }
-
             , { id: 'TaskType', name: 'Task Type', icon: 'view_list', route: '/main/TaskType' }
-
             , { id: 'StageStatus', name: 'Stage Status', icon: 'view_list', route: '/main/StageStatus' }
-
             , { id: 'WFQuoteStatus', name: 'WF Quote Status', icon: 'view_list', route: '/main/WFQuoteStatus' }
 
             //,{ id: 'Sysdiagram', name: 'SYSDIAGRAM', icon: 'view_list', route: '/main/Sysdiagram' }
