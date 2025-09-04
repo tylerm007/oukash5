@@ -20,13 +20,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
 
-    @app.route('/getNCRCDashboardTasks', methods=['GET','OPTIONS'])
+    @app.route('/get_ncrc_tasks', methods=['GET','OPTIONS'])
     def get_ncrc_dashboard_tasks():
         """
         Retrieves the NCRC dashboard data
-        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656/getNCRCDashboardTasks?application_id=1' -Method GET).Content | ConvertFrom-Json
+        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656/get_ncrc_tasks?application_id=1' -Method GET).Content | ConvertFrom-Json
 
-        $response = Invoke-WebRequest -Uri 'http://localhost:5656/getNCRCDashboardTasks?application_id=1' -Method GET
+        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_ncrc_tasks?application_id=1' -Method GET
         $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
         $jsonString | ConvertFrom-Json
         """

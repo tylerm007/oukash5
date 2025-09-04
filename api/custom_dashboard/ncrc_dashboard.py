@@ -18,8 +18,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
 
-    @app.route('/get_ncrc_data', methods=['GET',"OPTIONS"])
-    def get_ncrc_data():
+    @app.route('/get_ncrc_application', methods=['GET',"OPTIONS"])
+    def get_ncrc_application():
         """        
         Illustrates:
         * Use standard Flask, here for non-database endpoints.
@@ -27,7 +27,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         Test it with:
         
-        Invoke-RestMethod -Uri "http://localhost:5656/get_ncrc_data?applicationId=1" -Method GET -ContentType "application/json"
+        Invoke-RestMethod -Uri "http://localhost:5656/get_ncrc_application?applicationId=1" -Method GET -ContentType "application/json"
         
         Returns JSON response with application data including:
         - Application info (ID, submission date, status)

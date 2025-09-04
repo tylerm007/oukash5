@@ -1,4 +1,5 @@
 # coding: utf-8
+from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
 from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -14,16 +15,16 @@ from flask_jwt_extended import create_access_token
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  June 07, 2024 13:20:13
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject/database/authentication_db.sqlite
+# Created:  August 28, 2025 16:34:14
+# Database: sqlite:////Users/tylerband/OU/dashboard/database/authentication_db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
 ########################################################################################################################
  
-from database.system.SAFRSBaseX import SAFRSBaseX
+from database.system.SAFRSBaseX import SAFRSBaseX, TestBase
 from flask_login import UserMixin
-import safrs, flask_sqlalchemy
+import safrs, flask_sqlalchemy, os
 from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -40,9 +41,15 @@ metadata = Baseauthentication.metadata
 
 from sqlalchemy.dialects.sqlite import *
 
+if os.getenv('APILOGICPROJECT_NO_FLASK') is None or os.getenv('APILOGICPROJECT_NO_FLASK') == 'None':
+    Base = SAFRSBaseX   # enables rules to be used outside of Flask, e.g., test data loading
+else:
+    Base = TestBase     # ensure proper types, so rules work for data loading
+    print('*** Models.py Using TestBase ***')
 
 
-class Role(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
+
+class Role(Base):  # type: ignore
     __tablename__ = 'Role'
     _s_collection_name = 'authentication-Role'  # type: ignore
     __bind_key__ = 'authentication'
@@ -55,20 +62,9 @@ class Role(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
     # child relationships (access children)
     UserRoleList : Mapped[List["UserRole"]] = relationship(back_populates="Role")
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
 
 
-class User(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class User(Base):  # type: ignore
     __tablename__ = 'User'
     _s_collection_name = 'authentication-User'  # type: ignore
     __bind_key__ = 'authentication'
@@ -113,20 +109,9 @@ class User(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
         access_token = create_access_token(identity=user)
         return { "access_token" : access_token}
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
 
 
-class Api(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class Api(Base):  # type: ignore
     __tablename__ = 'Apis'
     _s_collection_name = 'authentication-Api'  # type: ignore
     __bind_key__ = 'authentication'
@@ -141,20 +126,9 @@ class Api(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
 
     # child relationships (access children)
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
 
 
-class UserRole(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class UserRole(Base):  # type: ignore
     __tablename__ = 'UserRole'
     _s_collection_name = 'authentication-UserRole'  # type: ignore
     __bind_key__ = 'authentication'
@@ -169,15 +143,3 @@ class UserRole(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ig
     user : Mapped["User"] = relationship(back_populates=("UserRoleList"))
 
     # child relationships (access children)
-
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
