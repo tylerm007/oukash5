@@ -84,12 +84,12 @@ VALUES ('OU Certification Workflow', '1.0', 'Complete workflow for OU Kosher cer
 -- =============================================
 INSERT INTO LaneDefinitions (ProcessId, LaneName, LaneDescription, EstimatedDurationDays, LaneRole, CreatedBy)
 VALUES 
-(1, 'Initial Processing', 'Initial application review and task assignment', 2, 'NCRC', 'system'),
-(1, 'NDA Processing', 'Non-disclosure agreement handling and execution', 3, 'LEGAL', 'system'),
-(1, 'Inspection Process', 'Plant inspection and RFR assignment process', 10, 'INSP', 'system'),
-(1, 'Ingredients Review', 'IAR ingredients and kosher code review process', 7, 'IAR', 'system'),
-(1, 'Products Department', 'Product evaluation and PLA processing', 5, 'PROD', 'system'),
-(1, 'Contract Processing', 'Contract review and certification agreement', 3, 'RC', 'system'),
+(1, 'Initial', 'Initial application review and task assignment', 2, 'NCRC', 'system'),
+(1, 'NDA', 'Non-disclosure agreement handling and execution', 3, 'LEGAL', 'system'),
+(1, 'Inspection', 'Plant inspection and RFR assignment process', 10, 'INSP', 'system'),
+(1, 'Ingredients', 'IAR ingredients and kosher code review process', 7, 'IAR', 'system'),
+(1, 'Products', 'Product evaluation and PLA processing', 5, 'PROD', 'system'),
+(1, 'Contract', 'Contract review and certification agreement', 3, 'RC', 'system'),
 (1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
 
 

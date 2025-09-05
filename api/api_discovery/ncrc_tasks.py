@@ -62,8 +62,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "plant": app_source.get("PlantName"),
                 "region": app_source.get("Region"),
                 "priority": app_dict.get("Priority", "Normal"),
-                "status": "contract_sent",
-                "assignedRC": "R. Gorelik",
+                "status": app_dict.get("Status", "New"),
+                "assignedRC": app_source.get("AssignedTo"),
                 "daysInStage": days_between,
                 "overdue": days_between > 10,
                 "lastUpdate": modified_date,
@@ -92,7 +92,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "assignee": task.AssignedTo,
                                 "daysActive": 0,
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
-                                "TaskId": task.TaskId
+                                "TaskId": task.TaskId,
+                                "PreScript": task.TaskDef.PreScriptJson if task and task.TaskDef else {},
+                                "PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {}
                             }
                         )
                     lane = LaneDefinition.query.filter_by(LaneId=stage['LaneId']).first()

@@ -6,9 +6,9 @@
             entity="TaskDefinition" 
             title="TASKDEFINITION"
             keys="TaskId"
-            columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;ConfigurationJson;TaskId;IsRequired" 
+            columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired" 
             header-actions="R;D"
-            visible-columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;ConfigurationJson;TaskId;IsRequired"  
+            visible-columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired"  
             sort-columns="TaskName" 
             query-rows="20" 
             quick-filter="yes"
@@ -64,7 +64,17 @@
             
             <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
             
-            <o-table-column #ConfigurationJson attr="ConfigurationJson" title="ConfigurationJson" editable="no" required="no" content-align="left"></o-table-column>
+            <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             

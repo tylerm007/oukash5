@@ -104,7 +104,17 @@
       
       <o-text-input #Description attr="Description" label="Description" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
-      <o-text-input #ConfigurationJson attr="ConfigurationJson" label="ConfigurationJson" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      <o-textarea-input #PreScriptJson attr="PreScriptJson" label="PreScriptJson" enabled="yes" required="no" fxFlex="40%" class="form-field"></o-textarea-input>
+      
+      <o-textarea-input #PostScriptJson attr="PostScriptJson" label="PostScriptJson" enabled="yes" required="no" fxFlex="40%" class="form-field"></o-textarea-input>
+      
+      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
       <o-integer-input #TaskId attr="TaskId" label="TaskId" type="integer" editable="no" required="no" ></o-integer-input>
       

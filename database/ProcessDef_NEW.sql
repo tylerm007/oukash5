@@ -134,13 +134,27 @@ CREATE TABLE TaskDefinitions (
     EstimatedDurationMinutes INT,
     IsRequired BIT NOT NULL DEFAULT 1,
     AutoComplete BIT NOT NULL DEFAULT 0,
-    Description NVARCHAR(500),
-    ConfigurationJson NVARCHAR(MAX), -- JSON configuration for task-specific settings
+    Description NVARCHAR(500), -- user instructions or details
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    CreatedBy NVARCHAR(100) NOT NULL,
+    ModifiedDate DATETIME2,
+    ModifiedBy NVARCHAR(100),
+    PreScriptJson NVARCHAR(MAX), -- PRE JSON configuration for task-specific settings
+    PostScriptJson NVARCHAR(MAX), -- POST JSON configuration for task-specific settings
     FOREIGN KEY (TaskCategory) REFERENCES TaskCategories(TaskCategoryCode),
     FOREIGN KEY (TaskType) REFERENCES TaskTypes(TaskTypeCode),
     FOREIGN KEY (LaneId) REFERENCES LaneDefinitions(LaneId),
     FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
 );
+-- Add additional columns to TaskDefinitions for Pre and Post processing
+-- ALTER TABLE TaskDefinitions 
+-- ADD 
+    --CreatedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    --CreatedBy NVARCHAR(100) NOT NULL,
+    --ModifiedDate DATETIME2,
+    --ModifiedBy NVARCHAR(100),
+    --PreScriptJson NVARCHAR(MAX), -- PRE JSON configuration for task-specific settings
+    --PostScriptJson NVARCHAR(MAX); -- POST JSON configuration for task-specific settings
 
 -- Task Dependencies and Flow
 CREATE TABLE TaskFlow (
@@ -169,6 +183,7 @@ CREATE TABLE ProcessPriorities (
 
 
 -- Application Workflow Instances
+-- Only 1 Process per ApplicationId
 CREATE TABLE ProcessInstances (
     InstanceId INT IDENTITY(1,1) PRIMARY KEY,
     ProcessId INT NOT NULL,
@@ -193,7 +208,9 @@ CREATE TABLE StageStatus (
     StatusDescription NVARCHAR(255) NOT NULL
 );
 
--- Stage Instance is a specific instance of a stage within a process
+-- Stage Instance is a specific instance of a Lane within a process
+-- We get the Role from the LaneDefinitions
+-- Each StageInstance is linked to a ProcessInstance
 CREATE TABLE StageInstance(
     StageInstanceId INT IDENTITY(1,1) PRIMARY KEY,
     ProcessInstanceId INT NOT NULL,
@@ -233,6 +250,7 @@ INSERT INTO TaskStatus (StatusCode, StatusDescription) VALUES
 ('Cancelled', 'Task Cancelled');
 
 -- Task Instance Execution
+-- Task instance is linked to TaskDefinition and StageInstance
 CREATE TABLE TaskInstances (
     TaskInstanceId INT IDENTITY(1,1) PRIMARY KEY,
     TaskId INT NOT NULL, -- TaskDefinition
@@ -243,7 +261,7 @@ CREATE TABLE TaskInstances (
     CompletedDate DATETIME2,
     DurationMinutes AS DATEDIFF(MINUTE, StartedDate, CompletedDate),
     Result NVARCHAR(50), -- 'Success', 'Failed', 'Retry', 'Skip'
-    ResultData NVARCHAR(MAX), -- JSON result data
+    ResultData NVARCHAR(MAX), -- JSON result user state data
     ErrorMessage NVARCHAR(1000),
     RetryCount INT DEFAULT 0,
     FOREIGN KEY (Status) REFERENCES TaskStatus(StatusCode),

@@ -636,7 +636,12 @@ resources:
       required: true
       type: Boolean
     - name: Description
-    - name: ConfigurationJson
+    - name: PreScriptJson
+    - name: PostScriptJson
+    - name: CreatedDate
+    - name: CreatedBy
+    - name: ModifiedDate
+    - name: ModifiedBy
     - name: TaskId
     - name: IsRequired
       required: true

@@ -425,7 +425,12 @@ class TaskDefinition(Base):  # type: ignore
     IsRequired = Column(Boolean, server_default=text("1"), nullable=False)
     AutoComplete = Column(Boolean, server_default=text("0"), nullable=False)
     Description = Column(Unicode(500))
-    ConfigurationJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    PreScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    PostScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    CreatedDate = Column(DATETIME2)
+    CreatedBy = Column(Unicode(100))
+    ModifiedDate = Column(DATETIME2)
+    ModifiedBy = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
 
     # parent relationships (access parent)
     Lane : Mapped["LaneDefinition"] = relationship(back_populates=("TaskDefinitionList"))
