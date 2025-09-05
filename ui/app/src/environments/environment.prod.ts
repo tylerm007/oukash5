@@ -1,5 +1,5 @@
 export const environment = {
-  apiEndpoint: "http://localhost/api",
+  apiEndpoint: "http://172.30.3.133:5656/api",
   production: true,
   versions: {
     core: '15.6.0-next.2',
