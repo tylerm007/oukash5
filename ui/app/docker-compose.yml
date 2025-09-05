@@ -1,0 +1,25 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the sqlite databases
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+# docker build -f Dockerfile -t tylerm007/dashboard --rm .
+# cd <project>  
+# sh ./ui/app/docker compose -f docker-compose.yml up -d
+# --> builds, runs at localhost/dashboard, and logs to console
+
+services:
+    dashboard:
+        image: tylerm007/dashboard
+        container_name: dashboard-frontend
+        restart: unless-stopped
+        expose:
+          - 80
+        ports:
+          - 80:80
+        volumes:
+          # local:path-in-container
+          #- ../ui/app/nginx:/etc/nginx  
+          - ../app/dist:/usr/share/nginx/html
+        environment:
+          - NODE_ENV=production
+
