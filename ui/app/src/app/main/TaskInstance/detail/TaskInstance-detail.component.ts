@@ -1,6 +1,6 @@
 import { Injector, ViewChild, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent, ORealPipe, ONIFInputComponent } from 'ontimize-web-ngx';
-
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'TaskInstance-detail',
@@ -34,7 +34,9 @@ export class TaskInstanceDetailComponent implements OnInit  {
   complete_task() {
     // Logic to complete the task
     console.log("Completing task...");
-    this.service.doRequest({method: 'POST', url: 'http://localhost:5656/complete_task', body: {taskId: this.data.TaskId}}).subscribe((resp) => {
+    const apiUrl = environment.apiEndpoint.replace('/api', '');
+    console.log("API URL: " + apiUrl);
+    this.service.doRequest({method: 'POST', url: apiUrl + '/complete_task', body: {taskId: this.data.TaskId}}).subscribe((resp) => {
       console.log("res: " + JSON.stringify(resp));
       if (resp.code === 0) {
         console.log('task completed successfully')

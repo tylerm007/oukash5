@@ -1,6 +1,6 @@
 import { Injector, ViewChild, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OFormComponent, OntimizeService, SnackBarService, OSnackBarConfig, DialogService } from 'ontimize-web-ngx';
-
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'WFApplication-detail',
@@ -46,8 +46,9 @@ export class WFApplicationDetailComponent implements OnInit  {
       iconPosition: 'left'
     }
     this.snackBarService.open("Please wait, Starting Workflow ...", configuration);
- 
-    this.service.doRequest({method: 'GET', url: 'http://localhost:5656/start_workflow?application_id=' + this.data.ApplicationID}).subscribe((resp) => {
+    const apiUrl = environment.apiEndpoint.replace('/api', '');
+    console.log("API URL: " + apiUrl);
+    this.service.doRequest({method: 'GET', url: apiUrl + '/start_workflow?application_id=' + this.data.ApplicationID}).subscribe((resp) => {
       console.log("res: " + JSON.stringify(resp));
       if (resp.code === 0) {
         console.log('workflow started successfully')
