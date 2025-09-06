@@ -1,5 +1,5 @@
 {
-  "name": "ontimize-app",
+  "name": "dashboard",
   "version": "15.6.0-NEXT-7",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "production": "ng build --base-href=/ontimize-app/"
+    "production": "ng build --base-href=/dashboard/"
   },
   "private": true,
   "engines": {
