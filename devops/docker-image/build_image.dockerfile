@@ -9,6 +9,10 @@ FROM --platform=linux/amd64 apilogicserver/api_logic_server
 
 USER root
 
+# user api_logic_server comes from apilogicserver/api_logic_server
+WORKDIR /home/api_logic_project
+# USER api_logic_server
+COPY ../../ .
 
 # Install build and ODBC driver dependencies
 RUN apt-get update && \
@@ -24,11 +28,6 @@ RUN apt-get update && \
 RUN pip install --upgrade pip && \
     pip install pyodbc==5.2.0
     
-# user api_logic_server comes from apilogicserver/api_logic_server
-WORKDIR /home/api_logic_project
-# USER api_logic_server
-COPY ../../ .
-
 # enables docker to write into container, for sqlite
 RUN chown -R api_logic_server /home/api_logic_project
 

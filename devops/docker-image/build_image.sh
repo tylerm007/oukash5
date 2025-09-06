@@ -9,7 +9,7 @@
 #    $ cd <your project>
 #    $ sh devops/docker-image/build_image.sh .
 
-projectname="oukash5"  # lower case, only
+projectname="dashboard-server"  # lower case, only
 repositoryname="tylerm007"
 version="1.0.0"
 
