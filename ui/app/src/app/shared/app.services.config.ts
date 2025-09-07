@@ -18,8 +18,6 @@ export const SERVICE_CONFIG ={ 'LaneDefinition': { 'path': '/LaneDefinition' }
 ,'TaskInstance': { 'path': '/TaskInstance' }
 ,'TaskStatus': { 'path': '/TaskStatus' }
 ,'TaskType': { 'path': '/TaskType' }
-,'ValidationResult': { 'path': '/ValidationResult' }
-,'ValidationRule': { 'path': '/ValidationRule' }
 ,'WFActivityLog': { 'path': '/WFActivityLog' }
 ,'WFActivityStatus': { 'path': '/WFActivityStatus' }
 ,'WFApplication': { 'path': '/WFApplication' }

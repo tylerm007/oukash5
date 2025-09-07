@@ -48,7 +48,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                "priority": "HIGH"
              }'
         """
-
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        
         # Extract variables from request.args
         process_name = request.args.get('process_name',"OU Certification Workflow")
         application_id = request.args.get('application_id', '1')
@@ -193,7 +195,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Start the next tasks
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
-            next_task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance.InstanceId, TaskId=next_task_id).first()
+            next_task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId, TaskId=next_task_id).first()
             if next_task_instance and next_task_instance.Status == 'Pending':
                 next_task_instance.Status = 'InProgress'
                 session.add(next_task_instance)

@@ -40,10 +40,6 @@ import { TaskStatusCardComponent } from './TaskStatus-card/TaskStatus-card.compo
 
 import { TaskTypeCardComponent } from './TaskType-card/TaskType-card.component';
 
-import { ValidationResultCardComponent } from './ValidationResult-card/ValidationResult-card.component';
-
-import { ValidationRuleCardComponent } from './ValidationRule-card/ValidationRule-card.component';
-
 import { WFActivityLogCardComponent } from './WFActivityLog-card/WFActivityLog-card.component';
 
 import { WFActivityStatusCardComponent } from './WFActivityStatus-card/WFActivityStatus-card.component';
@@ -137,10 +133,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
             , { id: 'LaneDefinition', name: 'Lane Definition', icon: 'view_list', route: '/main/LaneDefinition' }
             , { id: 'TaskDefinition', name: 'Task Definition', icon: 'view_list', route: '/main/TaskDefinition' }
             , { id: 'TaskFlow', name: 'Task Flow', icon: 'view_list', route: '/main/TaskFlow' }
-
-            // ,{ id: 'ValidationResult', name: 'VALIDATIONRESULT', icon: 'view_list', route: '/main/ValidationResult' }
-            //,{ id: 'ValidationRule', name: 'VALIDATIONRULE', icon: 'view_list', route: '/main/ValidationRule' }
         ]
+
     },
     {
         id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
@@ -234,9 +228,6 @@ export const MENU_COMPONENTS = [
 
     , TaskTypeCardComponent
 
-    , ValidationResultCardComponent
-
-    , ValidationRuleCardComponent
 
     , WFActivityLogCardComponent
 

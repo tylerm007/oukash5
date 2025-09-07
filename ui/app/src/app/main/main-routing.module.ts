@@ -54,10 +54,6 @@ export const routes: Routes = [
     
         { path: 'TaskType', loadChildren: () => import('./TaskType/TaskType.module').then(m => m.TaskTypeModule) },
     
-        { path: 'ValidationResult', loadChildren: () => import('./ValidationResult/ValidationResult.module').then(m => m.ValidationResultModule) },
-    
-        { path: 'ValidationRule', loadChildren: () => import('./ValidationRule/ValidationRule.module').then(m => m.ValidationRuleModule) },
-    
         { path: 'WFActivityLog', loadChildren: () => import('./WFActivityLog/WFActivityLog.module').then(m => m.WFActivityLogModule) },
     
         { path: 'WFActivityStatus', loadChildren: () => import('./WFActivityStatus/WFActivityStatus.module').then(m => m.WFActivityStatusModule) },
