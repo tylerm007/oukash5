@@ -173,7 +173,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if prior_task_instance and prior_task_instance.Status != 'Completed':
                 app_logger.error(f'Cannot complete task {task_instance_id}. Prior task {prior_task_id} is not completed.')
                 return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not completed."}), 400
-               
+        #result = ScriptEngine.run_script(task_def.PreCompletionScript, {"task_instance": task_instance, "session": session})      
         # Update the task instance status
         task_instance.Status = 'Completed'
         task_instance.CompletedAt = datetime.utcnow()
@@ -191,7 +191,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         )
         session.add(wf_history)
         session.commit()
-
+        #result = ScriptEngine.run_script(task_def.PostCompletionScript, {"task_instance": task_instance, "session": session})
         # Start the next tasks
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
