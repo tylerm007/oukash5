@@ -23,9 +23,9 @@ services:
           - 80
         ports:
           - 80:80
-        volumes:
+        #volumes:
           # local:path-in-container
           #- ../ui/app/nginx:/etc/nginx  
-          - ../app/dist:/usr/share/nginx/html
+          #- ../app/dist:/usr/share/nginx/html
 
           

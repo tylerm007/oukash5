@@ -2,6 +2,7 @@
 # Use official node image as the base image
 # cd ui/app
 # docker build -f Dockerfile -t tylerm007/dashboard --rm .
+# docker buildx build --platform linux/amd64 -t tylerm007/dashboard:latest --push .
 # docker tag tylerm007/dashboard tylerm007/dashboard:1.0.11
 # docker push tylerm007/dashboard:1.0.11  # requires docker login
 #
