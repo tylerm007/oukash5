@@ -21,6 +21,7 @@ import ast
 import sys
 import traceback
 
+
 #from SpiffWorkflow.exceptions import SpiffWorkflowException
 #from SpiffWorkflow.bpmn.exceptions import WorkflowTaskException
 from .python_environment import TaskDataEnvironment
@@ -56,10 +57,12 @@ class PythonScriptEngine(object):
         except Exception as e:
             raise e # WorkflowTaskException(f"Error evaluating expression '{expression}'", task=task, exception=e)
 
-    def execute(self, task, script, external_context=None) -> any:
+    def execute(self, task: dict, script, external_context=None) -> any:
         """Execute the script, within the context of the specified task."""
         try:
-            return self.environment.execute(script, task.data, external_context or {})
+            if task is None or script is None:
+                raise ValueError("Task and/or Script cannot be None")
+            return self.environment.execute(script, task, external_context or {})
         except Exception as err:
             #wte = self.create_task_exec_exception(task, script, err)
             raise err #wte
