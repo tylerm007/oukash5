@@ -723,6 +723,7 @@ resources:
       name: TaskInstanceId
       search: true
       sort: true
+    - name: ParentInstanceId
     - name: StageId
       required: true
     - name: Status
@@ -737,6 +738,7 @@ resources:
     - name: ResultData
     - name: ErrorMessage
     - name: RetryCount
+    - name: ChildrenInstanceIds
     tab_groups:
     - direction: tomany
       fks:
@@ -745,14 +747,19 @@ resources:
       resource: TaskComment
     - direction: tomany
       fks:
-      - TaskInstanceId
-      name: ValidationResultList
-      resource: ValidationResult
+      - ParentInstanceId
+      name: TaskInstanceList
+      resource: TaskInstance
     - direction: tomany
       fks:
       - TaskInstanceId
       name: WorkflowHistoryList
       resource: WorkflowHistory
+    - direction: toone
+      fks:
+      - ParentInstanceId
+      name: ParentInstance
+      resource: TaskInstance
     - direction: toone
       fks:
       - StageId

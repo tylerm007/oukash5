@@ -783,13 +783,17 @@ class TaskInstance(Base):  # type: ignore
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))
     RetryCount = Column(Integer, server_default=text("0"))
+    ParentInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'))
+    ChildrenInstanceIds = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
 
     # parent relationships (access parent)
+    ParentInstance : Mapped["TaskInstance"] = relationship(remote_side=[TaskInstanceId], back_populates=("TaskInstanceList"))
     Stage : Mapped["StageInstance"] = relationship(back_populates=("TaskInstanceList"))
     TaskStatus : Mapped["TaskStatus"] = relationship(back_populates=("TaskInstanceList"))
     TaskDef : Mapped["TaskDefinition"] = relationship(back_populates=("TaskInstanceList"))
 
     # child relationships (access children)
+    TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="ParentInstance")
     TaskCommentList : Mapped[List["TaskComment"]] = relationship(back_populates="TaskInstance")
     WorkflowHistoryList : Mapped[List["WorkflowHistory"]] = relationship(back_populates="TaskInstance")
 

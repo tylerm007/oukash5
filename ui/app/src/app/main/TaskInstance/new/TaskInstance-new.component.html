@@ -9,6 +9,25 @@ after-insert-mode="new" class="standalone-form-container" >
         <o-integer-input #TaskInstanceId attr="TaskInstanceId" label=" Task Instance Id" type="integer" editable="no" required="no" ></o-integer-input>
       
         <o-list-picker 
+        attr="ParentInstanceId"
+        service="TaskInstance" 
+        entity="TaskInstanceType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskInstanceId" 
+        value-column-type="INTEGER"  
+        keys="TaskInstanceId" 
+        columns="TaskInstanceId;ParentInstanceId;TaskInstanceId" 
+        title="ParentInstance"
+        visible-columns="TaskInstanceId;TaskInstanceId" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
         attr="StageId"
         service="StageInstance" 
         entity="StageInstanceType"
@@ -80,6 +99,8 @@ after-insert-mode="new" class="standalone-form-container" >
         <o-text-input #ErrorMessage attr="ErrorMessage" label="ErrorMessage" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-integer-input #RetryCount attr="RetryCount" label="RetryCount" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #ChildrenInstanceIds attr="ChildrenInstanceIds" label="ChildrenInstanceIds" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
 </div>
 </o-row>

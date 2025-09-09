@@ -21,6 +21,13 @@ const routes: Routes = [
         }
     }
 },{
+    path: ':ParentInstanceId/TaskInstance', loadChildren: () => import('../TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule),
+    data: {
+        oPermission: {
+            permissionId: 'TaskInstance-detail-permissions'
+        }
+    }
+},{
     path: ':TaskInstanceId/WorkflowHistory', loadChildren: () => import('../WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule),
     data: {
         oPermission: {

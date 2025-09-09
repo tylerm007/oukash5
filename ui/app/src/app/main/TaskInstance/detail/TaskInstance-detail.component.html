@@ -17,6 +17,26 @@
       <o-integer-input #TaskInstanceId attr="TaskInstanceId" label=" Task Instance Id" type="integer" editable="no" required="no" ></o-integer-input>
       
       <o-list-picker 
+        attr="ParentInstanceId"
+        service="TaskInstance" 
+        entity="TaskInstanceType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskInstanceId" 
+        value-column-type="INTEGER"  
+        keys="TaskInstanceId" 
+        columns="TaskInstanceId;ParentInstanceId;TaskInstanceId" 
+        title="ParentInstance"
+        visible-columns="TaskInstanceId;TaskInstanceId" 
+        separator=" - " width="680px" class="form-field">
+		<o-text-input #ChildrenInstanceIds attr="ChildrenInstanceIds" label="ChildrenInstanceIds" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+</o-list-picker>
+      
+      <o-list-picker 
         attr="StageId"
         service="StageInstance" 
         entity="StageInstanceType"
@@ -156,6 +176,88 @@
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
         render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
 </o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="TASKINSTANCE-ParentInstanceId">
+    <div layout-padding>
+      <o-table 
+        attr="TaskInstanceTable" 
+        service="TaskInstance" 
+        entity="TaskInstance" 
+        keys="TaskInstanceId"
+        parent-keys="ParentInstanceId:TaskInstanceId"
+        columns="TaskInstanceId;ParentInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ChildrenInstanceIds"  
+        horizontal-scroll="yes"
+        detail-form-route="TaskInstance" 
+        edit-form-route="TaskInstance"
+        visible-columns="TaskInstanceId;ParentInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ChildrenInstanceIds"  
+        sort-columns="TaskInstanceId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ParentInstanceId" title="ParentInstance">
+    <o-table-cell-renderer-service attr="ParentInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="TaskInstanceId:ParentInstanceId"
+        value-column="TaskInstanceId" keys="ParentInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="StageId" title="Stage">
+    <o-table-cell-renderer-service attr="StageId" 
+        service="StageInstance" entity="StageInstanceType" columns="StageInstanceId;StageInstanceId"
+        parent-keys="TaskInstanceId:StageId"
+        value-column="StageInstanceId" keys="StageId"
+        visible-columns="StageInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="TaskId" title="Task">
+    <o-table-cell-renderer-service attr="TaskId" 
+        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
+        parent-keys="TaskInstanceId:TaskId"
+        value-column="TaskName" keys="TaskId"
+        visible-columns="TaskName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ChildrenInstanceIds attr="ChildrenInstanceIds" title="ChildrenInstanceIds" editable="no" required="no" content-align="left"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

@@ -264,11 +264,18 @@ CREATE TABLE TaskInstances (
     ResultData NVARCHAR(MAX), -- JSON result user state data
     ErrorMessage NVARCHAR(1000),
     RetryCount INT DEFAULT 0,
+    ParentInstanceId INT, -- for sub-tasks or retries
+    ChildrenInstanceIds NVARCHAR(MAX), -- comma-separated list of child task instance IDs
     FOREIGN KEY (Status) REFERENCES TaskStatus(StatusCode),
     FOREIGN KEY (StageId) REFERENCES StageInstances(StageInstanceId),
+    FOREIGN KEY (ParentInstanceId) REFERENCES TaskInstances(TaskInstanceId),
     FOREIGN KEY (TaskId) REFERENCES TaskDefinitions(TaskId)
 );
 
+-- ALTER TABLE TaskInstances
+-- ADD  ParentInstanceId INT,
+--    ChildrenInstanceIds NVARCHAR(MAX),
+--    FOREIGN KEY (ParentInstanceId) REFERENCES TaskInstances(TaskInstanceId);
 -- =============================================
 -- Validation Framework Tables
 -- =============================================
