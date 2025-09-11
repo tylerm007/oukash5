@@ -3,11 +3,11 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 
 
 @Component({
-  selector: 'ValidationRule-detail',
-  templateUrl: './ValidationRule-detail.component.html',
-  styleUrls: ['./ValidationRule-detail.component.scss']
+  selector: 'CompanyApplication-detail',
+  templateUrl: './CompanyApplication-detail.component.html',
+  styleUrls: ['./CompanyApplication-detail.component.scss']
 })
-export class ValidationRuleDetailComponent implements OnInit  {
+export class CompanyApplicationDetailComponent implements OnInit  {
   protected service: OntimizeService;
 
   @ViewChild('oDetailForm') form: OFormComponent;
@@ -22,7 +22,7 @@ export class ValidationRuleDetailComponent implements OnInit  {
 
   protected configureService() {
     const conf = this.service.getDefaultServiceConfiguration();
-    conf['path'] = '/ValidationRule';
+    conf['path'] = '/CompanyApplication';
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {

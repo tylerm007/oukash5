@@ -1,4 +1,5 @@
 export const SERVICE_CONFIG ={ 'LaneDefinition': { 'path': '/LaneDefinition' }
+,'CompanyApplication': { 'path': '/CompanyApplication' }
 ,'LaneRole': { 'path': '/LaneRole' }
 ,'ProcessDefinition': { 'path': '/ProcessDefinition' }
 ,'ProcessInstance': { 'path': '/ProcessInstance' }
@@ -8,7 +9,7 @@ export const SERVICE_CONFIG ={ 'LaneDefinition': { 'path': '/LaneDefinition' }
 ,'ProcessStatus': { 'path': '/ProcessStatus' }
 ,'StageInstance': { 'path': '/StageInstance' }
 ,'StageStatus': { 'path': '/StageStatus' }
-,'Sysdiagram': { 'path': '/Sysdiagram' }
+
 ,'COMPANYTB': { 'path': '/COMPANYTB' }
 ,'TaskCategory': { 'path': '/TaskCategory' }
 ,'TaskComment': { 'path': '/TaskComment' }

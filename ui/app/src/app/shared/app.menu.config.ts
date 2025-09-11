@@ -1,5 +1,9 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
+import { COMPANYTBCardComponent } from './COMPANYTB-card/COMPANYTB-card.component';
+
+import { CompanyApplicationCardComponent } from './CompanyApplication-card/CompanyApplication-card.component';
+
 import { LaneDefinitionCardComponent } from './LaneDefinition-card/LaneDefinition-card.component';
 
 import { LaneRoleCardComponent } from './LaneRole-card/LaneRole-card.component';
@@ -12,8 +16,6 @@ import { ProcessMessageCardComponent } from './ProcessMessage-card/ProcessMessag
 
 import { ProcessMessageTypeCardComponent } from './ProcessMessageType-card/ProcessMessageType-card.component';
 
-
-import { COMPANYTBCardComponent } from './COMPANYTB-card/COMPANYTB-card.component';
 import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPriority-card.component';
 
 import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-card.component';
@@ -21,8 +23,6 @@ import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-c
 import { StageInstanceCardComponent } from './StageInstance-card/StageInstance-card.component';
 
 import { StageStatusCardComponent } from './StageStatus-card/StageStatus-card.component';
-
-import { SysdiagramCardComponent } from './Sysdiagram-card/Sysdiagram-card.component';
 
 import { TaskCategoryCardComponent } from './TaskCategory-card/TaskCategory-card.component';
 
@@ -177,9 +177,12 @@ export const MENU_CONFIG: MenuRootItem[] = [
     
     {id: 'legacy', name: ' Legacy Tables', icon: 'remove_red_eye', opened: false,
         items: [
+		
 	        { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
             ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
     
+     ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
+
         ]
     },
     { id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings' }
@@ -189,7 +192,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
 export const MENU_COMPONENTS = [
 
-    LaneDefinitionCardComponent
+    CompanyApplicationCardComponent
+    ,LaneDefinitionCardComponent
 
     , LaneRoleCardComponent
 
@@ -210,7 +214,6 @@ export const MENU_COMPONENTS = [
 
     , StageStatusCardComponent
 
-    , SysdiagramCardComponent
 
     , TaskCategoryCardComponent
 

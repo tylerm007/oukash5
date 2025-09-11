@@ -5,11 +5,11 @@ import {OReportModule,OReportStoreService} from 'ontimize-web-ngx-report'
 import { OGridComponent } from 'ontimize-web-ngx';
 
 @Component({
-  selector: 'ValidationRule-home',
-  templateUrl: './ValidationRule-home.component.html',
-  styleUrls: ['./ValidationRule-home.component.scss']
+  selector: 'CompanyApplication-home',
+  templateUrl: './CompanyApplication-home.component.html',
+  styleUrls: ['./CompanyApplication-home.component.scss']
 })
-export class ValidationRuleHomeComponent implements AfterViewInit {
+export class CompanyApplicationHomeComponent implements AfterViewInit {
 
   @ViewChild('table', { static: true }) table: OTableComponent;
 
