@@ -91,6 +91,8 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
     if logic_row.ins_upd_dlt == 'upd':  
         task_id = row.TaskInstanceId
         if row:
+            # NOTE: may want to cascade the ResultData to subsequent tasks
+            # depending on the workflow requirements
             task_def = row.TaskDef
             application_id = row.Stage.ProcessInstance.ApplicationId
             se = python_engine.PythonScriptEngine()
