@@ -1,5 +1,7 @@
 from asyncio import Task
 from datetime import datetime
+from multiprocessing import process
+from unicodedata import category
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
@@ -18,9 +20,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     _project_dir = project_dir
     pass
 
-
+    # ==================================================
+    #        WORKFLOW ENDPOINTS (Flask)
+    # ==================================================
     @app.route('/start_workflow', methods=['POST','OPTIONS'])
-    #@jwt_required()
+    @jwt_required()
     def start_workflow():
         """
         Illustrates:
@@ -44,7 +48,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
              -d '{
                "process_name": "Application Workflow",
                "application_id": "1", 
-               "started_by": "1",
+               "started_by": "tmb",
                "priority": "HIGH"
              }'
         """
@@ -61,6 +65,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     def _start_workflow(process_name:str, application_id:int, started_by:str, priority:str):
 
+        application = WFApplication.query.filter_by(ApplicationID=application_id).first()
+        if not application:
+                raise Exception(f'Application not found: {application_id}') 
         # Get ProcessId
         process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
         if not process_def:
@@ -71,30 +78,28 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
  
         # Create new Process InstanceId for this Application
         process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
-        if process_instance is None:
+        #if process_instance is None:
                  # Get StartTaskId
-                row = TaskDefinition.query.filter_by(ProcessId=process_id, TaskType='EVENT', TaskCategory='START').order_by(TaskDefinition.Sequence).first()
-                start_task_id = row.TaskId if row else None
-                print(f'Start TaskDefinition TaskId: {start_task_id}') 
-                if not start_task_id:
-                        raise Exception(f'Start Task definition not found for process: {process_name}')
-                process_instance = ProcessInstance(
-                ProcessId=process_id,
-                ApplicationId=int(application_id),
-                CurrentTaskId=start_task_id,
-                StartedBy=started_by,
-                Priority=priority
-                )
-                session.add(process_instance)
-                session.commit()
-        else:
-            return jsonify({"status": "error", "message": f"Workflow already started for application {application_id}"}), 400
+        row = TaskDefinition.query.filter_by(ProcessId=process_id, TaskType='EVENT', TaskCategory='START').order_by(TaskDefinition.Sequence).first()
+        start_task_id = row.TaskId if row else None
+        print(f'Start TaskDefinition TaskId: {start_task_id}') 
+        if start_task_id is None:
+                raise Exception(f'Start Task definition not found for process: {process_name}')
+        process_instance = ProcessInstance(
+            ProcessId=process_id,
+            ApplicationId=int(application_id),
+            CurrentTaskId=start_task_id,
+            StartedBy=started_by,
+            Priority=priority
+        )
+        session.add(process_instance)
+        session.commit()
+        #else:
+        #    return jsonify({"status": "error", "message": f"Workflow already started for application {application_id}"}), 400
              
         process_instance_id = process_instance.InstanceId
         # Insert into ProcessInstances
-        print(f'New ProcessInstance InstanceId: {process_instance_id}')
-        # Log History
-        #history_instance_id = str(uuid.uuid4())
+        app_logger.info(f'New ProcessInstance InstanceId: {process_instance_id}')
 
 
         # TODO - use TaskFlow to only create starting tasks?
@@ -111,19 +116,22 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 session.commit()
 
                 rows = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
+                task_instances = []
                 for row in rows:
                         print(f'TaskDefinition: {row.TaskName}')
-                        status = 'Pending' if row.TaskCategory != 'START' else 'Completed'
+                        status = 'Pending' # if row.TaskCategory != 'START' else 'Completed'
                         task_instance = TaskInstance(
                                 TaskId=row.TaskId,
                                 StageId=stage_instance.StageInstanceId,
                                 Status=status,
                                 CreatedDate=datetime.utcnow(),
-                                CreatedBy=started_by
+                                CreatedBy=started_by,
+                            
                         )
                         session.add(task_instance)
                         session.commit()
-                        print(f'New TaskInstance: {row.TaskName}')
+                        app_logger.info(f'Created TaskInstance: {row.TaskName}')
+                        task_instances.append(task_instance)
                         wf_history = WorkflowHistory(
                                 InstanceId=process_instance_id,
                                 TaskInstanceId=task_instance.TaskInstanceId,
@@ -134,7 +142,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         )
                         session.add(wf_history)
                         session.commit()
-
+                        
+                link_task(task_instances)
+                set_start_task(task_instances)        
         return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
     
     @app.route('/complete_task', methods=['POST','OPTIONS'])
@@ -311,3 +321,80 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.commit()
         app_logger.info(f'User {user_id} assigned to TaskInstance: {task_instance_id}')
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
+    
+    def link_task(task_instances: list[TaskInstance]):
+        """Link tasks in the workflow"""
+        for task in task_instances:
+            task_def = task.TaskDef
+            fromFlows = task_def.TaskFlowList
+            toFlows = task_def.ToTaskTaskFlowList
+            if task_def and task_def.TaskCategory == 'START':
+                task.ParentInstance = None
+            else:
+                task.ParentInstance = None
+                task.ChildrenInstanceIds = ''
+            session.add(task)
+        session.commit()
+        app_logger.info(f'Tasks linked: {[task.TaskInstanceId for task in task_instances]}')
+
+    def set_start_task(task_instances: list[TaskInstance]):
+        """Set the start task to completed - this will kick off the workflow to pending"""
+        for task_instance in task_instances:
+            task_def = task_instance.TaskDef
+            if task_def and task_def.TaskCategory == 'START':
+                task_instance.Status = 'Completed'
+                session.add(task_instance)
+                session.commit()
+                app_logger.info(f'Start TaskInstance set to Completed: {task_instance.TaskInstanceId}')
+                break
+
+    
+    @app.route('/validate_tasks', methods=['GET','OPTIONS'])
+    #@jwt_required()
+    def validate_tasks():   
+        '''
+        Validate tasks in the workflow
+        Make sure each TaskFlow is linked From/To TaskId
+
+        curl -X GET http://localhost:5656/validate_tasks?process_name="OU Certification Workflow" \
+                -H "Content-Type: application/json" \
+                -H "Authorization: Bearer <your_jwt_token>"
+
+        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks" -Method GET -ContentType "application/json"
+            -Headers @{Authorization = "Bearer <your_jwt_token>"}
+        Returns:
+            json: response        
+        '''
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200 
+        #data = request.args if request.args else {}
+        process_name = request.args.get('process_name',"OU Certification Workflow")
+        if not process_name:
+            return jsonify({"status": "error", "message": "process_name is required"}), 400
+        process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
+        if not process_def:
+            return jsonify({"status": "error", "message": f"Process definition not found: {process_name}"}), 404
+        process_id = process_def.ProcessId
+        task_defs = TaskDefinition.query.filter_by(ProcessId=process_id).all()
+        if not task_defs:
+            return jsonify({"status": "error", "message": f"No Task definitions found for process: {process_name}"}), 404
+        task_flow_errors = []
+        for task in task_defs:
+            from_task = task.TaskFlowList
+            to_task = task.ToTaskTaskFlowList
+            category = task.TaskCategory
+        
+            if not from_task and category != 'START':
+                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no incoming TaskFlow"})
+            if not to_task and category != 'END':
+                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no outgoing TaskFlow"})
+            #print(f'Task {task.TaskName} (ID: {task.TaskId}) is valid with {len(from_task)} incoming and {len(to_task)} outgoing TaskFlows')
+        if task_flow_errors:
+            for tfe in task_flow_errors:
+                app_logger.error(tfe['message'])
+            return jsonify(task_flow_errors), 400
+        return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
+
+        # ==================================================
+        #        END WORKFLOW ENDPOINTS (Flask)
+        # ==================================================

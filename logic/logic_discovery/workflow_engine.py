@@ -31,45 +31,60 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     '''
     Test if a task can be completed based on its dependencies.
     '''
-    task_def = row.TaskDef
-    dependencies = task_def.FromTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
-    for dependency in dependencies:
-        from_task_def = dependency.FromTaskDef
-        from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def.TaskId, StageId=row.StageId).first()
-        if from_task_instance and from_task_instance.Status != 'completed':
-            return False, f"Cannot complete task {row.TaskInstanceId}. Dependency task {from_task_instance.TaskInstanceId} is not completed."
-    return True, "All dependencies are completed."
+    if logic_row.ins_upd_dlt == 'upd' and row.Status == 'Completed':
+        task_def = row.TaskDef
+        dependencies = task_def.FromTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
+        for dependency in dependencies:
+            from_task_def = dependency.FromTaskDef
+            from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def.TaskId, StageId=row.StageId).first()
+            if from_task_instance and from_task_instance.Status != 'Completed':
+                logic_row.log(f"Cannot complete task {row.TaskInstanceId} because dependency task {from_task_instance.TaskInstanceId} is not completed.")
+                return False
+            
+    #call_script_engine_pre(row, old_row, logic_row)
+    #"All dependencies are completed."
+    return True
 
-def update_next_task(task_id: int):
+def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     '''
     When a task is completed, update the next tasks in the workflow to be 'isPending' ready to start.
     '''
-    task = models.TaskInstance.query.filter_by(TaskInstanceId=task_id).first()
+    if logic_row.ins_upd_dlt != 'upd' or row.Status != 'Completed':
+        return # only proceed if the task was updated to 'Completed'
+    task_id = row.TaskInstanceId
+    task = models.TaskInstance.query.filter_by(TaskInstanceId=row.TaskInstanceId).first()
     if not task:
         return None, jsonify({"success": False, "message": f"No task found with TaskInstanceId {task_id}"}), 404
     task_def = TaskDefinition.query.filter_by(TaskId=task.TaskId).first()
     if not task_def:
-        return None, jsonify({"success": False, "message": f"No task definition found for TaskId {task.TaskId}"}), 404
-    next_task_list = []
+        logic_row.log(f"No task definition found for TaskId {task.TaskId}")
+        return
+    logic_row.log(f'Task {task_id} completed. Checking for next tasks to set to isPending.')
+    call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
     for t in task_def.ToTaskTaskFlowList:
         next_task_def = t.ToTaskDef
         next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def.TaskId, StageId=task.StageId).first()
         if next_task_instance:
-            next_task_list.append(next_task_instance.to_dict().TaskInstanceId)
-
-    return next_task_list
+            next_task_instance.Status = 'IsPending'
+            session.add(next_task_instance)
+            session.commit()
+            app_logger.info(f'Next task {next_task_instance.TaskInstanceId} set to isPending')
+    
+    return 
 
 def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PreScriptJson or ''
     logic_row.log(f'PreScriptJson: {script}')
-    call_script_engine(row, old_row, logic_row, script)
+    if script != '':
+        call_script_engine(row, old_row, logic_row, script)
 
 def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PostScriptJson or ''
     logic_row.log(f'PostScriptJson: {script}')
-    call_script_engine(row, old_row, logic_row, script)
+    if script != '':
+        call_script_engine(row, old_row, logic_row, script)
 
 def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow, script: str):
 
@@ -93,6 +108,6 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
 def declare_logic():
     pass
 
-    # add logic here if needed
+    Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete task due to unmet dependencies.")
     Rule.row_event(on_class=models.TaskInstance,calling=call_script_engine_pre)
     Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

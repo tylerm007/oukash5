@@ -48,7 +48,7 @@ export class WFApplicationDetailComponent implements OnInit  {
     this.snackBarService.open("Please wait, Starting Workflow ...", configuration);
     const apiUrl = environment.apiEndpoint.replace('/api', '');
     console.log("API URL: " + apiUrl);
-    this.service.doRequest({method: 'GET', url: apiUrl + '/start_workflow?application_id=' + this.data.ApplicationID}).subscribe((resp) => {
+    this.service.doRequest({method: 'POST', url: apiUrl + '/start_workflow', body: { application_id: this.data.ApplicationID }}).subscribe((resp) => {
       console.log("res: " + JSON.stringify(resp));
       if (resp.code === 0) {
         console.log('workflow started successfully')
