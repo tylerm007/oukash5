@@ -1757,7 +1757,7 @@ entities:
     - direction: toone
       fks:
       - Status
-      name: StageStatu
+      name: StageStatus
       resource: StageStatus
     type: StageInstance
   StageStatus:
@@ -2070,7 +2070,10 @@ entities:
       sort: true
       template: integer
       type: INTEGER
-    - name: InstanceId
+    - name: ParentInstanceId
+      template: integer
+      type: INTEGER
+    - name: StageId
       required: true
       template: integer
       type: INTEGER
@@ -2108,6 +2111,9 @@ entities:
       name: RetryCount
       template: integer
       type: INTEGER
+    - name: ChildrenInstanceIds
+      template: text
+      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
     favorite: TaskInstanceId
     hidden: {}
     label: TaskInstance
@@ -2121,9 +2127,9 @@ entities:
       resource: TaskComment
     - direction: tomany
       fks:
-      - TaskInstanceId
-      name: ValidationResultList
-      resource: ValidationResult
+      - ParentInstanceId
+      name: TaskInstanceList
+      resource: TaskInstance
     - direction: tomany
       fks:
       - TaskInstanceId
@@ -2131,13 +2137,18 @@ entities:
       resource: WorkflowHistory
     - direction: toone
       fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
+      - ParentInstanceId
+      name: ParentInstance
+      resource: TaskInstance
+    - direction: toone
+      fks:
+      - StageId
+      name: Stage
+      resource: StageInstance
     - direction: toone
       fks:
       - Status
-      name: TaskStatu
+      name: TaskStatus
       resource: TaskStatus
     - direction: toone
       fks:

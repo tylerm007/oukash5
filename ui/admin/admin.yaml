@@ -52,215 +52,215 @@ resources:
       resource: ProcessDefinition
     type: LaneDefinition
     user_key: LaneName
-    CompanyApplication:
-      attributes:
-      - label: 'Company Name*'
-        name: CompanyName
-        required: true
-        search: true
-        sort: true
-      - name: ID
-        required: true
-      - name: PreviousCertification
-      - name: OUCertified
-      - name: CurrentlyCertified
-      - name: CompanyID
-      - name: PlantName
-      - name: Street1
-      - name: Street2
-      - name: City
-      - name: State
-      - name: Zip
-      - name: Country
-      - name: title
-      - name: FirstName
-      - name: LastName
-      - name: email
-      - name: phone
-      - name: NatureOfProducts
-      - name: HowHeardAboutUs
-      - name: Comments
-      - name: Description
-      - name: OtherCertification
-      - name: gclid
-      - name: utm_source
-      - name: utm_medium
-      - name: utm_campaign
-      - name: dateSubmitted
-      - name: Utm_Term
-      - name: Version
-      - name: Language
-      - name: Oukosher_source
-      - name: JotFormSubmissionID
-      tab_groups: []
-      type: CompanyApplication
-      user_key: CompanyName
-    COMPANYTB:
-      attributes:
-      - label: 'Company Name*'
-        name: NAME
-        required: true
-        search: true
-        sort: true
-      - name: COMPANY_ID
-        required: true
-      - name: LIST
-      - name: GP_NOTIFY
-      - name: PRODUCER
-      - name: MARKETER
-      - name: SOURCE
-      - name: IN_HOUSE
-      - name: PRIVATE_LABEL
-      - name: COPACKER
-      - name: JEWISH_OWNED
-      - name: CORPORATE
-      - name: COMPANY_TYPE
-      - name: INVOICE_TYPE
-      - name: INVOICE_FREQUENCY
-      - name: INVOICE_DTL
-      - name: TIMESTAMP
-      - name: STATUS
-      - name: RC
-      - name: PARENT_CO
-      - name: INVOICE_LAST_DATE
-      - name: COMPANY_BILL_TO_NAME
-      - name: ACTIVE
-      - name: AcquiredFrom
-      - name: UID
-      - name: MoveToGP
-      - name: DefaultPO
-      - name: POexpiry
-      - name: PrivateLabelPO
-      - name: PrivateLabelPOexpiry
-      - name: VisitPO
-      - name: VisitPOexpiry
-      - name: ValidFromTime
-      - name: ValidToTime
-      - name: CHANGESET_ID
-      - name: CATEGORY
-      - name: OLDCOMPANYTYPE
-      - name: BoilerplateInvoiceComment
-      - name: IsPoRequired
-      - name: ShouldPropagateCompanyPo
-      - name: ShouldPropagateKscPoToPlants
-      - name: ShouldPropagateVisitPoToPlants
-      - name: PoReason
-      - name: On3rdPartyBilling
-      - name: IsTest
-      - name: ChometzEmailSentDate
-      tab_groups:
-      - direction: tomany
-        fks:
-        - COMPANY_ID
-        name: PLANTTBList
-        resource: PLANTTB
-      - direction: tomany
-        fks:
-        - COMPANY_ID
-        name: OWNSTBList
-        resource: OWNSTB
-      type: COMPANYTB
-      user_key: NAME
-    PLANTTB:
-      attributes:
-      - label: 'Plant Name*'
-        name: NAME
-        required: true
-        search: true
-        sort: true
-      - name: PLANT_ID
-        required: true
-      - name: GP_NOTIFY
-      - name: MULTILINES
-      - name: PASSOVER
-      - name: SPECIAL_PROD
-      - name: JEWISH_OWNED
-      - name: PLANT_TYPE
-      - name: PLANT_DIRECTIONS
-      - name: ACTIVE
-      - name: USDA_CODE
-      - name: PlantUID
-      - name: DoNotAttach
-      - name: OtherCertification
-      - name: PrimaryCompany
-      - name: DesignatedRFR
-      - name: ValidFromTime
-      - name: ValidToTime
-      - name: CHANGESET_ID
-      - name: MaxOnSiteVisits
-      - name: MaxVirtualVisits
-      - name: IsDaily
-      tab_groups:
-      - direction: toone
-        fks:
-        - PrimaryCompany
-        name: COMPANY_TB
-        resource: COMPANYTB
-      - direction: tomany
-        fks:
-        - PLANT_ID
-        name: OWNSTBList
-        resource: OWNSTB
-      type: PLANTTB
-      user_key: NAME
-    OWNSTB:
-      attributes:
-      - label: 'ID*'
-        name: ID
-        required: true
-        search: true
-        sort: true
-      - name: COMPANY_ID
-        required: true
-      - name: PLANT_ID
-        required: true
-      - name: START_DATE
-      - name: END_DATE
-      - name: TYPE
-      - name: VISIT_FREQUENCY
-      - name: INVOICE_TYPE
-      - name: INVOICE_FREQUENCY
-      - name: INVOICE_DTL
-      - name: HOLD
-      - name: ROYALTIES
-      - name: SPECIAL_TICKET
-      - name: STATUS
-      - name: ACTIVE
-      - name: Setup_By
-      - name: AcquiredFrom
-      - name: NoRFRneeded
-      - name: LOCtext
-      - name: MoveToGP
-      - name: DefaultPO
-      - name: VisitBilling
-      - name: PlantName
-      - name: ShareAB
-      - name: POexpiry
-      - name: BillingName
-      - name: PLANT_BILL_TO_NAME
-      - name: AutoCertification
-      - name: primaryCompany
-      - name: Override
-      - name: VisitPO
-      - name: VisitPOexpiry
-      - name: ValidFromTime
-      - name: ValidToTime
-      - name: CHANGESET_ID
-      - name: BoilerplateInvoiceComment
-      - name: IsCertBillingOverride
-      tab_groups:
-      - direction: toone
-        fks:
-        - COMPANY_ID
-        name: COMPANY_TB
-        resource: COMPANYTB
-      - direction: toone
-        fks:
-        - PLANT_ID
-        name: PLANT_TB
-        resource: PLANTTB
-      type: OWNSTB
-      user_key: ID
+  CompanyApplication:
+    attributes:
+    - label: 'Company Name*'
+      name: CompanyName
+      required: true
+      search: true
+      sort: true
+    - name: ID
+      required: true
+    - name: PreviousCertification
+    - name: OUCertified
+    - name: CurrentlyCertified
+    - name: CompanyID
+    - name: PlantName
+    - name: Street1
+    - name: Street2
+    - name: City
+    - name: State
+    - name: Zip
+    - name: Country
+    - name: title
+    - name: FirstName
+    - name: LastName
+    - name: email
+    - name: phone
+    - name: NatureOfProducts
+    - name: HowHeardAboutUs
+    - name: Comments
+    - name: Description
+    - name: OtherCertification
+    - name: gclid
+    - name: utm_source
+    - name: utm_medium
+    - name: utm_campaign
+    - name: dateSubmitted
+    - name: Utm_Term
+    - name: Version
+    - name: Language
+    - name: Oukosher_source
+    - name: JotFormSubmissionID
+    tab_groups: []
+    type: CompanyApplication
+    user_key: CompanyName
+  COMPANYTB:
+    attributes:
+    - label: 'Company Name*'
+      name: NAME
+      required: true
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: LIST
+    - name: GP_NOTIFY
+    - name: PRODUCER
+    - name: MARKETER
+    - name: SOURCE
+    - name: IN_HOUSE
+    - name: PRIVATE_LABEL
+    - name: COPACKER
+    - name: JEWISH_OWNED
+    - name: CORPORATE
+    - name: COMPANY_TYPE
+    - name: INVOICE_TYPE
+    - name: INVOICE_FREQUENCY
+    - name: INVOICE_DTL
+    - name: TIMESTAMP
+    - name: STATUS
+    - name: RC
+    - name: PARENT_CO
+    - name: INVOICE_LAST_DATE
+    - name: COMPANY_BILL_TO_NAME
+    - name: ACTIVE
+    - name: AcquiredFrom
+    - name: UID
+    - name: MoveToGP
+    - name: DefaultPO
+    - name: POexpiry
+    - name: PrivateLabelPO
+    - name: PrivateLabelPOexpiry
+    - name: VisitPO
+    - name: VisitPOexpiry
+    - name: ValidFromTime
+    - name: ValidToTime
+    - name: CHANGESET_ID
+    - name: CATEGORY
+    - name: OLDCOMPANYTYPE
+    - name: BoilerplateInvoiceComment
+    - name: IsPoRequired
+    - name: ShouldPropagateCompanyPo
+    - name: ShouldPropagateKscPoToPlants
+    - name: ShouldPropagateVisitPoToPlants
+    - name: PoReason
+    - name: On3rdPartyBilling
+    - name: IsTest
+    - name: ChometzEmailSentDate
+    tab_groups:
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: PLANTTBList
+      resource: PLANTTB
+    - direction: tomany
+      fks:
+      - COMPANY_ID
+      name: OWNSTBList
+      resource: OWNSTB
+    type: COMPANYTB
+    user_key: NAME
+  PLANTTB:
+    attributes:
+    - label: 'Plant Name*'
+      name: NAME
+      required: true
+      search: true
+      sort: true
+    - name: PLANT_ID
+      required: true
+    - name: GP_NOTIFY
+    - name: MULTILINES
+    - name: PASSOVER
+    - name: SPECIAL_PROD
+    - name: JEWISH_OWNED
+    - name: PLANT_TYPE
+    - name: PLANT_DIRECTIONS
+    - name: ACTIVE
+    - name: USDA_CODE
+    - name: PlantUID
+    - name: DoNotAttach
+    - name: OtherCertification
+    - name: PrimaryCompany
+    - name: DesignatedRFR
+    - name: ValidFromTime
+    - name: ValidToTime
+    - name: CHANGESET_ID
+    - name: MaxOnSiteVisits
+    - name: MaxVirtualVisits
+    - name: IsDaily
+    tab_groups:
+    - direction: toone
+      fks:
+      - PrimaryCompany
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: tomany
+      fks:
+      - PLANT_ID
+      name: OWNSTBList
+      resource: OWNSTB
+    type: PLANTTB
+    user_key: NAME
+  OWNSTB:
+    attributes:
+    - label: 'ID*'
+      name: ID
+      required: true
+      search: true
+      sort: true
+    - name: COMPANY_ID
+      required: true
+    - name: PLANT_ID
+      required: true
+    - name: START_DATE
+    - name: END_DATE
+    - name: TYPE
+    - name: VISIT_FREQUENCY
+    - name: INVOICE_TYPE
+    - name: INVOICE_FREQUENCY
+    - name: INVOICE_DTL
+    - name: HOLD
+    - name: ROYALTIES
+    - name: SPECIAL_TICKET
+    - name: STATUS
+    - name: ACTIVE
+    - name: Setup_By
+    - name: AcquiredFrom
+    - name: NoRFRneeded
+    - name: LOCtext
+    - name: MoveToGP
+    - name: DefaultPO
+    - name: VisitBilling
+    - name: PlantName
+    - name: ShareAB
+    - name: POexpiry
+    - name: BillingName
+    - name: PLANT_BILL_TO_NAME
+    - name: AutoCertification
+    - name: primaryCompany
+    - name: Override
+    - name: VisitPO
+    - name: VisitPOexpiry
+    - name: ValidFromTime
+    - name: ValidToTime
+    - name: CHANGESET_ID
+    - name: BoilerplateInvoiceComment
+    - name: IsCertBillingOverride
+    tab_groups:
+    - direction: toone
+      fks:
+      - COMPANY_ID
+      name: COMPANY_TB
+      resource: COMPANYTB
+    - direction: toone
+      fks:
+      - PLANT_ID
+      name: PLANT_TB
+      resource: PLANTTB
+    type: OWNSTB
+    user_key: ID
   ProcessDefinition:
     attributes:
     - label: ' Process Name*'
@@ -505,7 +505,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: StageStatu
+      name: StageStatus
       resource: StageStatus
     type: StageInstance
     user_key: StageInstanceId
@@ -526,20 +526,6 @@ resources:
       resource: StageInstance
     type: StageStatus
     user_key: StatusDescription
-  Sysdiagram:
-    attributes:
-    - label: ' name*'
-      name: name
-      required: true
-      search: true
-      sort: true
-    - name: version
-    - name: definition
-    - name: principal_id
-      required: true
-    - name: diagram_id
-    type: Sysdiagram
-    user_key: name
   TaskCategory:
     attributes:
     - label: ' Task Category Description*'
@@ -768,12 +754,12 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: TaskStatu
+      name: TaskStatus
       resource: TaskStatus
     - direction: toone
       fks:
       - TaskId
-      name: Task
+      name: TaskDef
       resource: TaskDefinition
     type: TaskInstance
     user_key: TaskInstanceId
@@ -811,69 +797,6 @@ resources:
       resource: TaskDefinition
     type: TaskType
     user_key: TaskTypeDescription
-  ValidationResult:
-    attributes:
-    - label: ' Validation Result Id*'
-      name: ValidationResultId
-      search: true
-      sort: true
-    - name: InstanceId
-      required: true
-    - name: TaskInstanceId
-    - name: ValidationId
-      required: true
-    - name: ValidationMessage
-    - name: ValidationDate
-      required: true
-    - name: ValidatedBy
-    - name: IsValid
-      required: true
-      type: Boolean
-    tab_groups:
-    - direction: toone
-      fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
-    - direction: toone
-      fks:
-      - TaskInstanceId
-      name: TaskInstance
-      resource: TaskInstance
-    - direction: toone
-      fks:
-      - ValidationId
-      name: Validation
-      resource: ValidationRule
-    type: ValidationResult
-    user_key: ValidationResultId
-  ValidationRule:
-    attributes:
-    - label: ' Validation Name*'
-      name: ValidationName
-      required: true
-      search: true
-      sort: true
-    - name: Category
-      required: true
-    - name: RuleType
-      required: true
-    - name: ValidationQuery
-    - name: ErrorMessage
-    - name: IsActive
-      required: true
-      type: Boolean
-    - name: CreatedDate
-      required: true
-    - name: ValidationId
-    tab_groups:
-    - direction: tomany
-      fks:
-      - ValidationId
-      name: ValidationResultList
-      resource: ValidationResult
-    type: ValidationRule
-    user_key: ValidationName
   WFActivityLog:
     attributes:
     - label: ' User Name*'
@@ -903,7 +826,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_ActivityStatu
+      name: WF_ActivityStatus
       resource: WFActivityStatus
     type: WFActivityLog
     user_key: UserName
