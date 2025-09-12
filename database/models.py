@@ -206,25 +206,6 @@ class TaskType(Base):  # type: ignore
 
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="TaskType1")
-class ValidationRule(Base):  # type: ignore
-    __tablename__ = 'ValidationRules'
-    _s_collection_name = 'ValidationRule'  # type: ignore
-
-    ValidationId = Column(Integer, autoincrement=True, primary_key=True)
-    ValidationName = Column(Unicode(100), nullable=False)
-    Category = Column(Unicode(50), nullable=False)
-    RuleType = Column(Unicode(50), nullable=False)
-    ValidationQuery = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
-    ErrorMessage = Column(Unicode(500))
-    IsActive = Column(Boolean, server_default=text("1"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-   # ValidationResultList : Mapped[List["ValidationResult"]] = relationship(back_populates="Validation")
-
-
 
 class WFActivityStatus(Base):  # type: ignore
     __tablename__ = 'WF_ActivityStatus'

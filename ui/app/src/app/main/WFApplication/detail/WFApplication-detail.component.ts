@@ -46,9 +46,17 @@ export class WFApplicationDetailComponent implements OnInit  {
       iconPosition: 'left'
     }
     this.snackBarService.open("Please wait, Starting Workflow ...", configuration);
+    const isProduction = environment.production;
+    console.log("Environment is production: " + isProduction);
+    //const apiEndpoint = isProduction ? environment.apiEndpoint : environment.prod;
     const apiUrl = environment.apiEndpoint.replace('/api', '');
-    console.log("API URL: " + apiUrl);
-    this.service.doRequest({method: 'POST', url: apiUrl + '/start_workflow', body: { application_id: this.data.ApplicationID }}).subscribe((resp) => {
+    const payload =  { 
+      "application_id": this.data.ApplicationID, 
+      "process_name": "Test", 
+      "priority": this.data.Priority 
+    }
+    console.log("API URL: " + apiUrl, " Payload: " + JSON.stringify(payload));
+    this.service.doRequest({method: 'POST', url: apiUrl + '/start_workflow', body:JSON.stringify(payload)}).subscribe((resp) => {
       console.log("res: " + JSON.stringify(resp));
       if (resp.code === 0) {
         console.log('workflow started successfully')

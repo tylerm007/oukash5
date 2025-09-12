@@ -33,10 +33,14 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     '''
     if logic_row.ins_upd_dlt == 'upd' and row.Status == 'Completed':
         task_def = row.TaskDef
-        dependencies = task_def.FromTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
+        if task_def.TaskCategory == 'START':
+            update_next_task(row, old_row, logic_row)
+            return True  # START task can always be completed
+        dependencies = task_def.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
         for dependency in dependencies:
-            from_task_def = dependency.FromTaskDef
-            from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def.TaskId, StageId=row.StageId).first()
+            from_task_def = dependency.FromTaskId
+            to_task_def = dependency.ToTaskId
+            from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def, StageId=row.StageId).first()
             if from_task_instance and from_task_instance.Status != 'Completed':
                 logic_row.log(f"Cannot complete task {row.TaskInstanceId} because dependency task {from_task_instance.TaskInstanceId} is not completed.")
                 return False
@@ -52,22 +56,22 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     if logic_row.ins_upd_dlt != 'upd' or row.Status != 'Completed':
         return # only proceed if the task was updated to 'Completed'
     task_id = row.TaskInstanceId
-    task = models.TaskInstance.query.filter_by(TaskInstanceId=row.TaskInstanceId).first()
-    if not task:
-        return None, jsonify({"success": False, "message": f"No task found with TaskInstanceId {task_id}"}), 404
-    task_def = TaskDefinition.query.filter_by(TaskId=task.TaskId).first()
+    task_def = row.TaskDef
     if not task_def:
         logic_row.log(f"No task definition found for TaskId {task.TaskId}")
         return
     logic_row.log(f'Task {task_id} completed. Checking for next tasks to set to isPending.')
     call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
-    for t in task_def.ToTaskTaskFlowList:
-        next_task_def = t.ToTaskDef
-        next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def.TaskId, StageId=task.StageId).first()
+    for t in task_def.TaskFlowList:
+        next_task_def = t.ToTaskId
+        next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=row.StageId).first()
         if next_task_instance:
-            next_task_instance.Status = 'IsPending'
-            session.add(next_task_instance)
-            session.commit()
+            next_task_instance.Status = 'Pending'
+            #session.add(next_task_instance)
+            #session.commit()
+            logic_row.log(f'Next task {next_task_instance.TaskInstanceId} set to isPending')
+            logic_row.update(reason="Start task",row=next_task_instance)
+
             app_logger.info(f'Next task {next_task_instance.TaskInstanceId} set to isPending')
     
     return 
@@ -110,6 +114,6 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
 def declare_logic():
     pass
 
-    Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete task due to unmet dependencies.")
+    Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete this task due to unmet dependencies not completed.")
     Rule.row_event(on_class=models.TaskInstance,calling=call_script_engine_pre)
     Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

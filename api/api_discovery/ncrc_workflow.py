@@ -56,11 +56,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
         
         # Extract variables from request.args
-        process_name = request.args.get('process_name',"OU Certification Workflow")
-        application_id = request.args.get('application_id', '1')
-        started_by = request.args.get('started_by','admin')
-        priority = request.args.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
-        app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')    
+        data = request.get_json()
+        process_name = data.get('process_name', "OU Certification Workflow")
+        application_id = data.get('application_id', '1')
+        started_by = data.get('started_by', 'admin')
+        priority = data.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
+        app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')
         return _start_workflow(process_name, int(application_id), started_by, priority)
 
     def _start_workflow(process_name:str, application_id:int, started_by:str, priority:str):
@@ -143,8 +144,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         session.add(wf_history)
                         session.commit()
                         
-                link_task(task_instances)
-                set_start_task(task_instances)        
+        #link_task(task_instances)
+        #set_start_task(task_instances)        
         return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
     
     @app.route('/complete_task', methods=['POST','OPTIONS'])
@@ -330,9 +331,21 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             toFlows = task_def.ToTaskTaskFlowList
             if task_def and task_def.TaskCategory == 'START':
                 task.ParentInstance = None
+            elif task_def and task_def.TaskCategory == 'END':
+                task.ParentInstance = task.TaskInstanceId
             else:
-                task.ParentInstance = None
-                task.ChildrenInstanceIds = ''
+                for tf in fromFlows:
+                    from_task_id = tf.FromTaskId
+                    parent_task = next((t for t in task_instances if t.TaskId == from_task_id), None)
+                    if parent_task:
+                        task.ParentInstance = parent_task.TaskInstanceId
+                        if parent_task.ChildrenInstanceIds:
+                            parent_task.ChildrenInstanceIds += f',{task.TaskInstanceId}'
+                        else:
+                            parent_task.ChildrenInstanceIds = f'{task.TaskInstanceId}'
+                        session.add(parent_task)
+                        #session.commit()    
+                #task.ChildrenInstanceIds = ''
             session.add(task)
         session.commit()
         app_logger.info(f'Tasks linked: {[task.TaskInstanceId for task in task_instances]}')
@@ -342,8 +355,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         for task_instance in task_instances:
             task_def = task_instance.TaskDef
             if task_def and task_def.TaskCategory == 'START':
-                task_instance.Status = 'Completed'
-                session.add(task_instance)
+                new_task = TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
+                new_task.Status = 'Completed'
+                new_task.CompletedAt = datetime.utcnow()
+                new_task.CompletedBy = 'system'
+                session.add(new_task)
                 session.commit()
                 app_logger.info(f'Start TaskInstance set to Completed: {task_instance.TaskInstanceId}')
                 break
