@@ -360,7 +360,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 -H "Content-Type: application/json" \
                 -H "Authorization: Bearer <your_jwt_token>"
 
-        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks" -Method GET -ContentType "application/json"
+        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks?process_name=Test" -Method GET -ContentType "application/json"
             -Headers @{Authorization = "Bearer <your_jwt_token>"}
         Returns:
             json: response        
@@ -384,15 +384,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             to_task = task.ToTaskTaskFlowList
             category = task.TaskCategory
         
-            if not from_task and category != 'START':
+            if not from_task and category != 'END':
                 task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no incoming TaskFlow"})
-            if not to_task and category != 'END':
+            if not to_task and category != 'START':
                 task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no outgoing TaskFlow"})
             #print(f'Task {task.TaskName} (ID: {task.TaskId}) is valid with {len(from_task)} incoming and {len(to_task)} outgoing TaskFlows')
         if task_flow_errors:
             for tfe in task_flow_errors:
                 app_logger.error(tfe['message'])
             return jsonify(task_flow_errors), 400
+        else:
+            app_logger.info(f'All TaskFlows are valid for process: {process_name}')
         return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
 
         # ==================================================
