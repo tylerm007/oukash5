@@ -195,9 +195,11 @@ class TeamsGraphMessenger:
 def webhook_example():
     """Example using webhook (recommended for simple use cases)."""
     # Replace with your actual webhook URL
+    wh_url = 'https://defaulteec94eb4840d4d2ca7f105b024e605.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/bffbe79e79624adca10e7bd1d4120a04/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=JJY9yCEX-Nq2OYx2KjjLKZnyUyJbbKY2tMOnba2UyQE'
+    
     webhook_url = "https://outlook.office.com/webhook/YOUR-WEBHOOK-URL"
     
-    messenger = TeamsWebhookMessenger(webhook_url)
+    messenger = TeamsWebhookMessenger(wh_url)
     
     # Send simple message
     messenger.send_simple_message("Hello from Python! 🐍")
@@ -271,7 +273,7 @@ if __name__ == "__main__":
     # graph_api_example()
     
     # Quick notification example
-    webhook_url = "YOUR-WEBHOOK-URL-HERE"
+    webhook_url = "https://defaulteec94eb4840d4d2ca7f105b024e605.80.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/bffbe79e79624adca10e7bd1d4120a04/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=JJY9yCEX-Nq2OYx2KjjLKZnyUyJbbKY2tMOnba2UyQE"
     send_notification(
         webhook_url,
         "Python Script Complete",

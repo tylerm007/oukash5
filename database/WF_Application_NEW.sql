@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS WF_QuoteStatus;
 DROP TABLE IF EXISTS WF_ApplicationStatus;
 DROP TABLE IF EXISTS WF_Priorities;
 DROP TABLE IF EXISTS WF_Roles;
+DROP TABLE IF EXISTS RoleAssignments;
 
 -- =============================================
 -- CREATE TABLES
@@ -59,16 +60,21 @@ INSERT INTO WF_Roles (UserRole, Role) VALUES
 
 -- Users Table
 CREATE TABLE WF_Users (
-    UserID INT IDENTITY(1,1) PRIMARY KEY,
-    Username NVARCHAR(100) NOT NULL UNIQUE,
-    FullName NVARCHAR(200) NOT NULL,
+    Username NVARCHAR(100) NOT NULL PRIMARY KEY,
     Email NVARCHAR(255) NOT NULL UNIQUE,
-    Role NVARCHAR(10) NOT NULL DEFAULT 'ADMIN', -- technically a User can have many roles
+    FullName NVARCHAR(200) NOT NULL,
+    Role NVARCHAR(10) NOT NULL DEFAULT 'ADMIN', -- technically a User can have many roles - default role
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     LastLoginDate DATETIME2 NULL, -- add to OKTA /auth/login on success callback
     FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole)
 );
+
+insert into WF_Users (Username, Email, FullName, Role) values
+('sbenjamin', 'sbenjamin@example.com', 'System User', 'ADMIN'),
+('gmager', 'gmager@example.com', 'Gary Mager', 'ADMIN');
+
+
 
 -- This could be the parent table to do counts and sums or we write a View 
 CREATE TABLE WF_Dashboard (
@@ -132,6 +138,23 @@ CREATE TABLE WF_Applications (
     --,FOREIGN KEY (PlantID) REFERENCES PLANTTB(PlantID)
 );
 
+
+CREATE TABLE [dbo].[RoleAssigment](
+	[RoleAssigmentID] [int] IDENTITY(1,1) NOT NULL,
+	[ApplicationId] [int] NOT NULL,
+	[Role] [nvarchar](10) NOT NULL,
+	[Assignee] [nvarchar](100) NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
+	[CreatedBy]  [nvarchar](32) NOT NULL DEFAULT 'System',
+    CONSTRAINT [PK_RoleAssigment] PRIMARY KEY CLUSTERED,
+    FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole),
+    FOREIGN KEY (ApplicationId) REFERENCES WF_Applications(ApplicationID),
+    FOREIGN KEY (Assignee) REFERENCES WF_Users(Username)
+);
+
+insert into RoleAssigment (ApplicationId, Role, Assignee) values
+(1, 'RFR', 'gmagder'),
+(1, 'ADMIN', 'sbenjamin');
 
 -- When Application is NEW - Rule,after_flush_event we can copy data to this table using key ()
 -- Companies Table - JOIN OU_KASH.COMPANY_TB

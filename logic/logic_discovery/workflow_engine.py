@@ -31,7 +31,14 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     '''
     Test if a task can be completed based on its dependencies.
     '''
-    if logic_row.ins_upd_dlt == 'upd' and row.Status == 'Completed':
+    if logic_row.ins_upd_dlt == 'upd' and row.Status == 'Pending' and old_row.Status != 'Pending':
+        task_def = row.TaskDef
+        if task_def.AutoComplete:
+            logic_row.log(f"Task {row.TaskInstanceId} is Pending and AutoComplete is enabled.")
+            row.Status = 'Completed'
+            update_next_task(row, old_row, logic_row)
+        return True  # Only allow setting to Pending from Completed
+    elif logic_row.ins_upd_dlt == 'upd' and row.Status == 'Completed':
         task_def = row.TaskDef
         if task_def.TaskCategory == 'START':
             update_next_task(row, old_row, logic_row)
@@ -44,7 +51,12 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
             if from_task_instance and from_task_instance.Status != 'Completed':
                 logic_row.log(f"Cannot complete task {row.TaskInstanceId} because dependency task {from_task_instance.TaskInstanceId} is not completed.")
                 return False
-            
+    elif logic_row.ins_upd_dlt == 'upd' and old_row.Status == 'Completed' and row.Status != 'Completed':
+        logic_row.log(f"Task {row.TaskInstanceId} was Completed and is now being changed to {row.Status}.")
+        # If a task is reverted from Completed to another status, we might want to handle that
+        # For simplicity, we allow it here but in a real scenario, you might want to enforce rules
+        # such as reverting dependent tasks as well.
+        return True
     #call_script_engine_pre(row, old_row, logic_row)
     #"All dependencies are completed."
     return True
@@ -81,27 +93,33 @@ def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstanc
     script = task_def.PreScriptJson or ''
     logic_row.log(f'PreScriptJson: {script}')
     if script != '':
-        call_script_engine(row, old_row, logic_row, script)
+        row.Result = call_script_engine(row, old_row, logic_row, script)
 
 def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PostScriptJson or ''
     logic_row.log(f'PostScriptJson: {script}')
     if script != '':
-        call_script_engine(row, old_row, logic_row, script)
+        row.ResultData = call_script_engine(row, old_row, logic_row, script)
 
 def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow, script: str):
 
     if logic_row.ins_upd_dlt == 'upd':  
         task_id = row.TaskInstanceId
         if row:
-            # NOTE: may want to cascade the ResultData to subsequent tasks
+            # NOTE: we want to cascade the ResultData to subsequent tasks
             # depending on the workflow requirements
             task_def = row.TaskDef
+            parent_instances = row.ParentInstance
+            for parent in parent_instances:
+                if parent and parent.ResultData:
+                    logic_row.log(f'Inheriting ResultData from parent task {parent.TaskInstanceId}')
+                    row.ResultData.update(parent.ResultData)
+            # collect prior context from dependent tasks and create a union of ResultData
             application_id = row.Stage.ProcessInstance.ApplicationId
             se = python_engine.PythonScriptEngine()
-            context = {"data": row.to_dict(),"application_id": application_id, "task": row}
-            external_context = {"get_application": get_application,"get_next_tasks":get_next_tasks, "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
+            context = {"data": row.to_dict()["ResultData"],"application_id": application_id, "task": row.to_to_dict(), "old_task": old_row.to_dict() if old_row else None, "logic_row": logic_row}
+            external_context = {"get_application": get_application, "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:
                 app_logger.info(f'Script executed successfully for task_id {task_id}')
