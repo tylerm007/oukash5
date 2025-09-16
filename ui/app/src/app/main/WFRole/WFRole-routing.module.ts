@@ -14,6 +14,13 @@ const routes: Routes = [
       }
     }
   },{
+    path: ':Role/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
+    data: {
+        oPermission: {
+            permissionId: 'RoleAssigment-detail-permissions'
+        }
+    }
+},{
     path: ':Role/WFUser', loadChildren: () => import('../WFUser/WFUser.module').then(m => m.WFUserModule),
     data: {
         oPermission: {

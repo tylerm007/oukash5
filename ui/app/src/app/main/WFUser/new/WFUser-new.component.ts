@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class WFUserNewComponent {
   @ViewChild("WFUserForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'Role': "('ADMIN')", 'CreatedDate': '(getdate())', 'UserID': '0'}
+    const default_values = {'Role': "('ADMIN')", 'CreatedDate': '(getdate())'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

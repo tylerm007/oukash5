@@ -140,13 +140,12 @@ CREATE TABLE WF_Applications (
 
 
 CREATE TABLE [dbo].[RoleAssigment](
-	[RoleAssigmentID] [int] IDENTITY(1,1) NOT NULL,
+	[RoleAssigmentID] [int] IDENTITY(1,1) PRIMARY KEY,
 	[ApplicationId] [int] NOT NULL,
 	[Role] [nvarchar](10) NOT NULL,
 	[Assignee] [nvarchar](100) NOT NULL,
 	[CreatedDate] [datetime2](7) NOT NULL DEFAULT GETUTCDATE(),
 	[CreatedBy]  [nvarchar](32) NOT NULL DEFAULT 'System',
-    CONSTRAINT [PK_RoleAssigment] PRIMARY KEY CLUSTERED,
     FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole),
     FOREIGN KEY (ApplicationId) REFERENCES WF_Applications(ApplicationID),
     FOREIGN KEY (Assignee) REFERENCES WF_Users(Username)

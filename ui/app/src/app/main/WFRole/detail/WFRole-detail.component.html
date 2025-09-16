@@ -25,19 +25,71 @@
       
       <mat-tab-group fxFill>
         
+        <mat-tab label="ROLEASSIGMENT-Role">
+    <div layout-padding>
+      <o-table 
+        attr="RoleAssigmentTable" 
+        service="RoleAssigment" 
+        entity="RoleAssigment" 
+        keys="RoleAssigmentID"
+        parent-keys="Role:UserRole"
+        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        horizontal-scroll="yes"
+        detail-form-route="RoleAssigment" 
+        edit-form-route="RoleAssigment"
+        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        sort-columns="RoleAssigmentID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="UserRole:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Assignee attr="Assignee" title="Assignee" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
         <mat-tab label="WFUSER-Role">
     <div layout-padding>
       <o-table 
         attr="WFUserTable" 
         service="WFUser" 
         entity="WFUser" 
-        keys="UserID"
+        keys="Username"
         parent-keys="Role:UserRole"
-        columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID"  
+        columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate"  
         horizontal-scroll="yes"
         detail-form-route="WFUser" 
         edit-form-route="WFUser"
-        visible-columns="Username;Role;FullName;Email;IsActive;CreatedDate;LastLoginDate;UserID"  
+        visible-columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate"  
         sort-columns="Username" 
         query-rows="25" 
         quick-filter="yes"
@@ -57,9 +109,9 @@
         
           <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #FullName attr="FullName" title="FullName" editable="no" required="yes" content-align="left"></o-table-column>
-        
           <o-table-column #Email attr="Email" title="Email" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #FullName attr="FullName" title="FullName" editable="no" required="yes" content-align="left"></o-table-column>
         
           <o-table-column attr="IsActive" title="IsActive">
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
@@ -69,8 +121,6 @@
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
           <o-table-column #LastLoginDate attr="LastLoginDate" title="LastLoginDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #UserID attr="UserID" title="UserID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

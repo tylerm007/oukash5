@@ -15,6 +15,13 @@ const routes: Routes = [
       }
     }
   },{
+    path: ':ApplicationId/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
+    data: {
+        oPermission: {
+            permissionId: 'RoleAssigment-detail-permissions'
+        }
+    }
+  },{
     path: ':ApplicationID/WFActivityLog', loadChildren: () => import('../WFActivityLog/WFActivityLog.module').then(m => m.WFActivityLogModule),
     data: {
         oPermission: {

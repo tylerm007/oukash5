@@ -7,6 +7,7 @@ export const SERVICE_CONFIG ={ 'LaneDefinition': { 'path': '/LaneDefinition' }
 ,'ProcessMessageType': { 'path': '/ProcessMessageType' }
 ,'ProcessPriority': { 'path': '/ProcessPriority' }
 ,'ProcessStatus': { 'path': '/ProcessStatus' }
+,'RoleAssigment': { 'path': '/RoleAssigment' }
 ,'StageInstance': { 'path': '/StageInstance' }
 ,'StageStatus': { 'path': '/StageStatus' }
 

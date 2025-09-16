@@ -20,6 +20,8 @@ import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPrio
 
 import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-card.component';
 
+import { RoleAssigmentCardComponent } from './RoleAssigment-card/RoleAssigment-card.component';
+
 import { StageInstanceCardComponent } from './StageInstance-card/StageInstance-card.component';
 
 import { StageStatusCardComponent } from './StageStatus-card/StageStatus-card.component';
@@ -121,6 +123,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
             , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
 
             , { id: 'WFUser', name: 'User', icon: 'view_list', route: '/main/WFUser' }
+	    
+	    ,{ id: 'RoleAssigment', name: 'Role Assignment', icon: 'view_list', route: '/main/RoleAssigment' }
+    
         ]
     },
     {
@@ -210,7 +215,9 @@ export const MENU_COMPONENTS = [
 
     , ProcessStatusCardComponent
 
-    , StageInstanceCardComponent
+    ,RoleAssigmentCardComponent
+
+    ,StageInstanceCardComponent
 
     , StageStatusCardComponent
 

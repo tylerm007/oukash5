@@ -1,5 +1,5 @@
 <o-form #WFUserForm attr="WFUser_form_insert" service="WFUser" entity="WFUser"
-keys="UserID" fxLayout="column" show-header="yes" header-actions="I"
+keys="Username" fxLayout="column" show-header="yes" header-actions="I"
 horizontal-scroll="yes"
 after-insert-mode="new" class="standalone-form-container" >
 
@@ -27,17 +27,15 @@ after-insert-mode="new" class="standalone-form-container" >
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       
-        <o-text-input #FullName attr="FullName" label="FullName" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
         <o-text-input #Email attr="Email" label="Email" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #FullName attr="FullName" label="FullName" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
       
         <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
         <o-date-input #LastLoginDate attr="LastLoginDate" value-type="string" label="LastLoginDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-        <o-integer-input #UserID attr="UserID" label="UserID" type="integer" editable="no" required="no" ></o-integer-input>
       
 </div>
 </o-row>

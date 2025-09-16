@@ -7,13 +7,20 @@ import { WFUserDetailComponent } from './detail/WFUser-detail.component';
 const routes: Routes = [
   {path: '', component: WFUserHomeComponent},
   { path: 'new', component: WFUserNewComponent },
-  { path: ':UserID', component: WFUserDetailComponent,
+  { path: ':Username', component: WFUserDetailComponent,
     data: {
       oPermission: {
         permissionId: 'WFUser-detail-permissions'
       }
     }
-  }
+  },{
+    path: ':Assignee/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
+    data: {
+        oPermission: {
+            permissionId: 'RoleAssigment-detail-permissions'
+        }
+    }
+}
 ];
 
 export const WFUSER_MODULE_DECLARATIONS = [

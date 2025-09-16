@@ -5,8 +5,8 @@ about:
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 46
-  number_tables: 40
+  number_relationships: 47
+  number_tables: 41
 info_toggle_checked: true
 resources:
   LaneDefinition:
@@ -339,16 +339,6 @@ resources:
     - direction: tomany
       fks:
       - InstanceId
-      name: TaskInstanceList
-      resource: TaskInstance
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: ValidationResultList
-      resource: ValidationResult
-    - direction: tomany
-      fks:
-      - InstanceId
       name: WorkflowHistoryList
       resource: WorkflowHistory
     - direction: toone
@@ -459,6 +449,40 @@ resources:
       resource: ProcessInstance
     type: ProcessStatus
     user_key: StatusDescription
+  RoleAssigment:
+    attributes:
+    - label: ' Role Assigment I D*'
+      name: RoleAssigmentID
+      search: true
+      sort: true
+    - name: ApplicationId
+      required: true
+    - name: Assignee
+      required: true
+    - name: Role
+      required: true
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: WFApplication
+    - direction: toone
+      fks:
+      - Assignee
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - Role
+      name: WF_Role
+      resource: WFRole
+    type: RoleAssigment
+    user_key: RoleAssigmentID
   StageInstance:
     attributes:
     - label: ' Stage Instance Id*'
@@ -874,6 +898,11 @@ resources:
       required: true
     - name: PlantID
     tab_groups:
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: RoleAssigmentList
+      resource: RoleAssigment
     - direction: tomany
       fks:
       - ApplicationID
@@ -1369,6 +1398,11 @@ resources:
     - direction: tomany
       fks:
       - Role
+      name: RoleAssigmentList
+      resource: RoleAssigment
+    - direction: tomany
+      fks:
+      - Role
       name: WFUserList
       resource: WFUser
     type: WFRole
@@ -1382,9 +1416,9 @@ resources:
       sort: true
     - name: Role
       required: true
-    - name: FullName
-      required: true
     - name: Email
+      required: true
+    - name: FullName
       required: true
     - name: IsActive
       required: true
@@ -1392,8 +1426,12 @@ resources:
     - name: CreatedDate
       required: true
     - name: LastLoginDate
-    - name: UserID
     tab_groups:
+    - direction: tomany
+      fks:
+      - Assignee
+      name: RoleAssigmentList
+      resource: RoleAssigment
     - direction: toone
       fks:
       - Role
