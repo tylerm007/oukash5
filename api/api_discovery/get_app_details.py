@@ -18,17 +18,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
 
-    @app.route('/get_ncrc_application', methods=['GET',"OPTIONS"])
-    def get_ncrc_application():
+    @app.route('/get_application_detail', methods=['GET',"OPTIONS"])
+    def get_application_detail():
         """        
         Illustrates:
         * Use standard Flask, here for non-database endpoints.
         * Returns NCRC data in JSON format
 
         Test it with:
-        
-        Invoke-RestMethod -Uri "http://localhost:5656/get_ncrc_application?applicationId=1" -Method GET -ContentType "application/json"
-        
+
+        Invoke-RestMethod -Uri "http://localhost:5656/get_application_detail?applicationId=1" -Method GET -ContentType "application/json"
+
         Returns JSON response with application data including:
         - Application info (ID, submission date, status)
         - Company details (name, category, certification status)
@@ -36,12 +36,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         - Products list (label names, brands, certifications)
         - Ingredients list (NCRC IDs, manufacturers, certifications)
         """
-        application_id = request.args.get('applicationId',1, type=int)
+        application_id = request.args.get('applicationId',None, type=int)
         app_logger.info(f'{application_id}')
         from database.models import CompanyApplication, WFApplication, COMPANYTB, OWNSTB, PLANTTB, PLANTADDRESSTB, LabelTb, MERCHTB, USEDIN1TB
         wf_application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         if not wf_application:
-            return jsonify({"error": "WF_Application not found"}), 404
+            return jsonify({"error": f"Application for id {application_id} not found"}), 404
         application = wf_application.to_dict()
 
         company_application = CompanyApplication.query.filter_by(ID=application['ApplicationNumber']).first()
@@ -101,7 +101,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "country": company_application.Country if hasattr(company_application, 'Country') else "Unknown",
                 "type": "Unknown"
             }
-
+        #TO DO how to get contacts for plant? or use origin app?
         plant["contacts"] =  {
                 "name": "John Mitchell",
                 "title": "Plant Manager",
