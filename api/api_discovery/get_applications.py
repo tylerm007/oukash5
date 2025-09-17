@@ -103,6 +103,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     completed_cnt = 0
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
                     for task in task_instances:
+                        if task.TaskType in ['START', 'END','GATEWAY','SUBPROCESS']:
+                            continue
                         task_cnt += 1 if task.Status == 'Pending' else 0
                         completed_cnt += 1 if task.Status == 'Completed' else 0
                         created_date = task.StartedDate
@@ -121,8 +123,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "PreScript": task.TaskDef.PreScriptJson if task and task.TaskDef else {},
                                 "PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
                                 "taskRoles": [
-                                    { "taskRole": "NCRC-ADMIN" },
-                                    { "taskRole": "NCRC" }
+                                    { "taskRole": task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" },
                                 ],
                             }
                         )
@@ -131,7 +132,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         lane_name = lane.to_dict()["LaneName"]
                         app_row["stages"].update({
                             lane_name: {
-                                "status": stage["Status"],# TODO calculate stage status based on tasks
+                                "status": stage["Status"] if task_cnt == 0 else "In Progress", 
                                 "progress": completed_cnt / task_cnt  * 100 if  completed_cnt > 0 else 0,
                                 "tasks": tasks
                             }
