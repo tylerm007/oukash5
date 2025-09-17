@@ -33,7 +33,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         Test it with PowerShell POST:
 
         $body = @{
-                process_name = "Application Workflow"
+                process_name = "OU Application Init"
                 application_id = "1"
                 started_by = "1"
                 priority = "HIGH"
@@ -57,14 +57,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         # Extract variables from request.args
         data = request.get_json()
-        process_name = data.get('process_name', "OU Certification Workflow")
+        process_name = data.get('process_name', "OU Application Init")
         application_id = data.get('application_id', '1')
         started_by = data.get('started_by', 'admin')
         priority = data.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
         app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')
-        return _start_workflow(process_name, int(application_id), started_by, priority)
+        #return _start_workflow(process_name, int(application_id), started_by, priority)
 
-    def _start_workflow(process_name:str, application_id:int, started_by:str, priority:str):
+    #def _start_workflow(process_name:str, application_id:int, started_by:str, priority:str):
 
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         if not application:
@@ -79,22 +79,23 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
  
         # Create new Process InstanceId for this Application
         process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
-        #if process_instance is None:
-                 # Get StartTaskId
-        row = TaskDefinition.query.filter_by(ProcessId=process_id, TaskType='EVENT', TaskCategory='START').order_by(TaskDefinition.Sequence).first()
+        if process_instance is None:
+            process_instance = ProcessInstance(
+                ProcessId=process_id,
+                ApplicationId=int(application_id),
+                CurrentTaskId=start_task_id,
+                StartedBy=started_by,
+                Priority=priority
+            )
+            session.add(process_instance)
+            session.commit()
+        # Get StartTaskId
+        row = TaskDefinition.query.filter_by(ProcessId=process_id, TaskType='START').order_by(TaskDefinition.Sequence).first()
         start_task_id = row.TaskId if row else None
         print(f'Start TaskDefinition TaskId: {start_task_id}') 
         if start_task_id is None:
                 raise Exception(f'Start Task definition not found for process: {process_name}')
-        process_instance = ProcessInstance(
-            ProcessId=process_id,
-            ApplicationId=int(application_id),
-            CurrentTaskId=start_task_id,
-            StartedBy=started_by,
-            Priority=priority
-        )
-        session.add(process_instance)
-        session.commit()
+        
         #else:
         #    return jsonify({"status": "error", "message": f"Workflow already started for application {application_id}"}), 400
              
@@ -386,6 +387,50 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         else:
             app_logger.info(f'All TaskFlows are valid for process: {process_name}')
         return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
+
+    @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
+    def get_application_tasks():
+        """
+        Retrieves all of the application tasks within their stages for a given application_id
+        
+        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET).Content | ConvertFrom-Json
+
+        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET
+        $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
+        $jsonString | ConvertFrom-Json
+        """
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+
+        data = request.args if request.args else {}
+        application_id = data.get('application_id', None)
+        if application_id is None:
+            return jsonify({"status": "error", "message": "application_id is required"}), 400
+        
+        app_logger.info('Retrieving NCRC dashboard data')
+        # Implement your logic to retrieve and return the NCRC dashboard data:
+        
+        app_obj = WFApplication.query.filter_by(ApplicationID=application_id).first()
+        if not app_obj:
+            return jsonify({"status": "error", "message": "Application not found"}), 404    
+        
+        process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
+        if process_instance is None:
+            return jsonify({"status": "error", "message": "Process instance not found or workflow not started"}), 404
+        result = {}
+        result['process_instance'] = process_instance.to_dict() if process_instance else {}
+        stage_list = process_instance.StageInstanceList if process_instance else []
+        result['stages'] = {}
+        #[stage.to_dict() if stage else {} for stage in stage_list]
+        for stage in stage_list:
+            result['stages'][stage.Lane.LaneName] = {
+                "stage_info": stage.to_dict() if stage else {},
+                "tasks": []
+            }
+            tasks = stage.TaskInstanceList if stage else []
+            for task in tasks:
+                result['stages'][stage.Lane.LaneName]['tasks'].append(task.to_dict() if task else {})
+        return jsonify({"status": "ok", "data": result}), 200
 
         # ==================================================
         #        END WORKFLOW ENDPOINTS (Flask)

@@ -52,7 +52,7 @@ export class WFApplicationDetailComponent implements OnInit  {
     const apiUrl = environment.apiEndpoint.replace('/api', '');
     const payload =  { 
       "application_id": this.data.ApplicationID, 
-      "process_name": "Test", 
+      "process_name": "OU Application Init",
       "priority": this.data.Priority 
     }
     console.log("API URL: " + apiUrl, " Payload: " + JSON.stringify(payload));

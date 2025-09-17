@@ -1,7 +1,7 @@
 from datetime import datetime
 import re
 from tracemalloc import start
-from database.models import LaneDefinition, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
+from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -16,7 +16,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     global _project_dir
     _project_dir = project_dir
     pass
-
+    def calc_days_between(start_date, end_date):
+        if start_date and end_date:
+            if isinstance(start_date, str):
+                start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
+            if isinstance(end_date, str):
+                end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
+            return (end_date - start_date).days
+        return 0
     @app.route('/get_applications', methods=['GET','OPTIONS'])
     def get_applications():
         """
@@ -44,22 +51,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 continue
             application_id = app_dict.get("ApplicationID", None)
             files = WFFile.query.filter_by(ApplicationID=application_id).all()
+            app_messages = WFApplicationMessage.query.filter_by(ApplicationID=application_id).all()
             app_source = company_app.to_dict() if company_app else {}
             # Calculate days between CreateDate and ModifiedDate
             created_date = app_dict.get("CreatedDate")
             modified_date = app_dict.get("ModifiedDate")
-            days_between = 0
-            if created_date and modified_date:
-                if isinstance(created_date, str):
-                    created_date = datetime.fromisoformat(created_date.replace('Z', '+00:00'))
-                if isinstance(modified_date, str):
-                    modified_date = datetime.fromisoformat(modified_date.replace('Z', '+00:00'))
-                days_between = (modified_date - created_date).days
-            
+            days_between = calc_days_between(created_date, modified_date)
+            #process_id = app_dict.get("ProcessId")
+      
             app_row = {
                 "id": application_id,
                 "company": app_source.get("CompanyName"),
                 "plant": app_source.get("PlantName"),
+                "plantHistory": {},
+                "applicationId": application_id,
                 "region": app_source.get("Region"),
                 "priority": app_dict.get("Priority", "Normal"),
                 "status": app_dict.get("Status", "New"),
@@ -69,7 +74,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "lastUpdate": modified_date,
                 "nextAction": "Follow up on contract",
                 "documents": len(files) if files else 0,
-                "notes": 3
+                "notes": len(app_messages) if app_messages else 0,
+                "aiSuggestions": {},
+                "assignedRC": app_source.get("AssignedTo","Unassigned"),
+                "assignedRoles": [{"DISPATCHER": "S.Benjamin"}, 
+                        {"NCRC": "S.Benjamin"},
+                        {"NCRC-ADMIN": "S.Benjamin"},
+                        {"LEGAL": "S.Benjamin"},
+                        {"IAR": "S.Benjamin"},
+                        {"PRODUCT": "S.Benjamin"},
+                        {"RFR": "S.Benjamin"}]
             }
             
           
@@ -79,22 +93,37 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     app_logger.warning(f"Process instance not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Process instance not found for application id {application_id}"}), 404
                 stages =  [stage.to_dict() for stage in StageInstance.query.filter_by(ProcessInstanceId=process_instance.InstanceId).all()]
+                if stages is None:
+                    app_logger.warning(f"Stages not found for application id {application_id}")
+                    return jsonify({"status": "error", "message": f"Workflow Stages not found for application id {application_id}"}), 404
                 app_row["stages"] = {}
-
                 for stage in stages:
                     tasks = []
+                    task_cnt = 0
+                    completed_cnt = 0
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
                     for task in task_instances:
+                        task_cnt += 1 if task.Status == 'Pending' else 0
+                        completed_cnt += 1 if task.Status == 'Completed' else 0
+                        created_date = task.StartedDate
+                        modified_date = datetime.now() if task.Status != 'Completed' else task.get("CompletedDate")
+                        days_between = calc_days_between(created_date, modified_date)
                         tasks.append(
                             {
                                 "name": task.TaskDef.TaskName if task and task.TaskDef else "Unknown Task Name",
                                 "status": task.Status,
+                                "taskType": task.TaskDef.TaskType if task and task.TaskDef else "Unknown Task Type",
+                                "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
                                 "assignee": task.AssignedTo,
-                                "daysActive": 0, #TODO calculate days active
+                                "daysActive": days_between,
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
                                 "TaskInstanceId": task.TaskId,
                                 "PreScript": task.TaskDef.PreScriptJson if task and task.TaskDef else {},
-                                "PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {}
+                                "PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
+                                "taskRoles": [
+                                    { "taskRole": "NCRC-ADMIN" },
+                                    { "taskRole": "NCRC" }
+                                ],
                             }
                         )
                     lane = LaneDefinition.query.filter_by(LaneId=stage['LaneId']).first()
@@ -103,14 +132,24 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         app_row["stages"].update({
                             lane_name: {
                                 "status": stage["Status"],# TODO calculate stage status based on tasks
-                                "progress": 100, #TODO calculate progress
+                                "progress": completed_cnt / task_cnt  * 100 if  completed_cnt > 0 else 0,
                                 "tasks": tasks
                             }
                         })
             app_row["aiSuggestions"] = {}
             app_row["plantHistory"] = {}
             app_row["relatedTasks"] = {}
+            app_row["application_messages"] =[]
             #task_messages = TaskComment.query.filter_by(ApplicationId=application_id).order_by(TaskComment.CreatedOn.desc()).limit(5).all()
-            app_row["application_messages"] ={}# {msg.CreatedOn: msg.to_dict() for msg in task_messages}
+            for am in app_messages:
+                msg = am.to_dict()
+                app_row["application_messages"].append({
+                    "id": msg.get("MessageID"),
+                    "sender": msg.get("FromUser"), 
+                    "text": msg.get("MessageText"),
+                    "timestamp": msg.get("SentDate"),
+                    "isSystemMessage": True if msg.get("MessageType") == "system" else False,
+                })
+           
             result.append(app_row)
         return jsonify({"status": "ok", "data": result}), 200
