@@ -11,6 +11,53 @@ use dashboard;
 -- =============================================
 -- DROP TABLES (for clean setup)
 -- =============================================
+
+-- DELETE FROMS (safer alternative to DROP - preserves structure)
+-- Note: TRUNCATE requires tables to exist, using IF EXISTS checks
+
+IF OBJECT_ID('WF_ActivityLog', 'U') IS NOT NULL
+    DELETE FROM WF_ActivityLog;
+IF OBJECT_ID('WF_ApplicationComments', 'U') IS NOT NULL
+    DELETE FROM WF_ApplicationComments;
+IF OBJECT_ID('WF_ApplicationMessages', 'U') IS NOT NULL
+    DELETE FROM WF_ApplicationMessages;
+IF OBJECT_ID('WF_Files', 'U') IS NOT NULL
+    DELETE FROM WF_Files;
+IF OBJECT_ID('WF_QuoteItems', 'U') IS NOT NULL
+    DELETE FROM WF_QuoteItems;
+IF OBJECT_ID('WF_Quotes', 'U') IS NOT NULL
+    DELETE FROM WF_Quotes;
+IF OBJECT_ID('WF_Ingredients', 'U') IS NOT NULL
+    DELETE FROM WF_Ingredients;
+IF OBJECT_ID('WF_Products', 'U') IS NOT NULL
+    DELETE FROM WF_Products;
+IF OBJECT_ID('WF_Plants', 'U') IS NOT NULL
+    DELETE FROM WF_Plants;
+IF OBJECT_ID('WF_Contacts', 'U') IS NOT NULL
+    DELETE FROM WF_Contacts;
+IF OBJECT_ID('WF_Companies', 'U') IS NOT NULL
+    DELETE FROM WF_Companies;
+IF OBJECT_ID('WF_Users', 'U') IS NOT NULL
+    DELETE FROM WF_Users;
+IF OBJECT_ID('RoleAssigment', 'U') IS NOT NULL
+    DELETE FROM RoleAssigment;
+IF OBJECT_ID('WF_Applications', 'U') IS NOT NULL
+    DELETE FROM WF_Applications;
+IF OBJECT_ID('WF_Dashboard', 'U') IS NOT NULL
+    DELETE FROM WF_Dashboard;
+IF OBJECT_ID('WF_FileTypes', 'U') IS NOT NULL
+    DELETE FROM WF_FileTypes;
+IF OBJECT_ID('WF_ActivityStatus', 'U') IS NOT NULL
+    DELETE FROM WF_ActivityStatus;
+IF OBJECT_ID('WF_QuoteStatus', 'U') IS NOT NULL
+    DELETE FROM WF_QuoteStatus;
+IF OBJECT_ID('WF_ApplicationStatus', 'U') IS NOT NULL
+    DELETE FROM WF_ApplicationStatus;
+IF OBJECT_ID('WF_Priorities', 'U') IS NOT NULL
+    DELETE FROM WF_Priorities;
+IF OBJECT_ID('WF_Roles', 'U') IS NOT NULL
+    DELETE FROM WF_Roles;
+
 -- Drop child tables first (tables with foreign keys)
 DROP TABLE IF EXISTS WF_ActivityLog;
 DROP TABLE IF EXISTS WF_ApplicationComments;
@@ -23,18 +70,25 @@ DROP TABLE IF EXISTS WF_Products;
 DROP TABLE IF EXISTS WF_Plants;
 DROP TABLE IF EXISTS WF_Contacts;
 DROP TABLE IF EXISTS WF_Companies;
-DROP TABLE IF EXISTS WF_Applications;
-DROP TABLE IF EXISTS WF_Users;
 
--- Drop parent/reference tables
+-- Drop RoleAssignments first (references both WF_Users and WF_Roles)
+DROP TABLE IF EXISTS RoleAssigment;
+
+-- Drop WF_Applications (references WF_Roles, WF_Dashboard, WF_Priorities, WF_ApplicationStatus)
+DROP TABLE IF EXISTS WF_Applications;
+
+-- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
+DROP TABLE IF EXISTS WF_Users;
+DROP TABLE IF EXISTS WF_Roles;
+
+-- Drop parent/reference tables last
 DROP TABLE IF EXISTS WF_Dashboard;
 DROP TABLE IF EXISTS WF_FileTypes;
 DROP TABLE IF EXISTS WF_ActivityStatus;
 DROP TABLE IF EXISTS WF_QuoteStatus;
 DROP TABLE IF EXISTS WF_ApplicationStatus;
 DROP TABLE IF EXISTS WF_Priorities;
-DROP TABLE IF EXISTS WF_Roles;
-DROP TABLE IF EXISTS RoleAssignments;
+
 
 -- =============================================
 -- CREATE TABLES
@@ -56,6 +110,10 @@ INSERT INTO WF_Roles (UserRole, Role) VALUES
     ('SALES', 'Sales'),
     ('SUPPORT', 'Support'),
     ('CUST', 'Customer'),
+    ('NCRC-ADMIN', 'NCRC Admin'),
+    ('RC','RC'),
+    ('FIN', 'Finance'),
+    ('GUEST', 'Guest'),
     ('NCRC', 'NCRC');
 
 -- Users Table
@@ -71,7 +129,8 @@ CREATE TABLE WF_Users (
 );
 
 insert into WF_Users (Username, Email, FullName, Role) values
-('sbenjamin', 'sbenjamin@example.com', 'System User', 'ADMIN'),
+('sbenjamin', 'sbenjamin@example.com', 'Shouki Benjamin', 'ADMIN'),
+('tband', 'tband@example.com', 'Tyler Band', 'ADMIN'),
 ('gmager', 'gmager@example.com', 'Gary Mager', 'ADMIN');
 
 
@@ -120,7 +179,7 @@ CREATE TABLE WF_Applications (
     ApplicationNumber INT NOT NULL UNIQUE, -- ties back to legacy CompanyApplication.ID 
     CompanyID INT NOT NULL,
     PlantID INT, -- becomes OWNSID CompanyID-PlantID
-    SubmissionDate DATE NOT NULL,
+    SubmissionDate DATE NOT NULL DEFAULT GETDATE(),
     Status NVARCHAR(50) NOT NULL DEFAULT 'NEW',
     Priority NVARCHAR(20) DEFAULT 'NORMAL', -- 'Low', 'Normal', 'High', 'Critical'
     AssignedTo nvarchar(100) NULL, -- User email
@@ -128,9 +187,16 @@ CREATE TABLE WF_Applications (
     AssignedDate datetime2(7) NULL, -- Rule.formula when AssignedTo is not null return current_date
     CreatedDate datetime2(7) NOT NULL DEFAULT GETUTCDATE(),
     CreatedBy nvarchar(100) NOT NULL DEFAULT 'System',
-    ModifiedDate datetime2(7) NULL,
-    ModifiedBy nvarchar(100) NULL,
+    ModifiedDate datetime2(7) NULL, -- global rule on update set to current date
+    ModifiedBy nvarchar(100) NULL, -- global rule on update set to current user
     WFDashboardID INT NULL DEFAULT 1,
+    verify_company BIT NOT NULL DEFAULT 0, -- rule when company verified set to 1
+    verify_plant BIT NOT NULL DEFAULT 0, -- rule when plant verified set to 1
+    verify_contacts BIT NOT NULL DEFAULT 0, -- rule when contacts verified set to 1
+    verify_products BIT NOT NULL DEFAULT 0, -- rule when products verified set to 1
+    verify_ingredients BIT NOT NULL DEFAULT 0, -- rule when ingredients verified set to 1
+    verify_quote BIT NOT NULL DEFAULT 0, -- rule when quote verified set to 1
+    assign_ncrc_rep BIT NOT NULL DEFAULT 0, -- rule when ncrc rep assigned set to 1 
     FOREIGN KEY (WFDashboardID) REFERENCES WF_Dashboard(ID),
     FOREIGN KEY (Priority) REFERENCES WF_Priorities(PriorityCode),
     FOREIGN KEY (Status) REFERENCES WF_ApplicationStatus(StatusCode)
@@ -153,7 +219,9 @@ CREATE TABLE [dbo].[RoleAssigment](
 
 insert into RoleAssigment (ApplicationId, Role, Assignee) values
 (1, 'RFR', 'gmagder'),
-(1, 'ADMIN', 'sbenjamin');
+(1, 'ADMIN', 'sbenjamin'),
+(1, 'ADMIN', 'sbenjamin'),
+(1, 'ADMIN', 'tband');
 
 -- When Application is NEW - Rule,after_flush_event we can copy data to this table using key ()
 -- Companies Table - JOIN OU_KASH.COMPANY_TB
@@ -175,15 +243,6 @@ CREATE TABLE WF_Contacts (
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
 
--- Plants Table 
-CREATE TABLE WF_Plants (
-    PlantID INT IDENTITY(1,1) PRIMARY KEY,
-    ApplicationID INT NOT NULL,
-    PlantNumber INT  NULL, -- Foreign Key to ou_kash.PLANT_TB
-    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
-    FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
-    --,FOREIGN KEY (PlantNumber) REFERENCES PLANTTB(PlantID)
-);
 
 
 -- Create table: WF_Products
@@ -220,8 +279,6 @@ CREATE INDEX [IX_WF_Products_Status] ON [dbo].[WF_Products] ([status]);
 CREATE INDEX [IX_WF_Products_DPM] ON [dbo].[WF_Products] ([dpm]);
 CREATE INDEX [IX_WF_Products_Group] ON [dbo].[WF_Products] ([group]);
 CREATE INDEX [IX_WF_Products_ProcessedDate] ON [dbo].[WF_Products] ([processedDate]);
-
-
 
 
 CREATE TABLE WF_Ingredients (
@@ -380,7 +437,6 @@ CREATE INDEX IX_WF_Applications_CompanyID ON WF_Applications(CompanyID);
 CREATE INDEX IX_WF_Applications_Status ON WF_Applications(Status);
 CREATE INDEX IX_WF_Applications_ApplicationNumber ON WF_Applications(ApplicationNumber);
 CREATE INDEX IX_ValidationChecks_ApplicationID ON WF_Applications(ApplicationID);
-CREATE INDEX IX_Plants_ApplicationID ON WF_Plants(ApplicationID);
 CREATE INDEX IX_Products_ApplicationID ON WF_Products(ApplicationID);
 CREATE INDEX IX_Ingredients_ApplicationID ON WF_Ingredients(ApplicationID);
 --CREATE INDEX IX_Ingredients_NCRCIngredientID ON WF_Ingredients(NCRCIngredientID);
@@ -406,9 +462,9 @@ INSERT INTO WF_Users (Username, FullName, Email, Role) VALUES
 
 -- Insert Application
 INSERT INTO WF_Applications (
-    ApplicationNumber, CompanyID, SubmissionDate, Status
+    ApplicationNumber, CompanyID, PlantID , SubmissionDate, Status, Priority
 ) VALUES (
-    9999, 1, '2025-07-17', 'NEW'
+    4804, 1401550, NULL,'2025-09-10','NEW', 'HIGH'
 );
 
 

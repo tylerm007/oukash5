@@ -100,8 +100,6 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
             , { id: 'WFContact', name: 'Contact', icon: 'view_list', route: '/main/WFContact' }
 
-             , { id: 'WFPlant', name: 'Plant', icon: 'view_list', route: '/main/WFPlant' }
-
              , { id: 'WFProduct', name: 'Product', icon: 'view_list', route: '/main/WFProduct' }
 
             , { id: 'WFIngredient', name: 'Ingredients', icon: 'view_list', route: '/main/WFIngredient' }

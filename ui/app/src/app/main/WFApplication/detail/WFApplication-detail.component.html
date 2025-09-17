@@ -91,6 +91,20 @@
       
       <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
+      <o-checkbox #verify_company attr="verify_company" label="verify_company" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #verify_plant attr="verify_plant" label="verify_plant" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #verify_contacts attr="verify_contacts" label="verify_contacts" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #verify_products attr="verify_products" label="verify_products" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #verify_ingredients attr="verify_ingredients" label="verify_ingredients" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #verify_quote attr="verify_quote" label="verify_quote" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-checkbox #assign_ncrc_rep attr="assign_ncrc_rep" label="assign_ncrc_rep" read-only="no" enabled="yes"></o-checkbox>
+      
       <o-integer-input #CompanyID attr="CompanyID" label="CompanyID" type="integer" editable="no" required="yes" ></o-integer-input>
       
       <o-integer-input #PlantID attr="PlantID" label="PlantID" type="integer" editable="no" required="no" ></o-integer-input>
@@ -565,55 +579,7 @@
       </o-table>
     </div>
 </mat-tab>
-        
-        <mat-tab label="WFPLANT-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFPlantTable" 
-        service="WFPlant" 
-        entity="WFPlant" 
-        keys="PlantID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="PlantID;ApplicationID;PlantNumber;CreatedDate"  
-        horizontal-scroll="yes"
-        detail-form-route="WFPlant" 
-        edit-form-route="WFPlant"
-        visible-columns="PlantID;ApplicationID;PlantNumber;CreatedDate"  
-        sort-columns="PlantID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #PlantID attr="PlantID" title=" Plant I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #PlantNumber attr="PlantNumber" title="PlantNumber" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+
         <mat-tab label="WFPRODUCT-ApplicationID">
     <div layout-padding>
       <o-table 

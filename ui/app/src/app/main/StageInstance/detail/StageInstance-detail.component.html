@@ -112,11 +112,11 @@
         entity="TaskInstance" 
         keys="TaskInstanceId"
         parent-keys="StageId:StageInstanceId"
-        columns="TaskInstanceId;ParentInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ChildrenInstanceIds"  
+        columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
         horizontal-scroll="yes"
         detail-form-route="TaskInstance" 
         edit-form-route="TaskInstance"
-        visible-columns="TaskInstanceId;ParentInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ChildrenInstanceIds"  
+        visible-columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
         sort-columns="TaskInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -133,15 +133,6 @@
         horizontal-scroll="yes" class="fill-form">
         
           <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ParentInstanceId" title="ParentInstance">
-    <o-table-cell-renderer-service attr="ParentInstanceId" 
-        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
-        parent-keys="StageInstanceId:ParentInstanceId"
-        value-column="TaskInstanceId" keys="ParentInstanceId"
-        visible-columns="TaskInstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
         
           <o-table-column attr="StageId" title="Stage">
     <o-table-cell-renderer-service attr="StageId" 
@@ -179,7 +170,6 @@
         
           <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column #ChildrenInstanceIds attr="ChildrenInstanceIds" title="ChildrenInstanceIds" editable="no" required="no" content-align="left"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

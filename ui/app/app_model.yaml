@@ -556,29 +556,29 @@ application:
             menu_title: TaskInstance
             page:
               detail:
-                columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: TaskInstance
                 typescript_name: detail_component.jinja
-                visible_columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
               home:
-                columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: TaskInstance
                 typescript_name: home_template.jinja
-                visible_columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
               new:
-                columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: TaskInstance
                 typescript_name: new_component.jinja
-                visible_columns: TaskInstanceId,ParentInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
             template_name: module.jinja
           TaskStatus:
             icon: edit_square
@@ -2593,9 +2593,6 @@ entities:
       sort: true
       template: integer
       type: INTEGER
-    - name: ParentInstanceId
-      template: integer
-      type: INTEGER
     - name: StageId
       required: true
       template: integer
@@ -2634,9 +2631,6 @@ entities:
       name: RetryCount
       template: integer
       type: INTEGER
-    - name: ChildrenInstanceIds
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
     favorite: TaskInstanceId
     hidden: {}
     label: TaskInstance
@@ -2650,19 +2644,9 @@ entities:
       resource: TaskComment
     - direction: tomany
       fks:
-      - ParentInstanceId
-      name: TaskInstanceList
-      resource: TaskInstance
-    - direction: tomany
-      fks:
       - TaskInstanceId
       name: WorkflowHistoryList
       resource: WorkflowHistory
-    - direction: toone
-      fks:
-      - ParentInstanceId
-      name: ParentInstance
-      resource: TaskInstance
     - direction: toone
       fks:
       - StageId

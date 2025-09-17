@@ -208,8 +208,7 @@ Table TaskInstance {
     ResultData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     RetryCount INTEGER 
-    ParentInstanceId INTEGER 
-    ChildrenInstanceIds VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+ 
     }
 
 Table TaskType {
@@ -447,7 +446,7 @@ Table WorkflowHistory {
     Ref: TaskComment.(CommentType) < TaskCommentType.(CommentTypeCode)
     Ref: TaskComment.(ProcessInstanceId) < ProcessInstance.(InstanceId)
     Ref: TaskComment.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
-    Ref: TaskInstance.(ParentInstanceId) < TaskInstance.(TaskInstanceId)
+
     Ref: TaskInstance.(StageId) < StageInstance.(StageInstanceId)
     Ref: TaskInstance.(Status) < TaskStatus.(StatusCode)
     Ref: TaskInstance.(TaskId) < TaskDefinition.(TaskId)

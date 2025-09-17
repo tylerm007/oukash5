@@ -10,6 +10,8 @@ import json
 import time
 from typing import List, Dict, Any
 import logging
+import inspect
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,75 +19,39 @@ logger = logging.getLogger(__name__)
 
 # Base API URL
 BASE_URL = "http://localhost:5656/api" 
-BASE_URL = "http://172.30.3.133:5656/api"
+#BASE_URL = "http://172.30.3.133:5656/api"
 
 # List of all API endpoints (collection names from models.py)
-API_ENDPOINTS = [
-    "AchAuthToken",
-    "ASSIGNEDMASHGIACHTB",
-    "AchPlaidLambdaResponse", 
-    "AchStripePayment",
-    "AchStripePaymentDetail",
-    "BarCode",
-    "Billing",
-    "CODETB",
-    "CompanyPlantOption",
-    "CompanycontactsTb",
-    "COMPANYADDRESSTB",
-    "COMPANYCERTDETAIL",
-    "COMPANYCOMMENT",
-    "COMPANYFEECOMMENT",
-    "COMPANYFEESTRUCTURE",
-    "COMPANYHOLDTB",
-    "COMPANYOTHERNAME",
-    "COMPANYSTATUSTB",
-    "COMPANYTB",
-    "CoPackerFacilitiesCategory",
-    "CoPackerFacilitiesLocation",
-    "CoPackerFacility",
-    "COPRIVATELABELFEEDETAIL",
-    "FormulaComponent",
-    "FormulaProduct",
-    "FormulaSubmissionComponent",
-    "FormulaSubmissionPlant",
-    "INVOICEFEE",
-    "INVOICEFEESDETAIL",
-    "LabelBarcode",
-    "LabelComment",
-    "LabelOption",
-    "LabelTb",
-    "MERCHCOMMENT",
-    "MERCHOTHERNAME",
-    "MERCHTB",
-    "MiniCRMAction",
-    "OWNSTB",
-    "PENDINGINFOTB",
-    "PERSONADDRESSTB",
-    "PERSONJOBSTATUSTB",
-    "PERSONJOBTB",
-    "PERSONTB",
-    "PLANTADDRESSTB",
-    "PLANTCERTDETAIL",
-    "PLANTCOMMENT",
-    "PLANTFEECOMMENT",
-    "PLANTFEESTRUCTURE",
-    "PLANTFEESTRUCTUREOUT",
-    "PLANTHOLDTB",
-    "PLANTTB",
-    "PRIVATELABELBILL",
-    "PrivateLabelTemplate",
-    "ProducedIn1Tb",
-    "ProductJob",
-    "ProductJobLineItem",
-    "PurchaseOrder",
-    "RCTB",
-    "StripeCustomer",
-    "ThirdPartyBillingCompany",
-    "USEDIN1TB",
-    "VISIT",
-    "VISITSCOMMENT",
-    "YoshonInfo"
-]
+import importlib.util
+
+def get_api_endpoints_from_models():
+    """
+    Dynamically discover API endpoints from models.py class definitions
+    """
+    # Adjust the path to your models.py file
+    models_path = os.path.join(os.path.dirname(__file__),'..','database', 'models.py')
+    
+    # Add the parent directory to sys.path so relative imports work
+    import sys
+    parent_dir = os.path.join(os.path.dirname(__file__), '..')
+    parent_dir = os.path.abspath(parent_dir)
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+
+    spec = importlib.util.spec_from_file_location("models", models_path)
+    models = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(models)
+    
+    endpoints = []
+    for name, obj in inspect.getmembers(models):
+        if inspect.isclass(obj) and hasattr(obj, '__tablename__'):
+            # Use class name as endpoint (or __tablename__ if preferred)
+            endpoints.append(name)
+    
+    return sorted(endpoints)
+
+# Replace the hardcoded list with dynamic discovery
+API_ENDPOINTS = get_api_endpoints_from_models()
 
 class APITester:
     """Class to test API endpoints"""

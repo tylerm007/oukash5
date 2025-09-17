@@ -1,6 +1,5 @@
 use dashboard;
 
-    
 -- =============================================
 -- Additional Reference Data Inserts
 -- =============================================
@@ -8,17 +7,20 @@ use dashboard;
 -- Lane Roles (if not already exist)
 INSERT INTO LaneRoles (RoleCode, RoleDescription) VALUES
 ('NCRC', 'NCRC Coordinator'),
+('NCRCADMIN', 'NCRC Administrator'),
+('DISPATCH', 'Dispatcher Role'),
+('ADMIN', 'System Administrator'),
 ('LEGAL', 'Legal Department'),
 ('INSP', 'Inspection Team'),
 ('IAR', 'Ingredients Review Team'),
 ('PROD', 'Products Department'),
-('RC', 'Regional Coordinator'),
+('RC', 'Rabbinical Coordinator'),
 ('CERT', 'Certification Team'),
 ('BILLING', 'Billing Department'),
 ('IAR_MANAGER', 'IAR Manager'),
 ('PROD_MANAGER', 'Products Manager'),
 ('RC_MANAGER', 'RC Manager'),
-('RFR', 'Regional Field Representative'),
+('RFR', 'Rabbinical Field Representative'),
 ('SYSTEM', 'System Automated');
 
 
@@ -26,6 +28,11 @@ INSERT INTO LaneRoles (RoleCode, RoleDescription) VALUES
 INSERT INTO TaskTypes (TaskTypeCode, TaskTypeDescription) VALUES
 ('USER', 'User Task - Requires human interaction'),
 ('SYSTEM', 'System Task - Automated execution'),
+('START', 'Process Start Event'),
+('END', 'Process End Event'),
+('SERVICE', 'Service Task - External service call'),
+('SCRIPT', 'Script Task - Executes a script'),
+('CONDITION', 'Condition Task - Evaluates a condition'),
 ('GATEWAY', 'Gateway - Decision point');
 
 -- Task Categories
@@ -37,8 +44,8 @@ INSERT INTO TaskCategories (TaskCategoryCode, TaskCategoryDescription) VALUES
 ('COMPLETION', 'Task Completion Activities'),
 ('FINANCIAL', 'Financial and Billing Tasks'),
 ('ESCALATION', 'Escalation and Exception Handling'),
-('CONFIRMATION', 'Confirmation and Verification'),
 ('NOTIFICATION', 'System Notifications'),
+('CONFIRMATION', 'User Confirmation'),
 ('SCHEDULING', 'Scheduling and Planning'),
 ('VERIFICATION', 'Data and Status Verification');
  
@@ -68,7 +75,29 @@ INSERT INTO StageStatus (StatusCode, StatusDescription) VALUES
 ('ON_HOLD', 'Stage On Hold'),
 ('CANCELLED', 'Stage Cancelled');
 
+-- Task Status
+INSERT INTO TaskStatus (StatusCode, StatusDescription) VALUES
+('PENDING', 'Task Pending Execution'),
+('RUNNING', 'Task Currently Running'),
+('COMPLETED', 'Task Completed Successfully'),
+('FAILED', 'Task Failed'),
+('SKIPPED', 'Task Skipped'),
+('CANCELLED', 'Task Cancelled');
 
+-- Process Message Types
+INSERT INTO ProcessMessageTypes (MessageTypeCode, MessageTypeDescription) VALUES
+    ('STANDARD', 'Standard message'),
+    ('URGENT', 'Urgent message requiring immediate attention'),
+    ('SYSTEM', 'System-generated message'),
+    ('NOTIFICATION', 'Notification message');
+
+-- Task Comment Types
+INSERT INTO TaskCommentTypes (CommentTypeCode, CommentTypeDescription) VALUES
+    ('INTERNAL', 'Internal comment for staff use only'),
+    ('EXTERNAL', 'External comment visible to clients'),
+    ('SYSTEM', 'System-generated comment');
+
+GO
 -- =============================================
 -- Insert Process Definition and Tasks
 -- =============================================
@@ -76,9 +105,14 @@ INSERT INTO StageStatus (StatusCode, StatusDescription) VALUES
 -- =============================================
 -- 1. ProcessDefinition Insert
 -- =============================================
-INSERT INTO ProcessDefinitions (ProcessName, ProcessVersion, Description, IsActive, CreatedBy)
-VALUES ('OU Certification Workflow', '1.0', 'Complete workflow for OU Kosher certification process', 1, 'system');
 
+
+-- =============================================
+-- 1. ProcessDefinition Insert
+-- =============================================
+INSERT INTO ProcessDefinitions (ProcessName, ProcessVersion, Description, IsActive, CreatedBy)
+VALUES ('OU Application Init', '1.0', 'OU Kosher application init process', 1, 'SYSTEM');
+GO
 -- =============================================
 -- 2. LaneDefinition Inserts
 -- =============================================
@@ -91,21 +125,54 @@ VALUES
 (1, 'Products', 'Product evaluation and PLA processing', 5, 'PROD', 'system'),
 (1, 'Contract', 'Contract review and certification agreement', 3, 'RC', 'system'),
 (1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
+GO
+-- Insert Task Definitions for initial application Workflow
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
+VALUES
+    (1, 'Start_Application_Submitted', 'START', 'COMPLETION', 1, 1, 'SYSTEM', NULL, 'Application submitted and ready for admin review', 1,'system'),
+    (1, 'AssignNCRC', 'USER', 'ASSIGNMENT', 2, 1, 'DISPATCH', 2880, 'NCRC Dispatcher Select NCRC Admin', 0,'system'),
+    (1, 'verify Company', 'SCRIPT', 'CONFIRMATION', 3, 1, 'NCRCADMIN', 2880, 'Verify Company', 0,'system'),
+    (1, 'verify Plant', 'SCRIPT', 'CONFIRMATION', 4, 1, 'NCRCADMIN', 2880, 'Verify Plant', 0,'system'),
+    (1, 'verify Contact', 'USER', 'CONFIRMATION', 5, 1, 'NCRCADMIN', 2880, 'Verify Contact', 0,'system'),
+    (1, 'verify Product', 'USER', 'CONFIRMATION', 6, 1, 'NCRCADMIN', 2880, 'Verify Product', 0,'system'),
+    (1, 'verify Ingredients', 'USER', 'CONFIRMATION', 7, 1, 'NCRCADMIN', 2880, 'verify Ingredients', 0,'system'),
+    (1, 'All Verified Gateway', 'GATEWAY', 'ESCALATION', 8, 1, 'SYSTEM', NULL, 'All verifications completed', 1,'system'),
+    (1, 'to Withdrawn Y/N', 'CONDITION', 'APPROVAL', 9, 1, 'NCRC', 2880, 'Withdrawn Application Y/N', 0,'system'),
+    (1, 'Assign Product', 'USER', 'ASSIGNMENT', 10, 1, 'NCRC', 2880, 'Assign to Product', 0,'system'),
+    (1, 'Assign Ingredients', 'USER', 'ASSIGNMENT', 11, 1, 'NCRC', 2880, 'Assign to Ingredients', 0,'system'),
+    (1, 'Contact Customer', 'USER', 'COMMUNICATION', 12, 1, 'NCRC', 2880, 'Contact Customer', 0,'system'),
+    (1, 'Initial Collector', 'GATEWAY', 'ESCALATION', 13, 1, 'SYSTEM', NULL, 'Initial Collector', 1,'system'),
+    (1, 'End', 'END', 'COMPLETION', 14, 1, 'SYSTEM', NULL, 'end task', 1,'system');
 
+GO
 
+-- task flow for tasks in lane 1
+--INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
+EXEC sp_add_flow @from_name = 'Start_Application_Submitted', @to_name = 'AssignNCRC', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Company', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Plant', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Contract', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Product', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Ingredients', @condition = NULL;
+EXEC sp_add_flow @from_name = 'verify Company', @to_name = 'All Verified Gateway', @condition = NULL;
+EXEC sp_add_flow @from_name = 'verify Plant', @to_name = 'All Verified Gateway', @condition = NULL;
+EXEC sp_add_flow @from_name = 'verify Contact', @to_name = 'All Verified Gateway', @condition = NULL;
+EXEC sp_add_flow @from_name = 'verify Product', @to_name = 'All Verified Gateway', @condition = NULL;
+EXEC sp_add_flow @from_name = 'verify Ingredients', @to_name = 'All Verified Gateway', @condition = NULL;
+EXEC sp_add_flow @from_name = 'All Verified Gateway', @to_name = 'to Withdrawn Y/N', @condition = NULL;
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'End', @condition = 'YES';
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Product', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Ingredients', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Contact Customer', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Assign Product', @to_name = 'Initial Collector', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Assign Ingredients', @to_name = 'Initial Collector', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Contact Customer', @to_name = 'Initial Collector', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'End', @condition = NULL;
+GO
+-- ============================================= STOP HERE FOR TESTING =======================
 
--- Insert Task Definitions for Admin Completion Workflow
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete)
-VALUES 
-    (1, 'Start_Application_Submitted', 'Event', 'Start', 1, 1, 'System', NULL, 'Application submitted and ready for admin review', 1),
-    (1, 'Mark_Application_Complete', 'UserTask', 'Action', 10, 1, 'Admin', 2, 'Admin marks application as complete and ready for dispatch', 0),
-    (1, 'Admin_Action_Gateway', 'Gateway', 'Decision', 11, 1, 'Admin', NULL, 'Admin chooses next action: Dispatch, Undo, Comment, or Message', 0),
-    (1, 'Dispatch_To_Queue', 'ServiceTask', 'Action', 12, 1, 'Admin', 1, 'Send application to dispatcher review queue', 0),
-    (1, 'Undo_Completion', 'UserTask', 'Action', 13, 1, 'Admin', 1, 'Return application to incomplete status for further review', 0),
-    (1, 'Add_Internal_Comment', 'UserTask', 'Notification', 14, 1, 'Admin', 3, 'Add internal comment for audit trail', 0),
-    (1, 'Send_Message_To_Dispatcher', 'UserTask', 'Notification', 15, 1, 'Admin', 5, 'Send message to dispatcher about application status', 0),
-    (1, 'Application_Dispatched', 'Event', 'End', 16, 1, 'System', NULL, 'Application successfully dispatched to review queue', 1),
-    (1, 'Under_Review', 'Event', 'End', 17, 1, 'Dispatcher', NULL, 'Application is under review by dispatcher', 1);
+INSERT INTO ProcessDefinitions (ProcessName, ProcessVersion, Description, IsActive, CreatedBy)
+VALUES ('OU Certification Workflow', '1.0', 'Complete workflow for OU Kosher certification process', 1, 'system');
 
 
 -- =============================================
@@ -228,3 +295,96 @@ INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
 VALUES
 (29, 30, NULL, 1), -- Send KCM Invoice -> KCM Paid
 (30, 31, NULL, 1); -- KCM Paid -> Issue Certification
+GO
+-- =============================================
+-- STORED PROCEDURES
+-- =============================================
+
+-- Stored Procedure: sp_add_flow
+-- Purpose: Add a new task flow by looking up TaskDefinition IDs by TaskName
+-- Parameters: 
+--   @from_name - TaskName of the source task (can be NULL for start flows)
+--   @to_name - TaskName of the destination task
+--   @condition - Flow condition (optional)
+-- =============================================
+
+CREATE OR ALTER PROCEDURE sp_add_flow
+    @from_name NVARCHAR(100) = NULL,
+    @to_name NVARCHAR(100),
+    @condition NVARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @from_task_id INT = NULL;
+    DECLARE @to_task_id INT;
+    DECLARE @error_msg NVARCHAR(500);
+    
+    BEGIN TRY
+        -- Look up the ToTask ID (required)
+        SELECT @to_task_id = TaskId 
+        FROM TaskDefinitions 
+        WHERE TaskName = @to_name;
+        
+        IF @to_task_id IS NULL
+        BEGIN
+            SET @error_msg = 'ToTask not found: ' + @to_name;
+            THROW 50001, @error_msg, 1;
+        END
+        
+        -- Look up the FromTask ID (optional for start flows)
+        IF @from_name IS NOT NULL
+        BEGIN
+            SELECT @from_task_id = TaskId 
+            FROM TaskDefinitions 
+            WHERE TaskName = @from_name;
+            
+            IF @from_task_id IS NULL
+            BEGIN
+                SET @error_msg = 'FromTask not found: ' + @from_name;
+                THROW 50002, @error_msg, 1;
+            END
+        END
+        
+        -- Check if flow already exists
+        IF EXISTS (
+            SELECT 1 FROM TaskFlow 
+            WHERE FromTaskId = @from_task_id 
+            AND ToTaskId = @to_task_id
+            AND ISNULL(Condition, '') = ISNULL(@condition, '')
+        )
+        BEGIN
+            SET @error_msg = 'Flow already exists from ''' + ISNULL(@from_name, 'START') + ''' to ''' + @to_name + '''';
+            THROW 50003, @error_msg, 1;
+        END
+        
+        -- Insert the new flow
+        INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
+        VALUES (@from_task_id, @to_task_id, @condition, 0);
+        
+        -- Return success message
+        SELECT 
+            SCOPE_IDENTITY() as FlowId,
+            @from_task_id as FromTaskId,
+            @to_task_id as ToTaskId,
+            @from_name as FromTaskName,
+            @to_name as ToTaskName,
+            @condition as Condition,
+            'Flow added successfully' as Message;
+            
+    END TRY
+    BEGIN CATCH
+        -- Return error information
+        SELECT 
+            ERROR_NUMBER() as ErrorNumber,
+            ERROR_MESSAGE() as ErrorMessage,
+            ERROR_SEVERITY() as ErrorSeverity,
+            ERROR_STATE() as ErrorState;
+    END CATCH
+END;
+GO
+
+-- Example usage:
+-- EXEC sp_add_flow @from_name = 'Application Received', @to_name = 'Initial Review', @condition = NULL;
+-- EXEC sp_add_flow @from_name = NULL, @to_name = 'Application Received', @condition = NULL; -- Start flow
+-- EXEC sp_add_flow @from_name = 'Review Completed', @to_name = 'Send Approval', @condition = 'status = ''approved''';

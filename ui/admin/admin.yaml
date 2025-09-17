@@ -733,7 +733,6 @@ resources:
       name: TaskInstanceId
       search: true
       sort: true
-    - name: ParentInstanceId
     - name: StageId
       required: true
     - name: Status
@@ -748,7 +747,6 @@ resources:
     - name: ResultData
     - name: ErrorMessage
     - name: RetryCount
-    - name: ChildrenInstanceIds
     tab_groups:
     - direction: tomany
       fks:
@@ -757,19 +755,9 @@ resources:
       resource: TaskComment
     - direction: tomany
       fks:
-      - ParentInstanceId
-      name: TaskInstanceList
-      resource: TaskInstance
-    - direction: tomany
-      fks:
       - TaskInstanceId
       name: WorkflowHistoryList
       resource: WorkflowHistory
-    - direction: toone
-      fks:
-      - ParentInstanceId
-      name: ParentInstance
-      resource: TaskInstance
     - direction: toone
       fks:
       - StageId
@@ -894,6 +882,27 @@ resources:
       required: true
     - name: ModifiedDate
     - name: ModifiedBy
+    - name: verify_company
+      required: true
+      type: Boolean
+    - name: verify_plant
+      required: true
+      type: Boolean
+    - name: verify_contacts
+      required: true
+      type: Boolean
+    - name: verify_products
+      required: true
+      type: Boolean
+    - name: verify_ingredients
+      required: true
+      type: Boolean
+    - name: verify_quote
+      required: true
+      type: Boolean
+    - name: assign_ncrc_rep
+      required: true
+      type: Boolean
     - name: CompanyID
       required: true
     - name: PlantID
@@ -938,11 +947,6 @@ resources:
       - ApplicationID
       name: WFIngredientList
       resource: WFIngredient
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFPlantList
-      resource: WFPlant
     - direction: tomany
       fks:
       - ApplicationID
@@ -1201,25 +1205,6 @@ resources:
       resource: WFApplication
     type: WFIngredient
     user_key: IngredientName
-  WFPlant:
-    attributes:
-    - label: ' Plant I D*'
-      name: PlantID
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: PlantNumber
-    - name: CreatedDate
-      required: true
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFPlant
-    user_key: PlantID
   WFPriority:
     attributes:
     - label: ' Priority Description*'

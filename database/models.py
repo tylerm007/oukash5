@@ -57,6 +57,7 @@ class LaneRole(Base):  # type: ignore
 
     # child relationships (access children)
     LaneDefinitionList : Mapped[List["LaneDefinition"]] = relationship(back_populates="LaneRole1")
+
 class ProcessDefinition(Base):  # type: ignore
     __tablename__ = 'ProcessDefinitions'
     _s_collection_name = 'ProcessDefinition'  # type: ignore
@@ -132,7 +133,7 @@ class ProcessStatus(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="ProcessStatu")
+    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="ProcessStatus")
 
 
 
@@ -321,7 +322,7 @@ class WFRole(Base):  # type: ignore
 t_vw_ActiveWorkflows = Table(
     'vw_ActiveWorkflows', metadata,
     Column('InstanceId', Integer, nullable=False),
-    Column('ApplicationId', Unicode(50), nullable=False),
+    Column('ApplicationId', Integer, nullable=False),
     Column('ProcessName', Unicode(100), nullable=False),
     Column('Status', Unicode(10), nullable=False),
     Column('CurrentTask', Unicode(100)),
@@ -346,15 +347,6 @@ t_vw_TaskPerformance = Table(
 )
 
 
-t_vw_ValidationStatus = Table(
-    'vw_ValidationStatus', metadata,
-    Column('InstanceId', Integer, nullable=False),
-    Column('ApplicationId', Unicode(50), nullable=False),
-    Column('TotalValidations', Integer),
-    Column('PassedValidations', Integer),
-    Column('FailedValidations', Integer),
-    Column('ValidationStatus', String(12), nullable=False)
-)
 
 
 t_vw_WorkflowDashboard = Table(
@@ -421,11 +413,10 @@ class TaskDefinition(Base):  # type: ignore
     TaskType1 : Mapped["TaskType"] = relationship(back_populates=("TaskDefinitionList"))
 
     # child relationships (access children)
-    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="CurrentTask")
     TaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.FromTaskId]', back_populates="FromTask")
     ToTaskTaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.ToTaskId]', back_populates="ToTask")
     TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="TaskDef")
-
+    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="CurrentTask")
 
 
 class WFApplication(Base):  # type: ignore
@@ -447,6 +438,13 @@ class WFApplication(Base):  # type: ignore
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
     WFDashboardID = Column(ForeignKey('WF_Dashboard.ID'), server_default=text("1"))
+    verify_company = Column(Boolean, server_default=text("((0))"), nullable=False)
+    verify_plant = Column(Boolean, server_default=text("((0))"), nullable=False)
+    verify_contacts = Column(Boolean, server_default=text("((0))"), nullable=False)
+    verify_products = Column(Boolean, server_default=text("((0))"), nullable=False)
+    verify_ingredients = Column(Boolean, server_default=text("((0))"), nullable=False)
+    verify_quote = Column(Boolean, server_default=text("((0))"), nullable=False)
+    assign_ncrc_rep = Column(Boolean, server_default=text("((0))"), nullable=False)
 
     # parent relationships (access parent)
     WF_Priority : Mapped["WFPriority"] = relationship(back_populates=("WFApplicationList"))
@@ -462,7 +460,6 @@ class WFApplication(Base):  # type: ignore
     WFContactList : Mapped[List["WFContact"]] = relationship(back_populates="Application")
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFIngredientList : Mapped[List["WFIngredient"]] = relationship(back_populates="Application")
-    WFPlantList : Mapped[List["WFPlant"]] = relationship(back_populates="Application")
     WFProductList : Mapped[List["WFProduct"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
 
@@ -527,7 +524,7 @@ class ProcessInstance(Base):  # type: ignore
     CurrentTask : Mapped["TaskDefinition"] = relationship(back_populates=("ProcessInstanceList"))
     ProcessPriority : Mapped["ProcessPriority"] = relationship(back_populates=("ProcessInstanceList"))
     Process : Mapped["ProcessDefinition"] = relationship(back_populates=("ProcessInstanceList"))
-    ProcessStatu : Mapped["ProcessStatus"] = relationship(back_populates=("ProcessInstanceList"))
+    ProcessStatus : Mapped["ProcessStatus"] = relationship(back_populates=("ProcessInstanceList"))
 
     # child relationships (access children)
     ProcessMessageList : Mapped[List["ProcessMessage"]] = relationship(back_populates="Instance")
@@ -673,24 +670,6 @@ class WFFile(Base):  # type: ignore
     # child relationships (access children)
 
 
-
-class WFPlant(Base):  # type: ignore
-    __tablename__ = 'WF_Plants'
-    _s_collection_name = 'WFPlant'  # type: ignore
-
-    PlantID = Column(Integer, autoincrement=True, primary_key=True)
-    ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False, index=True)
-    PlantNumber = Column(Unicode(50))
-    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
-
-    # parent relationships (access parent)
-    Application : Mapped["WFApplication"] = relationship(back_populates=("WFPlantList"))
-
-    # child relationships (access children)
-   # WFProductList : Mapped[List["WFProduct"]] = relationship(back_populates="Plant")
-
-
-
 class WFQuote(Base):  # type: ignore
     __tablename__ = 'WF_Quotes'
     _s_collection_name = 'WFQuote'  # type: ignore
@@ -785,17 +764,13 @@ class TaskInstance(Base):  # type: ignore
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))
     RetryCount = Column(Integer, server_default=text("0"))
-    ParentInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'))
-    ChildrenInstanceIds = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
 
     # parent relationships (access parent)
-    ParentInstance : Mapped["TaskInstance"] = relationship(remote_side=[TaskInstanceId], back_populates=("TaskInstanceList"))
     Stage : Mapped["StageInstance"] = relationship(back_populates=("TaskInstanceList"))
     TaskStatus : Mapped["TaskStatus"] = relationship(back_populates=("TaskInstanceList"))
     TaskDef : Mapped["TaskDefinition"] = relationship(back_populates=("TaskInstanceList"))
 
     # child relationships (access children)
-    TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="ParentInstance")
     TaskCommentList : Mapped[List["TaskComment"]] = relationship(back_populates="TaskInstance")
     WorkflowHistoryList : Mapped[List["WorkflowHistory"]] = relationship(back_populates="TaskInstance")
 

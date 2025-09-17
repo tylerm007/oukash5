@@ -110,20 +110,23 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             # NOTE: we want to cascade the ResultData to subsequent tasks
             # depending on the workflow requirements
             task_def = row.TaskDef
-            parent_instances = row.ParentInstance
-            for parent in parent_instances:
-                if parent and parent.ResultData:
-                    logic_row.log(f'Inheriting ResultData from parent task {parent.TaskInstanceId}')
-                    row.ResultData.update(parent.ResultData)
+            parent_instances = None # row.ParentInstance
+            if parent_instances:
+                for parent in parent_instances:
+                    if parent and parent.ResultData:
+                        logic_row.log(f'Inheriting ResultData from parent task {parent.TaskInstanceId}')
+                        row.ResultData.update(parent.ResultData)
             # collect prior context from dependent tasks and create a union of ResultData
             application_id = row.Stage.ProcessInstance.ApplicationId
             se = python_engine.PythonScriptEngine()
-            context = {"data": row.to_dict()["ResultData"],"application_id": application_id, "task": row.to_to_dict(), "old_task": old_row.to_dict() if old_row else None, "logic_row": logic_row}
+            data = row.ResultData or {}
+            task = row.to_dict()
+            context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id}
             external_context = {"get_application": get_application, "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:
                 app_logger.info(f'Script executed successfully for task_id {task_id}')
-                row.ResultData = r.get('ResultData', None)
+                row.ResultData = r.get('data', None)
                 print(f'Result: {row.ResultData}')
 
         else:
@@ -131,7 +134,12 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
 
 def declare_logic():
     pass
-
+    # A TaskInstance can only be set to 'Pending' if all its dependencies are 'Completed'
+    # A TaskInstance can only be set to 'Completed' if it is currently 'Pending'
+    # A TaskInstance with TaskCategory 'START' can always be set to 'Completed' 
     Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete this task due to unmet dependencies not completed.")
+    
+    # TaskInstance PreScriptJson and PostScriptJson execution are called before and after row update
+    # they set the Result and ResultData fields respectively with context data
     Rule.row_event(on_class=models.TaskInstance,calling=call_script_engine_pre)
     Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

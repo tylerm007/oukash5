@@ -71,13 +71,6 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':ApplicationID/WFPlant', loadChildren: () => import('../WFPlant/WFPlant.module').then(m => m.WFPlantModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFPlant-detail-permissions'
-        }
-    }
-},{
     path: ':ApplicationID/WFProduct', loadChildren: () => import('../WFProduct/WFProduct.module').then(m => m.WFProductModule),
     data: {
         oPermission: {

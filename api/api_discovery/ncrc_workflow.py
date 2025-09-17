@@ -322,33 +322,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.commit()
         app_logger.info(f'User {user_id} assigned to TaskInstance: {task_instance_id}')
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
-    
-    def link_task(task_instances: list[TaskInstance]):
-        """Link tasks in the workflow"""
-        for task in task_instances:
-            task_def = task.TaskDef
-            fromFlows = task_def.TaskFlowList
-            toFlows = task_def.ToTaskTaskFlowList
-            if task_def and task_def.TaskCategory == 'START':
-                task.ParentInstance = None
-            elif task_def and task_def.TaskCategory == 'END':
-                task.ParentInstance = task.TaskInstanceId
-            else:
-                for tf in fromFlows:
-                    from_task_id = tf.FromTaskId
-                    parent_task = next((t for t in task_instances if t.TaskId == from_task_id), None)
-                    if parent_task:
-                        task.ParentInstance = parent_task.TaskInstanceId
-                        if parent_task.ChildrenInstanceIds:
-                            parent_task.ChildrenInstanceIds += f',{task.TaskInstanceId}'
-                        else:
-                            parent_task.ChildrenInstanceIds = f'{task.TaskInstanceId}'
-                        session.add(parent_task)
-                        #session.commit()    
-                #task.ChildrenInstanceIds = ''
-            session.add(task)
-        session.commit()
-        app_logger.info(f'Tasks linked: {[task.TaskInstanceId for task in task_instances]}')
 
     def set_start_task(task_instances: list[TaskInstance]):
         """Set the start task to completed - this will kick off the workflow to pending"""
@@ -376,7 +349,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 -H "Content-Type: application/json" \
                 -H "Authorization: Bearer <your_jwt_token>"
 
-        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks?process_name=Test" -Method GET -ContentType "application/json"
+        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks" -Method GET -ContentType "application/json"
             -Headers @{Authorization = "Bearer <your_jwt_token>"}
         Returns:
             json: response        
@@ -384,7 +357,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200 
         #data = request.args if request.args else {}
-        process_name = request.args.get('process_name',"OU Certification Workflow")
+        process_name = request.args.get('process_name',"OU Application Init")
         if not process_name:
             return jsonify({"status": "error", "message": "process_name is required"}), 400
         process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
@@ -399,10 +372,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             from_task = task.TaskFlowList
             to_task = task.ToTaskTaskFlowList
             category = task.TaskCategory
+            task_type = task.TaskType
         
-            if not from_task and category != 'END':
+            if not from_task and task_type != 'END':
                 task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no incoming TaskFlow"})
-            if not to_task and category != 'START':
+            if not to_task and task_type != 'START':
                 task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no outgoing TaskFlow"})
             #print(f'Task {task.TaskName} (ID: {task.TaskId}) is valid with {len(from_task)} incoming and {len(to_task)} outgoing TaskFlows')
         if task_flow_errors:
