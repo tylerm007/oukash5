@@ -103,7 +103,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     completed_cnt = 0
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
                     for task in task_instances:
-                        if task.TaskType in ['START', 'END','GATEWAY','SUBPROCESS']:
+                        if task.TaskDef.TaskType in ['START', 'END','GATEWAY','SUBPROCESS']:
                             continue
                         task_cnt += 1 if task.Status == 'Pending' else 0
                         completed_cnt += 1 if task.Status == 'Completed' else 0
