@@ -25,27 +25,31 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
     Verify that the number of requests for an application does not exceed the allowed limit.
     '''
     if logic_row.ins_upd_dlt == 'upd':
-        if row.verify_company == 1 and old_row.verify_company == 0:
-            company_id = row.CompanyID
+        company_id = row.CompanyID
+        plant_id = row.PlantID
+        if row.verify_company == 1 and old_row.verify_company == 0:    
             if company_id is None:
                 logic_row.log("CompanyID is None; cannot verify requests.")
                 raise Exception("CompanyID is required for verification.")
                 # COMPANYTB has CompanyID
-            company = models.CompanyTB.query.filter_by(CompanyID=company_id).first()
+            company = models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
             if not company:
                 logic_row.log(f"Company with ID {company_id} does not exist in Company Table.")
                 raise Exception(f"Company with ID {company_id} does not exist in Company Table.")
         elif row.verify_plant == 1 and old_row.verify_plant == 0:
-            plant_id = row.PlantID
             if plant_id is None:
                 logic_row.log("PlantID is None; cannot verify requests.")
                 raise Exception("PlantID is required for verification.")
             # PLANTTB has PlantID - should check OWNSTB Company-Plant
-            plant = models.PLANTTB.query.filter_by(PlantID=plant_id).first()
+            plant = models.PLANTTB.query.filter_by(PLANT_ID=plant_id).first()
             if not plant:
                 logic_row.log(f"Plant with ID {plant_id} does not exist in Plant Table.")
                 raise Exception(f"Plant with ID {plant_id} does not exist in Plant Table.")
-
+            if company_id is not None and plant_id is not None:
+                ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+                if not ownstb:
+                    logic_row.log(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
+                    raise Exception(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
 def declare_logic():
     pass
 
