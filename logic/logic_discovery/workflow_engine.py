@@ -40,7 +40,7 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
         return True  # Only allow setting to Pending from Completed
     elif logic_row.ins_upd_dlt == 'upd' and row.Status == 'Completed':
         task_def = row.TaskDef
-        if task_def.TaskCategory == 'START':
+        if task_def.TaskType == 'START':
             update_next_task(row, old_row, logic_row)
             return True  # START task can always be completed
         dependencies = task_def.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
@@ -70,23 +70,23 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     task_id = row.TaskInstanceId
     task_def = row.TaskDef
     if not task_def:
-        logic_row.log(f"No task definition found for TaskId {task.TaskId}")
+        logic_row.log(f"No task definition found for TaskId {row.TaskId} in update_next_task")
         return
-    logic_row.log(f'Task {task_id} completed. Checking for next tasks to set to isPending.')
-    call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
+    logic_row.log(f'Task {task_id} completed. Checking for next tasks to set to Pending.')
+    #call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
     for t in task_def.TaskFlowList:
         next_task_def = t.ToTaskId
         next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=row.StageId).first()
-        if next_task_instance:
-            next_task_instance.Status = 'Pending'
+        if next_task_instance and next_task_instance.Status == 'NEW':
+            next_task_instance.Status = 'PENDING'
             #session.add(next_task_instance)
             #session.commit()
-            logic_row.log(f'Next task {next_task_instance.TaskInstanceId} set to isPending')
+            logic_row.log(f'Next task {next_task_instance.TaskInstanceId} set to PENDING')
             logic_row.update(reason="Start task",row=next_task_instance)
 
-            app_logger.info(f'Next task {next_task_instance.TaskInstanceId} set to isPending')
-    
-    return 
+            app_logger.info(f'Next task {next_task_instance.TaskInstanceId} set to PENDING')
+
+    return
 
 def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
@@ -100,7 +100,7 @@ def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstan
     script = task_def.PostScriptJson or ''
     logic_row.log(f'PostScriptJson: {script}')
     if script != '':
-        row.ResultData = call_script_engine(row, old_row, logic_row, script)
+        row.Result = call_script_engine(row, old_row, logic_row, script)
 
 def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow, script: str):
 
@@ -125,9 +125,11 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             external_context = {"get_application": get_application, "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:
+                result = r.get('data', None)
                 app_logger.info(f'Script executed successfully for task_id {task_id}')
-                row.ResultData = r.get('data', None)
-                print(f'Result: {row.ResultData}')
+                row.ResultData = result
+                logic_row.log(f'Script execution Result: {result}')
+                return result
 
         else:
             app_logger.warning(f'No task found with task_id {task_id}') 
