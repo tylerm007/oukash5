@@ -151,7 +151,7 @@ GO
 EXEC sp_add_flow @from_name = 'Start_Application_Submitted', @to_name = 'AssignNCRC', @condition = NULL;
 EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Company', @condition = NULL;
 EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Plant', @condition = NULL;
-EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Contract', @condition = NULL;
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Contact', @condition = NULL;
 EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Product', @condition = NULL;
 EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'verify Ingredients', @condition = NULL;
 EXEC sp_add_flow @from_name = 'verify Company', @to_name = 'All Verified Gateway', @condition = NULL;
