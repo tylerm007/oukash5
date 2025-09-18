@@ -36,7 +36,7 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
             if not company:
                 logic_row.log(f"Company with ID {company_id} does not exist in Company Table.")
                 raise Exception(f"Company with ID {company_id} does not exist in Company Table.")
-        elif row.verify_plant == 1 and old_row.verify_plant == 0:
+        if row.verify_plant == 1 and old_row.verify_plant == 0:
             if plant_id is None:
                 logic_row.log("PlantID is None; cannot verify requests.")
                 raise Exception("PlantID is required for verification.")

@@ -734,7 +734,7 @@ class StageInstance(Base):  # type: ignore
     CompletedCount = Column(Integer)
     TotalCount = Column(Integer)
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
-    CreatedBy = Column(Unicode(100), default_text=text('system'), nullable=False)
+    CreatedBy = Column(Unicode(100), server_default=text('system'), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
 

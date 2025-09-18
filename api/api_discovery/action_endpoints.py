@@ -77,7 +77,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ActionBy='system',
             ActionCommentText=f'Role {role} assigned to {assignee} for application {app_id}',
             ActionReason=f'Role {role} assigned to {assignee} for application {app_id}'
-        )
+        )   
         session.add(task_comment)
         session.commit()
         '''
@@ -89,7 +89,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
             admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
-            add_role_assignment(app_id, 'NCRCADMIN', admin_assignee)
+            add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
     
     def add_role_assignment(application_id, role, assignee):

@@ -62,7 +62,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     '''
     When a task is COMPLETED, update the next tasks in the workflow to be 'isPending' ready to start.
     '''
-    if logic_row.ins_upd_dlt != 'upd' or row.Status != 'COMPLETED':
+    if logic_row.ins_upd_dlt != 'upd' and row.Status != 'COMPLETED' and old_row.Status != row.Status:
         return # only proceed if the task was updated to 'COMPLETED'
     task_id = row.TaskInstanceId
     task_def = row.TaskDef
@@ -137,6 +137,7 @@ def declare_logic():
     pass
     # A TaskInstance can only be set to 'Pending' if all its from dependencies are 'COMPLETED'
     # A TaskInstance can only be set to 'COMPLETED' if it is currently 'Pending'
+
     # A TaskInstance with TaskCategory 'START' can always be set to 'COMPLETED' 
     Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete this task due to unmet dependencies not COMPLETED.")
     

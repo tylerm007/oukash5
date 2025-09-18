@@ -54,7 +54,7 @@ def declare_logic():
 
         Grant.process_updates(logic_row=logic_row)
         did_stamping = False
-        enable_stamping = True
+        enable_stamping = False # set True to enable date/user stamping
         if enable_stamping:  # #als:  DATE / USER STAMPING
             row = logic_row.row
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedDate"):
