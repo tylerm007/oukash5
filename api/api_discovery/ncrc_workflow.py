@@ -73,41 +73,40 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
         if not process_def:
                 raise Exception(f'Process definition not found: {process_name}') 
-        process_id = process_def.ProcessId
-        print(f'ProcessDefinition ProcessId: {process_id}')
-
- 
+        process_definition_id = process_def.ProcessId
+        app_logger.info(f'ProcessDefinition ProcessId: {process_definition_id}')
         # Create new Process InstanceId for this Application
         process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
         if process_instance is None:
             process_instance = ProcessInstance(
-                ProcessId=process_id,
+                ProcessId=process_definition_id,
                 ApplicationId=int(application_id),
+                Status='RUNNING',
                 CurrentTaskId=start_task_id,
                 StartedBy=started_by,
                 Priority=priority
             )
             session.add(process_instance)
             session.commit()
+        else:
+            app_logger.warning(f'ProcessInstance already exists for ApplicationId: {application_id}')
+            return jsonify({"status": "error", "message": f"ProcessInstance already exists for ApplicationId: {application_id}"}), 400
         # Get StartTaskId
-        row = TaskDefinition.query.filter_by(ProcessId=process_id, TaskType='START').order_by(TaskDefinition.Sequence).first()
-        start_task_id = row.TaskId if row else None
-        print(f'Start TaskDefinition TaskId: {start_task_id}') 
+        task_definition = TaskDefinition.query.filter_by(ProcessId=process_definition_id, TaskType='START').first()
+        start_task_id = task_definition.TaskId if task_definition else None
+        app_logger.info(f'Start TaskDefinition TaskId: {start_task_id}') 
         if start_task_id is None:
                 raise Exception(f'Start Task definition not found for process: {process_name}')
         
-        #else:
-        #    return jsonify({"status": "error", "message": f"Workflow already started for application {application_id}"}), 400
-             
         process_instance_id = process_instance.InstanceId
         # Insert into ProcessInstances
         app_logger.info(f'New ProcessInstance InstanceId: {process_instance_id}')
 
 
-        # TODO - use TaskFlow to only create starting tasks?
-        LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_id).all()
+        # use TaskFlow to only create starting tasks
+        LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_definition_id).all()
         for lane in LaneDefinitions:
-                print(f'LaneDefinition: {lane.LaneName}')
+                app_logger.info(f'Create Stage from LaneDefinition: {lane.LaneName}')
                 stage_instance = StageInstance(
                         ProcessInstanceId=process_instance_id,
                         LaneId=lane.LaneId,
@@ -117,13 +116,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 session.add(stage_instance)
                 session.commit()
 
-                rows = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
+                task_definition = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
                 task_instances = []
-                for row in rows:
-                        print(f'TaskDefinition: {row.TaskName}')
-                        status = 'Pending' # if row.TaskCategory != 'START' else 'Completed'
+                for task_definition in task_definition:
+                        app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
+                        status = 'NEW' #if task_definition.TaskType != 'START' else 'COMPLETED'
                         task_instance = TaskInstance(
-                                TaskId=row.TaskId,
+                                TaskId=task_definition.TaskId,
                                 StageId=stage_instance.StageInstanceId,
                                 Status=status,
                                 CreatedDate=datetime.utcnow(),
@@ -132,13 +131,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         )
                         session.add(task_instance)
                         session.commit()
-                        app_logger.info(f'Created TaskInstance: {row.TaskName}')
+                        app_logger.info(f'Created TaskInstance: {task_definition.TaskName}')
                         task_instances.append(task_instance)
                         wf_history = WorkflowHistory(
                                 InstanceId=process_instance_id,
                                 TaskInstanceId=task_instance.TaskInstanceId,
-                                Action=row.TaskName,
-                                NewStatus='ACTIVE',
+                                Action=task_definition.TaskName,
+                                NewStatus='NEW',
                                 ActionBy=started_by,
                                 ActionReason=f'New application id: {application_id} Task added to workflow'
                         )
@@ -146,7 +145,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         session.commit()
                         
         #link_task(task_instances)
-        #set_start_task(task_instances)        
+        set_start_task(task_instances)        
         return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
     
     @app.route('/complete_task', methods=['POST','OPTIONS'])
@@ -328,15 +327,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """Set the start task to completed - this will kick off the workflow to pending"""
         for task_instance in task_instances:
             task_def = task_instance.TaskDef
-            if task_def and task_def.TaskCategory == 'START':
+            if task_def and task_def.TaskType == 'START':
                 new_task = TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
-                new_task.Status = 'Completed'
+                new_task.Status = 'COMPLETED'
                 new_task.CompletedAt = datetime.utcnow()
                 new_task.CompletedBy = 'system'
                 session.add(new_task)
                 session.commit()
                 app_logger.info(f'Start TaskInstance set to Completed: {task_instance.TaskInstanceId}')
-                break
+                return
 
     
     @app.route('/validate_tasks', methods=['GET','OPTIONS'])
