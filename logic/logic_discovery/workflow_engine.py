@@ -92,15 +92,17 @@ def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstanc
     task_def = row.TaskDef
     script = task_def.PreScriptJson or ''
     logic_row.log(f'PreScriptJson: {script}')
-    if script != '':
+    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'PENDING':
         row.Result = call_script_engine(row, old_row, logic_row, script)
+        logic_row.log(f'PreScriptJson Result: {row.Result}')
 
 def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PostScriptJson or ''
     logic_row.log(f'PostScriptJson: {script}')
-    if script != '':
+    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
         row.Result = call_script_engine(row, old_row, logic_row, script)
+        logic_row.log(f'PostScriptJson Result: {row.Result}')
 
 def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow, script: str):
 

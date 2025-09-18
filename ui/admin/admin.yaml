@@ -328,12 +328,12 @@ resources:
       resource: ProcessMessage
     - direction: tomany
       fks:
-      - ProcessInstanceId
+      - InstanceId
       name: StageInstanceList
       resource: StageInstance
     - direction: tomany
       fks:
-      - ProcessInstanceId
+      - InstanceId
       name: TaskCommentList
       resource: TaskComment
     - direction: tomany
@@ -359,7 +359,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: ProcessStatu
+      name: ProcessStatus
       resource: ProcessStatus
     type: ProcessInstance
     user_key: InstanceId
@@ -513,7 +513,7 @@ resources:
     tab_groups:
     - direction: tomany
       fks:
-      - StageId
+      - StageInstanceId
       name: TaskInstanceList
       resource: TaskInstance
     - direction: toone
@@ -909,7 +909,7 @@ resources:
     tab_groups:
     - direction: tomany
       fks:
-      - ApplicationId
+      - ApplicationID
       name: RoleAssigmentList
       resource: RoleAssigment
     - direction: tomany

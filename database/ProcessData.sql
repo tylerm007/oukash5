@@ -26,6 +26,8 @@ INSERT INTO LaneRoles (RoleCode, RoleDescription) VALUES
 
 -- Task Types
 INSERT INTO TaskTypes (TaskTypeCode, TaskTypeDescription) VALUES
+('CONFIRM', 'User Confirmation Task - Requires human interaction'),
+('ACTION', 'User Action Task - Requires human interaction'),
 ('USER', 'User Task - Requires human interaction'),
 ('SYSTEM', 'System Task - Automated execution'),
 ('START', 'Process Start Event'),
@@ -130,17 +132,17 @@ GO
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
     (1, 'Start_Application_Submitted', 'START', 'COMPLETION', 1, 1, 'SYSTEM', NULL, 'Application submitted and ready for admin review', 1,'system'),
-    (1, 'AssignNCRC', 'USER', 'ASSIGNMENT', 2, 1, 'DISPATCH', 2880, 'NCRC Dispatcher Select NCRC Admin', 0,'system'),
-    (1, 'verify Company', 'SCRIPT', 'CONFIRMATION', 3, 1, 'NCRCADMIN', 2880, 'Verify Company', 0,'system'),
-    (1, 'verify Plant', 'SCRIPT', 'CONFIRMATION', 4, 1, 'NCRCADMIN', 2880, 'Verify Plant', 0,'system'),
-    (1, 'verify Contact', 'USER', 'CONFIRMATION', 5, 1, 'NCRCADMIN', 2880, 'Verify Contact', 0,'system'),
-    (1, 'verify Product', 'USER', 'CONFIRMATION', 6, 1, 'NCRCADMIN', 2880, 'Verify Product', 0,'system'),
-    (1, 'verify Ingredients', 'USER', 'CONFIRMATION', 7, 1, 'NCRCADMIN', 2880, 'verify Ingredients', 0,'system'),
+    (1, 'AssignNCRC', 'ACTION', 'ASSIGNMENT', 2, 1, 'DISPATCH', 2880, 'NCRC Dispatcher Select NCRC Admin', 0,'system'),
+    (1, 'verify Company', 'CONFIRM', 'CONFIRMATION', 3, 1, 'NCRCADMIN', 2880, 'Verify Company', 0,'system'),
+    (1, 'verify Plant', 'CONFIRM', 'CONFIRMATION', 4, 1, 'NCRCADMIN', 2880, 'Verify Plant', 0,'system'),
+    (1, 'verify Contact', 'CONFIRM', 'CONFIRMATION', 5, 1, 'NCRCADMIN', 2880, 'Verify Contact', 0,'system'),
+    (1, 'verify Product', 'CONFIRM', 'CONFIRMATION', 6, 1, 'NCRCADMIN', 2880, 'Verify Product', 0,'system'),
+    (1, 'verify Ingredients', 'CONFIRM', 'CONFIRMATION', 7, 1, 'NCRCADMIN', 2880, 'verify Ingredients', 0,'system'),
     (1, 'All Verified Gateway', 'GATEWAY', 'ESCALATION', 8, 1, 'SYSTEM', NULL, 'All verifications completed', 1,'system'),
     (1, 'to Withdrawn Y/N', 'CONDITION', 'APPROVAL', 9, 1, 'NCRC', 2880, 'Withdrawn Application Y/N', 0,'system'),
-    (1, 'Assign Product', 'USER', 'ASSIGNMENT', 10, 1, 'NCRC', 2880, 'Assign to Product', 0,'system'),
-    (1, 'Assign Ingredients', 'USER', 'ASSIGNMENT', 11, 1, 'NCRC', 2880, 'Assign to Ingredients', 0,'system'),
-    (1, 'Contact Customer', 'USER', 'COMMUNICATION', 12, 1, 'NCRC', 2880, 'Contact Customer', 0,'system'),
+    (1, 'Assign Product', 'CONFIRM', 'ASSIGNMENT', 10, 1, 'NCRC', 2880, 'Assign to Product', 0,'system'),
+    (1, 'Assign Ingredients', 'CONFIRM', 'ASSIGNMENT', 11, 1, 'NCRC', 2880, 'Assign to Ingredients', 0,'system'),
+    (1, 'Contact Customer', 'CONFIRM', 'COMMUNICATION', 12, 1, 'NCRC', 2880, 'Contact Customer', 0,'system'),
     (1, 'Initial Collector', 'GATEWAY', 'ESCALATION', 13, 1, 'SYSTEM', NULL, 'Initial Collector', 1,'system'),
     (1, 'End', 'END', 'COMPLETION', 14, 1, 'SYSTEM', NULL, 'end task', 1,'system');
 
