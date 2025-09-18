@@ -41,7 +41,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400
 
         app_logger.info(f'Assign Role {role} to {assignee} for application {app_id} task {task_id}')
-        # Here you would add the logic to assign the role to the user for the application   
+        # Here you would add the loigic to assign the role to the user for the application   
         application = models.WFApplication.query.filter_by(ApplicationID=app_id).first()
         if not application:
             return jsonify({"error": f"Application with ID {app_id} not found"}), 404
@@ -49,6 +49,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not task:    
             return jsonify({"error": f"Task with ID {task_id} not found"}), 404
         application.AssignedTo = assignee
+        application.AssignedDate = datetime.utcnow()
+        application.Status = 'INP'
         session.add(application)
         session.commit()
          # Log the role assignment as a TaskComment 
