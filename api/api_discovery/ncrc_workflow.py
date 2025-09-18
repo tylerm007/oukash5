@@ -324,12 +324,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
 
     def set_start_task(task_instances: list[TaskInstance]):
-        """Set the start task to completed - this will kick off the workflow to pending"""
+        """Set the start task to pending and autocomplete - this will kick off the workflow to pending"""
         for task_instance in task_instances:
             task_def = task_instance.TaskDef
             if task_def and task_def.TaskType == 'START':
                 new_task = TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
-                new_task.Status = 'COMPLETED'
+                new_task.Status = 'PENDING'
                 new_task.CompletedAt = datetime.utcnow()
                 new_task.CompletedBy = 'system'
                 session.add(new_task)
