@@ -20,7 +20,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
     @app.route('/assignRole', methods=['OPTIONS','POST'])
-    @jwt_required
+    @jwt_required()
     def assignRole():
         """        
             new custom end point to retrive admin for given ncrc
@@ -30,7 +30,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         Test it with:
 
-           curl -X 'POST' http://localhost:5656/assignRole -d '{"applicationId":1, "role":"NCRC", "user":"S.Benjamin"}' -H 'accept: application/json' -H 'Authorization: Bearer <your_token>'
+            $body = @{
+                appId = 1
+                taskId = 1
+                role = "NCRC"
+                assignee = "S.Benjamin"
+            } | ConvertTo-Json
+
+            Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4"}
+            
+
+           curl -X 'POST' http://localhost:5656/assignRole -d '{"appId":1, "taskId":1, "role":"NCRC", "assignee":"S.Benjamin"}' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4'
         """
         data = request.get_json()
         app_id = data.get('appId')   
@@ -68,8 +78,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.commit()
         '''
         task.Status = 'COMPLETED'
-        task.CompletedAt = datetime.utcnow()
-        task.CompletedBy = 'system' 
+        task.CompletedDate = datetime.utcnow()
         session.add(task)
         session.commit()
         app_logger.info(f'TaskInstance set to Completed: {task.TaskInstanceId}')
