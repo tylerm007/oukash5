@@ -37,7 +37,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 assignee = "S.Benjamin"
             } | ConvertTo-Json
 
-            Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4"}
+            Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIxNzgxMCwianRpIjoiZTM3NzY2NTgtNmQyZS00MGNlLWJlMjEtM2QxNjE0NTU5NTQ3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjE3ODEwLCJleHAiOjE3NTgyMzExMzB9.JY3xPlkUddDIwvB1AYjO5ZiYUSyObxf7a-l9vAICe4Q"}
             
 
            curl -X 'POST' http://localhost:5656/assignRole -d '{"appId":1, "taskId":1, "role":"NCRC", "assignee":"S.Benjamin"}' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4'
@@ -86,4 +86,30 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.add(task)
         session.commit()
         app_logger.info(f'TaskInstance set to Completed: {task.TaskInstanceId}')
+        add_role_assignment(app_id, role, assignee)
+        if role == 'NCRC':
+            admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
+            add_role_assignment(app_id, 'NCRCADMIN', admin_assignee)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
+    
+    def add_role_assignment(application_id, role, assignee):
+        """Add a role assignment to the database.
+        Args:
+            application_id (int): The ID of the application.
+            role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
+            assignee (str): The user to whom the role is assigned.
+        """
+        role_assignment = models.RoleAssigment(
+            ApplicationId=application_id,
+            Role=role,
+            Assignee=assignee,
+            CreatedDate=datetime.utcnow()
+        )
+        session.add(role_assignment)
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            app_logger.error(f'Error assigning role {role} to {assignee} for application {application_id}: {e}')
+        else:
+            app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
