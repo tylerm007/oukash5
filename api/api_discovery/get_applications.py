@@ -1,5 +1,5 @@
 from datetime import datetime
-from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
+from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -56,7 +56,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             modified_date = app_dict.get("ModifiedDate")
             days_between = calc_days_between(created_date, modified_date)
             #process_id = app_dict.get("ProcessId")
-      
+            assigned_roles = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
             app_row = {
                 "id": application_id,
                 "company": app_source.get("CompanyName"),
@@ -75,13 +75,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "notes": len(app_messages) if app_messages else 0,
                 "aiSuggestions": {},
                 "assignedRC": app_source.get("AssignedTo","Unassigned"),
-                "assignedRoles": [{"DISPATCH": "S.Benjamin"}, 
-                        {"NCRC": "S.Benjamin"},
-                        {"NCRCADMIN": "S.Benjamin"},
-                        {"LEGAL": "S.Benjamin"},
-                        {"IAR": "S.Benjamin"},
-                        {"PRODUCT": "S.Benjamin"},
-                        {"RFR": "S.Benjamin"}]
+                "assignedRoles": [{ role.WF_Role.UserRole: role.Assignee} for role in assigned_roles]
             }
             
           
