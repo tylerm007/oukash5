@@ -1081,35 +1081,38 @@ class COMPANYTB(Base):  # type: ignore
     ChometzEmailSentDate = Column(DATETIME2)
     allow_client_generated_ids = True
 
-    # Child relationships (access children)
+    # parent relationships (access parent)
+
+    # child relationships (access children)
     COMPANYADDRESSTBList : Mapped[List["COMPANYADDRESSTB"]] = relationship(back_populates="COMPANY_TB")
-    #CompanyApplicationList : Mapped[List["CompanyApplication"]] = relationship(back_populates="ApplicationCompany")
     PLANTTBList : Mapped[List["PLANTTB"]] = relationship(back_populates="COMPANY_TB")
-    LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
     OWNSTBList : Mapped[List["OWNSTB"]] = relationship(back_populates="COMPANY_TB")
     PLANTADDRESSTBList : Mapped[List["PLANTADDRESSTB"]] = relationship(back_populates="COMPANY_TB")
+    PLANTCERTDETAILList : Mapped[List["PLANTCERTDETAIL"]] = relationship(back_populates="COMPANY_TB")
+    PLANTCOMMENTList : Mapped[List["PLANTCOMMENT"]] = relationship(back_populates="COMPANY_TB")
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="COMPANY_TB")
-    #LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
-
+    LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
+    
 class COMPANYADDRESSTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_ADDRESS_TB'
     _s_collection_name = 'COMPANYADDRESSTB'  # type: ignore
     __table_args__ = (
         Index('compaddress2', 'COMPANY_ID', 'ADDRESS_SEQ_NUM', 'ACTIVE'),
     )
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40))
     ATTN = Column(String(40))
-    STREET1 = Column(String(60), server_default=text("('')"))
-    STREET2 = Column(String(60), server_default=text("('')"))
+    STREET1 = Column(String(60), server_default=text(""))
+    STREET2 = Column(String(60), server_default=text(""))
     STREET3 = Column(String(60))
-    CITY = Column(String(40), server_default=text("('')"))
-    STATE = Column(String(25), server_default=text("('')"))
+    CITY = Column(String(40), server_default=text(""))
+    STATE = Column(String(25), server_default=text(""))
     ZIP = Column(String(18))
-    COUNTRY = Column(String(25), server_default=text("('')"))
+    COUNTRY = Column(String(25), server_default=text(""))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
     ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
@@ -1140,7 +1143,7 @@ class PLANTTB(Base):  # type: ignore
     DoNotAttach = Column(String(1))
     OtherCertification = Column(String(500))
     PrimaryCompany = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
-    DesignatedRFR = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'), ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
+    DesignatedRFR = Column(Integer) #Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
     ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
     ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
@@ -1158,7 +1161,9 @@ class PLANTTB(Base):  # type: ignore
     OWNSTBList : Mapped[List["OWNSTB"]] = relationship(back_populates="PLANT_TB")
     # Child Relationships
     PLANTADDRESSTBList : Mapped[List["PLANTADDRESSTB"]] = relationship(back_populates="PLANT_TB")
-
+    PLANTCERTDETAILList : Mapped[List["PLANTCERTDETAIL"]] = relationship(back_populates="PLANT_TB")
+    PLANTCOMMENTList : Mapped[List["PLANTCOMMENT"]] = relationship(back_populates="PLANT_TB")
+    #USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="PLANT_TB")
 
 class OWNSTB(Base):  # type: ignore
     __tablename__ = 'OWNS_TB'
@@ -1190,17 +1195,17 @@ class OWNSTB(Base):  # type: ignore
     NoRFRneeded = Column(String(1), server_default=text("N"), nullable=False)
     LOCtext = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     MoveToGP = Column(String(1), server_default=text("N"))
-    DefaultPO = Column(String(75), server_default=text("('')"))
-    VisitBilling = Column(String(10), server_default=text("('')"))
-    PlantName = Column(String(100), server_default=text("('')"))
+    DefaultPO = Column(String(75), server_default=text(""))
+    VisitBilling = Column(String(10), server_default=text(""))
+    PlantName = Column(String(100), server_default=text(""))
     ShareAB = Column(String(1), server_default=text("N"))
     POexpiry = Column(Date)
     BillingName = Column(String(100))
-    PLANT_BILL_TO_NAME = Column(String(80), server_default=text("('')"))
+    PLANT_BILL_TO_NAME = Column(String(80), server_default=text(""))
     AutoCertification = Column(Boolean, server_default=text("0"), nullable=False)
     primaryCompany = Column(Integer)
     Override = Column(Boolean, server_default=text("0"), nullable=False)
-    VisitPO = Column(String(75), server_default=text("('')"))
+    VisitPO = Column(String(75), server_default=text(""))
     VisitPOexpiry = Column(DATETIME)
     ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
     ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
@@ -1213,6 +1218,9 @@ class OWNSTB(Base):  # type: ignore
     PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("OWNSTBList"))
     #PERSON_JOB_TB : Mapped["PERSONJOBTB"] = relationship(back_populates=("OWNSTBList"))
     
+    #Children
+    USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="OWNS_TB")
+    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="OWNS_TB")
 
 class PLANTADDRESSTB(Base):  # type: ignore
     __tablename__ = 'PLANT_ADDRESS_TB'
@@ -1224,13 +1232,13 @@ class PLANTADDRESSTB(Base):  # type: ignore
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40), nullable=False)
     ATTN = Column(String(40))
-    STREET1 = Column(String(60), server_default=text("('')"))
+    STREET1 = Column(String(60), server_default=text(""))
     STREET2 = Column(String(60))
     STREET3 = Column(String(60))
-    CITY = Column(String(40), server_default=text("('')"))
-    STATE = Column(String(25), server_default=text("('')"))
+    CITY = Column(String(40), server_default=text(""))
+    STATE = Column(String(25), server_default=text(""))
     ZIP = Column(String(25))
-    COUNTRY = Column(String(25), server_default=text("('')"))
+    COUNTRY = Column(String(25), server_default=text(""))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
@@ -1241,8 +1249,8 @@ class PLANTADDRESSTB(Base):  # type: ignore
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("PLANTADDRESSTBList"))
     PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("PLANTADDRESSTBList"))
-    USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="OWNS_TB")
-    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="OWNS_TB")
+
+    # child relationships (access children)
 
 
 class USEDIN1TB(Base):  # type: ignore
@@ -1263,10 +1271,10 @@ class USEDIN1TB(Base):  # type: ignore
     END_DATE = Column(DATETIME)
     TIMESTAMP = Column(BINARY(8))
     STATUS = Column(String(20))
-    COMMENT = Column(String(255), server_default=text("('')"))
+    COMMENT = Column(String(255), server_default=text(""))
     ACTIVE = Column(Integer, index=True)
     OWNS_ID = Column(ForeignKey('OWNS_TB.ID'), index=True)
-    RAW_MATERIAL_CODE = Column(String(500), server_default=text("('')"))
+    RAW_MATERIAL_CODE = Column(String(500), server_default=text(""))
     ENTERED_BY = Column(String(75), server_default=text("suser_sname()"))
     Ing_Name_ps = Column(String(75))
     JobID = Column(Integer)
@@ -1288,6 +1296,7 @@ class USEDIN1TB(Base):  # type: ignore
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("USEDIN1TBList"))
     label_tb : Mapped["LabelTb"] = relationship(back_populates=("USEDIN1TBList"))
     OWNS_TB : Mapped["OWNSTB"] = relationship(back_populates=("USEDIN1TBList"))
+    #PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("USEDIN1TBList"))
 
     # child relationships (access children)
 
@@ -1305,7 +1314,7 @@ class MERCHTB(Base):  # type: ignore
     MERCHANDISE_ID = Column(Integer, server_default=text("0"), primary_key=True)
     NAME = Column(String(225), nullable=False)
     AS_STIPULATED = Column(String(1), server_default=text("N"))
-    STIPULATION = Column(String(1000), server_default=text("('')"))
+    STIPULATION = Column(String(1000), server_default=text(""))
     CONFIDENTIAL = Column(String(1), server_default=text("N"))
     RETAIL = Column(String(1))
     FOODSERVICE = Column(String(1))
@@ -1324,16 +1333,16 @@ class MERCHTB(Base):  # type: ignore
     CONFIDENTIAL_TEXT = Column(String(500))
     GROUP_COMMENT = Column(String(100))
     STATUS = Column(String(25))
-    LOC_CATEGORY = Column(String(80), server_default=text("('')"))
+    LOC_CATEGORY = Column(String(80), server_default=text(""))
     LOC_SELECTED = Column(String(80))
     COMMENTS_SCHED_B = Column(String(250))
-    PROD_NUM = Column(String(25), server_default=text("('')"))
+    PROD_NUM = Column(String(25), server_default=text(""))
     INTERMEDIATE_MIX = Column(String(1), server_default=text("N"))
     ALTERNATE_NAME = Column(String(80))
     BrochoCode = Column(SMALLINT, server_default=text("0"))
     Brocho2Code = Column(SMALLINT, server_default=text("0"))
-    CAS = Column(String(30), server_default=text("('')"))
-    Symbol = Column(String(50), server_default=text("('')"))
+    CAS = Column(String(30), server_default=text(""))
+    Symbol = Column(String(50), server_default=text(""))
     LOC = Column(Date)
     UKDdisplay = Column(String(1), server_default=text("('Y')"))
     Reviewed = Column(Boolean)
@@ -1347,12 +1356,7 @@ class MERCHTB(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    #FormulaProductList : Mapped[List["FormulaProduct"]] = relationship(back_populates="MERCH_TB")
-    #MERCHOTHERNAMEList : Mapped[List["MERCHOTHERNAME"]] = relationship(back_populates="MERCH_TB")
-    #YoshonInfoList : Mapped[List["YoshonInfo"]] = relationship(back_populates="Merch")
-    #LabelTbList : Mapped[List["LabelTb"]] = relationship(back_populates="MERCH_TB")
-    #FormulaComponentList : Mapped[List["FormulaComponent"]] = relationship(back_populates="MERCH_TB")
-    #FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="MERCH_TB")
+    FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="MERCH_TB")
 
 
 
@@ -1403,7 +1407,7 @@ class LabelTb(Base):  # type: ignore
     GRP = Column(String(10), server_default=text("3"))
     SEAL_SIGN_FLAG = Column(String(1))
     BRAND_NAME = Column(String(100), index=True)
-    SRC_MAR_ID = Column(Integer, nullable=False)
+    SRC_MAR_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     LABEL_NAME = Column(String(225), index=True)
     INDUSTRIAL = Column(String(1))
     CONSUMER = Column(String(1))
@@ -1423,7 +1427,7 @@ class LabelTb(Base):  # type: ignore
     LOChold = Column(String(1))
     LOCholdDate = Column(DATETIME)
     PassoverSpecialProduction = Column(String(1), server_default=text("N"))
-    COMMENT = Column(String(1000), server_default=text("('')"))
+    COMMENT = Column(String(1000), server_default=text(""))
     DisplayNewlyCertifiedOnWeb = Column(String(1), server_default=text("N"))
     Status = Column(String(25))
     ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
@@ -1444,45 +1448,13 @@ class LabelTb(Base):  # type: ignore
     #COMPANY_TB1 : Mapped["COMPANYTB"] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates=("LabelTbList1"), overlaps="COMPANY_TB,LabelTbList")
 
     # child relationships (access children)
-    #FormulaComponentList : Mapped[List["FormulaComponent"]] = relationship(back_populates="label_tb")
-    #LabelCommentList : Mapped[List["LabelComment"]] = relationship(back_populates="Label")
-    #LabelOptionList : Mapped[List["LabelOption"]] = relationship(foreign_keys='[LabelOption.LabelID]', back_populates="label_tb")
-    #LabelOptionList1 : Mapped[List["LabelOption"]] = relationship(foreign_keys='[LabelOption.LabelID]', back_populates="label_tb1", overlaps="LabelOptionList")
+    FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="label_tb")
+    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="label_tb")
     #LabelBarcodeList : Mapped[List["LabelBarcode"]] = relationship(back_populates="label")
     #FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="label_tb")
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="label_tb")
     ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="label_tb")
 
-
-
-class PLANTADDRESSTB(Base):  # type: ignore
-    __tablename__ = 'PLANT_ADDRESS_TB'
-    _s_collection_name = 'PLANTADDRESSTB'  # type: ignore
-
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
-    PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False, index=True)
-    ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
-    TYPE = Column(String(40), nullable=False)
-    ATTN = Column(String(40))
-    STREET1 = Column(String(60), server_default=text("('')"))
-    STREET2 = Column(String(60))
-    STREET3 = Column(String(60))
-    CITY = Column(String(40), server_default=text("('')"))
-    STATE = Column(String(25), server_default=text("('')"))
-    ZIP = Column(String(25))
-    COUNTRY = Column(String(25), server_default=text("('')"))
-    TIMESTAMP = Column(BINARY(8))
-    ACTIVE = Column(Integer)
-    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
-
-    # parent relationships (access parent)
-    COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("PLANTADDRESSTBList"))
-    PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("PLANTADDRESSTBList"))
-
-    # child relationships (access children)
 
 class PLANTCERTDETAIL(Base):  # type: ignore
     __tablename__ = 'PLANT_CERT_DETAIL'
@@ -1490,6 +1462,7 @@ class PLANTCERTDETAIL(Base):  # type: ignore
     __table_args__ = (
         Index('IX_PLANT_CERT_DETAIL', 'COMPANY_ID', 'PLANT_ID', 'COMPANY_FEE_ID'),
     )
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, primary_key=True)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
@@ -1517,6 +1490,7 @@ class PLANTCOMMENT(Base):  # type: ignore
     __table_args__ = (
         Index('XPKPLANT_COMMENT', 'PLANT_ID', 'COMPANY_ID', 'COMMENT_ID', unique=True),
     )
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
@@ -1534,6 +1508,7 @@ class PLANTCOMMENT(Base):  # type: ignore
 class FormulaSubmissionComponent(Base):  # type: ignore
     __tablename__ = 'FormulaSubmissionComponents'
     _s_collection_name = 'FormulaSubmissionComponent'  # type: ignore
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     FormulaSubmissionID = Column(Integer, nullable=False)
@@ -1558,6 +1533,7 @@ class FormulaSubmissionComponent(Base):  # type: ignore
 class FormulaSubmissionPlant(Base):  # type: ignore
     __tablename__ = 'FormulaSubmissionPlants'
     _s_collection_name = 'FormulaSubmissionPlant'  # type: ignore
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     FormulaSubmissionID = Column(Integer, nullable=False)
@@ -1570,6 +1546,7 @@ class FormulaSubmissionPlant(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
+    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="FormulaSubmissionPlant")
     ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="FormulaSubmissionPlant")
 
 class ProducedIn1Tb(Base):  # type: ignore
@@ -1585,27 +1562,28 @@ class ProducedIn1Tb(Base):  # type: ignore
         Index('EyePR', 'LabelID', 'STATUS', 'OWNS_ID', 'ACTIVE', 'DIST'),
         Index('idxProducedIn1EndDate', 'END_DATE', 'ACTIVE')
     )
-
+    __bind_key__ = 'ou'
+    
     ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
     PROC_LINE_ID = Column(Integer, server_default=text("((1))"))
     START_DATE = Column(DATETIME)
     END_DATE = Column(DATETIME)
-    REGULAR = Column(String(1), server_default=text("('')"))
+    REGULAR = Column(String(1), server_default=text(""))
     SPECIAL = Column(String(1))
     PASSOVER = Column(String(20))
     PRIVATE_LABEL_FEE = Column(SMALLMONEY)
     TIMESTAMP = Column(BINARY(8))
     STATUS = Column(String(20))
-    SPECIAL_STATUS_1 = Column(String(40), server_default=text("('')"))
+    SPECIAL_STATUS_1 = Column(String(40), server_default=text(""))
     RC_1 = Column(String(80))
     DATE_1 = Column(DATETIME)
-    SPECIAL_STATUS_2 = Column(String(40), server_default=text("('')"))
+    SPECIAL_STATUS_2 = Column(String(40), server_default=text(""))
     RC_2 = Column(String(80))
     DATE_2 = Column(DATETIME)
-    SPECIAL_STATUS_3 = Column(String(40), server_default=text("('')"))
+    SPECIAL_STATUS_3 = Column(String(40), server_default=text(""))
     RC_3 = Column(String(80))
     DATE_3 = Column(DATETIME)
-    SPECIAL_STATUS_4 = Column(String(40), server_default=text("('')"))
+    SPECIAL_STATUS_4 = Column(String(40), server_default=text(""))
     RC_4 = Column(String(80))
     DATE_4 = Column(DATETIME)
     ACTIVE = Column(Integer)

@@ -26,7 +26,20 @@ def get_application(application_id):
     if not application:
         return None, jsonify({"success": False, "message": f"No application found with ApplicationID {application_id}"}), 404
     return application
-
+def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, logic_row: LogicRow):
+    '''
+    Validate that all prior tasks in the workflow are completed before allowing this task to proceed.
+    '''
+    dependencies = taskDef.TaskFlowList  # List of TaskFlow objects where this task is the ToTask
+    if dependencies is None or len(dependencies) == 0:
+        return True  # No dependencies, so it's valid to proceed
+    for dependency in dependencies:
+        from_task_def = dependency.FromTaskId
+        from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def, StageId=stage_id).first()
+        if from_task_instance and from_task_instance.Status != 'COMPLETED':
+            logic_row.log(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskInstanceId} is not COMPLETED.")
+            return False
+    return True
 def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     '''
     Test if a task can be COMPLETED based on its dependencies.
@@ -34,20 +47,23 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['NEW', 'PENDING'] and old_row.Status != row.Status:
         task_def = row.TaskDef
         if task_def.AutoComplete:
+            is_valid = validate_prior_tasks(task_def, row.StageId, logic_row)
+            if not is_valid:
+                raise Exception(f"Cannot complete task {row.TaskInstanceId} due to unmet dependencies not COMPLETED.")  
             logic_row.log(f"Task {row.TaskInstanceId} is Pending and AutoComplete is enabled.")
             row.Status = 'COMPLETED'
             update_next_task(row, old_row, logic_row)
         return True  # Only allow setting to Pending from COMPLETED
     elif logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and old_row.Status in ['NEW', 'PENDING']:
         task_def = row.TaskDef
-        dependencies = task_def.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
-        for dependency in dependencies:
-            from_task_def = dependency.FromTaskId
-            to_task_def = dependency.ToTaskId
-            from_task_instance = models.TaskInstance.query.filter_by(TaskId=from_task_def, StageId=row.StageId).first()
-            if from_task_instance and from_task_instance.Status != 'COMPLETED':
-                logic_row.log(f"Cannot complete task {row.TaskInstanceId} because dependency task {from_task_instance.TaskInstanceId} is not COMPLETED.")
-                return False
+        if not task_def:
+            logic_row.log(f"No task definition found for TaskId {row.TaskId} in test_complete_task")
+            return False
+        is_valid = validate_prior_tasks(task_def, row.StageId, logic_row)
+        if not is_valid:
+            raise Exception(f"Cannot complete task {row.TaskInstanceId} due to unmet dependencies not COMPLETED.")
+        update_next_task(row, old_row, logic_row)
+        return True  # Allow setting to COMPLETED from NEW or PENDING
     elif logic_row.ins_upd_dlt == 'upd' and old_row.Status == 'COMPLETED' and row.Status != 'COMPLETED':
         logic_row.log(f"Task {row.TaskInstanceId} was COMPLETED and is now being changed to {row.Status}.")
         # If a task is reverted from COMPLETED to another status, we might want to handle that
@@ -60,7 +76,7 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
 
 def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     '''
-    When a task is COMPLETED, update the next tasks in the workflow to be 'isPending' ready to start.
+    When a task is COMPLETED, update the next tasks in the workflow to be 'PENDING' ready to start.
     '''
     if logic_row.ins_upd_dlt != 'upd' and row.Status != 'COMPLETED' and old_row.Status != row.Status:
         return # only proceed if the task was updated to 'COMPLETED'
@@ -71,26 +87,22 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
         return
     logic_row.log(f'Task {task_id} COMPLETED. Checking for next tasks to set to Pending.')
     #call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
-    for t in task_def.TaskFlowList:
+    for t in task_def.ToTaskTaskFlowList:
         next_task_def = t.ToTaskId
         next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=row.StageId).first()
-        if next_task_instance and next_task_instance.Status == 'NEW':
-            next_task_instance.Status = 'PENDING'
-            #session.add(next_task_instance)
-            #session.commit()
-            logic_row.log(f'Next task {next_task_instance.TaskInstanceId} set to PENDING')
-            logic_row.update(reason="Start task",row=next_task_instance)
-
-            app_logger.info(f'Next task {next_task_instance.TaskInstanceId} set to PENDING')
+        if next_task_instance and next_task_instance.Status in ['NEW', 'PENDING']:
+            next_task_instance.Status = 'COMPLETED' if next_task_instance.TaskDef.AutoComplete else 'PENDING'
+            logic_row.log(f'Next task {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
+            logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
 
     return
 
 def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PreScriptJson or ''
-    logic_row.log(f'PreScriptJson: {script}')
+    #logic_row.log(f'PreScriptJson: {script}')
     if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'PENDING':
-        row.Result = call_script_engine(row, old_row, logic_row, script)
+        #row.Result = call_script_engine(row, old_row, logic_row, script)
         logic_row.log(f'PreScriptJson Result: {row.Result}')
 
 def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):

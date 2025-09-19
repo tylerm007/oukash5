@@ -50,6 +50,7 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
                 if not ownstb:
                     logic_row.log(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
                     raise Exception(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
+    return True
 def declare_logic():
     pass
 

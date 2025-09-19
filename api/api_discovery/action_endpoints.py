@@ -20,7 +20,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
     @app.route('/assignRole', methods=['OPTIONS','POST'])
-    @jwt_required()
+    #@jwt_required()
     def assignRole():
         """        
             new custom end point to retrive admin for given ncrc
