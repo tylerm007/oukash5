@@ -1,4 +1,5 @@
 from datetime import datetime
+from turtle import title
 from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from flask import app, request, jsonify, session
 import logging
@@ -113,8 +114,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "description": task.TaskDef.Description if task and task.TaskDef else " ",
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
                                 "TaskInstanceId": task.TaskInstanceId,
-                                "PreScript": task.TaskDef.PreScriptJson if task and task.TaskDef else {},
-                                "PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
+                                "PreScript": getPreScript(task),
+                                #"PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
                                 "taskRoles": [
                                     { "taskRole": task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" },
                                 ],
@@ -147,3 +148,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
            
             result.append(app_row)
         return jsonify({"status": "ok", "data": result}), 200
+    def getPreScript(task: TaskInstance):
+        script = task.TaskDef.PreScriptJson if task and task.TaskDef else {}
+        from jinja2 import Template
+        if script and isinstance(script, str) and '{{' in script:
+            template = Template(script)
+            title = task.TaskDef.TaskName if task and task.TaskDef else "Unknown Task Name"
+            description = task.TaskDef.Description if task and task.TaskDef else " "
+            application_id = task.Stage.ProcessInstance.ApplicationId if task and task.Stage and task.Stage.ProcessInstance else None
+            task_id = task.TaskInstanceId if task else None
+            script = template.render(Title=title, Description=description, ApplicationID=application_id, TaskInstanceId=task_id)
+
+        return script
+    def getPostScript(task: TaskInstance):
+        return task.TaskDef.PostScriptJson if task and task.TaskDef else {}

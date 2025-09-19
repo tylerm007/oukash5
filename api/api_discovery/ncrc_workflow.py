@@ -82,7 +82,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ProcessId=process_definition_id,
                 ApplicationId=int(application_id),
                 Status='RUNNING',
-                CurrentTaskId=start_task_id,
+                #CurrentTaskId=start_task_id,
                 StartedBy=started_by,
                 Priority=priority
             )

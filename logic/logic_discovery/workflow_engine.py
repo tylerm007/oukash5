@@ -31,14 +31,14 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     '''
     Test if a task can be COMPLETED based on its dependencies.
     '''
-    if logic_row.ins_upd_dlt == 'upd' and row.Status == 'PENDING' and old_row.Status != row.Status:
+    if logic_row.ins_upd_dlt == 'upd' and row.Status in ['NEW', 'PENDING'] and old_row.Status != row.Status:
         task_def = row.TaskDef
         if task_def.AutoComplete:
             logic_row.log(f"Task {row.TaskInstanceId} is Pending and AutoComplete is enabled.")
             row.Status = 'COMPLETED'
             update_next_task(row, old_row, logic_row)
         return True  # Only allow setting to Pending from COMPLETED
-    elif logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and old_row.Status == 'PENDING':
+    elif logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and old_row.Status in ['NEW', 'PENDING']:
         task_def = row.TaskDef
         dependencies = task_def.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
         for dependency in dependencies:
