@@ -1,13 +1,32 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
+import { COMPANYADDRESSTBCardComponent } from './COMPANYADDRESSTB-card/COMPANYADDRESSTB-card.component';
+
 import { COMPANYTBCardComponent } from './COMPANYTB-card/COMPANYTB-card.component';
 
 import { CompanyApplicationCardComponent } from './CompanyApplication-card/CompanyApplication-card.component';
 
+import { FormulaProductCardComponent } from './FormulaProduct-card/FormulaProduct-card.component';
+
+import { FormulaSubmissionComponentCardComponent } from './FormulaSubmissionComponent-card/FormulaSubmissionComponent-card.component';
+
+import { FormulaSubmissionPlantCardComponent } from './FormulaSubmissionPlant-card/FormulaSubmissionPlant-card.component';
+
+import { LabelTbCardComponent } from './LabelTb-card/LabelTb-card.component';
+
 import { LaneDefinitionCardComponent } from './LaneDefinition-card/LaneDefinition-card.component';
 
-import { LaneRoleCardComponent } from './LaneRole-card/LaneRole-card.component';
+import { MERCHTBCardComponent } from './MERCHTB-card/MERCHTB-card.component';
 
+import { OWNSTBCardComponent } from './OWNSTB-card/OWNSTB-card.component';
+
+import { PLANTADDRESSTBCardComponent } from './PLANTADDRESSTB-card/PLANTADDRESSTB-card.component';
+
+import { PLANTCERTDETAILCardComponent } from './PLANTCERTDETAIL-card/PLANTCERTDETAIL-card.component';
+
+import { PLANTCOMMENTCardComponent } from './PLANTCOMMENT-card/PLANTCOMMENT-card.component';
+
+import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
 import { ProcessDefinitionCardComponent } from './ProcessDefinition-card/ProcessDefinition-card.component';
 
 import { ProcessInstanceCardComponent } from './ProcessInstance-card/ProcessInstance-card.component';
@@ -19,6 +38,8 @@ import { ProcessMessageTypeCardComponent } from './ProcessMessageType-card/Proce
 import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPriority-card.component';
 
 import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-card.component';
+
+import { ProducedIn1TbCardComponent } from './ProducedIn1Tb-card/ProducedIn1Tb-card.component';
 
 import { RoleAssigmentCardComponent } from './RoleAssigment-card/RoleAssigment-card.component';
 
@@ -42,6 +63,8 @@ import { TaskStatusCardComponent } from './TaskStatus-card/TaskStatus-card.compo
 
 import { TaskTypeCardComponent } from './TaskType-card/TaskType-card.component';
 
+import { USEDIN1TBCardComponent } from './USEDIN1TB-card/USEDIN1TB-card.component';
+
 import { WFActivityLogCardComponent } from './WFActivityLog-card/WFActivityLog-card.component';
 
 import { WFActivityStatusCardComponent } from './WFActivityStatus-card/WFActivityStatus-card.component';
@@ -62,12 +85,9 @@ import { WFDashboardCardComponent } from './WFDashboard-card/WFDashboard-card.co
 
 import { WFFileCardComponent } from './WFFile-card/WFFile-card.component';
 
-import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
 import { WFFileTypeCardComponent } from './WFFileType-card/WFFileType-card.component';
 
 import { WFIngredientCardComponent } from './WFIngredient-card/WFIngredient-card.component';
-
-import { WFPlantCardComponent } from './WFPlant-card/WFPlant-card.component';
 
 import { WFPriorityCardComponent } from './WFPriority-card/WFPriority-card.component';
 
@@ -180,12 +200,43 @@ export const MENU_CONFIG: MenuRootItem[] = [
     
     {id: 'legacy', name: ' Legacy Tables', icon: 'remove_red_eye', opened: false,
         items: [
-		
-	        { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
-            ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
+        { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
+        ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
     
-     ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
-
+        ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
+	, { id: 'COMPANYADDRESSTB', name: 'COMPANYADDRESSTB', icon: 'view_list', route: '/main/COMPANYADDRESSTB' }
+   
+        ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
+    
+        ,{ id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
+    
+        ,{ id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
+    
+        ,{ id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
+    
+        ,{ id: 'LabelTb', name: 'LABELTB', icon: 'view_list', route: '/main/LabelTb' }
+         ,{ id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
+    
+        ,{ id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
+    
+        ,{ id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
+    
+	,{ id: 'MERCHTB', name: 'MERCHTB', icon: 'view_list', route: '/main/MERCHTB' }
+    
+        ,{ id: 'OWNSTB', name: 'OWNSTB', icon: 'view_list', route: '/main/OWNSTB' }
+    
+        ,{ id: 'PLANTADDRESSTB', name: 'PLANTADDRESSTB', icon: 'view_list', route: '/main/PLANTADDRESSTB' }
+    
+        ,{ id: 'PLANTCERTDETAIL', name: 'PLANTCERTDETAIL', icon: 'view_list', route: '/main/PLANTCERTDETAIL' }
+    
+        ,{ id: 'PLANTCOMMENT', name: 'PLANTCOMMENT', icon: 'view_list', route: '/main/PLANTCOMMENT' }
+    
+        ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
+	
+	,{ id: 'ProducedIn1Tb', name: 'PRODUCEDIN1TB', icon: 'view_list', route: '/main/ProducedIn1Tb' }
+    
+    	 ,{ id: 'USEDIN1TB', name: 'USEDIN1TB', icon: 'view_list', route: '/main/USEDIN1TB' }
+    
         ]
     },
     { id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings' }
@@ -195,23 +246,47 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
 export const MENU_COMPONENTS = [
 
-    CompanyApplicationCardComponent
+    COMPANYADDRESSTBCardComponent
+
+    ,COMPANYTBCardComponent
+
+    ,CompanyApplicationCardComponent
+
+    ,FormulaProductCardComponent
+
+    ,FormulaSubmissionComponentCardComponent
+
+    ,FormulaSubmissionPlantCardComponent
+
+    ,LabelTbCardComponent
+
     ,LaneDefinitionCardComponent
 
-    , LaneRoleCardComponent
+    ,MERCHTBCardComponent
 
-    , ProcessDefinitionCardComponent
+    ,OWNSTBCardComponent
+
+    ,PLANTADDRESSTBCardComponent
+
+    ,PLANTCERTDETAILCardComponent
+
+    ,PLANTCOMMENTCardComponent
+
+    ,PLANTTBCardComponent
+
+    ,ProcessDefinitionCardComponent
 
     , ProcessInstanceCardComponent
 
     , ProcessMessageCardComponent
 
-    ,COMPANYTBCardComponent
-    , ProcessMessageTypeCardComponent
+    ,ProcessMessageTypeCardComponent
 
     , ProcessPriorityCardComponent
 
     , ProcessStatusCardComponent
+
+    ,ProducedIn1TbCardComponent
 
     ,RoleAssigmentCardComponent
 
@@ -236,6 +311,7 @@ export const MENU_COMPONENTS = [
 
     , TaskTypeCardComponent
 
+    ,USEDIN1TBCardComponent
 
     , WFActivityLogCardComponent
 
@@ -255,14 +331,11 @@ export const MENU_COMPONENTS = [
 
     , WFDashboardCardComponent
 
-    ,PLANTTBCardComponent
-    , WFFileCardComponent
+    ,WFFileCardComponent
 
     , WFFileTypeCardComponent
 
-    , WFIngredientCardComponent
-
-    , WFPlantCardComponent
+    ,WFIngredientCardComponent
 
     , WFPriorityCardComponent
 

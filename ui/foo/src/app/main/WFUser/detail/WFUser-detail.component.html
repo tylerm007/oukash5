@@ -1,0 +1,109 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="Username" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="WFUser_form_edit" 
+        service="WFUser" 
+        entity="WFUser" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="Username" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #Username attr="Username" label=" Username" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-list-picker 
+        attr="Role"
+        service="WFRole" 
+        entity="WFRoleType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="UserRole" 
+        value-column-type="VARCHAR"  
+        keys="UserRole" 
+        columns="UserRole;Role;UserRole" 
+        title="Role"
+        visible-columns="UserRole;UserRole" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-text-input #Email attr="Email" label="Email" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #FullName attr="FullName" label="FullName" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
+      
+      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-date-input #LastLoginDate attr="LastLoginDate" value-type="string" label="LastLoginDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="ROLEASSIGMENT-Assignee">
+    <div layout-padding>
+      <o-table 
+        attr="RoleAssigmentTable" 
+        service="RoleAssigment" 
+        entity="RoleAssigment" 
+        keys="RoleAssigmentID"
+        parent-keys="Assignee:Username"
+        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        horizontal-scroll="yes"
+        detail-form-route="RoleAssigment" 
+        edit-form-route="RoleAssigment"
+        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        sort-columns="RoleAssigmentID" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="Username:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Assignee attr="Assignee" title="Assignee" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

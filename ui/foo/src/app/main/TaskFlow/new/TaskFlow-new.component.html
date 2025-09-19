@@ -1,0 +1,58 @@
+<o-form #TaskFlowForm attr="TaskFlow_form_insert" service="TaskFlow" entity="TaskFlow"
+keys="FlowId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #FlowId attr="FlowId" label=" Flow Id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="FromTaskId"
+        service="TaskDefinition" 
+        entity="TaskDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskId" 
+        value-column-type="INTEGER"  
+        keys="TaskId" 
+        columns="TaskId;FromTaskId;TaskName" 
+        title="FromTask"
+        visible-columns="TaskId;TaskName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ToTaskId"
+        service="TaskDefinition" 
+        entity="TaskDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskId" 
+        value-column-type="INTEGER"  
+        keys="TaskId" 
+        columns="TaskId;ToTaskId;TaskName" 
+        title="ToTask"
+        visible-columns="TaskId;TaskName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #Condition attr="Condition" label="Condition" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-checkbox #IsDefault attr="IsDefault" label="IsDefault" read-only="no" enabled="yes"></o-checkbox>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

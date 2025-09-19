@@ -1,0 +1,99 @@
+<o-form #StageInstanceForm attr="StageInstance_form_insert" service="StageInstance" entity="StageInstance"
+keys="StageInstanceId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #StageInstanceId attr="StageInstanceId" label=" Stage Instance Id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="LaneId"
+        service="LaneDefinition" 
+        entity="LaneDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="LaneId" 
+        value-column-type="INTEGER"  
+        keys="LaneId" 
+        columns="LaneId;LaneId;LaneName" 
+        title="Lane"
+        visible-columns="LaneId;LaneName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ProcessInstanceId"
+        service="ProcessInstance" 
+        entity="ProcessInstanceType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="InstanceId" 
+        value-column-type="INTEGER"  
+        keys="InstanceId" 
+        columns="InstanceId;ProcessInstanceId;InstanceId" 
+        title="ProcessInstance"
+        visible-columns="InstanceId;InstanceId" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="Status"
+        service="StageStatus" 
+        entity="StageStatusType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="StatusCode" 
+        value-column-type="VARCHAR"  
+        keys="StatusCode" 
+        columns="StatusCode;Status;StatusDescription" 
+        title="Status"
+        visible-columns="StatusCode;StatusDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-date-input #StartedDate attr="StartedDate" value-type="string" label="StartedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #CompletedDate attr="CompletedDate" value-type="string" label="CompletedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #DurationDays attr="DurationDays" label="DurationDays" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #RetryCount attr="RetryCount" label="RetryCount" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #AssignedTo attr="AssignedTo" label="AssignedTo" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #AssignedBy attr="AssignedBy" label="AssignedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #AssignedDate attr="AssignedDate" value-type="string" label="AssignedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #CompletedCount attr="CompletedCount" label="CompletedCount" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #TotalCount attr="TotalCount" label="TotalCount" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

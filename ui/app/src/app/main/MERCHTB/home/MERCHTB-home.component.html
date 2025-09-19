@@ -1,0 +1,57 @@
+<o-form-layout-manager attr="MERCHTB" mode="tab" title="MERCHTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="MERCHTBTable" 
+            service="MERCHTB" 
+            entity="MERCHTB" 
+            title="MERCHTB"
+            keys="MERCHANDISE_ID"
+            columns="NAME;MERCHANDISE_ID;COMPANY_ID;RMC;ACTIVE;STATUS;TIMESTAMP;PrimaryLabelID;Category;ValidFromTime;ValidToTime;CHANGESET_ID;IsPrimary;SecondaryCategory" 
+            header-actions="R;D"
+            visible-columns="NAME;MERCHANDISE_ID;COMPANY_ID;RMC;ACTIVE;STATUS;TIMESTAMP;PrimaryLabelID;Category;ValidFromTime;ValidToTime;CHANGESET_ID;IsPrimary;SecondaryCategory"  
+            sort-columns="NAME" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #NAME attr="NAME" title="Merchandise Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MERCHANDISE_ID attr="MERCHANDISE_ID" title="MERCHANDISE_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #COMPANY_ID attr="COMPANY_ID" title="COMPANY_ID" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #RMC attr="RMC" title="RMC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #STATUS attr="STATUS" title="STATUS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PrimaryLabelID attr="PrimaryLabelID" title="PrimaryLabelID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Category attr="Category" title="Category" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #IsPrimary attr="IsPrimary" title="IsPrimary" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #SecondaryCategory attr="SecondaryCategory" title="SecondaryCategory" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

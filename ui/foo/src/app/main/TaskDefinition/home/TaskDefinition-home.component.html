@@ -1,0 +1,90 @@
+<o-form-layout-manager attr="TaskDefinition" mode="tab" title="TASKDEFINITION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="TaskDefinitionTable" 
+            service="TaskDefinition" 
+            entity="TaskDefinition" 
+            title="TASKDEFINITION"
+            keys="TaskId"
+            columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired" 
+            header-actions="R;D"
+            visible-columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired"  
+            sort-columns="TaskName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #TaskName attr="TaskName" title=" Task Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="LaneId" title="Lane">
+    <o-table-cell-renderer-service attr="LaneId" 
+        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
+        parent-keys="TaskId:LaneId"
+        value-column="LaneName" keys="LaneId"
+        visible-columns="LaneName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ProcessId" title="Process">
+    <o-table-cell-renderer-service attr="ProcessId" 
+        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
+        parent-keys="TaskId:ProcessId"
+        value-column="ProcessName" keys="ProcessId"
+        visible-columns="ProcessName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #TaskCategory attr="TaskCategory" title="TaskCategory" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TaskType attr="TaskType" title="TaskType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Sequence attr="Sequence" title="Sequence" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsParallel" title="IsParallel">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #AssigneeRole attr="AssigneeRole" title="AssigneeRole" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #EstimatedDurationMinutes attr="EstimatedDurationMinutes" title="EstimatedDurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="AutoComplete" title="AutoComplete">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="IsRequired" title="IsRequired">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

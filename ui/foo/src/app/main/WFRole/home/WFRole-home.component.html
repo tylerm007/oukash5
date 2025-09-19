@@ -1,0 +1,35 @@
+<o-form-layout-manager attr="WFRole" mode="tab" title="WFROLE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFRoleTable" 
+            service="WFRole" 
+            entity="WFRole" 
+            title="WFROLE"
+            keys="UserRole"
+            columns="UserRole;Role;CreatedDate" 
+            header-actions="R;D"
+            visible-columns="UserRole;Role;CreatedDate"  
+            sort-columns="UserRole" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #UserRole attr="UserRole" title=" User Role" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

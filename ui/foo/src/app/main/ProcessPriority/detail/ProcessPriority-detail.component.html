@@ -1,0 +1,99 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="PriorityDescription" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="ProcessPriority_form_edit" 
+        service="ProcessPriority" 
+        entity="ProcessPriority" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="PriorityCode" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #PriorityDescription attr="PriorityDescription" label=" Priority Description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #PriorityCode attr="PriorityCode" label="PriorityCode" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="PROCESSINSTANCE-Priority">
+    <div layout-padding>
+      <o-table 
+        attr="ProcessInstanceTable" 
+        service="ProcessInstance" 
+        entity="ProcessInstance" 
+        keys="InstanceId"
+        parent-keys="Priority:PriorityCode"
+        columns="InstanceId;CurrentTaskId;Priority;ProcessId;Status;StartedDate;StartedBy;CompletedDate;CompletedBy;ContextData;ApplicationId"  
+        horizontal-scroll="yes"
+        detail-form-route="ProcessInstance" 
+        edit-form-route="ProcessInstance"
+        visible-columns="InstanceId;CurrentTaskId;Priority;ProcessId;Status;StartedDate;StartedBy;CompletedDate;CompletedBy;ContextData;ApplicationId"  
+        sort-columns="InstanceId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #InstanceId attr="InstanceId" title=" Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="CurrentTaskId" title="CurrentTask">
+    <o-table-cell-renderer-service attr="CurrentTaskId" 
+        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
+        parent-keys="PriorityCode:CurrentTaskId"
+        value-column="TaskName" keys="CurrentTaskId"
+        visible-columns="TaskName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="ProcessId" title="Process">
+    <o-table-cell-renderer-service attr="ProcessId" 
+        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
+        parent-keys="PriorityCode:ProcessId"
+        value-column="ProcessName" keys="ProcessId"
+        visible-columns="ProcessName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #StartedBy attr="StartedBy" title="StartedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CompletedBy attr="CompletedBy" title="CompletedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ContextData attr="ContextData" title="ContextData" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ApplicationId attr="ApplicationId" title="ApplicationId" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

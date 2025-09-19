@@ -1,0 +1,43 @@
+<o-form-layout-manager attr="WFDashboard" mode="tab" title="WFDASHBOARD">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFDashboardTable" 
+            service="WFDashboard" 
+            entity="WFDashboard" 
+            title="WFDASHBOARD"
+            keys="ID"
+            columns="ID;count_new;count_in_progress;count_withdrawn;count_overdue;total_count;count_completed" 
+            header-actions="R;D"
+            visible-columns="ID;count_new;count_in_progress;count_withdrawn;count_overdue;total_count;count_completed"  
+            sort-columns="ID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ID attr="ID" title=" I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #count_new attr="count_new" title="count_new" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #count_in_progress attr="count_in_progress" title="count_in_progress" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #count_withdrawn attr="count_withdrawn" title="count_withdrawn" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #count_overdue attr="count_overdue" title="count_overdue" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #total_count attr="total_count" title="total_count" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #count_completed attr="count_completed" title="count_completed" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

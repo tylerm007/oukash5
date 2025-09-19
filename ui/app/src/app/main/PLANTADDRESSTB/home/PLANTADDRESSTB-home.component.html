@@ -1,0 +1,77 @@
+<o-form-layout-manager attr="PLANTADDRESSTB" mode="tab" title="PLANTADDRESSTB">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTADDRESSTBTable" 
+            service="PLANTADDRESSTB" 
+            entity="PLANTADDRESSTB" 
+            title="PLANTADDRESSTB"
+            keys="ID"
+            columns="PLANT_ADDRESS_TYPE;COMPANY_ID;PLANT_ID;PLANT_ADDRESS_SEQUENCE;ADDRESS_TYPE;STREET1;STREET2;CITY;STATE;ZIP;COUNTRY;COMMENTS;TIMESTAMP;ACTIVE;ValidFromTime;ValidToTime;CHANGESET_ID" 
+            header-actions="R;D"
+            visible-columns="PLANT_ADDRESS_TYPE;COMPANY_ID;PLANT_ID;PLANT_ADDRESS_SEQUENCE;ADDRESS_TYPE;STREET1;STREET2;CITY;STATE;ZIP;COUNTRY;COMMENTS;TIMESTAMP;ACTIVE;ValidFromTime;ValidToTime;CHANGESET_ID"  
+            sort-columns="PLANT_ADDRESS_TYPE" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #PLANT_ADDRESS_TYPE attr="PLANT_ADDRESS_TYPE" title="Plant Address" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #PLANT_ADDRESS_SEQUENCE attr="PLANT_ADDRESS_SEQUENCE" title="PLANT_ADDRESS_SEQUENCE" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ADDRESS_TYPE attr="ADDRESS_TYPE" title="ADDRESS_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #STREET1 attr="STREET1" title="STREET1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #STREET2 attr="STREET2" title="STREET2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CITY attr="CITY" title="CITY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #STATE attr="STATE" title="STATE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ZIP attr="ZIP" title="ZIP" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COUNTRY attr="COUNTRY" title="COUNTRY" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMMENTS attr="COMMENTS" title="COMMENTS" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ACTIVE attr="ACTIVE" title="ACTIVE" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ValidFromTime attr="ValidFromTime" title="ValidFromTime" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ValidToTime attr="ValidToTime" title="ValidToTime" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CHANGESET_ID attr="CHANGESET_ID" title="CHANGESET_ID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

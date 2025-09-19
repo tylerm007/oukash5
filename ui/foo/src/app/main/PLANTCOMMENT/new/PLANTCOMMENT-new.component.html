@@ -1,0 +1,66 @@
+<o-form #PLANTCOMMENTForm attr="PLANTCOMMENT_form_insert" service="PLANTCOMMENT" entity="PLANTCOMMENT"
+keys="ID" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #COMMENT_TEXT attr="COMMENT_TEXT" label="Comment Text" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #ID attr="ID" label="ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="PLANT_ID"
+        service="PLANTTB" 
+        entity="PLANTTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PLANT_ID" 
+        value-column-type="INTEGER"  
+        keys="PLANT_ID" 
+        columns="PLANT_ID;PLANT_ID;NAME" 
+        title="PLANT_ID"
+        visible-columns="PLANT_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="COMPANY_ID"
+        service="COMPANYTB" 
+        entity="COMPANYTBType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="COMPANY_ID" 
+        value-column-type="INTEGER"  
+        keys="COMPANY_ID" 
+        columns="COMPANY_ID;COMPANY_ID;NAME" 
+        title="COMPANY_ID"
+        visible-columns="COMPANY_ID;NAME" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #COMMENT_ID attr="COMMENT_ID" label="COMMENT_ID" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-text-input #COMMENT_TYPE attr="COMMENT_TYPE" label="COMMENT_TYPE" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #COMMENT_DATE attr="COMMENT_DATE" value-type="string" label="COMMENT_DATE" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #COMMENT_PERSON_ID attr="COMMENT_PERSON_ID" label="COMMENT_PERSON_ID" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-textarea-input #TIMESTAMP attr="TIMESTAMP"  label="TIMESTAMP" enabled="true" read-only="false" fxFlex="50%"></o-textarea-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

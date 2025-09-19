@@ -1,0 +1,69 @@
+<o-form-layout-manager attr="FormulaSubmissionComponent" mode="tab" title="FORMULASUBMISSIONCOMPONENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="FormulaSubmissionComponentTable" 
+            service="FormulaSubmissionComponent" 
+            entity="FormulaSubmissionComponent" 
+            title="FORMULASUBMISSIONCOMPONENT"
+            keys="ID"
+            columns="ComponentName;ID;FormulaSubmissionID;UniqueID;RMC;ProductNumber;ComponentMerchID;ComponentLabelID;ComponentDescription;IngredientStatement;ActionTaken;CreatedDate;ModifiedDate" 
+            header-actions="R;D"
+            visible-columns="ComponentName;ID;FormulaSubmissionID;UniqueID;RMC;ProductNumber;ComponentMerchID;ComponentLabelID;ComponentDescription;IngredientStatement;ActionTaken;CreatedDate;ModifiedDate"  
+            sort-columns="ComponentName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #ComponentName attr="ComponentName" title="Component Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #FormulaSubmissionID attr="FormulaSubmissionID" title="FormulaSubmissionID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #UniqueID attr="UniqueID" title="UniqueID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #RMC attr="RMC" title="RMC" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ProductNumber attr="ProductNumber" title="ProductNumber" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="ComponentMerchID" title="ComponentMerchID">
+    <o-table-cell-renderer-service attr="ComponentMerchID" 
+        service="MERCHTB" entity="MERCHTBType" columns="MERCHANDISE_ID;NAME"
+        parent-keys="ID:ComponentMerchID"
+        value-column="NAME" keys="ComponentMerchID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ComponentLabelID" title="ComponentLabelID">
+    <o-table-cell-renderer-service attr="ComponentLabelID" 
+        service="LabelTb" entity="LabelTbType" columns="ID;LABEL_NAME"
+        parent-keys="ID:ComponentLabelID"
+        value-column="LABEL_NAME" keys="ComponentLabelID"
+        visible-columns="LABEL_NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #ComponentDescription attr="ComponentDescription" title="ComponentDescription" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #IngredientStatement attr="IngredientStatement" title="IngredientStatement" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ActionTaken attr="ActionTaken" title="ActionTaken" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="text" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="text" editable="no" required="no" ></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

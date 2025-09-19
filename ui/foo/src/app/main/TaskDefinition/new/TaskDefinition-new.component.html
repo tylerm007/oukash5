@@ -1,0 +1,120 @@
+<o-form #TaskDefinitionForm attr="TaskDefinition_form_insert" service="TaskDefinition" entity="TaskDefinition"
+keys="TaskId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #TaskName attr="TaskName" label=" Task Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="LaneId"
+        service="LaneDefinition" 
+        entity="LaneDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="LaneId" 
+        value-column-type="INTEGER"  
+        keys="LaneId" 
+        columns="LaneId;LaneId;LaneName" 
+        title="Lane"
+        visible-columns="LaneId;LaneName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ProcessId"
+        service="ProcessDefinition" 
+        entity="ProcessDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ProcessId" 
+        value-column-type="INTEGER"  
+        keys="ProcessId" 
+        columns="ProcessId;ProcessId;ProcessName" 
+        title="Process"
+        visible-columns="ProcessId;ProcessName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="TaskCategory"
+        service="TaskCategory" 
+        entity="TaskCategoryType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskCategoryCode" 
+        value-column-type="VARCHAR"  
+        keys="TaskCategoryCode" 
+        columns="TaskCategoryCode;TaskCategory;TaskCategoryDescription" 
+        title="TaskCategory"
+        visible-columns="TaskCategoryCode;TaskCategoryDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="TaskType"
+        service="TaskType" 
+        entity="TaskTypeType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="TaskTypeCode" 
+        value-column-type="VARCHAR"  
+        keys="TaskTypeCode" 
+        columns="TaskTypeCode;TaskType;TaskTypeDescription" 
+        title="TaskType"
+        visible-columns="TaskTypeCode;TaskTypeDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-integer-input #Sequence attr="Sequence" label="Sequence" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-checkbox #IsParallel attr="IsParallel" label="IsParallel" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #AssigneeRole attr="AssigneeRole" label="AssigneeRole" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #EstimatedDurationMinutes attr="EstimatedDurationMinutes" label="EstimatedDurationMinutes" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #AutoComplete attr="AutoComplete" label="AutoComplete" read-only="no" enabled="yes"></o-checkbox>
+      
+        <o-text-input #Description attr="Description" label="Description" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PreScriptJson attr="PreScriptJson" label="PreScriptJson" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #PostScriptJson attr="PostScriptJson" label="PostScriptJson" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #TaskId attr="TaskId" label="TaskId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-checkbox #IsRequired attr="IsRequired" label="IsRequired" read-only="no" enabled="yes"></o-checkbox>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

@@ -1,0 +1,18 @@
+<o-form #TaskCategoryForm attr="TaskCategory_form_insert" service="TaskCategory" entity="TaskCategory"
+keys="TaskCategoryCode" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #TaskCategoryDescription attr="TaskCategoryDescription" label=" Task Category Description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #TaskCategoryCode attr="TaskCategoryCode" label="TaskCategoryCode" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

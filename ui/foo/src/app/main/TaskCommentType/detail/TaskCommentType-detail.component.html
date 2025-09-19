@@ -1,0 +1,96 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="CommentTypeDescription" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="TaskCommentType_form_edit" 
+        service="TaskCommentType" 
+        entity="TaskCommentType" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="CommentTypeCode" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #CommentTypeDescription attr="CommentTypeDescription" label=" Comment Type Description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #CommentTypeCode attr="CommentTypeCode" label="CommentTypeCode" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="TASKCOMMENT-CommentType">
+    <div layout-padding>
+      <o-table 
+        attr="TaskCommentTable" 
+        service="TaskComment" 
+        entity="TaskComment" 
+        keys="CommentId"
+        parent-keys="CommentType:CommentTypeCode"
+        columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        horizontal-scroll="yes"
+        detail-form-route="TaskComment" 
+        edit-form-route="TaskComment"
+        visible-columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        sort-columns="CommentId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #CommentId attr="CommentId" title=" Comment Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
+    <o-table-cell-renderer-service attr="ProcessInstanceId" 
+        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
+        parent-keys="CommentTypeCode:ProcessInstanceId"
+        value-column="InstanceId" keys="ProcessInstanceId"
+        visible-columns="InstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="TaskInstanceId" title="TaskInstance">
+    <o-table-cell-renderer-service attr="TaskInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="CommentTypeCode:TaskInstanceId"
+        value-column="TaskInstanceId" keys="TaskInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #CommentText attr="CommentText" title="CommentText" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Author attr="Author" title="Author" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column attr="IsVisible" title="IsVisible">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

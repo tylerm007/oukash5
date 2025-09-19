@@ -1,0 +1,52 @@
+<o-form-layout-manager attr="WFApplicationMessage" mode="tab" title="WFAPPLICATIONMESSAGE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFApplicationMessageTable" 
+            service="WFApplicationMessage" 
+            entity="WFApplicationMessage" 
+            title="WFAPPLICATIONMESSAGE"
+            keys="MessageID"
+            columns="MessageID;ApplicationID;FromUser;ToUser;MessageText;MessageType;Priority;SentDate" 
+            header-actions="R;D"
+            visible-columns="MessageID;ApplicationID;FromUser;ToUser;MessageText;MessageType;Priority;SentDate"  
+            sort-columns="MessageID" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #MessageID attr="MessageID" title=" Message I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="ApplicationID" title="ApplicationID">
+    <o-table-cell-renderer-service attr="ApplicationID" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="MessageID:ApplicationID"
+        value-column="ApplicationID" keys="ApplicationID"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

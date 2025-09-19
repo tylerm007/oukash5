@@ -1,0 +1,95 @@
+<o-form-layout-manager attr="CompanyApplication" mode="dialog" title="COMPANYAPPLICATION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CompanyApplicationTable" 
+            service="CompanyApplication" 
+            entity="CompanyApplication" 
+            title="COMPANYAPPLICATION"
+            keys="ID"
+            columns="CompanyName;ID;PreviousCertification;OUCertified;CurrentlyCertified;CompanyID;PlantName;Street1;Street2;City;State;Zip;Country;title;FirstName;LastName;email;phone;NatureOfProducts;HowHeardAboutUs;Comments;Description;OtherCertification;gclid;utm_source;utm_medium;utm_campaign;dateSubmitted;Utm_Term;Version;Language;Oukosher_source;JotFormSubmissionID" 
+            header-actions="R;D"
+            visible-columns="CompanyName;ID;PreviousCertification;OUCertified;CurrentlyCertified;CompanyID;PlantName;Street1;Street2;City;State;Zip;Country;title;FirstName;LastName;email;phone;NatureOfProducts;HowHeardAboutUs;Comments;Description;OtherCertification;gclid;utm_source;utm_medium;utm_campaign;dateSubmitted;Utm_Term;Version;Language;Oukosher_source;JotFormSubmissionID"  
+            sort-columns="CompanyName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #CompanyName attr="CompanyName" title="Company Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #PreviousCertification attr="PreviousCertification" title="PreviousCertification" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OUCertified attr="OUCertified" title="OUCertified" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CurrentlyCertified attr="CurrentlyCertified" title="CurrentlyCertified" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #CompanyID attr="CompanyID" title="CompanyID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #PlantName attr="PlantName" title="PlantName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Street1 attr="Street1" title="Street1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Street2 attr="Street2" title="Street2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #City attr="City" title="City" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #State attr="State" title="State" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Zip attr="Zip" title="Zip" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Country attr="Country" title="Country" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #title attr="title" title="title" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #FirstName attr="FirstName" title="FirstName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #LastName attr="LastName" title="LastName" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #email attr="email" title="email" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #phone attr="phone" title="phone" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #NatureOfProducts attr="NatureOfProducts" title="NatureOfProducts" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #HowHeardAboutUs attr="HowHeardAboutUs" title="HowHeardAboutUs" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Comments attr="Comments" title="Comments" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #OtherCertification attr="OtherCertification" title="OtherCertification" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #gclid attr="gclid" title="gclid" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #utm_source attr="utm_source" title="utm_source" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #utm_medium attr="utm_medium" title="utm_medium" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #utm_campaign attr="utm_campaign" title="utm_campaign" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dateSubmitted attr="dateSubmitted" title="dateSubmitted" type="DATETIME" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #Utm_Term attr="Utm_Term" title="Utm_Term" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Version attr="Version" title="Version" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Language attr="Language" title="Language" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #Oukosher_source attr="Oukosher_source" title="Oukosher_source" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #JotFormSubmissionID attr="JotFormSubmissionID" title="JotFormSubmissionID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

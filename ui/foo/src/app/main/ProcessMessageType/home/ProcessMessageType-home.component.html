@@ -1,0 +1,33 @@
+<o-form-layout-manager attr="ProcessMessageType" mode="tab" title="PROCESSMESSAGETYPE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ProcessMessageTypeTable" 
+            service="ProcessMessageType" 
+            entity="ProcessMessageType" 
+            title="PROCESSMESSAGETYPE"
+            keys="MessageTypeCode"
+            columns="MessageTypeDescription;MessageTypeCode" 
+            header-actions="R;D"
+            visible-columns="MessageTypeDescription;MessageTypeCode"  
+            sort-columns="MessageTypeDescription" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #MessageTypeDescription attr="MessageTypeDescription" title=" Message Type Description" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #MessageTypeCode attr="MessageTypeCode" title="MessageTypeCode" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

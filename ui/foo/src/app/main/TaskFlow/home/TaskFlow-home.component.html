@@ -1,0 +1,56 @@
+<o-form-layout-manager attr="TaskFlow" mode="tab" title="TASKFLOW">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="TaskFlowTable" 
+            service="TaskFlow" 
+            entity="TaskFlow" 
+            title="TASKFLOW"
+            keys="FlowId"
+            columns="FlowId;FromTaskId;ToTaskId;Condition;IsDefault" 
+            header-actions="R;D"
+            visible-columns="FlowId;FromTaskId;ToTaskId;Condition;IsDefault"  
+            sort-columns="FlowId" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #FlowId attr="FlowId" title=" Flow Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="FromTaskId" title="FromTask">
+    <o-table-cell-renderer-service attr="FromTaskId" 
+        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
+        parent-keys="FlowId:FromTaskId"
+        value-column="TaskName" keys="FromTaskId"
+        visible-columns="TaskName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="ToTaskId" title="ToTask">
+    <o-table-cell-renderer-service attr="ToTaskId" 
+        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
+        parent-keys="FlowId:ToTaskId"
+        value-column="TaskName" keys="ToTaskId"
+        visible-columns="TaskName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Condition attr="Condition" title="Condition" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsDefault" title="IsDefault">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,61 @@
+<o-form-layout-manager attr="PLANTCOMMENT" mode="tab" title="PLANTCOMMENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="PLANTCOMMENTTable" 
+            service="PLANTCOMMENT" 
+            entity="PLANTCOMMENT" 
+            title="PLANTCOMMENT"
+            keys="ID"
+            columns="COMMENT_TEXT;ID;PLANT_ID;COMPANY_ID;COMMENT_ID;COMMENT_TYPE;COMMENT_DATE;COMMENT_PERSON_ID;TIMESTAMP" 
+            header-actions="R;D"
+            visible-columns="COMMENT_TEXT;ID;PLANT_ID;COMPANY_ID;COMMENT_ID;COMMENT_TYPE;COMMENT_DATE;COMMENT_PERSON_ID;TIMESTAMP"  
+            sort-columns="COMMENT_TEXT" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #COMMENT_TEXT attr="COMMENT_TEXT" title="Comment Text" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ID attr="ID" title="ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column attr="PLANT_ID" title="PLANT_ID">
+    <o-table-cell-renderer-service attr="PLANT_ID" 
+        service="PLANTTB" entity="PLANTTBType" columns="PLANT_ID;NAME"
+        parent-keys="ID:PLANT_ID"
+        value-column="NAME" keys="PLANT_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="COMPANY_ID" title="COMPANY_ID">
+    <o-table-cell-renderer-service attr="COMPANY_ID" 
+        service="COMPANYTB" entity="COMPANYTBType" columns="COMPANY_ID;NAME"
+        parent-keys="ID:COMPANY_ID"
+        value-column="NAME" keys="COMPANY_ID"
+        visible-columns="NAME" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #COMMENT_ID attr="COMMENT_ID" title="COMMENT_ID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #COMMENT_TYPE attr="COMMENT_TYPE" title="COMMENT_TYPE" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #COMMENT_DATE attr="COMMENT_DATE" title="COMMENT_DATE" type="text" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #COMMENT_PERSON_ID attr="COMMENT_PERSON_ID" title="COMMENT_PERSON_ID" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #TIMESTAMP attr="TIMESTAMP" title="TIMESTAMP" type="BINARY" editable="no" required="no" ></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

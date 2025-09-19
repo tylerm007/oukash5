@@ -1,0 +1,255 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="LaneName" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="LaneDefinition_form_edit" 
+        service="LaneDefinition" 
+        entity="LaneDefinition" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="LaneId" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #LaneName attr="LaneName" label=" Lane Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-list-picker 
+        attr="LaneRole"
+        service="LaneRole" 
+        entity="LaneRoleType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="" 
+        value-column-type=""  
+        keys="" 
+        columns="" 
+        title="LaneRole"
+        visible-columns="" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-list-picker 
+        attr="ProcessId"
+        service="ProcessDefinition" 
+        entity="ProcessDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="ProcessId" 
+        value-column-type="INTEGER"  
+        keys="ProcessId" 
+        columns="ProcessId;ProcessId;ProcessName" 
+        title="Process"
+        visible-columns="ProcessId;ProcessName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-text-input #LaneDescription attr="LaneDescription" label="LaneDescription" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #EstimatedDurationDays attr="EstimatedDurationDays" label="EstimatedDurationDays" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+      <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #LaneId attr="LaneId" label="LaneId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="STAGEINSTANCE-LaneId">
+    <div layout-padding>
+      <o-table 
+        attr="StageInstanceTable" 
+        service="StageInstance" 
+        entity="StageInstance" 
+        keys="StageInstanceId"
+        parent-keys="LaneId:LaneId"
+        columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;DurationDays;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        horizontal-scroll="yes"
+        detail-form-route="StageInstance" 
+        edit-form-route="StageInstance"
+        visible-columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;DurationDays;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        sort-columns="StageInstanceId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #StageInstanceId attr="StageInstanceId" title=" Stage Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="LaneId" title="Lane">
+    <o-table-cell-renderer-service attr="LaneId" 
+        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
+        parent-keys="LaneId:LaneId"
+        value-column="LaneName" keys="LaneId"
+        visible-columns="LaneName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
+    <o-table-cell-renderer-service attr="ProcessInstanceId" 
+        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
+        parent-keys="LaneId:ProcessInstanceId"
+        value-column="InstanceId" keys="ProcessInstanceId"
+        visible-columns="InstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #DurationDays attr="DurationDays" title="DurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #AssignedBy attr="AssignedBy" title="AssignedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #AssignedDate attr="AssignedDate" title="AssignedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CompletedCount attr="CompletedCount" title="CompletedCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #TotalCount attr="TotalCount" title="TotalCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="TASKDEFINITION-LaneId">
+    <div layout-padding>
+      <o-table 
+        attr="TaskDefinitionTable" 
+        service="TaskDefinition" 
+        entity="TaskDefinition" 
+        keys="TaskId"
+        parent-keys="LaneId:LaneId"
+        columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired"  
+        horizontal-scroll="yes"
+        detail-form-route="TaskDefinition" 
+        edit-form-route="TaskDefinition"
+        visible-columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;PreScriptJson;PostScriptJson;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;TaskId;IsRequired"  
+        sort-columns="TaskName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #TaskName attr="TaskName" title=" Task Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="LaneId" title="Lane">
+    <o-table-cell-renderer-service attr="LaneId" 
+        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
+        parent-keys="LaneId:LaneId"
+        value-column="LaneName" keys="LaneId"
+        visible-columns="LaneName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="ProcessId" title="Process">
+    <o-table-cell-renderer-service attr="ProcessId" 
+        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
+        parent-keys="LaneId:ProcessId"
+        value-column="ProcessName" keys="ProcessId"
+        visible-columns="ProcessName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #TaskCategory attr="TaskCategory" title="TaskCategory" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TaskType attr="TaskType" title="TaskType" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Sequence attr="Sequence" title="Sequence" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column attr="IsParallel" title="IsParallel">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #AssigneeRole attr="AssigneeRole" title="AssigneeRole" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #EstimatedDurationMinutes attr="EstimatedDurationMinutes" title="EstimatedDurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="AutoComplete" title="AutoComplete">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="IsRequired" title="IsRequired">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

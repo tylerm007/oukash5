@@ -1,0 +1,33 @@
+<o-form-layout-manager attr="WFQuoteStatus" mode="tab" title="WFQUOTESTATUS">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFQuoteStatusTable" 
+            service="WFQuoteStatus" 
+            entity="WFQuoteStatus" 
+            title="WFQUOTESTATUS"
+            keys="StatusCode"
+            columns="StatusCode;StatusDesc" 
+            header-actions="R;D"
+            visible-columns="StatusCode;StatusDesc"  
+            sort-columns="StatusCode" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #StatusCode attr="StatusCode" title=" Status Code" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #StatusDesc attr="StatusDesc" title="StatusDesc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>
