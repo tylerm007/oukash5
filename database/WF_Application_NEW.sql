@@ -121,18 +121,34 @@ CREATE TABLE WF_Users (
     Username NVARCHAR(100) NOT NULL PRIMARY KEY,
     Email NVARCHAR(255) NOT NULL UNIQUE,
     FullName NVARCHAR(200) NOT NULL,
-    Role NVARCHAR(10) NOT NULL DEFAULT 'ADMIN', -- technically a User can have many roles - default role
+    Role NVARCHAR(10) NOT NULL DEFAULT 'NCRC', -- technically a User can have many roles - default role
+    Admin NVARCHAR(100) NULL, -- if this user is an NCRC, who is their admin?
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     LastLoginDate DATETIME2 NULL, -- add to OKTA /auth/login on success callback
     FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole)
 );
 
-insert into WF_Users (Username, Email, FullName, Role) values
-('sbenjamin', 'sbenjamin@example.com', 'Shouki Benjamin', 'ADMIN'),
-('tband', 'tband@example.com', 'Tyler Band', 'ADMIN'),
-('gmager', 'gmager@example.com', 'Gary Mager', 'ADMIN');
+-- ALTER TABLE WF_Users ADD Admin NVARCHAR(100) NULL;
 
+insert into WF_Users (Username, Email, FullName, Role, Admin) values
+('Rabbi Dick', 'dick@ou.org', 'Rabbi Dick', 'NCRC', 'Bassie Fogelman'),
+('Rabbi Epstein', 'epstein@ou.org', 'Rabbi Epstein', 'NCRC', 'TBD'),
+('Rabbi Gutterman', 'gutterman@ou.org', 'Rabbi Gutterman', 'NCRC', 'Bassie Fogelman'),
+('Rabbi Nosenchuk', 'nosenchuk@ou.org', 'Rabbi Nosenchuk', 'NCRC', 'Tikki Goldstein'),
+('Rabbi Rabinowitz', 'rabinowitz@ou.org', 'Rabbi Rabinowitz', 'NCRC', 'Aviva Gottesman'),
+('Rabbi Shkarofsky', 'shkarofsky@ou.org', 'Rabbi Shkarofsky', 'NCRC', 'Miriam Ganz'),
+('Rabbi Stareshefsky', 'stareshefsky@ou.org', 'Rabbi Stareshefsky', 'NCRC', 'Naomi Marcovici'),
+('Rabbi Steinberg', 'steinberg@ou.org', 'Rabbi Steinberg', 'NCRC', 'Yael Schottenstein'),
+('Rabbi Machuca', 'machuca@ou.org', 'Rabbi Machuca', 'NCRC', 'TBD'),
+('Rabbi Twersky', 'twersky@ou.org', 'Rabbi Twersky', 'NCRC', 'Yael Schottenstein'),
+-- Insert Admin users
+('Bassie Fogelman', 'bfogelman@ou.org', 'Bassie Fogelman', 'NCRC-ADMIN', NULL),
+('Tikki Goldstein', 'tgoldstein@ou.org', 'Tikki Goldstein', 'NCRC-ADMIN', NULL),
+('Aviva Gottesman', 'agottesman@ou.org', 'Aviva Gottesman', 'NCRC-ADMIN', NULL),
+('Miriam Ganz', 'mganz@ou.org', 'Miriam Ganz', 'NCRC-ADMIN', NULL),
+('Naomi Marcovici', 'nmarcovici@ou.org', 'Naomi Marcovici', 'NCRC-ADMIN', NULL),
+('Yael Schottenstein', 'yschottenstein@ou.org', 'Yael Schottenstein', 'NCRC-ADMIN', NULL);
 
 
 -- This could be the parent table to do counts and sums or we write a View 
