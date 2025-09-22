@@ -1,6 +1,4 @@
 from datetime import datetime
-from math import log
-from operator import call
 from database.models import TaskDefinition, TaskInstance
 from integration.workflow import python_engine
 from flask import app, request, jsonify, session
@@ -12,9 +10,7 @@ from config.config import Config
 import datetime, os
 from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
-from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
-from logic_bank.logic_bank import DeclareRule
 import database.models as models
 
 app_logger = logging.getLogger("api_logic_server_app")
