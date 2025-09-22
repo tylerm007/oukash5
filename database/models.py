@@ -1357,7 +1357,8 @@ class MERCHTB(Base):  # type: ignore
 
     # child relationships (access children)
     FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="MERCH_TB")
-
+    LabelTbList : Mapped[List["LabelTb"]] = relationship(back_populates=("MERCH_TB"))
+    FormulaProductList : Mapped[List["FormulaProduct"]] = relationship(back_populates=("MERCH_TB"))
 
 
 class FormulaProduct(Base):  # type: ignore
@@ -1367,10 +1368,10 @@ class FormulaProduct(Base):  # type: ignore
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
     FormulaID = Column(Integer, nullable=False)
-    Merchandise_ID = Column(Integer, nullable=False)
+    Merchandise_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), nullable=False)
 
     # parent relationships (access parent)
-    #MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("FormulaProductList"))
+    MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("FormulaProductList"))
 
 
 class LabelTb(Base):  # type: ignore
@@ -1398,7 +1399,7 @@ class LabelTb(Base):  # type: ignore
     __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True, unique=True)
-    MERCHANDISE_ID = Column(Integer, nullable=False)
+    MERCHANDISE_ID = Column(ForeignKey('MERCH_TB.MERCHANDISE_ID'), nullable=False)
     LABEL_SEQ_NUM = Column(SMALLINT, nullable=False)
     SYMBOL = Column(String(20))
     INSTITUTIONAL = Column(String(1))
@@ -1443,7 +1444,7 @@ class LabelTb(Base):  # type: ignore
     NameNum = Column(String(251), Computed("(ltrim(isnull(concat(nullif([Label_Name],''),case when [Label_Name]<>'' AND [Label_Num]<>'' then ' '+[Label_Num] else [Label_Num] end),'')))", persisted=False))
 
     # parent relationships (access parent)
-    #MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("LabelTbList"))
+    MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("LabelTbList"))
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates=("LabelTbList"))
     #COMPANY_TB1 : Mapped["COMPANYTB"] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates=("LabelTbList1"), overlaps="COMPANY_TB,LabelTbList")
 
