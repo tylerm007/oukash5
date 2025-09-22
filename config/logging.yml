@@ -33,7 +33,7 @@ loggers:
         propagate: no
 
     logic_logger:
-        level: DEBUG
+        level: INFO
         handlers: [console]
         propagate: no
 
