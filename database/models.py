@@ -1450,7 +1450,7 @@ class LabelTb(Base):  # type: ignore
 
     # child relationships (access children)
     FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="label_tb")
-    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="label_tb")
+    #ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="label_tb")
     #LabelBarcodeList : Mapped[List["LabelBarcode"]] = relationship(back_populates="label")
     #FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates="label_tb")
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="label_tb")

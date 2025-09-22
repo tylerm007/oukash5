@@ -27,6 +27,41 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     from api.api_discovery.auto_discovery import discover_services
     discover_services(app, api, project_dir, swagger_host, PORT)
 
+    @app.route('/plant_details', methods=['GET','OPTIONS'], strict_slashes=False)
+    def plant_details():
+        """
+        Illustrates: 
+        
+        * #als: "Raw" SQLAlchemy table queries (non-mapped objects), by manual code
+
+        PS> Invoke-RestMethod -Uri "http://localhost:5656/plant_details?plant_id=1"
+
+        Returns:
+            json: response
+        """
+        from database import models
+        plant_id = request.args.get('plant_id',2539001)
+        
+        #Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+        if plant_id is None:
+            return jsonify('plant_id is required'), 400
+        plant = models.PLANTTB.query.filter(models.PLANTTB.PLANT_ID == plant_id).first()
+        if plant is None:
+            return jsonify(f'Plant not found for plant_id {plant_id}'), 400
+        
+        address = models.PLANTADDRESSTB.query.filter(models.PLANTADDRESSTB.PLANT_ID == plant_id).first()
+        owns = models.OWNSTB.query.filter(models.OWNSTB.PLANT_ID == plant_id).all()
+        for own in owns:
+            usedin_list = own.USEDIN1TBList
+            produced_in_list = own.ProducedIn1TbList
+        result = { "plant": plant.to_dict(), 
+                    "address": address.to_dict() if address else None,
+                    "owns": [ own.to_dict() for own in owns ],
+                    "used_in": [ used_in.to_dict() for used_in in usedin_list ],
+                    "produced_in": [ produced_in.to_dict() for produced_in in produced_in_list ]
+                    }  
+        return jsonify({ "success": True, "result":  result})
+    
     @app.route('/hello_world')
     def hello_world():  # test it with: http://localhost::5656/hello_world?user=ApiLogicServer
         """
