@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Directory</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Plant Directory</h1>
+            <div class="view-controls">
+                <button id="back-btn" class="view-btn back-btn">← Back to Home</button>
+                <button id="card-view-btn" class="view-btn active">Card View</button>
+                <button id="table-view-btn" class="view-btn">Table View</button>
+                <button id="columns-btn" class="view-btn columns-btn">Columns</button>
+                <button id="refresh-btn" class="view-btn refresh-btn">Refresh</button>
+            </div>
+        </header>
+        <main>
+            <div id="sort-filter-info" class="sort-filter-info hidden">
+                <div id="sort-info" class="info-item hidden">
+                    <strong>Sorted by:</strong> <span id="sort-details"></span>
+                </div>
+                <div id="filter-info" class="info-item hidden">
+                    <strong>Filtered by:</strong> <div id="filter-details"></div>
+                </div>
+            </div>
+            <div id="auth-error" class="auth-error hidden">
+                <h3>Authentication Error (401)</h3>
+                <p>The Bearer token has expired. Please enter a new token:</p>
+                <div class="token-input-container">
+                    <input type="text" id="token-input" placeholder="Paste new Bearer token here" />
+                    <button id="update-token-btn" class="update-token-btn">Update Token</button>
+                </div>
+            </div>
+            <div id="loading" class="loading">Loading plants...</div>
+            <div id="error" class="error hidden">Failed to load plants. Please try again.</div>
+            <div id="plant-list" class="plant-grid"></div>
+            <div id="loading-more" class="loading-more hidden">Loading more plants...</div>
+            <div id="no-more-data" class="no-more-data hidden">No more plants to load</div>
+        </main>
+
+        <!-- Filter Dialog -->
+        <div id="filter-dialog" class="filter-dialog hidden">
+            <div class="filter-dialog-content">
+                <h3 id="filter-dialog-title">Filter by Field</h3>
+                <div id="filter-type-container" class="filter-type-container">
+                    <label for="filter-type-select">Filter Type:</label>
+                    <select id="filter-type-select" class="filter-type-select">
+                        <option value="contains">Contains</option>
+                        <option value="starts_with">Starts with</option>
+                        <option value="ends_with">Ends with</option>
+                        <option value="exact">Exact match</option>
+                    </select>
+                </div>
+                <input type="text" id="filter-input" placeholder="Enter filter value..." />
+                <div class="filter-dialog-buttons">
+                    <button id="apply-filter-btn" class="apply-filter-btn">Apply Filter</button>
+                    <button id="clear-filter-btn" class="clear-filter-btn">Clear Filter</button>
+                    <button id="cancel-filter-btn" class="cancel-filter-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Column Selector Dialog -->
+        <div id="column-dialog" class="column-dialog hidden">
+            <div class="column-dialog-content">
+                <h3>Select and Order Columns</h3>
+                <div class="column-selector">
+                    <div class="column-section">
+                        <h4>Available Fields</h4>
+                        <div id="available-columns" class="column-list">
+                            <!-- Available columns will be populated here -->
+                        </div>
+                    </div>
+                    <div class="column-section">
+                        <h4>Displayed Fields</h4>
+                        <div id="displayed-columns" class="column-list">
+                            <!-- Displayed columns will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="column-dialog-buttons">
+                    <button id="apply-columns-btn" class="apply-columns-btn">Apply</button>
+                    <button id="reset-columns-btn" class="reset-columns-btn">Reset to Default</button>
+                    <button id="cancel-columns-btn" class="cancel-columns-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plant Context Menu -->
+        <div id="plant-context-menu" class="context-menu hidden">
+            <div class="context-menu-item" data-action="details">
+                <span class="context-menu-icon">📄</span>
+                Details
+            </div>
+            <div class="context-menu-item" data-action="companies">
+                <span class="context-menu-icon">🏢</span>
+                Companies
+            </div>
+            <div class="context-menu-item" data-action="ingredients">
+                <span class="context-menu-icon">🧪</span>
+                Ingredients
+            </div>
+            <div class="context-menu-item" data-action="products">
+                <span class="context-menu-icon">📦</span>
+                Products
+            </div>
+            <div class="context-menu-item" data-action="inspections">
+                <span class="context-menu-icon">🔍</span>
+                Inspections
+            </div>
+        </div>
+
+        <!-- Plant Details Popup -->
+        <div id="plant-details-popup" class="plant-details-popup hidden">
+            <div class="plant-details-content">
+                <button id="close-details-btn" class="close-details-btn">&times;</button>
+                <h2 id="details-plant-name">Plant Details</h2>
+                <div id="details-content">
+                    <!-- Plant details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="dataService.js"></script>
+    <script src="displayService.js"></script>
+    <script src="entityConfigs.js"></script>
+    <script src="plants.js"></script>
+</body>
+</html>
