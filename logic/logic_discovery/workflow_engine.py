@@ -87,7 +87,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     When a task is COMPLETED, update the next tasks in the workflow to be 'PENDING' ready to start.
     '''
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING', 'COMPLETED'] and old_row.Status != row.Status:
-    # only proceed if the task was updated to 'COMPLETED'
+    # only proceed if the task instance Status was updated and is now PENDING or COMPLETED
         task_id = row.TaskInstanceId
         task_def = row.TaskDef
         if not task_def:
@@ -98,19 +98,30 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             if task_def.AutoComplete:
                 logic_row.log(f"Task {task_id} is auto-completing.")
                 row.Status = 'COMPLETED'
-                #logic_row.update(reason="AutoComplete task", row=row)
-                #update_next_task(row, old_row, logic_row)  # recursively update next tasks
-                #process_task_instance(row, logic_row)
-            #return
+                logic_row.log(f'TaskInstance {task_id} auto-completed due to AutoComplete=True.')
+        
         logic_row.log(f'TaskInstance {task_id} Status:{row.Status}. Checking for next tasks to set to Pending.')
-        #call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
-        for task_flow in task_def.TaskFlowList:
+        task_flow = task_def.TaskFlowList or []
+        for task_flow in task_flow:
             next_task_def = task_flow.ToTaskId
             next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=row.StageId).first()
             if next_task_instance and next_task_instance.Status in ['NEW', 'PENDING']:
                 if next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, row.StageId, logic_row):
                     next_task_instance.Status = 'COMPLETED'
                     logic_row.log(f'Next task {next_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
+                    future_task = next_task_instance.TaskDef.TaskFlowList or []
+                    for future_flow in future_task: 
+                        future_task_def = future_flow.ToTaskId
+                        future_task_instance = models.TaskInstance.query.filter_by(TaskId=future_task_def, StageId=row.StageId).first()
+                        if future_task_instance and future_task_instance.Status in ['NEW']:
+                            if validate_prior_tasks(future_task_instance.TaskDef, row.StageId, logic_row):
+                                if future_task_instance.TaskDef.AutoComplete:
+                                    future_task_instance.Status = 'COMPLETED'
+                                    logic_row.log(f'Future task {future_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
+                                    update_next_task(future_task_instance, None, logic_row)  # recursively update next tasks
+                                else:
+                                    future_task_instance.Status = 'PENDING'
+                                    logic_row.log(f'Future task {future_task_instance.TaskInstanceId} set to PENDING as all dependencies are COMPLETED.')
                 elif next_task_instance.TaskDef.TaskType == 'START':
                     next_task_instance.Status = 'COMPLETED'
                     logic_row.log(f'Next task {next_task_instance.TaskInstanceId} auto-completed because it is a START task.')
@@ -132,11 +143,14 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                         logic_row.log(f'Next CONDITION task {next_task_instance.TaskInstanceId} set to PENDING based on condition.')
                 else:
                     next_task_instance.Status = 'PENDING' 
+            elif row.Status == 'COMPLETED' and next_task_instance and next_task_instance.Status == 'NEW':
+                next_task_instance.Status = 'PENDING'
+                logic_row.log(f'Next task {next_task_instance.TaskInstanceId} is NEW, cannot set to PENDING until dependencies are met.')
+
             logic_row.log(f'Next {next_task_instance.TaskDef.TaskType} TaskInstance {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
             #logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
             process_task_instance(next_task_instance, logic_row)
-            #call_script_engine_pre(next_task_instance, None, logic_row)  # call pre script after setting to PENDING
-            #logic_row.log(f'PreScriptJson Result for next task {next_task_instance.TaskInstanceId}: {next_task_instance.Result}')
+            
     return
 
 def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
