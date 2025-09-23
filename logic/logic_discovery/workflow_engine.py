@@ -19,6 +19,26 @@ app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
 
+def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRow):
+    new_task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
+    if not new_task_instance:
+        print({"success": False, "message": f"No TaskInstance found with TaskInstanceId {task_instance.TaskInstanceId}"})
+        return
+
+    try:
+        session.add(new_task_instance)
+        #session.commit()
+        update_next_task(new_task_instance, None, logic_row)
+        print({"success": True, "message": f"TaskInstance {new_task_instance.TaskInstanceId} processed successfully."})
+        #call_script_engine_pre(next_task_instance, None, logic_row)  # call pre script after setting to PENDING
+        #logic_row.log(f'PreScriptJson Result for next task {next_task_instance.TaskInstanceId}: {next_task_instance.Result}')
+
+    except Exception as e:
+        #session.rollback()
+        app_logger.error(f"Error processing TaskInstance {new_task_instance}: {e}")
+        #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
+        return
+    
 def get_application(application_id):
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()
     if not application:
@@ -78,9 +98,10 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             if task_def.AutoComplete:
                 logic_row.log(f"Task {task_id} is auto-completing.")
                 row.Status = 'COMPLETED'
-                logic_row.update(reason="AutoComplete task", row=row)
-                update_next_task(row, old_row, logic_row)  # recursively update next tasks
-            return
+                #logic_row.update(reason="AutoComplete task", row=row)
+                #update_next_task(row, old_row, logic_row)  # recursively update next tasks
+                #process_task_instance(row, logic_row)
+            #return
         logic_row.log(f'TaskInstance {task_id} Status:{row.Status}. Checking for next tasks to set to Pending.')
         #call_script_engine_post(row, old_row, logic_row) # call post script before updating next tasks
         for task_flow in task_def.TaskFlowList:
@@ -112,8 +133,9 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                 else:
                     next_task_instance.Status = 'PENDING' 
             logic_row.log(f'Next {next_task_instance.TaskDef.TaskType} TaskInstance {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
-            logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
-            call_script_engine_pre(next_task_instance, None, logic_row)  # call pre script after setting to PENDING
+            #logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
+            process_task_instance(next_task_instance, logic_row)
+            #call_script_engine_pre(next_task_instance, None, logic_row)  # call pre script after setting to PENDING
             #logic_row.log(f'PreScriptJson Result for next task {next_task_instance.TaskInstanceId}: {next_task_instance.Result}')
     return
 

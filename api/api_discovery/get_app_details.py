@@ -101,6 +101,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "type": "Unknown"
             }
         #TO DO how to get contacts for plant? or use origin app?
+       #models.PLANTConatcts
         plant["contacts"] =  {
                 "name": "John Mitchell",
                 "title": "Plant Manager",
