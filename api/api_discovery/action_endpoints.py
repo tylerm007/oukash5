@@ -61,6 +61,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"error": f"Application with ID {app_id} not found"}), 404
         task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_id).first()
+        task_instance.Status = 'COMPLETED'
+        task_instance.AssignTo = assignee
+        session.add(task_instance)
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            app_logger.error(f'Error completing task {task_id} for application {app_id}: {e}')
+            return jsonify({"error": f"Failed to complete task {task_id} for application {app_id}"}), 500
         if not task_instance:    
             return jsonify({"error": f"Task with ID {task_id} not found"}), 404
         application.AssignedTo = assignee
@@ -93,15 +102,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
             add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
         # Set TaskInstance to Completed
-        task_instance.Status = 'COMPLETED'
-        task_instance.AssignTo = assignee
-        session.add(task_instance)
-        try:
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            app_logger.error(f'Error completing task {task_id} for application {app_id}: {e}')
-            return jsonify({"error": "Failed to complete task"}), 500
+        
         app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
