@@ -14,6 +14,8 @@ from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 from logic_bank.logic_bank import DeclareRule
 import database.models as models
+import requests
+import config.config as config
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
@@ -42,7 +44,33 @@ def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRo
         app_logger.error(f"Error processing TaskInstance {new_task_instance}: {e}")
         #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
         return
+
+def set_application_attribute(application_id, name, value) -> bool:
+    ''' Set an attribute of the application to a new value
+        The simple setattr does not work and we cannot commit()
+        will try PATCH
+    '''
+    data = {
+        "data": {
+            "attributes": {
+                f"{name}": f"{value}"
+            },
+            "type": "WFApplication",
+            "id": f"{application_id}"
+        }
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
     
+    args = config.Args
+    server = args.swagger_host
+    port = args.port
+    server_uri = f"http://{server}:{port}"
+    response = requests.patch(f"{server_uri}/api/WFApplication/{application_id}", json=data, headers=headers)
+    if response.status_code == 200:
+        return True
+    return False
 def get_application(application_id):
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()
     if not application:
@@ -206,7 +234,7 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             data = row.ResultData or {}
             task = row.to_dict()
             context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id}
-            external_context = {"get_application": get_application, "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
+            external_context = {"get_application": get_application, "set_application_attribute":set_application_attribute,"models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:
                 result = r.get('data', None)
