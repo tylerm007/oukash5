@@ -27,7 +27,7 @@ def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRo
 
     try:
         if task_instance.Status == 'PENDING':
-            new_task_instance.StartDate = datetime.datetime.utcnow()
+            new_task_instance.StartedDate = datetime.datetime.utcnow()
         elif task_instance.Status == 'COMPLETED':
             new_task_instance.CompletedDate = datetime.datetime.utcnow()
         session.add(new_task_instance)
@@ -90,6 +90,8 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     '''
     When a task is COMPLETED, update the next tasks in the workflow to be 'PENDING' ready to start.
     '''
+    if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING'] and old_row.Status != row.Status:
+        row.StartedDate = datetime.datetime.utcnow()
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING', 'COMPLETED'] and old_row.Status != row.Status:
     # only proceed if the task instance Status was updated and is now PENDING or COMPLETED
         task_id = row.TaskInstanceId
@@ -97,13 +99,18 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
         if not task_def:
             logic_row.log(f"No task definition found for TaskId {row.TaskId} in update_next_task")
             return
+        
+
         if task_def.TaskType in ['START', 'END', 'GATEWAY', 'SUBPROCESS'] and row.Status != 'COMPLETED':
             logic_row.log(f"Task {task_id} is of type {task_def.TaskType}, skipping next task update.")
             if task_def.AutoComplete:
                 logic_row.log(f"Task {task_id} is auto-completing.")
                 row.Status = 'COMPLETED'
                 logic_row.log(f'TaskInstance {task_id} auto-completed due to AutoComplete=True.')
-        
+        if row.Status == 'PENDING':
+            row.StartedDate = datetime.datetime.utcnow()
+        elif row.Status == 'COMPLETED':
+            row.CompletedDate = datetime.datetime.utcnow()
         logic_row.log(f'TaskInstance {task_id} Status:{row.Status}. Checking for next tasks to set to Pending.')
         task_flow = task_def.TaskFlowList or []
         for task_flow in task_flow:
@@ -121,10 +128,12 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                             if validate_prior_tasks(future_task_instance.TaskDef, row.StageId, logic_row):
                                 if future_task_instance.TaskDef.AutoComplete:
                                     future_task_instance.Status = 'COMPLETED'
+                                    future_task_instance.CompletedDate = datetime.datetime.utcnow()
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
                                     update_next_task(future_task_instance, None, logic_row)  # recursively update next tasks
                                 else:
                                     future_task_instance.Status = 'PENDING'
+                                    future_task_instance.StartedDate = datetime.datetime.utcnow()
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} set to PENDING as all dependencies are COMPLETED.')
                 elif next_task_instance.TaskDef.TaskType == 'START':
                     next_task_instance.Status = 'COMPLETED'
@@ -146,9 +155,11 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                         next_task_instance.Status = 'PENDING'
                         logic_row.log(f'Next CONDITION task {next_task_instance.TaskInstanceId} set to PENDING based on condition.')
                 else:
-                    next_task_instance.Status = 'PENDING' 
+                    next_task_instance.Status = 'PENDING'
+                    next_task_instance.StartedDate = datetime.datetime.utcnow()
             elif row.Status == 'COMPLETED' and next_task_instance and next_task_instance.Status == 'NEW':
                 next_task_instance.Status = 'PENDING'
+                next_task_instance.StartedDate = datetime.datetime.utcnow()
                 logic_row.log(f'Next task {next_task_instance.TaskInstanceId} is NEW, cannot set to PENDING until dependencies are met.')
 
             logic_row.log(f'Next {next_task_instance.TaskDef.TaskType} TaskInstance {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
