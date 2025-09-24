@@ -104,7 +104,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Set TaskInstance to Completed
         
         app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
-        add_role_assignment(app_id, role, assignee)
+
         if role == 'NCRC':
             admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
