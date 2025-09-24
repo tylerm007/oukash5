@@ -42,8 +42,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
            curl -X 'POST' http://localhost:5656/assignRole -d '{"appId":1, "taskId":1, "role":"NCRC", "assignee":"S.Benjamin"}' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4'
         """
         data = request.get_json()
-        app_id = data.get('appId')   
-        task_id = data.get('taskId')   
+        app_id = data.get('appId')   # ApplicationID
+        task_id = data.get('taskId')  # TaskInstanceId 
         role = data.get('role')
         assignee = data.get('assignee')
 
@@ -58,8 +58,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = models.WFApplication.query.filter_by(ApplicationID=app_id).first()
         if not application:
             return jsonify({"error": f"Application with ID {app_id} not found"}), 404
-        task = models.TaskInstance.query.filter_by(TaskInstanceId=task_id).first()
-        if not task:    
+        task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_id).first()
+        if not task_instance:    
             return jsonify({"error": f"Task with ID {task_id} not found"}), 404
         application.AssignedTo = assignee
         application.AssignedDate = datetime.utcnow()
@@ -80,15 +80,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.add(task_comment)
         session.commit()
         '''
-        task.Status = 'COMPLETED'
-        task.CompletedDate = datetime.utcnow()
-        session.add(task)
-        session.commit()
-        app_logger.info(f'TaskInstance set to Completed: {task.TaskInstanceId}')
+        #TODO add WF task history info
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
             admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
             add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
+        # Set TaskInstance to Completed
+        task_instance.Status = 'COMPLETED'
+        task_instance.CompletedDate = datetime.utcnow()
+        session.add(task_instance)
+        session.commit()
+        app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
+        add_role_assignment(app_id, role, assignee)
+        if role == 'NCRC':
+            admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
     
     def add_role_assignment(application_id, role, assignee):

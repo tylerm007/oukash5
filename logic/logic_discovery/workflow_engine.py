@@ -26,6 +26,10 @@ def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRo
         return
 
     try:
+        if task_instance.Status == 'PENDING':
+            new_task_instance.StartDate = datetime.datetime.utcnow()
+        elif task_instance.Status == 'COMPLETED':
+            new_task_instance.CompletedDate = datetime.datetime.utcnow()
         session.add(new_task_instance)
         #session.commit()
         update_next_task(new_task_instance, None, logic_row)
@@ -158,17 +162,18 @@ def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstanc
     script = task_def.PreScriptJson or ''
     #logic_row.log(f'PreScriptJson: {script}')
     # may want to restrict the content to Python only
-    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'PENDING':
-        #row.Result = call_script_engine(row, old_row, logic_row, script)
+    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'PENDING' and row.Status != old_row.Status:
+        row.Result = call_script_engine(row, old_row, logic_row, script)
         logic_row.log(f'PreScriptJson Result: {row.Result}')
 
 def call_script_engine_post(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     task_def = row.TaskDef
     script = task_def.PostScriptJson or ''
     logic_row.log(f'PostScriptJson: {script}')
-    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and row.Status:
+    if script != '' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and row.Status != old_row.Status:
         row.Result = call_script_engine(row, old_row, logic_row, script)
         logic_row.log(f'PostScriptJson Result: {row.Result}')
+        #TODO add WF task history info
 
 def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow, script: str):
 
