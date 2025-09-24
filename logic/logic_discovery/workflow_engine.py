@@ -142,7 +142,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                 elif row.TaskDef.TaskType == 'CONDITION' and row.Status == 'COMPLETED':
                     result = row.Result or None
                     condition = task_flow.Condition or ""
-                    if result and condition == result:
+                    if result and condition.lower() == result.lower():
                         next_task_instance.Status = 'PENDING'
                         logic_row.log(f'Next CONDITION task {next_task_instance.TaskInstanceId} set to PENDING based on condition.')
                 else:
