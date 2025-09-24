@@ -41,15 +41,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
            curl -X 'POST' http://localhost:5656/assignRole -d '{"appId":1, "taskId":1, "role":"NCRC", "assignee":"S.Benjamin"}' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4'
         """
+
+
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        
         data = request.get_json()
         app_id = data.get('appId')   # ApplicationID
         task_id = data.get('taskId')  # TaskInstanceId 
         role = data.get('role')
         assignee = data.get('assignee')
 
-        if request.method == 'OPTIONS':
-            return jsonify({"status": "ok"}), 200
-        
         if not data or 'appId' not in data or 'taskId' not in data or 'role' not in data or 'assignee' not in data:
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400
 
@@ -65,7 +67,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application.AssignedDate = datetime.utcnow()
         application.Status = 'INP'
         session.add(application)
-        session.commit()
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
+            return jsonify({"error": "Failed to assign role"}), 500
          # Log the role assignment as a TaskComment 
         '''
         task_comment = TaskComment(
@@ -87,9 +94,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
         # Set TaskInstance to Completed
         task_instance.Status = 'COMPLETED'
-        task_instance.CompletedDate = datetime.utcnow()
+        task_instance.AssignTo = assignee
         session.add(task_instance)
-        session.commit()
+        try:
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            app_logger.error(f'Error completing task {task_id} for application {app_id}: {e}')
+            return jsonify({"error": "Failed to complete task"}), 500
         app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
