@@ -101,6 +101,9 @@ import { WFQuoteStatusCardComponent } from './WFQuoteStatus-card/WFQuoteStatus-c
 
 import { WFRoleCardComponent } from './WFRole-card/WFRole-card.component';
 
+import { WFUSERADMINCardComponent } from './WFUSERADMIN-card/WFUSERADMIN-card.component';
+
+import { WFUSERROLECardComponent } from './WFUSERROLE-card/WFUSERROLE-card.component';
 import { WFUserCardComponent } from './WFUser-card/WFUser-card.component';
 
 import { WorkflowHistoryCardComponent } from './WorkflowHistory-card/WorkflowHistory-card.component';
@@ -141,6 +144,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
             , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
 
             , { id: 'WFUser', name: 'User', icon: 'view_list', route: '/main/WFUser' }
+	    ,{ id: 'WFUSERROLE', name: 'User Role', icon: 'view_list', route: '/main/WFUSERROLE' }
+            ,{ id: 'WFUSERADMIN', name: 'User Admins', icon: 'view_list', route: '/main/WFUSERADMIN' }
 	    
 	    ,{ id: 'RoleAssigment', name: 'Role Assignment', icon: 'view_list', route: '/main/RoleAssigment' }
     
@@ -349,7 +354,11 @@ export const MENU_COMPONENTS = [
 
     , WFRoleCardComponent
 
-    , WFUserCardComponent
+    ,WFUSERADMINCardComponent
+
+    ,WFUSERROLECardComponent
+
+    ,WFUserCardComponent
 
     , WorkflowHistoryCardComponent
 

@@ -37,6 +37,8 @@ IF OBJECT_ID('WF_Contacts', 'U') IS NOT NULL
     DELETE FROM WF_Contacts;
 IF OBJECT_ID('WF_Companies', 'U') IS NOT NULL
     DELETE FROM WF_Companies;
+IF OBJECT_ID('WF_USER_ADMINS', 'U') IS NOT NULL
+    DELETE FROM WF_USER_ADMINS; 
 IF OBJECT_ID('WF_USER_ROLE', 'U') IS NOT NULL
     DELETE FROM WF_USER_ROLE;
 IF OBJECT_ID('WF_Users', 'U') IS NOT NULL
@@ -80,6 +82,7 @@ DROP TABLE IF EXISTS RoleAssigment;
 DROP TABLE IF EXISTS WF_Applications;
 
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
+DROP TABLE IF
 DROP TABLE IF EXISTS WF_USER_ROLE;
 DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
@@ -124,34 +127,55 @@ CREATE TABLE WF_Users (
     Username NVARCHAR(100) NOT NULL PRIMARY KEY,
     Email NVARCHAR(255) NOT NULL UNIQUE,
     FullName NVARCHAR(200) NOT NULL,
-    Role NVARCHAR(10) NOT NULL DEFAULT 'NCRC', -- technically a User can have many roles - default role
-    Admin NVARCHAR(100) NULL, -- if this user is an NCRC, who is their admin?
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     LastLoginDate DATETIME2 NULL, -- add to OKTA /auth/login on success callback
     FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole)
 );
+-- ALTER TABLE WF_Users DROP Role;
+-- ALTER TABLE WF_Users DROP Admin;
 
--- ALTER TABLE WF_Users ADD Admin NVARCHAR(100) NULL;
-
-insert into WF_Users (Username, Email, FullName, Role, Admin) values
-('Rabbi Dick', 'dick@ou.org', 'Rabbi Dick', 'NCRC', 'Bassie Fogelman'),
-('Rabbi Epstein', 'epstein@ou.org', 'Rabbi Epstein', 'NCRC', 'TBD'),
-('Rabbi Gutterman', 'gutterman@ou.org', 'Rabbi Gutterman', 'NCRC', 'Bassie Fogelman'),
-('Rabbi Nosenchuk', 'nosenchuk@ou.org', 'Rabbi Nosenchuk', 'NCRC', 'Tikki Goldstein'),
-('Rabbi Rabinowitz', 'rabinowitz@ou.org', 'Rabbi Rabinowitz', 'NCRC', 'Aviva Gottesman'),
-('Rabbi Shkarofsky', 'shkarofsky@ou.org', 'Rabbi Shkarofsky', 'NCRC', 'Miriam Ganz'),
-('Rabbi Stareshefsky', 'stareshefsky@ou.org', 'Rabbi Stareshefsky', 'NCRC', 'Naomi Marcovici'),
-('Rabbi Steinberg', 'steinberg@ou.org', 'Rabbi Steinberg', 'NCRC', 'Yael Schottenstein'),
-('Rabbi Machuca', 'machuca@ou.org', 'Rabbi Machuca', 'NCRC', 'TBD'),
-('Rabbi Twersky', 'twersky@ou.org', 'Rabbi Twersky', 'NCRC', 'Yael Schottenstein'),
+insert into WF_Users (Username, Email, FullName) values
+('Rabbi Dick', 'dick@ou.org', 'Rabbi Dick'),
+('Rabbi Epstein', 'epstein@ou.org', 'Rabbi Epstein'),
+('Rabbi Gutterman', 'gutterman@ou.org', 'Rabbi Gutterman'),
+('Rabbi Nosenchuk', 'nosenchuk@ou.org', 'Rabbi Nosenchuk'),
+('Rabbi Rabinowitz', 'rabinowitz@ou.org', 'Rabbi Rabinowitz'),
+('Rabbi Shkarofsky', 'shkarofsky@ou.org', 'Rabbi Shkarofsky'),
+('Rabbi Stareshefsky', 'stareshefsky@ou.org', 'Rabbi Stareshefsky'),
+('Rabbi Steinberg', 'steinberg@ou.org', 'Rabbi Steinberg'),
+('Rabbi Machuca', 'machuca@ou.org', 'Rabbi Machuca'),
+('Rabbi Twersky', 'twersky@ou.org', 'Rabbi Twersky'),
 -- Insert Admin users
-('Bassie Fogelman', 'bfogelman@ou.org', 'Bassie Fogelman', 'NCRC-ADMIN', NULL),
-('Tikki Goldstein', 'tgoldstein@ou.org', 'Tikki Goldstein', 'NCRC-ADMIN', NULL),
-('Aviva Gottesman', 'agottesman@ou.org', 'Aviva Gottesman', 'NCRC-ADMIN', NULL),
-('Miriam Ganz', 'mganz@ou.org', 'Miriam Ganz', 'NCRC-ADMIN', NULL),
-('Naomi Marcovici', 'nmarcovici@ou.org', 'Naomi Marcovici', 'NCRC-ADMIN', NULL),
-('Yael Schottenstein', 'yschottenstein@ou.org', 'Yael Schottenstein', 'NCRC-ADMIN', NULL);
+('Bassie Fogelman', 'bfogelman@ou.org', 'Bassie Fogelman'),
+('Tikki Goldstein', 'tgoldstein@ou.org', 'Tikki Goldstein'),
+('Aviva Gottesman', 'agottesman@ou.org', 'Aviva Gottesman'),
+('Miriam Ganz', 'mganz@ou.org', 'Miriam Ganz'),
+('Naomi Marcovici', 'nmarcovici@ou.org', 'Naomi Marcovici'),
+('Yael Schottenstein', 'yschottenstein@ou.org', 'Yael Schottenstein');
+
+
+CREATE TABLE WF_USER_ADMINS(
+    UserName NVARCHAR(100) NOT NULL,
+    AdminUserName NVARCHAR(100) NOT NULL,
+    IsPrimary BIT NOT NULL DEFAULT 0,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    PRIMARY KEY (UserName, AdminUserName),
+    FOREIGN KEY (UserName) REFERENCES WF_Users(UserName),
+    FOREIGN KEY (AdminUserName) REFERENCES WF_Users(UserName)
+);
+
+INSERT INTO WF_USER_ADMINS (UserName, AdminUserName, IsPrimary) VALUES
+('Rabbi Dick', 'Bassie Fogelman', 1),
+('Rabbi Epstein', 'TBD', 0),
+('Rabbi Gutterman', 'Bassie Fogelman', 1),
+('Rabbi Nosenchuk', 'Tikki Goldstein', 1),
+('Rabbi Rabinowitz', 'Aviva Gottesman', 1),
+('Rabbi Shkarofsky', 'Miriam Ganz', 1),
+('Rabbi Stareshefsky', 'Naomi Marcovici', 1),
+('Rabbi Steinberg', 'Yael Schottenstein', 1),
+('Rabbi Machuca', 'TBD', 0),
+('Rabbi Twersky', 'Yael Schottenstein', 1);
 
 
 -- This could be the parent table to do counts and sums or we write a View 

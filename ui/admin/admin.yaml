@@ -1,12 +1,12 @@
 about:
-  date: August 28, 2025 08:38:16
+  date: September 25, 2025 11:45:42
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
   number_relationships: 47
-  number_tables: 41
+  number_tables: 42
 info_toggle_checked: true
 resources:
   LaneDefinition:
@@ -646,12 +646,14 @@ resources:
       required: true
       type: Boolean
     - name: Description
-    - name: PreScriptJson
-    - name: PostScriptJson
     - name: CreatedDate
+      required: true
     - name: CreatedBy
+      required: true
     - name: ModifiedDate
     - name: ModifiedBy
+    - name: PreScriptJson
+    - name: PostScriptJson
     - name: TaskId
     - name: IsRequired
       required: true
@@ -1387,11 +1389,71 @@ resources:
       resource: RoleAssigment
     - direction: tomany
       fks:
+      - UserRole
+      name: WFUSERROLEList
+      resource: WFUSERROLE
+    - direction: tomany
+      fks:
       - Role
       name: WFUserList
       resource: WFUser
     type: WFRole
     user_key: UserRole
+  WFUSERADMIN:
+    attributes:
+    - label: ' User Name*'
+      name: UserName
+      required: true
+      search: true
+      sort: true
+    - name: AdminUserName
+      required: true
+    - name: UserName
+      required: true
+    - name: IsPrimary
+      required: true
+      type: Boolean
+    - name: CreatedDate
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - AdminUserName
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - UserName
+      name: WF_User1
+      resource: WFUser
+    type: WFUSERADMIN
+    user_key: UserName
+  WFUSERROLE:
+    attributes:
+    - label: ' User Name*'
+      name: UserName
+      required: true
+      search: true
+      sort: true
+    - name: UserName
+      required: true
+    - name: UserRole
+      required: true
+    - name: CreatedDate
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - UserName
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - UserRole
+      name: WF_Role
+      resource: WFRole
+    type: WFUSERROLE
+    user_key: UserName
   WFUser:
     attributes:
     - label: ' Username*'
@@ -1411,12 +1473,28 @@ resources:
     - name: CreatedDate
       required: true
     - name: LastLoginDate
+    - name: Admin
     tab_groups:
     - direction: tomany
       fks:
       - Assignee
       name: RoleAssigmentList
       resource: RoleAssigment
+    - direction: tomany
+      fks:
+      - AdminUserName
+      name: WFUSERADMINList
+      resource: WFUSERADMIN
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUSERADMINList1
+      resource: WFUSERADMIN
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUSERROLEList
+      resource: WFUSERROLE
     - direction: toone
       fks:
       - Role

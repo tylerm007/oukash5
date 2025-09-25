@@ -45,6 +45,8 @@
       
       <o-date-input #LastLoginDate attr="LastLoginDate" value-type="string" label="LastLoginDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
+      <o-text-input #Admin attr="Admin" label="Admin" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
     </div>
   </o-row>
       
@@ -96,6 +98,133 @@
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
           <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="WFUSERADMIN-AdminUserName">
+    <div layout-padding>
+      <o-table 
+        attr="WFUSERADMINTable" 
+        service="WFUSERADMIN" 
+        entity="WFUSERADMIN" 
+        keys="UserName;AdminUserName"
+        parent-keys="AdminUserName:Username"
+        columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
+        horizontal-scroll="yes"
+        detail-form-route="WFUSERADMIN" 
+        edit-form-route="WFUSERADMIN"
+        visible-columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
+        sort-columns="UserName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #UserName attr="UserName" title=" User Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #AdminUserName attr="AdminUserName" title="AdminUserName" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="IsPrimary" title="IsPrimary">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="WFUSERADMIN-UserName">
+    <div layout-padding>
+      <o-table 
+        attr="WFUSERADMINTable" 
+        service="WFUSERADMIN" 
+        entity="WFUSERADMIN" 
+        keys="UserName;AdminUserName"
+        parent-keys="UserName:Username"
+        columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
+        horizontal-scroll="yes"
+        detail-form-route="WFUSERADMIN" 
+        edit-form-route="WFUSERADMIN"
+        visible-columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
+        sort-columns="UserName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #UserName attr="UserName" title=" User Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #AdminUserName attr="AdminUserName" title="AdminUserName" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="IsPrimary" title="IsPrimary">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="WFUSERROLE-UserName">
+    <div layout-padding>
+      <o-table 
+        attr="WFUSERROLETable" 
+        service="WFUSERROLE" 
+        entity="WFUSERROLE" 
+        keys="UserName;UserRole"
+        parent-keys="UserName:Username"
+        columns="UserName;UserRole;CreatedDate"  
+        horizontal-scroll="yes"
+        detail-form-route="WFUSERROLE" 
+        edit-form-route="WFUSERROLE"
+        visible-columns="UserName;UserRole;CreatedDate"  
+        sort-columns="UserName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #UserName attr="UserName" title=" User Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #UserRole attr="UserRole" title="UserRole" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

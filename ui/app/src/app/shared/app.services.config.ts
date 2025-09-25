@@ -49,6 +49,8 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'WFQuoteItem': { 'path': '/WFQuoteItem' }
 ,'WFQuoteStatus': { 'path': '/WFQuoteStatus' }
 ,'WFRole': { 'path': '/WFRole' }
+,'WFUSERADMIN': { 'path': '/WFUSERADMIN' }
+,'WFUSERROLE': { 'path': '/WFUSERROLE' }
 ,'WFUser': { 'path': '/WFUser' }
 ,'WorkflowHistory': { 'path': '/WorkflowHistory' }
  };

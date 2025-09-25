@@ -99,14 +99,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         #TODO add WF task history info
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
-            admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
+            admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+            if admin_assignee is None:
+                admin_assignee = assignee 
+            else:
+                admin_assignee = admin_assignee.AdminUserName
             add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
         # Set TaskInstance to Completed
         
         app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
 
-        if role == 'NCRC':
-            admin_assignee = assignee #TODO - how do we look up the admin for this NCRC?
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
     
     def add_role_assignment(application_id, role, assignee):

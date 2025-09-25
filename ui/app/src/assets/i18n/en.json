@@ -479,11 +479,15 @@
   "QuoteItemID": "Quote Item ID",
   "WFRole": "WF Role",
   "UserRole": "User Role",
-  "Role": "Role",
-  "WFUser": "WFUSER",
+  "Role": "Roles",
+  "WFUser": "Users",
   "Username": "Username",
   "FullName": "Full Name",
   "Email": "Email",
-  "LastLoginDate": "Last Login Date",
-  "UserID": "UserID"
+  "FullName": "FullName",
+  "LastLoginDate": "LastLoginDate",
+  "Admin": "Admin",
+  "WFUSERADMIN": "User Admins",
+  "IsPrimary": "IsPrimary",
+  "AdminUserName": "AdminUserName"
 }

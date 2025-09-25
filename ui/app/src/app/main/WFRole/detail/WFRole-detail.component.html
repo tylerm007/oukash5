@@ -77,6 +77,45 @@
     </div>
 </mat-tab>
         
+        <mat-tab label="WFUSERROLE-UserRole">
+    <div layout-padding>
+      <o-table 
+        attr="WFUSERROLETable" 
+        service="WFUSERROLE" 
+        entity="WFUSERROLE" 
+        keys="UserName;UserRole"
+        parent-keys="UserRole:UserRole"
+        columns="UserName;UserRole;CreatedDate"  
+        horizontal-scroll="yes"
+        detail-form-route="WFUSERROLE" 
+        edit-form-route="WFUSERROLE"
+        visible-columns="UserName;UserRole;CreatedDate"  
+        sort-columns="UserName" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #UserName attr="UserName" title=" User Name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #UserRole attr="UserRole" title="UserRole" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
         <mat-tab label="WFUSER-Role">
     <div layout-padding>
       <o-table 
@@ -85,11 +124,11 @@
         entity="WFUser" 
         keys="Username"
         parent-keys="Role:UserRole"
-        columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate"  
+        columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate;Admin"  
         horizontal-scroll="yes"
         detail-form-route="WFUser" 
         edit-form-route="WFUser"
-        visible-columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate"  
+        visible-columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate;Admin"  
         sort-columns="Username" 
         query-rows="25" 
         quick-filter="yes"
@@ -121,6 +160,8 @@
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
           <o-table-column #LastLoginDate attr="LastLoginDate" title="LastLoginDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #Admin attr="Admin" title="Admin" editable="no" required="no" content-align="left"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

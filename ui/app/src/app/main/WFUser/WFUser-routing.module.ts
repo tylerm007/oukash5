@@ -20,6 +20,27 @@ const routes: Routes = [
             permissionId: 'RoleAssigment-detail-permissions'
         }
     }
+},{
+    path: ':AdminUserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFUSERADMIN-detail-permissions'
+        }
+    }
+},{
+    path: ':UserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFUSERADMIN-detail-permissions'
+        }
+    }
+},{
+    path: ':UserName/WFUSERROLE', loadChildren: () => import('../WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFUSERROLE-detail-permissions'
+        }
+    }
 }
 ];
 

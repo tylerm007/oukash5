@@ -117,6 +117,10 @@ export const routes: Routes = [
     
         { path: 'WFRole', loadChildren: () => import('./WFRole/WFRole.module').then(m => m.WFRoleModule) },
     
+        { path: 'WFUSERADMIN', loadChildren: () => import('./WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule) },
+    
+        { path: 'WFUSERROLE', loadChildren: () => import('./WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule) },
+    
         { path: 'WFUser', loadChildren: () => import('./WFUser/WFUser.module').then(m => m.WFUserModule) },
     
         { path: 'WorkflowHistory', loadChildren: () => import('./WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule) },

@@ -1,0 +1,40 @@
+<o-form-layout-manager attr="WFUSERADMIN" mode="tab" title="WFUSERADMIN">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="WFUSERADMINTable" 
+            service="WFUSERADMIN" 
+            entity="WFUSERADMIN" 
+            title="WFUSERADMIN"
+            keys="UserName;AdminUserName"
+            columns="UserName;AdminUserName;IsPrimary;CreatedDate" 
+            header-actions="R;D"
+            visible-columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
+            sort-columns="UserName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #UserName attr="UserName" title=" User Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #AdminUserName attr="AdminUserName" title="AdminUserName" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="IsPrimary" title="IsPrimary">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

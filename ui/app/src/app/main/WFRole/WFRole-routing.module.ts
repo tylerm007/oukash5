@@ -21,6 +21,13 @@ const routes: Routes = [
         }
     }
 },{
+    path: ':UserRole/WFUSERROLE', loadChildren: () => import('../WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFUSERROLE-detail-permissions'
+        }
+    }
+},{
     path: ':Role/WFUser', loadChildren: () => import('../WFUser/WFUser.module').then(m => m.WFUserModule),
     data: {
         oPermission: {

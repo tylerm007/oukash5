@@ -348,7 +348,7 @@ class WFRole(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    WFUserList : Mapped[List["WFUser"]] = relationship(back_populates="WF_Role")
+    #WFUserList : Mapped[List["WFUser"]] = relationship(back_populates="WF_Role")
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="WF_Role")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_Role")
 
@@ -507,18 +507,18 @@ class WFUser(Base):  # type: ignore
     Username = Column(Unicode(100), primary_key=True)
     Email = Column(Unicode(255), nullable=False, unique=True)
     FullName = Column(Unicode(200), nullable=False)
-    Role = Column(ForeignKey('WF_Roles.UserRole'), server_default=text("('ADMIN')"), nullable=False)
     IsActive = Column(Boolean, server_default=text("1"), nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     LastLoginDate = Column(DATETIME2)
-    Admin = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
-    WF_Role : Mapped["WFRole"] = relationship(back_populates=("WFUserList"))
+    #WF_Role : Mapped["WFRole"] = relationship(back_populates=("WFUserList"))
 
     # child relationships (access children)
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="WF_User")
+    WFUSERADMINList : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates="WF_User")
+    WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
 
 
@@ -743,6 +743,24 @@ class WFQuote(Base):  # type: ignore
 
     # child relationships (access children)
     WFQuoteItemList : Mapped[List["WFQuoteItem"]] = relationship(back_populates="Quote")
+
+
+
+class WFUSERADMIN(Base):  # type: ignore
+    __tablename__ = 'WF_USER_ADMINS'
+    _s_collection_name = 'WFUSERADMIN'  # type: ignore
+
+    UserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
+    AdminUserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
+    IsPrimary = Column(Boolean, server_default=text("0"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+    WF_User : Mapped["WFUser"] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates=("WFUSERADMINList"))
+    WF_User1 : Mapped["WFUser"] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates=("WFUSERADMINList1"))
+
+    # child relationships (access children)
 
 
 

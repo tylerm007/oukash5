@@ -6,9 +6,9 @@
             entity="WFUser" 
             title="WFUSER"
             keys="Username"
-            columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate" 
+            columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate;Admin" 
             header-actions="R;D"
-            visible-columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate"  
+            visible-columns="Username;Role;Email;FullName;IsActive;CreatedDate;LastLoginDate;Admin"  
             sort-columns="Username" 
             query-rows="20" 
             quick-filter="yes"
@@ -38,6 +38,8 @@
             <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
             
             <o-table-column #LastLoginDate attr="LastLoginDate" title="LastLoginDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #Admin attr="Admin" title="Admin" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-context-menu></o-table-context-menu>
             <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
