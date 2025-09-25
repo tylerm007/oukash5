@@ -167,14 +167,14 @@ CREATE TABLE WF_USER_ADMINS(
 
 INSERT INTO WF_USER_ADMINS (UserName, AdminUserName, IsPrimary) VALUES
 ('Rabbi Dick', 'Bassie Fogelman', 1),
-('Rabbi Epstein', 'TBD', 0),
+--('Rabbi Epstein', 'TBD', 0),
 ('Rabbi Gutterman', 'Bassie Fogelman', 1),
 ('Rabbi Nosenchuk', 'Tikki Goldstein', 1),
 ('Rabbi Rabinowitz', 'Aviva Gottesman', 1),
 ('Rabbi Shkarofsky', 'Miriam Ganz', 1),
 ('Rabbi Stareshefsky', 'Naomi Marcovici', 1),
 ('Rabbi Steinberg', 'Yael Schottenstein', 1),
-('Rabbi Machuca', 'TBD', 0),
+--('Rabbi Machuca', 'TBD', 0),
 ('Rabbi Twersky', 'Yael Schottenstein', 1);
 
 
@@ -422,12 +422,16 @@ CREATE TABLE WF_Files (
 CREATE TABLE WF_ApplicationMessages (
     MessageID INT IDENTITY(1,1) PRIMARY KEY,
     ApplicationID INT NOT NULL,
-    FromUser NVARCHAR(200) NOT NULL,
-    ToUser NVARCHAR(200) NOT NULL,
+    FromUser NVARCHAR(100) NOT NULL,
+    ToUser NVARCHAR(100) NOT NULL,
     MessageText NVARCHAR(MAX) NOT NULL,
-    MessageType NVARCHAR(50) NOT NULL DEFAULT 'outgoing',
-    Priority NVARCHAR(20) NOT NULL DEFAULT 'normal',
+    MessageType NVARCHAR(50) NOT NULL DEFAULT 'internal',
+    Priority NVARCHAR(20) NOT NULL DEFAULT 'NORMAL',
     SentDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    FOREIGN KEY (Priority) REFERENCES WF_Priorities(PriorityCode),
+    -- FOREIGN KEY (MessageType) REFERENCES WF_MessageType(TypeCode),
+    FOREIGN KEY (ToUser) REFERENCES WF_Users(Username),
+    FOREIGN KEY (FromUser) REFERENCES WF_Users(Username),
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
 

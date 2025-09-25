@@ -27,15 +27,66 @@ after-insert-mode="new" class="standalone-form-container" >
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       
-        <o-text-input #FromUser attr="FromUser" label="FromUser" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+        <o-list-picker 
+        attr="FromUser"
+        service="WFUser" 
+        entity="WFUserType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="Username" 
+        value-column-type="VARCHAR"  
+        keys="Username" 
+        columns="Username;FromUser;Username" 
+        title="FromUser"
+        visible-columns="Username;Username" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
       
-        <o-text-input #ToUser attr="ToUser" label="ToUser" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+        <o-list-picker 
+        attr="Priority"
+        service="WFPriority" 
+        entity="WFPriorityType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="PriorityCode" 
+        value-column-type="VARCHAR"  
+        keys="PriorityCode" 
+        columns="PriorityCode;Priority;PriorityDescription" 
+        title="Priority"
+        visible-columns="PriorityCode;PriorityDescription" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="ToUser"
+        service="WFUser" 
+        entity="WFUserType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="Username" 
+        value-column-type="VARCHAR"  
+        keys="Username" 
+        columns="Username;ToUser;Username" 
+        title="ToUser"
+        visible-columns="Username;Username" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
       
         <o-text-input #MessageText attr="MessageText" label="MessageText" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-text-input #MessageType attr="MessageType" label="MessageType" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
-        <o-text-input #Priority attr="Priority" label="Priority" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-date-input #SentDate attr="SentDate" value-type="string" label="SentDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       

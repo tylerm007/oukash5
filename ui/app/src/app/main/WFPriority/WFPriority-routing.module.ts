@@ -20,6 +20,13 @@ const routes: Routes = [
             permissionId: 'WFApplication-detail-permissions'
         }
     }
+},{
+    path: ':Priority/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFApplicationMessage-detail-permissions'
+        }
+    }
 }
 ];
 

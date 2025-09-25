@@ -299,6 +299,7 @@ class WFPriority(Base):  # type: ignore
 
     # child relationships (access children)
     WFApplicationList : Mapped[List["WFApplication"]] = relationship(back_populates="WF_Priority")
+    WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="WF_Priority")    
 
 t_CompanyContactsAndAddresses = Table(
     'CompanyContactsAndAddresses', metadata,
@@ -520,6 +521,9 @@ class WFUser(Base):  # type: ignore
     WFUSERADMINList : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates="WF_User")
     WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
+    WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(foreign_keys='[WFApplicationMessage.FromUser]', back_populates="WF_FromUser")
+    WFApplicationMessageList1 : Mapped[List["WFApplicationMessage"]] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates="WF_ToUser")
+
 
 
 
@@ -651,20 +655,22 @@ class WFApplicationMessage(Base):  # type: ignore
     __tablename__ = 'WF_ApplicationMessages'
     _s_collection_name = 'WFApplicationMessage'  # type: ignore
 
-    MessageID = Column(Integer, autoincrement=True, primary_key=True)
-    ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False, index=True)
-    FromUser = Column(Unicode(200), nullable=False)
-    ToUser = Column(Unicode(200), nullable=False)
+    MessageID = Column(Integer, server_default=text("0"), primary_key=True)
+    ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
+    FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
+    ToUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
-    MessageType = Column(Unicode(50), server_default=text('outgoing'), nullable=False)
-    Priority = Column(Unicode(20), server_default=text('normal'), nullable=False)
-    SentDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    MessageType = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('internal')"), nullable=False)
+    Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)
+    SentDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
 
     # parent relationships (access parent)
     Application : Mapped["WFApplication"] = relationship(back_populates=("WFApplicationMessageList"))
+    WF_FromUser : Mapped["WFUser"] = relationship(foreign_keys='[WFApplicationMessage.FromUser]', back_populates=("WFApplicationMessageList"))
+    WF_Priority : Mapped["WFPriority"] = relationship(back_populates=("WFApplicationMessageList"))
+    WF_ToUser : Mapped["WFUser"] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates=("WFApplicationMessageList1"))
 
     # child relationships (access children)
-
 
 
 class WFCompany(Base):  # type: ignore

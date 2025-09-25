@@ -5,7 +5,7 @@ about:
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 47
+  number_relationships: 49
   number_tables: 42
 info_toggle_checked: true
 resources:
@@ -659,12 +659,6 @@ resources:
       required: true
       type: Boolean
     tab_groups:
-    # Child relationships (tomany)
-    - direction: tomany
-      fks:
-      - CurrentTaskId
-      name: ProcessInstanceList
-      resource: ProcessInstance
     - direction: tomany
       fks:
       - FromTaskId
@@ -1031,6 +1025,21 @@ resources:
       - ApplicationID
       name: Application
       resource: WFApplication
+    - direction: toone
+      fks:
+      - FromUser
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - Priority
+      name: WF_Priority
+      resource: WFPriority
+    - direction: toone
+      fks:
+      - ToUser
+      name: WF_User1
+      resource: WFUser
     type: WFApplicationMessage
     user_key: MessageID
   WFApplicationStatus:
@@ -1222,6 +1231,11 @@ resources:
       - Priority
       name: WFApplicationList
       resource: WFApplication
+    - direction: tomany
+      fks:
+      - Priority
+      name: WFApplicationMessageList
+      resource: WFApplicationMessage
     type: WFPriority
     user_key: PriorityDescription
   WFProduct:
@@ -1392,11 +1406,6 @@ resources:
       - UserRole
       name: WFUSERROLEList
       resource: WFUSERROLE
-    - direction: tomany
-      fks:
-      - Role
-      name: WFUserList
-      resource: WFUser
     type: WFRole
     user_key: UserRole
   WFUSERADMIN:
@@ -1461,8 +1470,6 @@ resources:
       required: true
       search: true
       sort: true
-    - name: Role
-      required: true
     - name: Email
       required: true
     - name: FullName
@@ -1473,13 +1480,22 @@ resources:
     - name: CreatedDate
       required: true
     - name: LastLoginDate
-    - name: Admin
     tab_groups:
     - direction: tomany
       fks:
       - Assignee
       name: RoleAssigmentList
       resource: RoleAssigment
+    - direction: tomany
+      fks:
+      - FromUser
+      name: WFApplicationMessageList
+      resource: WFApplicationMessage
+    - direction: tomany
+      fks:
+      - ToUser
+      name: WFApplicationMessageList1
+      resource: WFApplicationMessage
     - direction: tomany
       fks:
       - AdminUserName
@@ -1495,11 +1511,6 @@ resources:
       - UserName
       name: WFUSERROLEList
       resource: WFUSERROLE
-    - direction: toone
-      fks:
-      - Role
-      name: WF_Role
-      resource: WFRole
     type: WFUser
     user_key: Username
   WorkflowHistory:

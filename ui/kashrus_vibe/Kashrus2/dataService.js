@@ -7,7 +7,7 @@ class DataService {
     constructor() {
         this.baseApiUrl = 'http://172.30.3.133:5656/api/';
         this.bearerToken = localStorage.getItem('plant_app_bearer_token') ||
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODQ4Njc1NSwianRpIjoiN2ZlMTU0MzktODcyNy00NDIxLTgyMzAtZTVhNGQ4YmI3YTJhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4NDg2NzU1LCJleHAiOjE3NTg1MDAwNzV9.npoIB_A7iiLf52reWVbS5q6nK61r-9PVMZH4XVYomu0';
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODgyMDMyMCwianRpIjoiMGRlMjllYjAtZjAwNi00NzNhLTk4YWQtMzBlMjNmMWNmNzU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4ODIwMzIwLCJleHAiOjE3NTg4MzM2NDB9.ETf29fcfRTWe3kvfPGsK-jTYjDjCOvR5wEqxLnEG3y4';
 
         // Pagination state
         this.currentPage = 0;

@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class WFApplicationMessageNewComponent {
   @ViewChild("WFApplicationMessageForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'MessageID': '0', 'MessageType': "('outgoing')", 'Priority': "('normal')", 'SentDate': '(getdate())'}
+    const default_values = {'MessageID': '0', 'Priority': "('NORMAL')", 'MessageType': "('internal')", 'SentDate': '(getdate())'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

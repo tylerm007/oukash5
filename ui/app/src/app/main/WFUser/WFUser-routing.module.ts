@@ -21,6 +21,20 @@ const routes: Routes = [
         }
     }
 },{
+    path: ':FromUser/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFApplicationMessage-detail-permissions'
+        }
+    }
+},{
+    path: ':ToUser/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
+    data: {
+        oPermission: {
+            permissionId: 'WFApplicationMessage-detail-permissions'
+        }
+    }
+},{
     path: ':AdminUserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
     data: {
         oPermission: {

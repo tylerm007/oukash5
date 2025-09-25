@@ -6,9 +6,9 @@
             entity="WFApplicationMessage" 
             title="WFAPPLICATIONMESSAGE"
             keys="MessageID"
-            columns="MessageID;ApplicationID;FromUser;ToUser;MessageText;MessageType;Priority;SentDate" 
+            columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate" 
             header-actions="R;D"
-            visible-columns="MessageID;ApplicationID;FromUser;ToUser;MessageText;MessageType;Priority;SentDate"  
+            visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
             sort-columns="MessageID" 
             query-rows="20" 
             quick-filter="yes"
@@ -35,13 +35,13 @@
             
             <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
             
+            <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
+            
             <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="yes" content-align="left"></o-table-column>
             
             <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
             
             <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
-            
-            <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
             
             <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
             
