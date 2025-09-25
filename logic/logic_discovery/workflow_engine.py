@@ -46,7 +46,7 @@ def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRo
         return
 
 def set_application_attribute(application_id, name, value) -> bool:
-    ''' Set an attribute of the application to a new value
+    ''' Set an attribute of the WFApplication to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
     '''
@@ -66,11 +66,43 @@ def set_application_attribute(application_id, name, value) -> bool:
     args = config.Args
     server = args.swagger_host
     port = args.port
-    server_uri = f"http://{server}:{port}"
+    server_uri = "http://localhost:5656" #f"http://{server}:{port}"
     response = requests.patch(f"{server_uri}/api/WFApplication/{application_id}", json=data, headers=headers)
     if response.status_code == 200:
+        app_logger.info(f"Application {application_id} attribute {name} set to {value}")
         return True
+    app_logger.error(f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
     return False
+
+def set_task_attribute(task_instance_id, name, value) -> bool:
+    ''' Set an attribute of the TaskInstance to a new value
+        The simple setattr does not work and we cannot commit()
+        will try PATCH
+    '''
+    data = {
+        "data": {
+            "attributes": {
+                f"{name}": f"{value}"
+            },
+            "type": "TaskInstance",
+            "id": f"{task_instance_id}"
+        }
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    
+    args = config.Args
+    server = args.swagger_host
+    port = args.port
+    server_uri = f"http://{server}:{port}"
+    response = requests.patch(f"{server_uri}/api/TaskInstance/{task_instance_id}", json=data, headers=headers)
+    if response.status_code == 200:
+        app_logger.info(f"TaskInstance {task_instance_id} attribute {name} set to {value}")
+        return True
+    app_logger.error(f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
+    return False
+
 def get_application(application_id):
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()
     if not application:
@@ -234,7 +266,8 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             data = row.ResultData or {}
             task = row.to_dict()
             context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id}
-            external_context = {"get_application": get_application, "set_application_attribute":set_application_attribute,"models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
+            external_context = {"get_application": get_application, "set_application_attribute":set_application_attribute, "set_task_attribute":set_task_attribute,
+                                "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:
                 result = r.get('data', None)

@@ -16,6 +16,21 @@ import database.models as models
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
+
+def append_message(row: models.WFApplication, logic_row: LogicRow, message: str) -> bool:
+    
+    logic_row.log(message)
+    wf_message = models.WFApplicationMessage(
+        ApplicationID=row.ApplicationID,
+        MessageText=message,
+        FromUser="System",
+        ToUser=row.AssignedTo,
+        Priority="HIGH",
+        SendDate=datetime.datetime.now()
+    )
+    logic_row.insert(reason="add WF Message", row=wf_message)
+    return False
+
 def verify_requests(row: models.WFApplication, old_row: models.WFApplication, logic_row: LogicRow):
     '''
     Verify that the number of requests for an application does not exceed the allowed limit.
@@ -23,30 +38,28 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
     if logic_row.ins_upd_dlt == 'upd':
         company_id = row.CompanyID
         plant_id = row.PlantID
+        application_id = row.ApplicationID
         if row.verify_company == 1 and old_row.verify_company == 0:    
             if company_id is None:
-                logic_row.log("CompanyID is None; cannot verify requests.")
-                raise Exception("CompanyID is required for verification.")
+                return append_message(row, logic_row,"CompanyID is required for verification.")
                 # COMPANYTB has CompanyID
             company = models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
             if not company:
-                logic_row.log(f"Company with ID {company_id} does not exist in Company Table.")
-                raise Exception(f"Company with ID {company_id} does not exist in Company Table.")
+                return append_message(row, logic_row,f"Company with ID {company_id} does not exist in Company Table.")
         if row.verify_plant == 1 and old_row.verify_plant == 0:
             if plant_id is None:
-                logic_row.log("PlantID is None; cannot verify requests.")
-                raise Exception("PlantID is required for verification.")
+                return append_message(row, logic_row,"PlantID is required for verification.")
             # PLANTTB has PlantID - should check OWNSTB Company-Plant
             plant = models.PLANTTB.query.filter_by(PLANT_ID=plant_id).first()
             if not plant:
-                logic_row.log(f"Plant with ID {plant_id} does not exist in Plant Table.")
-                raise Exception(f"Plant with ID {plant_id} does not exist in Plant Table.")
+                return append_message(row, logic_row,f"Plant with ID {plant_id} does not exist in Plant Table.")
+            # Check OWNSTB for CompanyID and PlantID combination
             if company_id is not None and plant_id is not None:
                 ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
                 if not ownstb:
-                    logic_row.log(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
-                    raise Exception(f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
+                    return append_message(row, logic_row,f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
     return True
+
 def declare_logic():
     pass
 
