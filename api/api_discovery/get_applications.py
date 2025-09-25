@@ -139,9 +139,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 msg = am.to_dict()
                 app_row["application_messages"].append({
                     "id": msg.get("MessageID"),
-                    "sender": msg.get("FromUser"), 
+                    "fromUser": msg.get("FromUser"), 
+                    "toUser": msg.get("ToUser"),
+                    "priority": msg.get("Priority"),
                     "text": msg.get("MessageText"),
-                    "timestamp": msg.get("SentDate"),
+                    "sentDate": msg.get("SentDate"),
+                    "messageType": msg.get("MessageType"),
                     "isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
            
