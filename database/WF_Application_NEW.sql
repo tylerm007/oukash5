@@ -37,6 +37,8 @@ IF OBJECT_ID('WF_Contacts', 'U') IS NOT NULL
     DELETE FROM WF_Contacts;
 IF OBJECT_ID('WF_Companies', 'U') IS NOT NULL
     DELETE FROM WF_Companies;
+IF OBJECT_ID('WF_USER_ROLE', 'U') IS NOT NULL
+    DELETE FROM WF_USER_ROLE;
 IF OBJECT_ID('WF_Users', 'U') IS NOT NULL
     DELETE FROM WF_Users;
 IF OBJECT_ID('RoleAssigment', 'U') IS NOT NULL
@@ -78,6 +80,7 @@ DROP TABLE IF EXISTS RoleAssigment;
 DROP TABLE IF EXISTS WF_Applications;
 
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
+DROP TABLE IF EXISTS WF_USER_ROLE;
 DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
 
@@ -444,6 +447,15 @@ CREATE TABLE WF_ActivityLog (
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
 
+
+CREATE TABLE WF_USER_ROLE(
+    UserName NVARCHAR(100) NOT NULL,
+    UserRole NVARCHAR(10) NOT NULL,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    PRIMARY KEY (UserName, UserRole),
+    FOREIGN KEY (UserName) REFERENCES WF_Users(UserName),
+    FOREIGN KEY (UserRole) REFERENCES WF_Roles(UserRole)
+);
 -- =============================================
 -- CREATE INDEXES
 -- =============================================

@@ -350,6 +350,7 @@ class WFRole(Base):  # type: ignore
     # child relationships (access children)
     WFUserList : Mapped[List["WFUser"]] = relationship(back_populates="WF_Role")
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="WF_Role")
+    WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_Role")
 
 
 
@@ -510,6 +511,7 @@ class WFUser(Base):  # type: ignore
     IsActive = Column(Boolean, server_default=text("1"), nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     LastLoginDate = Column(DATETIME2)
+    Admin = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -517,6 +519,7 @@ class WFUser(Base):  # type: ignore
 
     # child relationships (access children)
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="WF_User")
+    WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
 
 
 
@@ -742,6 +745,22 @@ class WFQuote(Base):  # type: ignore
     WFQuoteItemList : Mapped[List["WFQuoteItem"]] = relationship(back_populates="Quote")
 
 
+
+class WFUSERROLE(Base):  # type: ignore
+    __tablename__ = 'WF_USER_ROLE'
+    _s_collection_name = 'WFUSERROLE'  # type: ignore
+
+    UserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
+    UserRole = Column(ForeignKey('WF_Roles.UserRole'), primary_key=True, nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+    WF_User : Mapped["WFUser"] = relationship(back_populates=("WFUSERROLEList"))
+    WF_Role : Mapped["WFRole"] = relationship(back_populates=("WFUSERROLEList"))
+
+    # child relationships (access children)
+	
 
 class ProcessMessage(Base):  # type: ignore
     __tablename__ = 'ProcessMessages'
