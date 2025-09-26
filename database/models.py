@@ -658,7 +658,7 @@ class WFApplicationMessage(Base):  # type: ignore
     MessageID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
-    ToUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
+    ToUser = Column(ForeignKey('WF_Users.Username'))
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
     MessageType = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('internal')"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)

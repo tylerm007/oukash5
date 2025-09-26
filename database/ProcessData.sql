@@ -169,7 +169,7 @@ EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Contact Customer',
 EXEC sp_add_flow @from_name = 'Assign Product', @to_name = 'Initial Collector', @condition = NULL;
 EXEC sp_add_flow @from_name = 'Assign Ingredients', @to_name = 'Initial Collector', @condition = NULL;
 EXEC sp_add_flow @from_name = 'Contact Customer', @to_name = 'Initial Collector', @condition = NULL;
-EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'End', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'End', @condition = NULL;
 GO
 -- ============================================= STOP HERE FOR TESTING =======================
 
@@ -199,19 +199,22 @@ INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequen
 VALUES
 (1, 'Start NDA', 'START', 'COMPLETION', 4, 2, 0, 'NCRC', 15, 0, 1, 'Start NDA stage', 'system'),
 (1, 'Needs NDA', 'CONDITION', 'APPROVAL', 4, 2, 0, 'NCRC', 15, 0, 0, 'Determine if NDA is required', 'system'),
-(1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 5, 2, 0, 'LEGAL', 30, 0, 0, 'Send non-disclosure agreement to customer', 'system'),
+(1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 5, 2, 0, 'LEGAL', 30, 0, 0, 'Send/Recieve non-disclosure agreement to customer', 'system'),
 (1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 0, 'LEGAL', 480, 0, 0, 'Legal review and execution of NDA', 'system'),
 (1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 0, 'LEGAL', 15, 0, 0, 'Mark NDA process as completed', 'system');
 (1, 'NDA End', 'END', 'COMPLETION', 7, 2, 0, 'SYSTEM', 15, 0, 1, 'NDA completed', 'system');
 -- Task Flow for NDA Lane
-EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Start NDA', @condition = NULL;
+
+EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'Start NDA', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Needs NDA', @condition = NULL;
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = NULL;
 EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES';
 EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'YES';
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA Completed', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Needs Completed', @to_name = 'NDA End', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'NO';
-EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'End', @condition = NULL;
+EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'End', @condition = NULL; -- need collector task before end
+GO
 -- Continue with other lanes...
 -- Inspection Process Lane Tasks (LaneId = 3)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)

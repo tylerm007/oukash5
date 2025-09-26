@@ -428,7 +428,7 @@ CREATE TABLE WF_ApplicationMessages (
     MessageID INT IDENTITY(1,1) PRIMARY KEY,
     ApplicationID INT NOT NULL,
     FromUser NVARCHAR(100) NOT NULL,
-    ToUser NVARCHAR(100) NOT NULL,
+    ToUser NVARCHAR(100) NULL,
     MessageText NVARCHAR(MAX) NOT NULL,
     MessageType NVARCHAR(50) NOT NULL DEFAULT 'internal',
     Priority NVARCHAR(20) NOT NULL DEFAULT 'NORMAL',
@@ -439,6 +439,8 @@ CREATE TABLE WF_ApplicationMessages (
     FOREIGN KEY (FromUser) REFERENCES WF_Users(Username),
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
+
+-- ALTER TABLE WF_ApplicationMessages ALTER COLUMN ToUser NVARCHAR(100) NULL;
 
 -- Comments Table
 CREATE TABLE WF_ApplicationComments (
