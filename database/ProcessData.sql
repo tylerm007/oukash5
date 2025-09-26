@@ -217,33 +217,83 @@ EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'End', @condition = NULL; --
 GO
 -- Continue with other lanes...
 -- Inspection Process Lane Tasks (LaneId = 3)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Set Inspection Fee', 'USER', 'FINANCIAL', 8, 3, 0, 'INSP', 60, 1, 0, 'Calculate and set inspection fees'),
-(1, 'Send KIM Invoice', 'USER', 'FINANCIAL', 9, 3, 0, 'BILLING', 30, 1, 0, 'Send Kosher Inspection and Monitoring invoice'),
-(1, 'Payment Overdue - Escalation Required', 'USER', 'ESCALATION', 10, 3, 0, 'BILLING', 60, 0, 0, 'Handle overdue payment escalation'),
-(1, 'Assign RFR', 'USER', 'ASSIGNMENT', 11, 3, 0, 'INSP', 30, 1, 0, 'Assign Regional Field Representative'),
-(1, 'RFR Assigned', 'USER', 'CONFIRMATION', 12, 3, 0, 'RFR', 15, 1, 0, 'Confirm RFR assignment'),
-(1, 'EIR Received/Reviewed', 'USER', 'REVIEW', 13, 3, 0, 'INSP', 240, 1, 0, 'Review Equipment Ingredient Report'),
-(1, 'Notify IAR of EIR', 'SYSTEM', 'NOTIFICATION', 14, 3, 0, 'SYSTEM', 5, 1, 1, 'Notify IAR team of EIR completion');
+(1, 'Inspection Needed', 'CONDITION', 'APPROVAL', 8, 3, 0, 'RC', 15, 0, 1, 'Start Inspection stage', 'system'),
+(1, 'Set Inspection Fee', 'CONFIRM', 'CONFIRMATION', 8, 3, 0, 'INSP', 60, 1, 0, 'Calculate and set inspection fees', 'system'),
+(1, 'Send KIM Invoice', 'ACTION', 'ASSIGNMENT', 9, 3, 0, 'BILLING', 30, 1, 0, 'Send Kosher Inspection and Monitoring invoice', 'system'),
+(1, 'Invoice Paid', 'CONFIRM', 'CONFIRMATION', 10, 3, 0, 'BILLING', 60, 0, 0, 'Payment Received by Finance', 'system'),
+(1, 'Payment Overdue', 'CONFIRM', 'CONFIRMATION', 10, 3, 0, 'BILLING', 60, 0, 0, 'Handle overdue payment escalation', 'system'),
+(1, 'Assign RFR', 'CONDITION', 'APPROVAL', 11, 3, 0, 'INSP', 30, 1, 0, 'Assign Regional Field Representative', 'system'),
+(1, 'RFR Assigned', 'CONFIRM', 'CONFIRMATION', 12, 3, 0, 'RFR', 15, 1, 0, 'Confirm RFR assignment', 'system'),
+(1, 'EIR Received/Reviewed', 'CONFIRM', 'CONFIRMATION', 13, 3, 0, 'INSP', 240, 1, 0, 'Review Equipment & Ingredient Report', 'system'),
+(1, 'Notify IAR of EIR', 'SCRIPT', 'NOTIFICATION', 14, 3, 0, 'SYSTEM', 5, 1, 1, 'Notify IAR team of EIR completion', 'system'),
+(1, 'End Inspection', 'END', 'COMPLETION', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Inspection stage completed', 'system');
+GO
 
+-- Task Flow for Inspection Lane
+EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'Inspection Needed', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Inspection Needed', @to_name = 'End Inspection', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Inspection Needed', @to_name = 'Set Inspection Fee', @condition = 'YES';
+EXEC sp_add_flow @from_name = 'Set Inspection Fee', @to_name = 'Send KIM Invoice', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Send KIM Invoice', @to_name = 'Invoice Paid', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Invoice Paid', @to_name = 'Assign RFR', @condition = 'YES';
+EXEC sp_add_flow @from_name = 'Invoice Paid', @to_name = 'Payment Overdue', @condition = 'NO'; -- set to handle overdue payment escalation
+EXEC sp_add_flow @from_name = 'Assign RFR', @to_name = 'RFR Assigned', @condition = NULL;
+EXEC sp_add_flow @from_name = 'RFR Assigned', @to_name = 'EIR Received/Reviewed', @condition = NULL;
+EXEC sp_add_flow @from_name = 'EIR Received/Reviewed', @to_name = 'Notify IAR of EIR', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Notify IAR of EIR', @to_name = 'End Inspection', @condition = NULL;  
+EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'END', @condition = NULL; -- link to next END collector
+GO
 -- Ingredients Review Lane Tasks (LaneId = 4)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Assign to RC IAR Review', 'USER', 'ASSIGNMENT', 15, 4, 0, 'IAR_MANAGER', 15, 1, 0, 'Assign to Regional Coordinator for IAR review'),
-(1, 'Schedule A Verification', 'USER', 'SCHEDULING', 16, 4, 0, 'IAR', 60, 1, 0, 'Schedule ingredient verification process'),
-(1, 'Kosher Code Verification', 'USER', 'VERIFICATION', 17, 4, 0, 'IAR', 180, 1, 0, 'Verify kosher status codes for ingredients'),
-(1, 'Supplier Approval Check', 'USER', 'VERIFICATION', 18, 4, 0, 'IAR', 120, 1, 0, 'Check supplier approvals and certifications'),
-(1, 'Approved by IAR RC Review', 'USER', 'APPROVAL', 19, 4, 0, 'RC', 60, 1, 0, 'Regional Coordinator approval of IAR review'),
-(1, 'IAR Completed', 'USER', 'COMPLETION', 20, 4, 0, 'RC', 15, 1, 0, 'Mark IAR process as completed');
+VALUES
+(1, 'Start Ingredients Stage', 'START', 'COMPLETION', 8, 4, 0, 'IAR', 15, 0, 1, 'Start Ingredients stage', 'system'),
+(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Upload ingredient data to KASH database', 'system'),
+(1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Verify if all ingredient reviews are complete', 'system'),
+(1, 'End Ingredients', 'END', 'COMPLETION', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Ingredients stage completed', 'system');
 
--- Products Department Lane Tasks (LaneId = 5)
+
+--(1, "Start Ingredients Stage", 'START', 'COMPLETION', 8, 4, 0, 'IAR', 15, 0, 1, 'Start Ingredients stage', 'system'),
+--(1, 'Assign to IAR', 'CONDITION', 'APPROVAL', 14, 4, 0, 'NCRC', 15, 1, 0, 'Assign application to Ingredients Review', 'system'),
+--(1, 'Assign to RC IAR Review', 'CONDITION', 'APPROVAL', 15, 4, 0, 'IAR_MANAGER', 15, 1, 0, 'Assign to Regional Coordinator for IAR review', 'system'),
+--(1, 'Schedule A Verification', 'CONFIRM', 'CONDITION', 16, 4, 0, 'IAR', 60, 1, 0, 'Schedule ingredient verification process', 'system'),
+--(1, 'Kosher Code Verification', 'CONFIRM', 'VERIFICATION', 17, 4, 0, 'IAR', 180, 1, 0, 'Verify kosher status codes for ingredients', 'system'),
+--(1, 'Supplier Approval Check', 'CONFIRM', 'VERIFICATION', 18, 4, 0, 'IAR', 120, 1, 0, 'Check supplier approvals and certifications', 'system'),
+--(1, 'Approved by IAR RC Review', 'CONFIRM', 'APPROVAL', 19, 4, 0, 'RC', 60, 1, 0, 'Regional Coordinator approval of IAR review', 'system'),
+--(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Upload ingredient data to KASH database', 'system'),
+--(1, "Verify Ingredients in DB", 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Verify if all ingredient reviews are complete', 'system'),
+--(1, 'IAR Completed', 'CONFIRM', 'COMPLETION', 20, 4, 0, 'RC', 15, 1, 0, 'Mark IAR process as completed', 'system'),
+--(1, 'End Ingredients', 'END', 'COMPLETION', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Ingredients stage completed', 'system');
+
+EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'Start Ingredients Stage', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload to KASH DB', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingredients', @condition = NULL;
+EXEC sp_add_flow @from_name = 'End Ingredients', @to_name = 'END', @condition = NULL;
+
+
+- Products Department Lane Tasks (LaneId = 5)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
 VALUES
-(1, 'Assign to Products Dept', 'USER', 'ASSIGNMENT', 21, 5, 0, 'PROD_MANAGER', 15, 1, 0, 'Assign application to Products Department'),
-(1, 'Send PLA Invoice', 'USER', 'FINANCIAL', 22, 5, 0, 'BILLING', 30, 0, 0, 'Send Private Label Agreement invoice'),
-(1, 'PLA Invoice Paid', 'USER', 'FINANCIAL', 23, 5, 0, 'BILLING', 15, 0, 0, 'Confirm PLA invoice payment'),
-(1, 'Products Dept Complete', 'USER', 'COMPLETION', 24, 5, 0, 'PROD', 15, 1, 0, 'Mark Products Department review as completed');
+(1, 'Start Products Stage', 'START', 'COMPLETION', 8, 5, 0, 'IAR', 15, 0, 1, 'Start Products stage', 'system'),
+(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 1, 'Upload product data to KASH database', 'system'),
+(1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 1, 'Verify if all product reviews are complete', 'system'),
+(1, 'End Products', 'END', 'COMPLETION', 14, 5, 0, 'SYSTEM', 15, 0, 1, 'Products stage completed', 'system');
+
+
+--(1, 'Assign to Products Dept', 'USER', 'ASSIGNMENT', 21, 5, 0, 'PROD_MANAGER', 15, 1, 0, 'Assign application to Products Department'),
+--(1, 'Send PLA Invoice', 'USER', 'FINANCIAL', 22, 5, 0, 'BILLING', 30, 0, 0, 'Send Private Label Agreement invoice'),
+--(1, 'PLA Invoice Paid', 'USER', 'FINANCIAL', 23, 5, 0, 'BILLING', 15, 0, 0, 'Confirm PLA invoice payment'),
+--(1, 'Products Dept Complete', 'USER', 'COMPLETION', 24, 5, 0, 'PROD', 15, 1, 0, 'Mark Products Department review as completed');
+
+EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'Start Products Stage', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload to KASH DB', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Products in DB', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Verify Products in DB', @to_name = 'End Products', @condition = NULL;
+EXEC sp_add_flow @from_name = 'End Products', @to_name = 'END', @condition = NULL;
+
 
 -- Contract Processing Lane Tasks (LaneId = 6)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)

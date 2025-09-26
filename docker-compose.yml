@@ -2,6 +2,7 @@ services:
      api-logic-server:
         image: tylerm007/dashboard-server:latest
         container_name: genai-server
+        restart: unless-stopped
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
@@ -13,8 +14,8 @@ services:
           - OKTA_CLIENT_ID=0oa1crjfiwoxRYadi0x8
           - OKTA_CLIENT_SECRET=eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7
           - OKTA_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
-          #- SECURITY_PROVIDER=sql
-          #- APILOGICPROJECT_SECURITY_PROVIDERsql
+          #- SECURITY_PROVIDER=OKTA
+          #- APILOGICPROJECT_SECURITY_PROVIDER = OKTA 
           ## TODO: verify Database uri's here,
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_OU_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
