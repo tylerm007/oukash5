@@ -484,6 +484,26 @@ CREATE TABLE WF_USER_ROLE(
     FOREIGN KEY (UserName) REFERENCES WF_Users(UserName),
     FOREIGN KEY (UserRole) REFERENCES WF_Roles(UserRole)
 );
+
+INSERT INTO WF_USER_ROLE (UserName, UserRole) VALUES
+('Rabbi Dick', 'NCRC'),
+('Rabbi Epstein', 'NCRC'),
+('Rabbi Gutterman', 'NCRC'),
+('Rabbi Nosenchuk', 'NCRC'),
+('Rabbi Rabinowitz', 'NCRC'),
+('Rabbi Shkarofsky', 'NCRC'),
+('Rabbi Stareshefsky', 'NCRC'),
+('Rabbi Steinberg', 'NCRC'),
+('Rabbi Machuca', 'NCRC'),
+('Rabbi Twersky', 'NCRC'),
+-- Insert Admin users
+('Bassie Fogelman', 'NCRC-ADMIN'),
+('Tikki Goldstein', 'NCRC-ADMIN'),
+('Aviva Gottesman', 'NCRC-ADMIN'),
+('Miriam Ganz', 'NCRC-ADMIN'),
+('Naomi Marcovici', 'NCRC-ADMIN'),
+('Yael Schottenstein', 'NCRC-ADMIN');
+
 -- =============================================
 -- CREATE INDEXES
 -- =============================================

@@ -181,20 +181,38 @@ VALUES ('OU Certification Workflow', '1.0', 'Complete workflow for OU Kosher cer
 -- 3. TaskDefinition Inserts
 -- =============================================
 -- Initial Processing Lane Tasks (LaneId = 1)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
-VALUES
-(1, 'Evaluate Application', 'USER', 'REVIEW', 1, 1, 0, 'NCRC', 120, 1, 0, 'Initial evaluation of certification application'),
-(1, 'Assign to Products', 'USER', 'ASSIGNMENT', 2, 1, 1, 'NCRC', 15, 1, 0, 'Assign application to Products Department'),
-(1, 'Assign to IAR', 'USER', 'ASSIGNMENT', 3, 1, 1, 'NCRC', 15, 1, 0, 'Assign application to Ingredients Review'),
-(1, 'Contact Customer', 'USER', 'COMMUNICATION', 4, 1, 1, 'NCRC', 30, 1, 0, 'Initial customer contact for information gathering');
+--INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
+--VALUES
+--(1, 'Evaluate Application', 'CONFIRM', 'CONFIRMATION', 1, 1, 0, 'NCRC', 120, 1, 0, 'Initial evaluation of certification application', 'system'),
+--(1, 'Assign to Products', 'ACTION', 'ASSIGNMENT', 2, 1, 1, 'NCRC', 15, 1, 0, 'Assign application to Products Department', 'system'),
+--(1, 'Assign to IAR', 'ACTION', 'ASSIGNMENT', 3, 1, 1, 'NCRC', 15, 1, 0, 'Assign application to Ingredients Review', 'system'),
+--(1, 'Contact Customer', 'CONFIRM', 'CONFIRMATION', 4, 1, 1, 'NCRC', 30, 1, 0, 'Initial customer contact for information gathering', 'system');
+--EXEC sp_add_flow @from_name = 'Evaluate Application', @to_name = 'Assign to Products', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Evaluate Application', @to_name = 'Assign to IAR', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Evaluate Application', @to_name = 'Contact Customer', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Assign to Products', @to_name = 'End', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Assign to IAR', @to_name = 'End', @condition = NULL;
+--EXEC sp_add_flow @from_name = 'Contact Customer', @to_name = 'End', @condition = NULL;
 
 -- NDA Processing Lane Tasks (LaneId = 2)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Send NDA', 'USER', 'COMMUNICATION', 5, 2, 0, 'LEGAL', 30, 0, 0, 'Send non-disclosure agreement to customer'),
-(1, 'NDA Executed by Legal', 'USER', 'APPROVAL', 6, 2, 0, 'LEGAL', 480, 0, 0, 'Legal review and execution of NDA'),
-(1, 'NDA Completed', 'USER', 'COMPLETION', 7, 2, 0, 'LEGAL', 15, 0, 0, 'Mark NDA process as completed');
-
+(1, 'Start NDA', 'START', 'COMPLETION', 4, 2, 0, 'NCRC', 15, 0, 1, 'Start NDA stage', 'system'),
+(1, 'Needs NDA', 'CONDITION', 'APPROVAL', 4, 2, 0, 'NCRC', 15, 0, 0, 'Determine if NDA is required', 'system'),
+(1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 5, 2, 0, 'LEGAL', 30, 0, 0, 'Send non-disclosure agreement to customer', 'system'),
+(1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 0, 'LEGAL', 480, 0, 0, 'Legal review and execution of NDA', 'system'),
+(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 0, 'LEGAL', 15, 0, 0, 'Mark NDA process as completed', 'system');
+(1, 'NDA End', 'END', 'COMPLETION', 7, 2, 0, 'SYSTEM', 15, 0, 1, 'NDA completed', 'system');
+-- Task Flow for NDA Lane
+EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Start NDA', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = NULL;
+EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES';
+EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'YES';
+EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA Completed', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Needs Completed', @to_name = 'NDA End', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'End', @condition = NULL;
+-- Continue with other lanes...
 -- Inspection Process Lane Tasks (LaneId = 3)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
 VALUES
