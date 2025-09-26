@@ -183,15 +183,15 @@ t_COMPANY_ADDRESS = Table(
     Column('ID', Integer, nullable=False),
     Column('COMPANY_ID', Integer, nullable=False),
     Column('ADDRESS_SEQ_NUM', Integer, nullable=False),
-    Column('TYPE', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('ATTN', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET3', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('CITY', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STATE', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('ZIP', String(18, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('COUNTRY', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
+    Column('TYPE', String(40)),
+    Column('ATTN', String(40)),
+    Column('STREET1', String(60)),
+    Column('STREET2', String(60)),
+    Column('STREET3', String(60)),
+    Column('CITY', String(40)),
+    Column('STATE', String(25)),
+    Column('ZIP', String(18)),
+    Column('COUNTRY', String(25)),
     Column('TIMESTAMP', BINARY(8))
 )
 
@@ -301,26 +301,6 @@ class WFPriority(Base):  # type: ignore
     WFApplicationList : Mapped[List["WFApplication"]] = relationship(back_populates="WF_Priority")
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="WF_Priority")    
 
-t_CompanyContactsAndAddresses = Table(
-    'CompanyContactsAndAddresses', metadata,
-    Column('Company', String(120, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
-    Column('Industry', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Status', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('RC', String(255, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('CompanyTitle', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Title', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('FirstName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('LastName', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Voice', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Fax', String(50, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Email', String(100, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('ContactType', String(23, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
-    Column('Street1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Street2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('City', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('State', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('Zip', String(18, 'SQL_Latin1_General_CP1_CI_AS'))
-)
 
 class WFQuoteStatus(Base):  # type: ignore
     __tablename__ = 'WF_QuoteStatus'
@@ -626,30 +606,14 @@ class WFApplicationComment(Base):  # type: ignore
     CommentType = Column(Unicode(50), server_default=text('internal'), nullable=False)
     Category = Column(Unicode(100))
     CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
+    ModifiedDate = Column(DATETIME2)
+    ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
     Application : Mapped["WFApplication"] = relationship(back_populates=("WFApplicationCommentList"))
 
     # child relationships (access children)
-
-t_PLANT_ADDRESS = Table(
-    'PLANT_ADDRESS', metadata,
-    Column('ID', Integer, server_default=text("0"), nullable=False),
-    Column('PLANT_ID', Integer, nullable=False),
-    Column('ADDRESS_SEQ_NUM', Integer, nullable=False),
-    Column('TYPE', String(40, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False),
-    Column('ATTN', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET1', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET2', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STREET3', String(60, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('CITY', String(40, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('STATE', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('ZIP', String(15, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('COUNTRY', String(25, 'SQL_Latin1_General_CP1_CI_AS')),
-    Column('TIMESTAMP', BINARY(8)),
-    Column('COMPANY_ID', Integer)
-)
-
 
 class WFApplicationMessage(Base):  # type: ignore
     __tablename__ = 'WF_ApplicationMessages'
@@ -660,7 +624,7 @@ class WFApplicationMessage(Base):  # type: ignore
     FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
     ToUser = Column(ForeignKey('WF_Users.Username'))
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
-    MessageType = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text("('internal')"), nullable=False)
+    MessageType = Column(Unicode(50), server_default=text("('internal')"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)
     SentDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
 
@@ -747,6 +711,9 @@ class WFQuote(Base):  # type: ignore
     Status = Column(ForeignKey('WF_QuoteStatus.StatusCode'), server_default=text('PEND'), nullable=False)
     LastUpdatedDate = Column(Date, nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    CreatedBy = Column(Unicode(100), server_default=text("('System')"), nullable=False)
+    ModifiedDate = Column(DATETIME2)
+    ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
     Application : Mapped["WFApplication"] = relationship(back_populates=("WFQuoteList"))
@@ -950,26 +917,6 @@ class TaskComment(Base):  # type: ignore
     # child relationships (access children)
 
 
-
-class ValidationResult(Base):  # type: ignore
-    __tablename__ = 'ValidationResults'
-    _s_collection_name = 'ValidationResult'  # type: ignore
-
-    ValidationResultId = Column(Integer, autoincrement=True, primary_key=True)
-    InstanceId = Column(ForeignKey('ProcessInstances.InstanceId'), nullable=False, index=True)
-    ValidationId = Column(ForeignKey('ValidationRules.ValidationId'), nullable=False)
-    TaskInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'))
-    IsValid = Column(Boolean, nullable=False, index=True)
-    ValidationMessage = Column(Unicode(500))
-    ValidationDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
-    ValidatedBy = Column(Unicode(100))
-
-    # parent relationships (access parent)
-    #Instance : Mapped["ProcessInstance"] = relationship(back_populates=("ValidationResultList"))
-    #TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("ValidationResultList"))
-    #Validation : Mapped["ValidationRule"] = relationship(back_populates=("ValidationResultList"))
-
-    # child relationships (access children)
 
 
 
@@ -1662,3 +1609,52 @@ class ProducedIn1Tb(Base):  # type: ignore
 
     # child relationships (access children)
     #ProductJobLineItemList : Mapped[List["ProductJobLineItem"]] = relationship(back_populates="pr")
+ 
+ 
+ # -------------------------------------- VIEWS -------------------------------------------
+
+class v_PLANT_ADDRESS(Base):
+    __tablename__ = 'PLANT_ADDRESS'
+    _s_collection_name = 'PLANT_ADDRESS'  # type: ignore
+    http_methods = ['GET']
+    __bind_key__ = 'ou'
+
+    ID = Column(Integer, server_default=text("0"), nullable=False, primary_key=True)
+    PLANT_ID = Column(Integer, nullable=False)
+    ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
+    TYPE = Column(String(40), nullable=False)
+    ATTN = Column(String(40))
+    STREET1 = Column(String(60))
+    STREET2 = Column(String(60))
+    STREET3 = Column(String(60))
+    CITY = Column(String(40))
+    STATE = Column(String(25))
+    ZIP = Column(String(15))
+    COUNTRY = Column(String(25))
+    TIMESTAMP = Column(BINARY(8))
+    COMPANY_ID = Column(Integer)
+
+
+class v_CompanyContactsAndAddresses(Base):
+    __tablename__ = 'CompanyContactsAndAddresses'
+    _s_collection_name = 'CompanyContactsAndAddresses'  # type: ignore
+    http_methods= ['GET']
+    __bind_key__ = 'ou'
+
+    Company = Column(String(120), nullable=False, primary_key=True)
+    Industry = Column(String(50))
+    Status = Column(String(40))
+    RC = Column(String(255))
+    CompanyTitle = Column(String(50))
+    Title = Column(String(50))
+    FirstName = Column(String(50))
+    LastName = Column(String(50))
+    Voice = Column(String(50))
+    Fax = Column(String(50))
+    Email = Column(String(100))
+    ContactType = Column(String(23), nullable=False)
+    Street1 = Column(String(60))
+    Street2 = Column(String(60))
+    City = Column(String(40))
+    State = Column(String(25))
+    Zip = Column(String(18))

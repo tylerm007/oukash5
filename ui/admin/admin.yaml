@@ -333,7 +333,7 @@ resources:
       resource: StageInstance
     - direction: tomany
       fks:
-      - InstanceId
+      - ProcessInstanceId
       name: TaskCommentList
       resource: TaskComment
     - direction: tomany
@@ -343,19 +343,9 @@ resources:
       resource: WorkflowHistory
     - direction: toone
       fks:
-      - CurrentTaskId
-      name: CurrentTask
-      resource: TaskDefinition
-    - direction: toone
-      fks:
       - Priority
       name: ProcessPriority
       resource: ProcessPriority
-    - direction: toone
-      fks:
-      - ProcessId
-      name: Process
-      resource: ProcessDefinition
     - direction: toone
       fks:
       - Status
@@ -1009,13 +999,12 @@ resources:
       required: true
     - name: FromUser
       required: true
-    - name: ToUser
+    - name: Priority
       required: true
+    - name: ToUser
     - name: MessageText
       required: true
     - name: MessageType
-      required: true
-    - name: Priority
       required: true
     - name: SentDate
       required: true
@@ -1081,14 +1070,22 @@ resources:
     user_key: CompanyID
   WFContact:
     attributes:
-    - label: ' Contact I D*'
-      name: ContactID
+    - label: ' Contact Name*'
+      name: ContactName
+      required: true
       search: true
       sort: true
     - name: ApplicationID
       required: true
+    - name: Title
+    - name: ContactPhone
+    - name: ContactEmail
+    - name: IsPrimary
+      required: true
+      type: Boolean
     - name: CreatedDate
       required: true
+    - name: ContactID
     tab_groups:
     - direction: toone
       fks:
@@ -1096,7 +1093,7 @@ resources:
       name: Application
       resource: WFApplication
     type: WFContact
-    user_key: ContactID
+    user_key: ContactName
   WFDashboard:
     attributes:
     - label: ' I D*'

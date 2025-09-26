@@ -46,28 +46,6 @@ Table ProcessInstance {
     ContextData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
-Table TaskDefinition {
-    TaskId INTEGER [primary key]
-    ProcessId INTEGER 
-    TaskName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    TaskType VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    TaskCategory VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Sequence INTEGER 
-    LaneId INTEGER 
-    IsParallel BOOLEAN 
-    AssigneeRole VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    EstimatedDurationMinutes INTEGER 
-    IsRequired BOOLEAN 
-    AutoComplete BOOLEAN 
-    Description VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    PreScriptJson VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    PostScriptJson VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ModifiedDate DATETIME2 
-    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
 Table ProcessPriority {
     PriorityCode VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
     PriorityDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
@@ -122,14 +100,19 @@ Table WFApplication {
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     WFDashboardID INTEGER 
+    verify_company BOOLEAN 
+    verify_plant BOOLEAN 
+    verify_contacts BOOLEAN 
+    verify_products BOOLEAN 
+    verify_ingredients BOOLEAN 
+    verify_quote BOOLEAN 
+    assign_ncrc_rep BOOLEAN 
     }
 
 Table WFUser {
-    UserID INTEGER [primary key]
-    Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
     Email VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Role VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     IsActive BOOLEAN 
     CreatedDate DATETIME2 
     LastLoginDate DATETIME2 
@@ -167,7 +150,7 @@ Table StageStatus {
     }
 
 Table Sysdiagram {
-    name NULL 
+    name VARCHAR(128) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     principal_id INTEGER 
     diagram_id INTEGER [primary key]
     version INTEGER 
@@ -208,7 +191,28 @@ Table TaskInstance {
     ResultData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     RetryCount INTEGER 
- 
+    }
+
+Table TaskDefinition {
+    TaskId INTEGER [primary key]
+    ProcessId INTEGER 
+    TaskName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    TaskType VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    TaskCategory VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    Sequence INTEGER 
+    LaneId INTEGER 
+    IsParallel BOOLEAN 
+    AssigneeRole VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    EstimatedDurationMinutes INTEGER 
+    IsRequired BOOLEAN 
+    AutoComplete BOOLEAN 
+    Description VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CreatedDate DATETIME2 
+    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ModifiedDate DATETIME2 
+    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    PreScriptJson VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    PostScriptJson VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table TaskType {
@@ -282,8 +286,8 @@ Table WFApplicationComment {
 Table WFApplicationMessage {
     MessageID INTEGER [primary key]
     ApplicationID INTEGER 
-    FromUser VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ToUser VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    FromUser VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ToUser VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     MessageText VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     MessageType VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     Priority VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
@@ -300,6 +304,11 @@ Table WFCompany {
 Table WFContact {
     ContactID INTEGER [primary key]
     ApplicationID INTEGER 
+    ContactName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    Title VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ContactPhone VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ContactEmail VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsPrimary BOOLEAN 
     CreatedDate DATETIME2 
     }
 
@@ -342,13 +351,6 @@ Table WFIngredient {
     NCRCId VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     CreatedDate DATETIME2 
     ModifiedDate DATETIME2 
-    }
-
-Table WFPlant {
-    PlantID INTEGER [primary key]
-    ApplicationID INTEGER 
-    PlantNumber INTEGER 
-    CreatedDate DATETIME2 
     }
 
 Table WFProduct {
@@ -405,6 +407,19 @@ Table WFQuoteItem {
     SortOrder INTEGER 
     }
 
+Table WFUSERADMIN {
+    UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    AdminUserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsPrimary BOOLEAN 
+    CreatedDate DATETIME2 
+    }
+
+Table WFUSERROLE {
+    UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CreatedDate DATETIME2 
+    }
+
 Table WorkflowHistory {
     HistoryId INTEGER [primary key]
     InstanceId INTEGER 
@@ -423,48 +438,50 @@ Table WorkflowHistory {
 // Relationships
     Ref: LaneDefinition.(LaneRole) < LaneRole.(RoleCode)
     Ref: LaneDefinition.(ProcessId) < ProcessDefinition.(ProcessId)
-    Ref: ProcessInstance.(CurrentTaskId) < TaskDefinition.(TaskId)
     Ref: ProcessInstance.(Priority) < ProcessPriority.(PriorityCode)
-    Ref: ProcessInstance.(ProcessId) < ProcessDefinition.(ProcessId)
     Ref: ProcessInstance.(Status) < ProcessStatus.(StatusCode)
-    Ref: TaskDefinition.(LaneId) < LaneDefinition.(LaneId)
-    Ref: TaskDefinition.(ProcessId) < ProcessDefinition.(ProcessId)
-    Ref: TaskDefinition.(TaskCategory) < TaskCategory.(TaskCategoryCode)
-    Ref: TaskDefinition.(TaskType) < TaskType.(TaskTypeCode)
     Ref: ProcessMessage.(InstanceId) < ProcessInstance.(InstanceId)
     Ref: ProcessMessage.(MessageType) < ProcessMessageType.(MessageTypeCode)
     Ref: RoleAssigment.(ApplicationId) < WFApplication.(ApplicationID)
-    Ref: RoleAssigment.(Assignee) < WFUser.(UserID)
+    Ref: RoleAssigment.(Assignee) < WFUser.(Username)
     Ref: RoleAssigment.(Role) < WFRole.(UserRole)
     Ref: WFApplication.(Priority) < WFPriority.(PriorityCode)
     Ref: WFApplication.(Status) < WFApplicationStatus.(StatusCode)
     Ref: WFApplication.(WFDashboardID) < WFDashboard.(ID)
-    Ref: WFUser.(Role) < WFRole.(UserRole)
     Ref: StageInstance.(LaneId) < LaneDefinition.(LaneId)
     Ref: StageInstance.(ProcessInstanceId) < ProcessInstance.(InstanceId)
     Ref: StageInstance.(Status) < StageStatus.(StatusCode)
     Ref: TaskComment.(CommentType) < TaskCommentType.(CommentTypeCode)
     Ref: TaskComment.(ProcessInstanceId) < ProcessInstance.(InstanceId)
     Ref: TaskComment.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
-
     Ref: TaskInstance.(StageId) < StageInstance.(StageInstanceId)
     Ref: TaskInstance.(Status) < TaskStatus.(StatusCode)
     Ref: TaskInstance.(TaskId) < TaskDefinition.(TaskId)
+    Ref: TaskDefinition.(LaneId) < LaneDefinition.(LaneId)
+    Ref: TaskDefinition.(ProcessId) < ProcessDefinition.(ProcessId)
+    Ref: TaskDefinition.(TaskCategory) < TaskCategory.(TaskCategoryCode)
+    Ref: TaskDefinition.(TaskType) < TaskType.(TaskTypeCode)
     Ref: TaskFlow.(FromTaskId) < TaskDefinition.(TaskId)
     Ref: TaskFlow.(ToTaskId) < TaskDefinition.(TaskId)
     Ref: WFActivityLog.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFActivityLog.(Status) < WFActivityStatus.(StatusCode)
     Ref: WFApplicationComment.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFApplicationMessage.(ApplicationID) < WFApplication.(ApplicationID)
+    Ref: WFApplicationMessage.(FromUser) < WFUser.(Username)
+    Ref: WFApplicationMessage.(Priority) < WFPriority.(PriorityCode)
+    Ref: WFApplicationMessage.(ToUser) < WFUser.(Username)
     Ref: WFCompany.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFContact.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFFile.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFFile.(FileType) < WFFileType.(FileType)
     Ref: WFIngredient.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFPlant.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFProduct.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFQuote.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFQuote.(Status) < WFQuoteStatus.(StatusCode)
     Ref: WFQuoteItem.(QuoteID) < WFQuote.(QuoteID)
+    Ref: WFUSERADMIN.(AdminUserName) < WFUser.(Username)
+    Ref: WFUSERADMIN.(UserName) < WFUser.(Username)
+    Ref: WFUSERROLE.(UserName) < WFUser.(Username)
+    Ref: WFUSERROLE.(UserRole) < WFRole.(UserRole)
     Ref: WorkflowHistory.(InstanceId) < ProcessInstance.(InstanceId)
     Ref: WorkflowHistory.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
