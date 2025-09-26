@@ -655,7 +655,7 @@ class WFApplicationMessage(Base):  # type: ignore
     __tablename__ = 'WF_ApplicationMessages'
     _s_collection_name = 'WFApplicationMessage'  # type: ignore
 
-    MessageID = Column(Integer, server_default=text("0"), primary_key=True)
+    MessageID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
     ToUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
@@ -695,6 +695,11 @@ class WFContact(Base):  # type: ignore
 
     ContactID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
+    ContactName = Column(Unicode(200), nullable=False)
+    Title = Column(Unicode(100))
+    ContactPhone = Column(Unicode(50))
+    ContactEmail = Column(Unicode(255))
+    IsPrimary = Column(Boolean, server_default=text("0"), nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
 
     # parent relationships (access parent)

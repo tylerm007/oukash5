@@ -113,7 +113,7 @@ GO
 -- 1. ProcessDefinition Insert
 -- =============================================
 INSERT INTO ProcessDefinitions (ProcessName, ProcessVersion, Description, IsActive, CreatedBy)
-VALUES ('OU Application Init', '1.0', 'OU Kosher application init process', 1, 'SYSTEM');
+VALUES ('OU Application Init', '1.0', 'OU Kosher initial application process', 1, 'SYSTEM');
 GO
 -- =============================================
 -- 2. LaneDefinition Inserts
@@ -122,10 +122,10 @@ INSERT INTO LaneDefinitions (ProcessId, LaneName, LaneDescription, EstimatedDura
 VALUES 
 (1, 'Initial', 'Initial application review and task assignment', 2, 'NCRC', 'system'),
 (1, 'NDA', 'Non-disclosure agreement handling and execution', 3, 'LEGAL', 'system'),
-(1, 'Inspection', 'Plant inspection and RFR assignment process', 10, 'INSP', 'system'),
+(1, 'Inspection', 'Plant inspection and RFR assignment process', 10, 'RC', 'system'),
 (1, 'Ingredients', 'IAR ingredients and kosher code review process', 7, 'IAR', 'system'),
 (1, 'Products', 'Product evaluation and PLA processing', 5, 'PROD', 'system'),
-(1, 'Contract', 'Contract review and certification agreement', 3, 'RC', 'system'),
+(1, 'Contract', 'Contract review and certification agreement', 3, 'LEGAL', 'system'),
 (1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
 GO
 -- Insert Task Definitions for initial application Workflow

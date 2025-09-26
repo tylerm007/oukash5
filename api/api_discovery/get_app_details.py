@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from datetime import datetime
-from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFIngredient, WFProduct, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition
+from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFIngredient, WFProduct, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
@@ -101,14 +101,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "type": "Unknown"
             }
         #TO DO how to get contacts for plant? or use origin app?
-       #models.PLANTConatcts
-        plant["contacts"] =  {
-                "name": "John Mitchell",
+        contacts = WFContact.query.filter_by(ApplicationID=application_id, IsPrimary=1).all()
+        plant_contacts =  []
+        for contact in contacts:
+            contact = contacts[0]
+            plant_contacts.append({
+                "name": contact.ContactName if hasattr(contact, 'ContactName') else "Contact Name",
                 "title": "Plant Manager",
-                "phone": "(585) 555-0123",
-                "email": "j.mitchell@happycowmills.com"
-            }
+                "phone": contact.ContactPhone if hasattr(contact, 'ContactPhone') else "(555) 555-5555",
+                "email": contact.ContactEmail if hasattr(contact, 'ContactEmail') else "emial@co.com"
+            })
         
+        plant["contacts"] = plant_contacts
         application['Plants'] = plant
         products = WFProduct.query.filter_by(ApplicationID=application_id).all()
         application['Products'] = products
