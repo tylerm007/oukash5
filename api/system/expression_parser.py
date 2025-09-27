@@ -305,7 +305,8 @@ def advancedFilter(cls, args) -> any:
                 elif op in ["like","ilike"]:
                     expressions.append(attr.like( item['val']))
                 else:
-                    expressions.append(attr.eq(clean(item['val'])))
+
+                    expressions.append(attr.__eq__(clean(item['val'], attr.type)))
             for e in expressions : print(e," : ", e.right.value)
             return expressions, sqlWhere
         else:
@@ -379,19 +380,19 @@ def advancedFilter(cls, args) -> any:
         #join = flt.get("join", "").strip("_").lower()   
         attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id 
         if op_name in ["IN"]:
-            expr = ExpressionHolder(expr=attr.in_(clean(attr_val)), join=join)
+            expr = ExpressionHolder(expr=attr.in_(clean(attr_val, attr.type)), join=join)
             expression_holder.append(expr)
         elif op_name in ["LIKE", "ILIKE", "MATCH"]:
-            expressions.append(attr.ilike( clean(attr_val) ))
-            expr = ExpressionHolder(expr=attr.ilike(clean(attr_val)), join=join)
+            expressions.append(attr.ilike( clean(attr_val, attr.type) ))
+            expr = ExpressionHolder(expr=attr.ilike(clean(attr_val, attr.type)), join=join)
             expression_holder.append(expr)
-            sqlWhere += f'{join} "{attr_name}" LIKE {clean(attr_val)}'
+            sqlWhere += f'{join} "{attr_name}" LIKE {clean(attr_val, attr.type)}'
         elif op_name in ["NOTLIKE","NOTIN"]:
-            expr = ExpressionHolder(expr=attr.not_in_(clean(attr_val)), join=join)
+            expr = ExpressionHolder(expr=attr.not_in_(clean(attr_val, attr.type)), join=join)
             expression_holder.append(expr)
         elif op_name in ["EQ","NE","LT","LE","GT","GE"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "="
-            sqlWhere += f'{join} "{attr_name}" {op} {clean(attr_val)}'
+            sqlWhere += f'{join} "{attr_name}" {op} {clean(attr_val, attr.type)}'
         elif op_name in ["NULL","IS_NULL","NOTNULL","NOT_NULL"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "IS NULL"
             sqlWhere += f'{join} "{attr_name}" {op}'
@@ -410,8 +411,12 @@ def advancedFilter(cls, args) -> any:
     for e in expressions : print(e," : ", e.right.value)
     return expressions, sqlWhere #query.filter(or_(*expressions))
 
-def clean(val):
-    if val and isinstance(val, str) and (val.startswith("'") and val.endswith("'")):
+def clean(val, attr_type=None):
+    if attr_type and str(attr_type) in ['INTEGER','SMALLINT','BIGINT','TINYINT','INT']:
+        return int(val) if val is not None else None
+    elif attr_type and str(attr_type) in ['DECIMAL','NUMERIC','FLOAT','REAL']:
+        return float(val) if val is not None else None
+    elif val and isinstance(val, str) and (val.startswith("'") and val.endswith("'")):
             return f"'{val[1:-1 ]}'"
     elif val and isinstance(val, str) and (val.startswith('"') and val.endswith('"')):
             return f"'{val[1:-1 ]}'"

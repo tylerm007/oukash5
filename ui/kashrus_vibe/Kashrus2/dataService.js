@@ -5,7 +5,8 @@
 
 class DataService {
     constructor() {
-        this.baseApiUrl = 'http://172.30.3.133:5656/api/';
+        //this.baseApiUrl = 'http://172.30.3.133:5656/api/';
+        this.baseApiUrl = 'http://localhost:5656/api/';
         this.bearerToken = localStorage.getItem('plant_app_bearer_token') ||
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODgyMDMyMCwianRpIjoiMGRlMjllYjAtZjAwNi00NzNhLTk4YWQtMzBlMjNmMWNmNzU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4ODIwMzIwLCJleHAiOjE3NTg4MzM2NDB9.ETf29fcfRTWe3kvfPGsK-jTYjDjCOvR5wEqxLnEG3y4';
 
