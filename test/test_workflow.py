@@ -18,6 +18,29 @@ where StageId =22 and ti.TaskId = td.TaskId
 55	15	NEW	Initial Collector	GATEWAY
 56	16	NEW	End	END
 '''
+def pending_task(task_id):
+    url = f"http://localhost:5656/api/TaskInstance/{task_id}"
+    payload = {
+        "data": {
+            "type": "TaskInstance",
+            "id": task_id,
+            "attributes": {
+                "Status": "PENDING"
+            }
+        }
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.patch(url, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        print(f"✅ TaskInstance with TaskId {task_id} updated successfully.")
+        return response.json()['data']['id']  # Return the updated TaskInstanceId
+    else:
+        print(f"❌ Failed to update TaskInstance. Status Code: {response.status_code}, Response: {response.text}")
+        return None 
 def complete_task(task_id):
     url = f"http://localhost:5656/api/TaskInstance/{task_id}"
     payload = {
@@ -51,8 +74,9 @@ def test_get_api(task_id):
     return response.json()
 
 if __name__ == "__main__":
-    task_id = 43
-    complete_task(task_id)
+    task_id = 95
+    pending_task(task_id)
+'''
     task_id = 44
     complete_task(task_id)
     response = test_get_api(task_id)
@@ -64,3 +88,4 @@ if __name__ == "__main__":
     complete_task(task_id)
     task_id = 48
     complete_task(task_id)
+'''

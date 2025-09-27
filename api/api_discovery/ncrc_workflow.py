@@ -89,7 +89,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_logger.warning(f'ProcessInstance already exists for ApplicationId: {application_id}')
             return jsonify({"status": "error", "message": f"ProcessInstance already exists for ApplicationId: {application_id}"}), 400
         # Get StartTaskId
-        task_definition = TaskDefinition.query.filter_by(ProcessId=process_definition_id, TaskType='START').first()
+        task_definition = TaskDefinition.query.filter_by(ProcessId=process_definition_id, TaskType='START').order_by(TaskDefinition.TaskId).first()
         start_task_id = task_definition.TaskId if task_definition else None
         app_logger.info(f'Start TaskDefinition TaskId: {start_task_id}') 
         if start_task_id is None:
@@ -142,7 +142,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         session.commit()
                         
         #link_task(task_instances)
-        set_start_task(task_instances)        
+        set_start_task(start_task_id, task_instances)
         return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
     
     @app.route('/complete_task', methods=['POST','OPTIONS'])
@@ -320,11 +320,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f'User {user_id} assigned to TaskInstance: {task_instance_id}')
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
 
-    def set_start_task(task_instances: list[TaskInstance]):
+    def set_start_task(start_task_id: int, task_instances: list[TaskInstance]):
         """Set the start task to pending and autocomplete - this will kick off the workflow to pending"""
         for task_instance in task_instances:
             task_def = task_instance.TaskDef
-            if task_def and task_def.TaskType == 'START':
+            if task_def and task_def.TaskId == start_task_id:
                 new_task = TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
                 new_task.Status = 'PENDING'
                 new_task.CompletedAt = datetime.utcnow()

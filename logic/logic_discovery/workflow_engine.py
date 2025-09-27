@@ -152,7 +152,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     '''
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING'] and old_row.Status != row.Status:
         row.StartedDate = datetime.datetime.utcnow()
-    if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING', 'COMPLETED'] and old_row.Status != row.Status:
+    if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING', 'COMPLETED'] and old_row and old_row.Status != row.Status:
     # only proceed if the task instance Status was updated and is now PENDING or COMPLETED
         task_id = row.TaskInstanceId
         task_def = row.TaskDef
@@ -190,7 +190,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                                     future_task_instance.Status = 'COMPLETED'
                                     future_task_instance.CompletedDate = datetime.datetime.utcnow()
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
-                                    update_next_task(future_task_instance, None, logic_row)  # recursively update next tasks
+                                    update_next_task(future_task_instance, old_row, logic_row)  # recursively update next tasks
                                 else:
                                     future_task_instance.Status = 'PENDING'
                                     future_task_instance.StartedDate = datetime.datetime.utcnow()
