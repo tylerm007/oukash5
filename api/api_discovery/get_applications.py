@@ -145,7 +145,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "text": msg.get("MessageText"),
                     "sentDate": msg.get("SentDate"),
                     "messageType": msg.get("MessageType"),
-                    "isSystemMessage": True if msg.get("MessageType") == "system" else False,
+                    #"isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
            
             result.append(app_row)

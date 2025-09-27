@@ -260,11 +260,11 @@ CREATE TABLE [dbo].[RoleAssigment](
     FOREIGN KEY (Assignee) REFERENCES WF_Users(Username)
 );
 
-insert into RoleAssigment (ApplicationId, Role, Assignee) values
-(1, 'RFR', 'gmagder'),
-(1, 'ADMIN', 'sbenjamin'),
-(1, 'ADMIN', 'sbenjamin'),
-(1, 'ADMIN', 'tband');
+--insert into RoleAssigment (ApplicationId, Role, Assignee) values
+--(1, 'RFR', 'gmagder'),
+--(1, 'ADMIN', 'sbenjamin'),
+--(1, 'ADMIN', 'sbenjamin'),
+--(1, 'ADMIN', 'tband');
 
 -- When Application is NEW - Rule,after_flush_event we can copy data to this table using key ()
 -- Companies Table - JOIN OU_KASH.COMPANY_TB
@@ -282,6 +282,11 @@ CREATE TABLE WF_Companies (
 CREATE TABLE WF_Contacts (
     ContactID INT IDENTITY(1,1) PRIMARY KEY,
     ApplicationID INT NOT NULL,
+    ContactName NVARCHAR(200) NOT NULL,
+    Title NVARCHAR(100) NULL,
+    ContactPhone NVARCHAR(50) NULL,
+    ContactEmail NVARCHAR(255) NULL,
+    IsPrimary BIT NOT NULL DEFAULT 0,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
@@ -423,7 +428,7 @@ CREATE TABLE WF_ApplicationMessages (
     MessageID INT IDENTITY(1,1) PRIMARY KEY,
     ApplicationID INT NOT NULL,
     FromUser NVARCHAR(100) NOT NULL,
-    ToUser NVARCHAR(100) NOT NULL,
+    ToUser NVARCHAR(100) NULL,
     MessageText NVARCHAR(MAX) NOT NULL,
     MessageType NVARCHAR(50) NOT NULL DEFAULT 'internal',
     Priority NVARCHAR(20) NOT NULL DEFAULT 'NORMAL',
@@ -434,6 +439,8 @@ CREATE TABLE WF_ApplicationMessages (
     FOREIGN KEY (FromUser) REFERENCES WF_Users(Username),
     FOREIGN KEY (ApplicationID) REFERENCES WF_Applications(ApplicationID)
 );
+
+-- ALTER TABLE WF_ApplicationMessages ALTER COLUMN ToUser NVARCHAR(100) NULL;
 
 -- Comments Table
 CREATE TABLE WF_ApplicationComments (
@@ -528,11 +535,11 @@ CREATE INDEX IX_ActivityLog_ActivityDate ON WF_ActivityLog(ActivityDate);
 -- =============================================
 
 -- Insert Users
-INSERT INTO WF_Users (Username, FullName, Email, Role) VALUES
-('jmitchell', 'John Mitchell', 'john@happycowmills.com', 'ADMIN'),
-('gmagder', 'Gary Magder', 'gmagder@happycowmills.com', 'RFR'),
-('system', 'System Import', 'system@ncrc.com', 'ADMIN'),
-('autosync', 'Auto-Sync', 'autosync@ncrc.com', 'NCRC');
+--INSERT INTO WF_Users (Username, FullName, Email, Role) VALUES
+--('jmitchell', 'John Mitchell', 'john@happycowmills.com', 'ADMIN'),
+--('gmagder', 'Gary Magder', 'gmagder@happycowmills.com', 'RFR'),
+--('system', 'System Import', 'system@ncrc.com', 'ADMIN'),
+--('autosync', 'Auto-Sync', 'autosync@ncrc.com', 'NCRC');
 
 
 
