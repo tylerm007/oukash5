@@ -297,15 +297,26 @@ def advancedFilter(cls, args) -> any:
             # this is from sra ? default and/or to join
             # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
             for item in val:
-                name = item['name']
-                attr = cls._s_jsonapi_attrs[name] if name !="id" else cls.id   
-                op = item['op'].lower()
+                name = item['name'] if 'name' in item else item['lop'] if 'lop' in item else None
+                attr = cls._s_jsonapi_attrs[name] if name in cls._s_jsonapi_attrs  else None
+                if name in ["id","ID","Id"]:
+                   attr = cls.id
+                if attr is None:
+                    raise ValidationError(f'Invalid filter "{item}", unknown attribute "{name}" on endpoint "{cls.__name__}"')
+                op = item['op'].lower() if 'op' in item else "eq"
                 if op in ["in"]:
                     expressions.append(attr.in_(item['val']))
                 elif op in ["like","ilike"]:
                     expressions.append(attr.like( item['val']))
+                elif op in ["gt",">"]:
+                    expressions.append(attr.__gt__(clean(item['val'], attr.type)))
+                elif op in ["ge",">="]:
+                    expressions.append(attr.__ge__(clean(item['val'], attr.type)))
+                elif op in ["lt","<"]:
+                    expressions.append(attr.__lt__(clean(item['val'], attr.type)))
+                elif op in ["le","<="]:
+                    expressions.append(attr.__le__(clean(item['val'], attr.type)))
                 else:
-
                     expressions.append(attr.__eq__(clean(item['val'], attr.type)))
             for e in expressions : print(e," : ", e.right.value)
             return expressions, sqlWhere
@@ -383,10 +394,10 @@ def advancedFilter(cls, args) -> any:
             expr = ExpressionHolder(expr=attr.in_(clean(attr_val, attr.type)), join=join)
             expression_holder.append(expr)
         elif op_name in ["LIKE", "ILIKE", "MATCH"]:
-            expressions.append(attr.ilike( clean(attr_val, attr.type) ))
-            expr = ExpressionHolder(expr=attr.ilike(clean(attr_val, attr.type)), join=join)
+            expressions.append(attr.ilike(attr_val))
+            expr = ExpressionHolder(expr=attr.ilike(attr_val), join=join)
             expression_holder.append(expr)
-            sqlWhere += f'{join} "{attr_name}" LIKE {clean(attr_val, attr.type)}'
+            sqlWhere += f'{join} "{attr_name}" LIKE {attr_val}'
         elif op_name in ["NOTLIKE","NOTIN"]:
             expr = ExpressionHolder(expr=attr.not_in_(clean(attr_val, attr.type)), join=join)
             expression_holder.append(expr)
@@ -421,7 +432,7 @@ def clean(val, attr_type=None):
     elif val and isinstance(val, str) and (val.startswith('"') and val.endswith('"')):
             return f"'{val[1:-1 ]}'"
     elif val and isinstance(val, str):
-        return  f"'{val}'"
+        return  f"{val}"
     else:
         return val
             
