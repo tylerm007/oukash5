@@ -21,7 +21,7 @@ app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
 
-def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRow):
+def process_task_instance(task_instance: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     new_task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
     if not new_task_instance:
         print({"success": False, "message": f"No TaskInstance found with TaskInstanceId {task_instance.TaskInstanceId}"})
@@ -33,12 +33,10 @@ def process_task_instance(task_instance: models.TaskInstance, logic_row: LogicRo
         elif task_instance.Status == 'COMPLETED':
             new_task_instance.CompletedDate = datetime.datetime.utcnow()
         session.add(new_task_instance)
-        #session.commit()
-        update_next_task(new_task_instance, None, logic_row)
-        print({"success": True, "message": f"TaskInstance {new_task_instance.TaskInstanceId} processed successfully."})
-        #call_script_engine_pre(next_task_instance, None, logic_row)  # call pre script after setting to PENDING
-        #logic_row.log(f'PreScriptJson Result for next task {next_task_instance.TaskInstanceId}: {next_task_instance.Result}')
-
+        #session.commit() # Cannot commit here, will be done by LogicRow commit
+        update_next_task(new_task_instance, old_row, logic_row)
+        logic_row.log(f"Next TaskInstance {new_task_instance.TaskInstanceId} ({new_task_instance.TaskDef.TaskName} processed.")
+       
     except Exception as e:
         #session.rollback()
         app_logger.error(f"Error processing TaskInstance {new_task_instance}: {e}")
@@ -224,7 +222,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
 
             logic_row.log(f'Next {next_task_instance.TaskDef.TaskType} TaskInstance {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
             #logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
-            process_task_instance(next_task_instance, logic_row)
+            process_task_instance(next_task_instance, old_row, logic_row)
             
     return
 

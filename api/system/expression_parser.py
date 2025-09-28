@@ -380,7 +380,7 @@ def advancedFilter(cls, args) -> any:
         attr_name = convert_attrname(flt.get("lop"), cls._s_jsonapi_attrs)
         attr_val = flt.get("rop")
         if attr_name not in ["id","ID","Id"] and attr_name not in cls._s_jsonapi_attrs:
-            raise ValidationError(f'Invalid filter "{flt}", unknown attribute "{attr_name}"')
+            raise ValidationError(f'Invalid filter "{flt}", unknown attribute "{attr_name}" on class {cls.__name__}')
         if attr_name in ["id","ID","Id"]:
             for a in cls._s_jsonapi_attrs.items(): 
                 if "primary_key=True" in str(a): 
