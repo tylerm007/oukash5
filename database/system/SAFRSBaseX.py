@@ -29,7 +29,7 @@ def jsonapi_filter(cls):
         from api.system.expression_parser import advancedFilter
         expressions, sqlWhere = advancedFilter(cls, args)
     if sqlWhere != "":    
-        return query.filter(text(sqlWhere))
+        return query.filter(text(sqlWhere.replace("\"", "", 10)))
     else:
         return query.filter(and_(*expressions))   
 
