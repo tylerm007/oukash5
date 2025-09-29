@@ -1,11 +1,15 @@
 from flask import request, jsonify
 from datetime import datetime
-from security.system.authentication import jwt_required
 from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFIngredient, WFProduct, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
 import safrs
+from functools import wraps
+from flask_cors import cross_origin
+from config.config import Args
+from config.config import Config
+from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -16,10 +20,24 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     global _project_dir
     _project_dir = project_dir
     pass
-
+    
+    def admin_required():
+        """
+        Support option to bypass security (see cats, below).
+        """
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                if Args.instance.security_enabled == False:
+                    return fn(*args, **kwargs)
+                verify_jwt_in_request(True)  # must be issued if security enabled
+                return fn(*args, **kwargs)
+            return decorator
+        return wrapper
 
     @app.route('/get_application_detail', methods=['GET',"OPTIONS"])
-    @jwt_required()
+    @cross_origin()
+    @admin_required()
     def get_application_detail():
         """        
         Illustrates:

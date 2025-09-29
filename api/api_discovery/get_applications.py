@@ -3,8 +3,12 @@ from database.models import LaneDefinition, WFApplicationMessage, WFFile, Proces
 from flask import app, request, jsonify, session
 import logging
 import safrs
-from security.system.authentication import jwt_required
 from sqlalchemy import false
+from functools import wraps
+from flask_cors import cross_origin
+from config.config import Args
+from config.config import Config
+from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -15,6 +19,21 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     global _project_dir
     _project_dir = project_dir
     pass
+
+    def admin_required():
+        """
+        Support option to bypass security (see cats, below).
+        """
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                if Args.instance.security_enabled == False:
+                    return fn(*args, **kwargs)
+                verify_jwt_in_request(True)  # must be issued if security enabled
+                return fn(*args, **kwargs)
+            return decorator
+        return wrapper
+
     def calc_days_between(start_date, end_date):
         if start_date and end_date:
             if isinstance(start_date, str):
@@ -23,8 +42,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 end_date = datetime.fromisoformat(end_date.replace('Z', '+00:00'))
             return (end_date - start_date).days
         return 0
+    
     @app.route('/get_applications', methods=['GET','OPTIONS'])
-    @jwt_required()
+    @cross_origin()
+    @admin_required()
     def get_applications():
         """
         Retrieves the NCRC dashboard data
