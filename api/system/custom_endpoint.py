@@ -182,8 +182,8 @@ class CustomEndpoint():
         params = {'page[limit]': limit, 'page[offset]': offset}
         resource_logger.debug(f"CustomEndpoint get using query: {query}")
         if Args.security_enabled:
-            jwt = request.headers.get("Authorization") or ""
-            header = {"Authorization": jwt,"Content-Type": "application/json"}
+            _jwt = request.headers.get("Authorization") or ""
+            header = {"Authorization": _jwt,"Content-Type": "application/json"}
             result = requests.get(query, headers=header, params=params)
         else:
             result = requests.get(query, params=params)
@@ -224,11 +224,11 @@ class CustomEndpoint():
         args = {}
         payload = {}
         result = {}
-        jwt = ""
+        _jwt = ""
         pkey = None
         value = None
         if request is not None:
-            jwt = request.headers.get("Authorization") or ""
+            _jwt = request and request.headers and request.headers.get("Authorization") or ""
             method = request.method
             self._method = method
             args = request.args
@@ -243,7 +243,7 @@ class CustomEndpoint():
                 api = "api" # TODO Args.api_prefix()
                 serverURL = f"{request.host_url}{api}"
                 url = f"{serverURL}/{self._model_class_name}"
-                return self.handlePayload(method=method, payload=payload, url=url, jwt=jwt, altKey=altKey)
+                return self.handlePayload(method=method, payload=payload, url=url, jwt=_jwt, altKey=altKey)
             elif method == 'POST':
                 try:
                     return self.insert_or_update(payload=payload, altKey=altKey)
@@ -349,6 +349,8 @@ class CustomEndpoint():
                 qry = session_qry.filter(text(self.filter_by))
                 if self.order_by is not None:
                     qry = qry.order_by(self.order_by)
+                else:
+                    qry = qry.order_by(self.primaryKey)
                 if filter_by is not None and 'undefined' not in filter_by:
                     resource_logger.debug(
                     f"Adding filter_by: {filter_by}")
@@ -374,6 +376,8 @@ class CustomEndpoint():
                     else:
                         if order_by in self._attributes:
                             session_qry = session_qry.order_by(text(order_by))
+                        else:
+                            session_qry = session_qry.order_by(self.primaryKey)
                 rows = session_qry.limit(limit).offset(offset).all()
         else:
             resource_logger.debug(
@@ -381,8 +385,10 @@ class CustomEndpoint():
             if self.order_by is not None:
                     if self.order_by in self._attributes:
                         session_qry = session_qry.filter(text(queryFilter)).order_by(self.order_by)
+                    else:
+                        session_qry = session_qry.order_by(self.primaryKey)
             elif  self.filter_by is None:
-                session_qry = session_qry.filter(text(queryFilter))
+                session_qry = session_qry.order_by(self.primaryKey).filter(text(queryFilter))
             else:
                 if filter_by:
                     resource_logger.debug(
@@ -395,6 +401,9 @@ class CustomEndpoint():
                         col_name = a['attr'].columns[0].name
                         break
                 session_qry = session_qry.order_by(text(col_name))
+            else:
+                session_qry = session_qry.order_by(self.primaryKey)
+                
             rows = session_qry.limit(limit).offset(offset).all()
         if rows:    
             dictRows = self.rows_to_dict(rows)

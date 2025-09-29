@@ -101,6 +101,37 @@ def set_task_attribute(task_instance_id, name, value) -> bool:
     app_logger.error(f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
     return False
 
+
+def set_stage_attribute(stage_id, name, value) -> bool:
+    ''' Set an attribute of the StageInstance to a new value
+        The simple setattr does not work and we cannot commit()
+        will try PATCH
+    '''
+    data = {
+        "data": {
+            "attributes": {
+                f"{name}": f"{value}"
+            },
+            "type": "StageInstance",
+            "id": f"{stage_id}"
+        }
+    }
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    
+    args = config.Args
+    server = args.swagger_host
+    port = args.port
+    server_uri = "http://localhost:5656" #f"http://{server}:{port}"
+    response = requests.patch(f"{server_uri}/api/StageInstance/{stage_id}", json=data, headers=headers)
+    if response.status_code == 200:
+        app_logger.info(f"StageInstance {stage_id} attribute {name} set to {value}")
+        return True
+    app_logger.error(f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
+    return False
+
+
 def get_application(application_id):
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()
     if not application:
@@ -109,7 +140,7 @@ def get_application(application_id):
 
 def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, logic_row: LogicRow):
     '''
-    Validate that all prior tasks in the workflow are completed before allowing this task to proceed.
+    Validate that all prior tasks in the workflow (TaskFlow)are completed before allowing this task to proceed.
     '''
     dependencies = taskDef.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
     if dependencies is None or len(dependencies) == 0:
@@ -121,6 +152,7 @@ def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, logic_row: Logi
             logic_row.log(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskInstanceId} is not COMPLETED.")
             return False
     return True
+
 def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     '''
         This is a constraint - it only tests if the update is valid.
@@ -129,15 +161,15 @@ def test_complete_task(row: models.TaskInstance, old_row: models.TaskInstance, l
     if logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED' and old_row.Status in ['NEW', 'PENDING']:
         task_def = row.TaskDef
         if not task_def:
-            logic_row.log(f"No task definition found for TaskId {row.TaskId} in test_complete_task")
+            logic_row.log(f"No task definition found for  {row.TaskDef.TaskName}  TaskId {row.TaskId} in test_complete_task")
             return False
         is_valid = validate_prior_tasks(task_def, row.StageId, logic_row)
         if not is_valid:
-            logic_row.log(f"Cannot complete task {row.TaskInstanceId} due to unmet dependencies not COMPLETED.")
+            logic_row.log(f"Cannot complete task: {row.TaskDef.TaskName} id:{row.TaskInstanceId} due to unmet dependencies not COMPLETED.")
             return False
         return True  # Only allow setting to Pending from COMPLETED
     elif logic_row.ins_upd_dlt == 'upd' and old_row.Status == 'COMPLETED' and row.Status != 'COMPLETED':
-        logic_row.log(f"Task {row.TaskInstanceId} was COMPLETED and is now being changed to {row.Status}.")
+        logic_row.log(f"Task  {row.TaskDef.TaskName}  ID: {row.TaskInstanceId} was COMPLETED and is now being changed to {row.Status}.")
         # If a task is reverted from COMPLETED to another status, we might want to handle that
         # For simplicity, we allow it here but in a real scenario, you might want to enforce rules
         # such as reverting dependent tasks as well.
@@ -155,20 +187,17 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
         task_id = row.TaskInstanceId
         task_def = row.TaskDef
         if not task_def:
-            logic_row.log(f"No task definition found for TaskId {row.TaskId} in update_next_task")
+            logic_row.log(f"No task definition found for  {row.TaskDef.TaskName}  TaskId {row.TaskId} in update_next_task")
             return
         
 
         if task_def.TaskType in ['START', 'END', 'GATEWAY', 'SUBPROCESS'] and row.Status != 'COMPLETED':
-            logic_row.log(f"Task {task_id} is of type {task_def.TaskType}, skipping next task update.")
+            logic_row.log(f"Task  {task_def.TaskName}  ID: {task_id} with status {row.Status} is of type {task_def.TaskType} and AutoComplete: {row.TaskDef.AutoComplete}.")
             if task_def.AutoComplete:
                 logic_row.log(f"Task {task_id} is auto-completing.")
                 row.Status = 'COMPLETED'
-                logic_row.log(f'TaskInstance {task_id} auto-completed due to AutoComplete=True.')
-        if row.Status == 'PENDING':
-            row.StartedDate = datetime.datetime.utcnow()
-        elif row.Status == 'COMPLETED':
-            row.CompletedDate = datetime.datetime.utcnow()
+                logic_row.log(f'Task {task_def.TaskName} TaskInstance {task_id} AutoComplete=True.')
+        
         logic_row.log(f'TaskInstance {task_id} Status:{row.Status}. Checking for next tasks to set to Pending.')
         task_flow = task_def.TaskFlowList or []
         for task_flow in task_flow:
@@ -177,7 +206,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             if next_task_instance and next_task_instance.Status in ['NEW', 'PENDING']:
                 if next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, row.StageId, logic_row):
                     next_task_instance.Status = 'COMPLETED'
-                    logic_row.log(f'Next task {next_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
+                    logic_row.log(f'Next task {next_task_instance.TaskDef.TaskName} ID: {next_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
                     future_task = next_task_instance.TaskDef.TaskFlowList or []
                     for future_flow in future_task: 
                         future_task_def = future_flow.ToTaskId
@@ -188,7 +217,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                                     future_task_instance.Status = 'COMPLETED'
                                     future_task_instance.CompletedDate = datetime.datetime.utcnow()
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
-                                    update_next_task(future_task_instance, old_row, logic_row)  # recursively update next tasks
+                                    update_next_task(future_task_instance, row, logic_row)  # recursively update next tasks
                                 else:
                                     future_task_instance.Status = 'PENDING'
                                     future_task_instance.StartedDate = datetime.datetime.utcnow()
@@ -205,7 +234,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                         next_task_instance.Status = 'PENDING' if next_task_instance.AutoComplete else 'COMPLETED'
                         logic_row.log(f'Next GATEWAY task {next_task_instance.TaskInstanceId} set to PENDING as all dependencies are COMPLETED.')
                         if next_task_instance.AutoComplete:
-                            update_next_task(next_task_instance, None, logic_row)  # recursively update next tasks
+                            update_next_task(next_task_instance, row, logic_row)  # recursively update next tasks
                 elif row.TaskDef.TaskType == 'CONDITION' and row.Status == 'COMPLETED':
                     result = row.Result or None
                     condition = task_flow.Condition or ""
@@ -218,9 +247,12 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             elif row.Status == 'COMPLETED' and next_task_instance and next_task_instance.Status == 'NEW':
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.StartedDate = datetime.datetime.utcnow()
-                logic_row.log(f'Next task {next_task_instance.TaskInstanceId} is NEW, cannot set to PENDING until dependencies are met.')
-
-            logic_row.log(f'Next {next_task_instance.TaskDef.TaskType} TaskInstance {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
+                logic_row.log(f'Next task {next_task_instance.TaskDef.TaskName} ID: {next_task_instance.TaskInstanceId} is NEW, cannot set to PENDING until dependencies are met.')
+            if row.Status == 'PENDING' and row.StartedDate is None:
+                row.StartedDate = datetime.datetime.utcnow()
+            elif row.Status == 'COMPLETED' and row.CompletedDate is None:
+                row.CompletedDate = datetime.datetime.utcnow()
+            logic_row.log(f'Next Task {next_task_instance.TaskDef.TaskName} Type:{next_task_instance.TaskDef.TaskType} ID: {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
             #logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
             process_task_instance(next_task_instance, old_row, logic_row)
             

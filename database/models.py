@@ -3,7 +3,7 @@ from sqlalchemy.dialects.mysql import *
 from sqlalchemy import Boolean, Column, Computed, DECIMAL, Date, Float, ForeignKey, Index, Integer, LargeBinary, String, Table, Unicode, text
 from sqlalchemy.dialects.mssql import DATETIME2
 from sqlalchemy.sql.sqltypes import NullType
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, foreign
 from sqlalchemy.ext.declarative import declarative_base
 
 ########################################################################################################################
@@ -1737,6 +1737,14 @@ class v_Labels(Base):
     TransferredMerch = Column(Integer, nullable=False)
     Special_Status = Column(String(40), nullable=False)
 
+    #Parent Relationships
+    Company = relationship("COMPANYTB", primaryjoin="foreign(v_Labels.SRC_MAR_ID)==COMPANYTB.COMPANY_ID", viewonly=True)
+    Merch = relationship("MERCHTB", primaryjoin="foreign(v_Labels.MERCHANDISE_ID)==MERCHTB.MERCHANDISE_ID", viewonly=True)
+    #LabelBarcode = relationship("LabelBarcode", primaryjoin="foreign(v_Labels.ID)==LabelBarcode.LabelID", viewonly=True)
+    #FormulaSubmissionComponent = relationship("FormulaSubmissionComponent", primaryjoin="foreign(v_Labels.ID)==FormulaSubmissionComponent.ComponentLabelID", viewonly=True)
+    #ProducedIn1Tb = relationship("ProducedIn1Tb", primaryjoin="foreign(v_Labels.ID)==ProducedIn1Tb.LabelID", viewonly=True)
+    USEDIN1TB = relationship("USEDIN1TB", primaryjoin="foreign(v_Labels.ID)==USEDIN1TB.LabelID", viewonly=True) 
+   
 class v_Plants(Base):
     __tablename__ = 'v_plants'
     _s_collection_name = 'v_plants'  # type: ignore
@@ -1766,3 +1774,22 @@ class v_Plants(Base):
     PrimaryCompanyName = Column(String(255), nullable=False)
     DesignatedRFRName = Column(String(255), nullable=False)
     STATUS = Column(String(40), nullable=False)
+
+    # Parent Relationships
+    Plant = relationship("PLANTTB", primaryjoin="foreign(v_Plants.PLANT_ID)==PLANTTB.PLANT_ID", viewonly=True)
+    Company = relationship("COMPANYTB", primaryjoin="foreign(v_Plants.PrimaryCompany)==COMPANYTB.COMPANY_ID", viewonly=True)
+    #RFR = relationship("PERSONJOBTB", primaryjoin="foreign(v_Plants.DesignatedRFR)==PERSONJOBTB.PERSON_JOB_ID", viewonly=True)
+    PlantAddress = relationship("PLANTADDRESSTB", primaryjoin="foreign(v_Plants.PLANT_ID)==PLANTADDRESSTB.PLANT_ID", viewonly=True)
+    PlantComment = relationship("PLANTCOMMENT", primaryjoin="foreign(v_Plants.PLANT_ID)==PLANTCOMMENT.PLANT_ID", viewonly=True)
+    PlantCertDetail = relationship("PLANTCERTDETAIL", primaryjoin="foreign(v_Plants.PLANT_ID)==PLANTCERTDETAIL.PLANT_ID", viewonly=True)
+    Owns = relationship("OWNSTB", primaryjoin="foreign(v_Plants.PLANT_ID)==OWNSTB.PLANT_ID", viewonly=True)
+    '''    ProducedIn1TbList : Mapped[List["ProducedIn1Tb"]] = relationship(back_populates="PLANT_TB")
+    USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="PLANT_TB")
+    LabelTbList : Mapped[List["LabelTb"]] = relationship(back_populates=("PLANT_TB"))
+    MERCH_TBList : Mapped[List["MERCHTB"]] = relationship(back_populates=("PLANT_TB"))
+    FormulaProductList : Mapped[List["FormulaProduct"]] = relationship(back_populates=("PLANT_TB"))
+    FormulaSubmissionComponentList : Mapped[List["FormulaSubmissionComponent"]] = relationship(back_populates=("PLANT_TB"))
+    FormulaSubmissionPlantList : Mapped[List["FormulaSubmissionPlant"]] = relationship(back_populates=("PLANT_TB"))
+    ProductJobLineItemList : Mapped[List["ProductJobLineItem"]] = relationship(back_populates=("PLANT_TB"))
+    ProductList : Mapped[List["Product"]] = relationship(back_populates=("PLANT_TB"))
+    '''

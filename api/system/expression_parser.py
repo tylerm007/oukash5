@@ -14,6 +14,7 @@ from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
 from sqlalchemy import or_ as OR_
 from sqlalchemy import and_ as AND_
 from decimal import Decimal
+from sqlalchemy.inspection import inspect
 
 BASIC_EXPRESSION =  "@basic_expression"
 """Ontimize Advanced Filter Expressions"""
@@ -100,7 +101,7 @@ def parsePayload(clz, payload: str):
         pagesize: int = payload.get("pageSize") or 100
         orderBy: list = fixup_sort(clz, payload.get("orderBy", None)) or []
         data = fixup_data(payload.get("data", None), sqltypes)
-
+        orderBy = inspect(clz).primary_key[0].name if orderBy is None else orderBy
     return expressions, _filter, columns, sqltypes, offset, pagesize, orderBy, data
 
 
