@@ -7,8 +7,17 @@ let displayService;
 let config;
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Get configuration for plants
-    config = getEntityConfig('plants');
+    // Parse URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode') || 'standalone';
+    const companyId = urlParams.get('companyId');
+    const companyName = urlParams.get('companyName');
+
+    // Get configuration for plants with mode and parameters
+    config = getEntityConfig('plants', mode, {
+        companyId,
+        companyName
+    });
 
     // Initialize display service
     displayService = new DisplayService(window.dataService);

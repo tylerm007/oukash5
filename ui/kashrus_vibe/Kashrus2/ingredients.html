@@ -12,6 +12,13 @@
             <h1 id="page-title">Ingredients</h1>
             <div class="view-controls">
                 <button id="back-btn" class="view-btn back-btn">← Back to Home</button>
+                <div class="certified-toggle">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="certified-only-toggle">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">Certified Only</span>
+                    </label>
+                </div>
                 <button id="card-view-btn" class="view-btn active">Card View</button>
                 <button id="table-view-btn" class="view-btn">Table View</button>
                 <button id="columns-btn" class="view-btn columns-btn">Columns</button>
@@ -28,11 +35,31 @@
                 </div>
             </div>
             <div id="auth-error" class="auth-error hidden">
-                <h3>Authentication Error (401)</h3>
-                <p>The Bearer token has expired. Please enter a new token:</p>
-                <div class="token-input-container">
-                    <input type="text" id="token-input" placeholder="Paste new Bearer token here" />
-                    <button id="update-token-btn" class="update-token-btn">Update Token</button>
+                <h3>Authentication Required</h3>
+                <p>Please sign in to continue:</p>
+                <form id="login-form" class="login-form">
+                    <div id="login-error" class="login-error hidden">
+                        Invalid username or password. Please try again.
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" id="login-btn" class="login-btn">
+                        <span class="login-btn-text">Sign In</span>
+                        <span class="login-spinner hidden">Signing in...</span>
+                    </button>
+                </form>
+                <div class="token-fallback">
+                    <p><small>Or paste a bearer token directly:</small></p>
+                    <div class="token-input-container">
+                        <input type="text" id="token-input" placeholder="Paste Bearer token here" />
+                        <button id="update-token-btn" class="update-token-btn">Update Token</button>
+                    </div>
                 </div>
             </div>
             <div id="loading" class="loading">Loading ingredients...</div>
@@ -87,7 +114,39 @@
                 </div>
             </div>
         </div>
+
+        <!-- Ingredient Context Menu -->
+        <div id="plant-context-menu" class="context-menu hidden">
+            <div class="context-menu-item" data-action="details">
+                <span class="context-menu-icon">📄</span>
+                Details
+            </div>
+            <div class="context-menu-item" data-action="plants">
+                <span class="context-menu-icon">🌱</span>
+                Plants
+            </div>
+            <div class="context-menu-item" data-action="companies">
+                <span class="context-menu-icon">🏢</span>
+                Companies
+            </div>
+            <div class="context-menu-item" data-action="products">
+                <span class="context-menu-icon">📦</span>
+                Products
+            </div>
+        </div>
+
+        <!-- Ingredient Details Popup -->
+        <div id="plant-details-popup" class="plant-details-popup hidden">
+            <div class="plant-details-content">
+                <button id="close-details-btn" class="close-details-btn">&times;</button>
+                <h2 id="details-plant-name">Ingredient Details</h2>
+                <div id="details-content">
+                    <!-- Ingredient details will be populated here -->
+                </div>
+            </div>
+        </div>
     </div>
+    <script src="authService.js"></script>
     <script src="dataService.js"></script>
     <script src="displayService.js"></script>
     <script src="entityConfigs.js"></script>

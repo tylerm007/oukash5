@@ -25,6 +25,7 @@ class DisplayService {
         this.cacheElements();
         this.setupUI();
         this.updatePageTitle();
+        this.setupCertifiedToggle();
     }
 
     cacheElements() {
@@ -50,6 +51,9 @@ class DisplayService {
             authError: document.getElementById('auth-error'),
             tokenInput: document.getElementById('token-input'),
             updateTokenBtn: document.getElementById('update-token-btn'),
+
+            // Certified Only toggle
+            certifiedOnlyToggle: document.getElementById('certified-only-toggle'),
 
             // Sort/Filter info
             sortFilterInfo: document.getElementById('sort-filter-info'),
@@ -116,7 +120,21 @@ class DisplayService {
             this.showColumnDialog();
         });
 
-        // Auth token update
+        // Certified Only toggle
+        this.elements.certifiedOnlyToggle?.addEventListener('change', () => {
+            this.handleCertifiedToggle();
+        });
+
+        // Login form handling
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleLogin();
+            });
+        }
+
+        // Auth token update (fallback)
         this.elements.updateTokenBtn?.addEventListener('click', () => {
             this.updateToken();
         });
@@ -206,6 +224,22 @@ class DisplayService {
         }
     }
 
+    setupCertifiedToggle() {
+        // Hide the toggle if not enabled for this entity type
+        if (this.config.enableCertifiedToggle === false && this.elements.certifiedOnlyToggle) {
+            const toggleContainer = this.elements.certifiedOnlyToggle.closest('.certified-toggle');
+            if (toggleContainer) {
+                toggleContainer.style.display = 'none';
+            }
+        } else if (this.elements.certifiedOnlyToggle) {
+            // Ensure toggle is visible if not explicitly disabled
+            const toggleContainer = this.elements.certifiedOnlyToggle.closest('.certified-toggle');
+            if (toggleContainer) {
+                toggleContainer.style.display = '';
+            }
+        }
+    }
+
     setView(view) {
         this.currentView = view;
 
@@ -229,6 +263,28 @@ class DisplayService {
         this.showLoading();
         const result = await this.dataService.fetchData(this.config, 0, false, true);
         this.handleDataResult(result);
+    }
+
+    async handleCertifiedToggle() {
+        // Skip if toggle is disabled for this entity type
+        if (this.config.enableCertifiedToggle === false) {
+            return;
+        }
+
+        const isChecked = this.elements.certifiedOnlyToggle.checked;
+        const statusField = this.config.statusField || 'Status';
+
+        if (isChecked) {
+            // Add certified filter
+            this.dataService.addFilter(statusField, 'Certified', 'exact');
+        } else {
+            // Remove certified filter
+            this.dataService.removeFilter(statusField);
+        }
+
+        // Refresh data with new filter
+        await this.refresh();
+        this.updateSortFilterInfo();
     }
 
     async loadInitialData() {
@@ -611,6 +667,58 @@ class DisplayService {
             actionHandler(this.currentItem);
         } else {
             console.error('No action handler found for:', action);
+        }
+    }
+
+    async handleLogin() {
+        const username = document.getElementById('username')?.value.trim();
+        const password = document.getElementById('password')?.value.trim();
+        const loginBtn = document.getElementById('login-btn');
+        const loginBtnText = loginBtn?.querySelector('.login-btn-text');
+        const loginSpinner = loginBtn?.querySelector('.login-spinner');
+        const loginError = document.getElementById('login-error');
+
+        if (!username || !password) {
+            this.showLoginError('Please enter both username and password');
+            return;
+        }
+
+        // Show loading state
+        if (loginBtn) loginBtn.disabled = true;
+        if (loginBtnText) loginBtnText.classList.add('hidden');
+        if (loginSpinner) loginSpinner.classList.remove('hidden');
+        if (loginError) loginError.classList.add('hidden');
+
+        try {
+            const result = await window.authService.login(username, password);
+
+            if (result.success) {
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+
+                // Hide auth error and refresh data
+                this.hideAuthError();
+                this.refresh();
+            } else {
+                this.showLoginError(result.error || 'Login failed');
+            }
+        } catch (error) {
+            this.showLoginError('Login failed. Please try again.');
+            console.error('Login error:', error);
+        } finally {
+            // Reset loading state
+            if (loginBtn) loginBtn.disabled = false;
+            if (loginBtnText) loginBtnText.classList.remove('hidden');
+            if (loginSpinner) loginSpinner.classList.add('hidden');
+        }
+    }
+
+    showLoginError(message) {
+        const loginError = document.getElementById('login-error');
+        if (loginError) {
+            loginError.textContent = message;
+            loginError.classList.remove('hidden');
         }
     }
 

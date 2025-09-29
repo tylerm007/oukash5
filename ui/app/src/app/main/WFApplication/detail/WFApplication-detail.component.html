@@ -330,7 +330,7 @@
         
           <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="yes" content-align="left"></o-table-column>
+          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
         
@@ -399,12 +399,12 @@
         entity="WFContact" 
         keys="ContactID"
         parent-keys="ApplicationID:ApplicationID"
-        columns="ContactID;ApplicationID;CreatedDate"  
+        columns="ContactName;ApplicationID;Title;ContactPhone;ContactEmail;IsPrimary;CreatedDate;ContactID"  
         horizontal-scroll="yes"
         detail-form-route="WFContact" 
         edit-form-route="WFContact"
-        visible-columns="ContactID;ApplicationID;CreatedDate"  
-        sort-columns="ContactID" 
+        visible-columns="ContactName;ApplicationID;Title;ContactPhone;ContactEmail;IsPrimary;CreatedDate;ContactID"  
+        sort-columns="ContactName" 
         query-rows="25" 
         quick-filter="yes"
         row-height="medium" 
@@ -419,7 +419,7 @@
         edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         
-          <o-table-column #ContactID attr="ContactID" title=" Contact I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #ContactName attr="ContactName" title=" Contact Name" editable="no" required="yes" content-align="left"></o-table-column>
         
           <o-table-column attr="ApplicationID" title="ApplicationID">
     <o-table-cell-renderer-service attr="ApplicationID" 
@@ -430,7 +430,20 @@
     </o-table-cell-renderer-service>
 </o-table-column>
         
+          <o-table-column #Title attr="Title" title="Title" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ContactPhone attr="ContactPhone" title="ContactPhone" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #ContactEmail attr="ContactEmail" title="ContactEmail" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="IsPrimary" title="IsPrimary">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #ContactID attr="ContactID" title="ContactID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

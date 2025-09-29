@@ -14,13 +14,6 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':CurrentTaskId/ProcessInstance', loadChildren: () => import('../ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule),
-    data: {
-        oPermission: {
-            permissionId: 'ProcessInstance-detail-permissions'
-        }
-    }
-},{
     path: ':FromTaskId/TaskFlow', loadChildren: () => import('../TaskFlow/TaskFlow.module').then(m => m.TaskFlowModule),
     data: {
         oPermission: {

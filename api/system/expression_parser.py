@@ -308,14 +308,14 @@ def advancedFilter(cls, args) -> any:
                     expressions.append(attr.in_(item['val']))
                 elif op in ["like","ilike"]:
                     expressions.append(attr.like( item['val']))
-                elif op in ["gt",">"]:
-                    expressions.append(attr.__gt__(clean(item['val'], attr.type)))
                 elif op in ["ge",">="]:
-                    expressions.append(attr.__ge__(clean(item['val'], attr.type)))
-                elif op in ["lt","<"]:
-                    expressions.append(attr.__lt__(clean(item['val'], attr.type)))
+                    expressions.append(attr.ge( item['val']))
+                elif op in ["gt",">"]:
+                    expressions.append(attr.gt( item['val']))
                 elif op in ["le","<="]:
-                    expressions.append(attr.__le__(clean(item['val'], attr.type)))
+                    expressions.append(attr.le( item['val']))
+                elif op in ["lt","<"]:
+                    expressions.append(attr.lt( item['val']))
                 else:
                     expressions.append(attr.__eq__(clean(item['val'], attr.type)))
             for e in expressions : print(e," : ", e.right.value)
@@ -432,7 +432,7 @@ def clean(val, attr_type=None):
     elif val and isinstance(val, str) and (val.startswith('"') and val.endswith('"')):
             return f"'{val[1:-1 ]}'"
     elif val and isinstance(val, str):
-        return  f"{val}"
+        return  f"'{val}'"
     else:
         return val
             

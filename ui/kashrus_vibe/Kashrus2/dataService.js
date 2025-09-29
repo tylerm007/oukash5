@@ -5,10 +5,7 @@
 
 class DataService {
     constructor() {
-        //this.baseApiUrl = 'http://172.30.3.133:5656/api/';
-        this.baseApiUrl = 'http://localhost:5656/api/';
-        this.bearerToken = localStorage.getItem('plant_app_bearer_token') ||
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODgyMDMyMCwianRpIjoiMGRlMjllYjAtZjAwNi00NzNhLTk4YWQtMzBlMjNmMWNmNzU2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4ODIwMzIwLCJleHAiOjE3NTg4MzM2NDB9.ETf29fcfRTWe3kvfPGsK-jTYjDjCOvR5wEqxLnEG3y4';
+        this.baseApiUrl = 'http://172.30.3.133:5656/api/';
 
         // Pagination state
         this.currentPage = 0;
@@ -24,8 +21,11 @@ class DataService {
     }
 
     updateBearerToken(newToken) {
-        this.bearerToken = newToken.startsWith('Bearer ') ? newToken : `Bearer ${newToken}`;
-        localStorage.setItem('plant_app_bearer_token', this.bearerToken);
+        return window.authService.setToken(newToken);
+    }
+
+    getBearerToken() {
+        return window.authService.getToken();
     }
 
     resetPaginationState() {
@@ -78,10 +78,10 @@ class DataService {
             params.append('sort', config.defaultSort);
         }
 
-        // Filter parameter as JSON string
-        const filterJson = this.buildFilterJson(config);
-        if (filterJson.length > 0) {
-            params.append('filter', JSON.stringify(filterJson));
+        // Filter parameter as JSON array of all filters
+        const filterArray = this.buildFilterArray(config);
+        if (filterArray.length > 0) {
+            params.append('filter', JSON.stringify(filterArray));
         }
 
         // Include parameter for relationships
@@ -109,7 +109,7 @@ class DataService {
         return `${baseUrl}?${params.toString()}`;
     }
 
-    buildFilterJson(config) {
+    buildFilterArray(config) {
         const filterArray = [];
 
         // Add custom base filters from config first
@@ -188,6 +188,7 @@ class DataService {
             }
         });
 
+        // Return the simple filter array - each filter will be sent as separate URL parameters
         return filterArray;
     }
 
@@ -207,18 +208,23 @@ class DataService {
             const apiUrl = this.buildApiUrl(config, page);
             console.log('API URL:', apiUrl);
 
+            const token = this.getBearerToken();
+            if (!token) {
+                return { success: false, error: 'auth_required', status: 401 };
+            }
+
             const response = await fetch(apiUrl, {
                 method: 'GET',
                 headers: {
-                    'Authorization': this.bearerToken,
+                    'Authorization': token,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             });
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    return { success: false, error: 'auth_required', status: 401 };
+                if (window.authService.isAuthError(response.status)) {
+                    return { success: false, error: 'auth_required', status: response.status };
                 }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

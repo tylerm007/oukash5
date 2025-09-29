@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from datetime import datetime
+from security.system.authentication import jwt_required
 from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFIngredient, WFProduct, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
@@ -18,6 +19,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 
     @app.route('/get_application_detail', methods=['GET',"OPTIONS"])
+    @jwt_required()
     def get_application_detail():
         """        
         Illustrates:

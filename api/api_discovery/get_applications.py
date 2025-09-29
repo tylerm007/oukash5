@@ -3,6 +3,7 @@ from database.models import LaneDefinition, WFApplicationMessage, WFFile, Proces
 from flask import app, request, jsonify, session
 import logging
 import safrs
+from security.system.authentication import jwt_required
 from sqlalchemy import false
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -23,6 +24,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return (end_date - start_date).days
         return 0
     @app.route('/get_applications', methods=['GET','OPTIONS'])
+    @jwt_required()
     def get_applications():
         """
         Retrieves the NCRC dashboard data

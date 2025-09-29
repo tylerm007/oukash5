@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Directory</title>
+    <title>Products - Plant Directory</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1 id="page-title">Plant Directory</h1>
+            <h1 id="page-title">Products</h1>
             <div class="view-controls">
                 <button id="back-btn" class="view-btn back-btn">← Back to Home</button>
                 <div class="certified-toggle">
@@ -62,11 +62,11 @@
                     </div>
                 </div>
             </div>
-            <div id="loading" class="loading">Loading plants...</div>
-            <div id="error" class="error hidden">Failed to load plants. Please try again.</div>
+            <div id="loading" class="loading">Loading products...</div>
+            <div id="error" class="error hidden">Failed to load products. Please try again.</div>
             <div id="plant-list" class="plant-grid"></div>
-            <div id="loading-more" class="loading-more hidden">Loading more plants...</div>
-            <div id="no-more-data" class="no-more-data hidden">No more plants to load</div>
+            <div id="loading-more" class="loading-more hidden">Loading more products...</div>
+            <div id="no-more-data" class="no-more-data hidden">No more products to load</div>
         </main>
 
         <!-- Filter Dialog -->
@@ -99,13 +99,11 @@
                     <div class="column-section">
                         <h4>Available Fields</h4>
                         <div id="available-columns" class="column-list">
-                            <!-- Available columns will be populated here -->
                         </div>
                     </div>
                     <div class="column-section">
                         <h4>Displayed Fields</h4>
                         <div id="displayed-columns" class="column-list">
-                            <!-- Displayed columns will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -117,11 +115,15 @@
             </div>
         </div>
 
-        <!-- Plant Context Menu -->
+        <!-- Product Context Menu -->
         <div id="plant-context-menu" class="context-menu hidden">
             <div class="context-menu-item" data-action="details">
                 <span class="context-menu-icon">📄</span>
                 Details
+            </div>
+            <div class="context-menu-item" data-action="plants">
+                <span class="context-menu-icon">🌱</span>
+                Plants
             </div>
             <div class="context-menu-item" data-action="companies">
                 <span class="context-menu-icon">🏢</span>
@@ -131,23 +133,15 @@
                 <span class="context-menu-icon">🧪</span>
                 Ingredients
             </div>
-            <div class="context-menu-item" data-action="products">
-                <span class="context-menu-icon">📦</span>
-                Products
-            </div>
-            <div class="context-menu-item" data-action="inspections">
-                <span class="context-menu-icon">🔍</span>
-                Inspections
-            </div>
         </div>
 
-        <!-- Plant Details Popup -->
+        <!-- Product Details Popup -->
         <div id="plant-details-popup" class="plant-details-popup hidden">
             <div class="plant-details-content">
                 <button id="close-details-btn" class="close-details-btn">&times;</button>
-                <h2 id="details-plant-name">Plant Details</h2>
+                <h2 id="details-plant-name">Product Details</h2>
                 <div id="details-content">
-                    <!-- Plant details will be populated here -->
+                    <!-- Product details will be populated here -->
                 </div>
             </div>
         </div>
@@ -156,6 +150,6 @@
     <script src="dataService.js"></script>
     <script src="displayService.js"></script>
     <script src="entityConfigs.js"></script>
-    <script src="plants.js"></script>
+    <script src="products.js"></script>
 </body>
 </html>
