@@ -5,8 +5,8 @@
 
 class DataService {
     constructor() {
-        this.baseApiUrl = 'http://172.30.3.133:5656/api/';
-
+        //this.baseApiUrl = 'http://172.30.3.133:5656/api/';
+        this.baseApiUrl = 'http:/localhost:5656/api/';
         // Pagination state
         this.currentPage = 0;
         this.pageSize = 20;

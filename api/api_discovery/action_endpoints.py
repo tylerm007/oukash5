@@ -65,7 +65,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
         
-        data = request.get_json()
+        data = request.get_json(force=True)
         app_id = data.get('appId')   # ApplicationID
         task_id = data.get('taskId')  # TaskInstanceId 
         role = data.get('role')
