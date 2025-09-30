@@ -433,7 +433,7 @@ def clean(val, attr_type=None):
     elif val and isinstance(val, str) and (val.startswith('"') and val.endswith('"')):
             return f"'{val[1:-1 ]}'"
     elif val and isinstance(val, str):
-        return  f"'{val}'"
+        return  f"{val}"
     else:
         return val
             
