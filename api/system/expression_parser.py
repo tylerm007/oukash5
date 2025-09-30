@@ -404,6 +404,9 @@ def advancedFilter(cls, args) -> any:
             expression_holder.append(expr)
         elif op_name in ["EQ","NE","LT","LE","GT","GE"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "="
+            # Add single quotes around attr_val if attr.type is VARCHAR or String
+            if str(attr.type).upper() in ["VARCHAR", "STRING", "TEXT" ,"DATE", "DATETIME"]:
+                attr_val = f"'{attr_val}'"
             sqlWhere += f'{join} "{attr_name}" {op} {attr_val}'
         elif op_name in ["NULL","IS_NULL","NOTNULL","NOT_NULL"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "IS NULL"

@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import operator
 import json
+from sqlalchemy import and_, or_, text
 
 
 Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
@@ -122,7 +123,7 @@ class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
                 expressions.append(op(attr, attr_val))
 
         if len(filters) > 1:
-            return query.filter(operator.and_(*expressions))
+            return query.filter(and_(*expressions))
         else:
             return query.filter(*expressions)
 
