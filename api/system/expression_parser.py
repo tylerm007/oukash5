@@ -404,7 +404,7 @@ def advancedFilter(cls, args) -> any:
             expression_holder.append(expr)
         elif op_name in ["EQ","NE","LT","LE","GT","GE"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "="
-            sqlWhere += f'{join} "{attr_name}" {op} {clean(attr_val, attr.type)}'
+            sqlWhere += f'{join} "{attr_name}" {op} {attr_val}'
         elif op_name in ["NULL","IS_NULL","NOTNULL","NOT_NULL"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "IS NULL"
             sqlWhere += f'{join} "{attr_name}" {op}'
@@ -420,7 +420,7 @@ def advancedFilter(cls, args) -> any:
             final_expr.append(AND_(*expr.expr))
         else:
             final_expr.append(expr.expr)
-    for e in expressions : print(e," : ", e.right.value)
+    for e in expressions : print(e," : ", e.right.value) if expressions is not None else print("no expressions")
     return expressions, sqlWhere #query.filter(or_(*expressions))
 
 def clean(val, attr_type=None):

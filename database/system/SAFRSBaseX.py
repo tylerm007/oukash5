@@ -29,16 +29,17 @@ def jsonapi_filter(cls):
         from api.system.expression_parser import advancedFilter
         expressions, sqlWhere = advancedFilter(cls, args)
     if sqlWhere != "":    
-        where = sqlWhere.replace("\"", "", 20)
+        where = sqlWhere #.replace("\"", "", 20)
         print(f"SQLWhere: {where}")
         return query.filter(text(where))
     else:
         print(f"Expressions {expressions}")
         return query.filter(and_(*expressions))   
+    
 
 class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
     __abstract__ = True
-    if do_enable_ont_advanced_filters := True:
+    if do_enable_ont_advanced_filters := False:
         jsonapi_filter = jsonapi_filter
         
     def _s_parse_attr_value(self, attr_name: str, attr_val: any):
