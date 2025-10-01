@@ -284,7 +284,7 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             # NOTE: we want to cascade the ResultData to subsequent tasks
             # depending on the workflow requirements
             task_def = row.TaskDef
-            parent_instances = None # row.ParentInstance TODO
+            parent_instances = task_def.ToTaskTaskFlowList or [] # row.ParentInstance TODO
             if parent_instances:
                 for parent in parent_instances:
                     if parent and parent.ResultData:
@@ -320,4 +320,4 @@ def declare_logic():
     # TaskInstance PreScriptJson and PostScriptJson execution are called before and after row update
     # they set the Result and ResultData fields respectively with context data
     #Rule.row_event(on_class=models.TaskInstance,calling=update_next_task)
-    #Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)
+    Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

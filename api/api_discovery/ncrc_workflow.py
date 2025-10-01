@@ -167,6 +167,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     def complete_task():
         """
         Complete a task in the workflow {task_instance_id:int, result:str, completed_by:str, completion_notes:str}
+        # Example PowerShell command to complete a task in the workflow
+        $body = @{
+            task_instance_id = 102
+            result = "Approved"
+            completed_by = "user1"
+            completion_notes = "Task completed successfully"
+        } | ConvertTo-Json
+
+        Invoke-RestMethod -Uri "http://localhost:5656/complete_task" -Method POST -Body $body -ContentType "application/json"
         """
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200       
@@ -184,6 +193,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
         if not task_instance:
             app_logger.error(f'TaskInstance not found: {task_instance_id}')
+            app_logger.error(f'TaskInstance not found: {task_instance_id}')
             return jsonify({"status": "error", "message": "TaskInstance not found"}), 404
 
         # Go To TaskFlow from TaskId and check to see if all the prior states are completed
@@ -193,12 +203,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
 
         if task_instance.Status != 'PENDING' and task_def.TaskType != 'START':
-             return jsonify({"status": "error", "message": f"Cannot complete task. Task is not Pending  -> {task_instance.Status}."}), 400
+            app_logger.error(f'Cannot complete task {task_instance_id}. Task is not PENDING -> {task_instance.Status}.')
+            return jsonify({"status": "error", "message": f"Cannot complete task. Task is not Pending  -> {task_instance.Status}."}), 400
         
         task_name = task_def.TaskName
         app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name}')
-        task_flows_from = task_def.ToTaskTaskFlowList
-        task_flows_to = task_def.TaskFlowList
+        task_flows_from = task_def.ToTaskTaskFlowList or []
+        task_flows_to = task_def.TaskFlowList or []
         # Check if all prior tasks are completed
         if task_def.TaskType != "START":
             for tf in task_flows_from:
@@ -218,7 +229,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         wf_history = WorkflowHistory(
             InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
             TaskInstanceId=task_instance.TaskInstanceId,
-            Action='COMPLETE',
+            Action=f'{task_name}  COMPLETED',
             NewStatus='COMPLETED',
             ActionBy=completed_by,
             ActionReason=completion_notes
@@ -226,17 +237,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.add(wf_history)
         session.commit()
         session.flush()
-        #result = ScriptEngine.run_script(task_def.PostCompletionScript, {"task_instance": task_instance, "session": session})
+        
         # Start the next tasks
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
             next_task_instance = TaskInstance.query.filter_by(TaskId=next_task_id, StageId=task_instance.StageId).first()
-            if next_task_instance and next_task_instance.Status == 'NEW' and not next_task_instance.TaskDef.AutoComplete:
+            if next_task_instance and next_task_instance.Status == 'NEW':
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.StartedDate = datetime.utcnow()
                 session.add(next_task_instance)    
                 session.commit()
-            elif next_task_instance and next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, next_task_instance.StageId):
+            if next_task_instance and next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, next_task_instance.StageId):
                  _complete_task(next_task_instance.TaskInstanceId, 'system', 'Auto-completed')      
 
                 
@@ -474,6 +485,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             from_task_def = dependency.FromTaskId
             from_task_instance = TaskInstance.query.filter_by(TaskId=from_task_def, StageId=stage_id).first()
             if from_task_instance and from_task_instance.Status != 'COMPLETED' and taskDef.TaskType not in ['START']:
-                app_logger.linfo(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskInstanceId} is not COMPLETED.")
+                app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskInstanceId} is not COMPLETED.")
                 return False
         return True
