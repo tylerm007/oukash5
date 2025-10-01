@@ -1,29 +1,67 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+# Azure DevOps Pipeline for Dashboard Server Docker Image
+# Build and push Docker image using build_image.dockerfile
 
 trigger:
 - dashboard
+- main
 
 resources:
 - repo: self
 
 variables:
+  # Container registry variables (update these for your environment)
+  dockerRegistryServiceConnection: 'your-docker-registry-connection'
+  imageRepository: 'dashboard-server'
+  containerRegistry: 'tylerm007'  # Docker Hub username or ACR name
+  dockerfilePath: '$(Build.SourcesDirectory)/devops/docker-image/build_image.dockerfile'
   tag: '$(Build.BuildId)'
+  
+  # Build context is project root since dockerfile uses COPY ../../ .
+  buildContext: '$(Build.SourcesDirectory)'
 
 stages:
 - stage: Build
-  displayName: Build image
+  displayName: Build and push Docker image
   jobs:
   - job: Build
     displayName: Build
     pool:
       vmImage: ubuntu-latest
     steps:
+    - checkout: self
+      fetchDepth: 1
+    
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build Docker image
       inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/devops/build_image.dockerfile'
+        command: 'build'
+        repository: '$(containerRegistry)/$(imageRepository)'
+        dockerfile: '$(dockerfilePath)'
+        buildContext: '$(buildContext)'
         tags: |
           $(tag)
+          latest
+        arguments: '--no-cache --platform linux/amd64'
+
+    - task: Docker@2
+      displayName: Push to Docker Hub
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/dashboard')))
+      inputs:
+        command: 'push'
+        repository: '$(containerRegistry)/$(imageRepository)'
+        containerRegistry: '$(dockerRegistryServiceConnection)'
+        tags: |
+          $(tag)
+          latest
+
+    # Optional: Display build information
+    - task: PowerShell@2
+      displayName: Display build info
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Build completed successfully!"
+          Write-Host "Image: $(containerRegistry)/$(imageRepository):$(tag)"
+          Write-Host "Latest: $(containerRegistry)/$(imageRepository):latest"
+          Write-Host "Branch: $(Build.SourceBranch)"
+          Write-Host "Commit: $(Build.SourceVersion)"

@@ -1,0 +1,59 @@
+# Azure Container Registry (ACR) Pipeline
+# Alternative pipeline for pushing to Azure Container Registry
+
+trigger:
+- dashboard
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Azure Container Registry variables
+  acrServiceConnection: 'your-acr-service-connection'
+  acrName: 'youracrname'  # Replace with your ACR name
+  imageRepository: 'dashboard-server'
+  dockerfilePath: '$(Build.SourcesDirectory)/devops/docker-image/build_image.dockerfile'
+  tag: '$(Build.BuildId)'
+  buildContext: '$(Build.SourcesDirectory)'
+
+stages:
+- stage: BuildAndPush
+  displayName: Build and Push to ACR
+  jobs:
+  - job: BuildPush
+    displayName: Build and Push
+    steps:
+    - checkout: self
+      fetchDepth: 1
+
+    - task: AzureCLI@2
+      displayName: Build and push image to ACR
+      inputs:
+        azureSubscription: '$(acrServiceConnection)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Login to ACR
+          az acr login --name $(acrName)
+          
+          # Build and tag the image
+          docker build -f $(dockerfilePath) \
+            -t $(acrName).azurecr.io/$(imageRepository):$(tag) \
+            -t $(acrName).azurecr.io/$(imageRepository):latest \
+            --no-cache --platform linux/amd64 \
+            $(buildContext)
+          
+          # Push the image
+          docker push $(acrName).azurecr.io/$(imageRepository):$(tag)
+          docker push $(acrName).azurecr.io/$(imageRepository):latest
+          
+          echo "Image pushed successfully:"
+          echo "$(acrName).azurecr.io/$(imageRepository):$(tag)"
+          echo "$(acrName).azurecr.io/$(imageRepository):latest"
+
+    - task: PublishBuildArtifacts@1
+      displayName: Publish deployment info
+      inputs:
+        pathToPublish: '$(Build.SourcesDirectory)/devops'
+        artifactName: 'deployment-config'
