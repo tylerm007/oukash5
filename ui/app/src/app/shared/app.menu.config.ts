@@ -156,11 +156,12 @@ export const MENU_CONFIG: MenuRootItem[] = [
         items: [
 
            // { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
-          
-             { id: 'ProcessDefinition', name: 'Process Definition', icon: 'view_list', route: '/main/ProcessDefinition' }
+            { id: 'WFApplication', name: 'Application', icon: 'view_list', route: '/main/WFApplication' }
+            , { id: 'ProcessDefinition', name: 'Process Definition', icon: 'view_list', route: '/main/ProcessDefinition' }
             , { id: 'LaneDefinition', name: 'Lane Definition', icon: 'view_list', route: '/main/LaneDefinition' }
             , { id: 'TaskDefinition', name: 'Task Definition', icon: 'view_list', route: '/main/TaskDefinition' }
             , { id: 'TaskFlow', name: 'Task Flow', icon: 'view_list', route: '/main/TaskFlow' }
+            , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
         ]
 
     },

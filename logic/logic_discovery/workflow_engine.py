@@ -280,6 +280,7 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
 
     if logic_row.ins_upd_dlt == 'upd':  
         task_id = row.TaskInstanceId
+        stage_id = row.StageId
         if row:
             # NOTE: we want to cascade the ResultData to subsequent tasks
             # depending on the workflow requirements
@@ -287,9 +288,14 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             parent_instances = task_def.ToTaskTaskFlowList or [] # row.ParentInstance TODO
             if parent_instances:
                 for parent in parent_instances:
-                    if parent and parent.ResultData:
-                        logic_row.log(f'Inheriting ResultData from parent task {parent.TaskInstanceId}')
-                        row.ResultData.update(parent.ResultData)
+                    if parent:
+                        #and parent.ResultData:
+                        parent_instance = models.TaskInstance.query.filter_by(TaskId=parent.FromTaskId, StageId=stage_id).first()
+                        result_data = parent_instance.ResultData if "ResultData" in dir(parent_instance) else {}
+                        if result_data:
+                            row.ResultData.update(result_data)
+                            logic_row.log(f'Inheriting ResultData from parent task {parent_instance.TaskInstanceId}')
+                            row.ResultData.update(result_data)
             # collect prior context from dependent tasks and create a union of ResultData
             application_id = row.Stage.ProcessInstance.ApplicationId
             se = python_engine.PythonScriptEngine()
