@@ -319,5 +319,5 @@ def declare_logic():
     
     # TaskInstance PreScriptJson and PostScriptJson execution are called before and after row update
     # they set the Result and ResultData fields respectively with context data
-    Rule.row_event(on_class=models.TaskInstance,calling=update_next_task)
-    Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)
+    #Rule.row_event(on_class=models.TaskInstance,calling=update_next_task)
+    #Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

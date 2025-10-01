@@ -1,0 +1,16 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: Complete Task # features/task_complete.feature:2
+
+  Scenario: Complete Transaction Processing  # features/task_complete.feature:4
+    Given Start Task                         # features/steps/task_complete.py:18
+    When Complete Task Called                # features/steps/task_complete.py:27
+    Then Next Task is Pending                # features/steps/task_complete.py:41
+
+&nbsp;&nbsp;
+C:\OUProjects\oukash5/test/api_logic_server_behave/behave_run.py completed at October 01, 2025 10:25:23

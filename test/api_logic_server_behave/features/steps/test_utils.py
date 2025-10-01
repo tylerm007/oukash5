@@ -52,8 +52,8 @@ except ImportError:
     raise Exception(f'login: ImportError: config.config.Args')
 
 
-def login(user: str = 'aneu') -> dict:
-    """ login (default aneu), return header with token
+def login(user: str = 'admin') -> dict:
+    """ login (default admin), return header with token
 
     Note different api for sql vs. keycloak
 
@@ -97,6 +97,7 @@ def login(user: str = 'aneu') -> dict:
     
         # Explicitly setting headers to ensure application/json Content-Type
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        headers = {'Content-Type': 'application/json'}
         
         r = requests.post(post_uri, data=post_data)
         status_code = r.status_code
@@ -116,6 +117,32 @@ def login(user: str = 'aneu') -> dict:
         s.headers.update(header)
     return header
         
+def post(url: str, data: dict, user: str = 'admin') -> requests.Response:
+    """ post with login, return response
+
+    :param url: full url
+    :param data: data to be posted
+    :param user: user to login as (default admin)
+    :return: response
+    """
+    header = login()
+    headers = {'Content-Type': 'application/json'}
+    header.update(headers)
+    r = requests.post(url=url, json=data, headers=header)
+    return r
+
+def get(url: str, user: str = 'admin') -> requests.Response:
+    """ get with login, return response
+
+    :param url: full url
+    :param user: user to login as (default admin)
+    :return: response
+    """
+    header = login()
+    headers = {'Content-Type': 'application/json'}
+    header.update(headers)
+    r = requests.get(url=url, headers=header)
+    return r
 
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
