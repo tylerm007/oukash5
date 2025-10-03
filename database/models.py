@@ -502,7 +502,7 @@ class WFUser(Base):  # type: ignore
     WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(foreign_keys='[WFApplicationMessage.FromUser]', back_populates="WF_FromUser")
-    WFApplicationMessageList1 : Mapped[List["WFApplicationMessage"]] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates="WF_ToUser")
+    #WFApplicationMessageList1 : Mapped[List["WFApplicationMessage"]] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates="WF_ToUser")
 
 
 
@@ -622,7 +622,7 @@ class WFApplicationMessage(Base):  # type: ignore
     MessageID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
-    ToUser = Column(ForeignKey('WF_Users.Username'))
+    ToUser = Column(String(50))
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
     MessageType = Column(Unicode(50), server_default=text("('internal')"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)
@@ -632,7 +632,7 @@ class WFApplicationMessage(Base):  # type: ignore
     Application : Mapped["WFApplication"] = relationship(back_populates=("WFApplicationMessageList"))
     WF_FromUser : Mapped["WFUser"] = relationship(foreign_keys='[WFApplicationMessage.FromUser]', back_populates=("WFApplicationMessageList"))
     WF_Priority : Mapped["WFPriority"] = relationship(back_populates=("WFApplicationMessageList"))
-    WF_ToUser : Mapped["WFUser"] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates=("WFApplicationMessageList1"))
+    #WF_ToUser : Mapped["WFUser"] = relationship(foreign_keys='[WFApplicationMessage.ToUser]', back_populates=("WFApplicationMessageList1"))
 
     # child relationships (access children)
 

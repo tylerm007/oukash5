@@ -25,7 +25,6 @@ COPY package*.json .
 RUN npm install --force
 
 COPY . .
-COPY ../kashrus_vibe/Karshrus2 ./dist_kashrus
 
 # Generate the build of the application
 RUN npm run production

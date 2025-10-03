@@ -464,7 +464,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
 
 
     # use TaskFlow to only create starting tasks
-    LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_definition_id).all()
+    LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_definition_id).order_by(LaneDefinition.LaneId).all()
     for lane in LaneDefinitions:
             app_logger.info(f'Create Stage from LaneDefinition: {lane.LaneName}')
             stage_instance = StageInstance(
