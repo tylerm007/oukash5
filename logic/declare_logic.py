@@ -1,5 +1,7 @@
 import datetime, os
 from decimal import Decimal
+from httpcore import request
+import requests
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 import database.models as models
@@ -139,5 +141,68 @@ def declare_logic():
     Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
     Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     '''
+
+    
+    def start_workflow(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
+        """
+        Start the workflow for a New Application 
+        """
+        if logic_row.ins_upd_dlt != 'ins':
+            return
+        from api.api_discovery.ncrc_workflow import _start_workflow as start_workflow_function
+        process_name = "OU Application Init"
+        application_id = row.ApplicationID        
+        started_by = 'system'
+        priority = "HIGH"
+        headers = {'Content-Type': 'application/json'}
+        from flask import g
+        if "access_token" in g:
+            headers['Authorization'] = f'Bearer {g.access_token}'
+        # Deadlocks
+        #response = requests.post('http://localhost:5656/start_workflow', json={
+        #    'process_name': process_name,
+        #    'application_id': application_id,
+        #    'started_by': started_by,
+        #    'priority': priority
+        #}, headers=headers)
+        # calling start_workflow_function directly inside a flush event did not work
+        #start_workflow_function(process_name=process_name, application_id=application_id, started_by=started_by, priority=priority) 
+    
+    Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
+    
+    def update_stages(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
+        """
+        Update the status of the workflow application
+        """
+        if logic_row.ins_upd_dlt == 'upd' and row.Status == old_row.Status and row.Status != 'COMPLETED':
+            return
+        stage = row.Stage
+        if stage is None:
+            return
+        application_id = stage.ProcessInstance.ApplicationId
+        application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
+            
+        if row.TaskDef.TaskType == 'LANESTART':
+            stage.Status = 'IN_PROGRESS'
+            application.StartedDate = datetime.datetime.now()
+            logic_row.update(reason="update stage status to INP", row=application)
+        elif row.TaskDef.TaskType == 'LANEEND':
+            stage.Status = 'COMPLETED'
+            stage.CompletedDate = datetime.datetime.now()
+            logic_row.update(reason="update stage status to COMPLETED", row=application)
+        elif row.TaskDef.TaskType == 'START':
+            if application is not None:
+                application.Status = 'INP'
+                application.StartedDate = datetime.datetime.now()
+                logic_row.update(reason="update application status to INP", row=application)
+        elif row.TaskDef.TaskType == 'END':
+            if application is not None:
+                application.Status = 'COMPL'
+                application.CompletedDate = datetime.datetime.now()
+                logic_row.update(reason="update application status to COMPLETED", row=application)
+        
+    Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
+    
+
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
