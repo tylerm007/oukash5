@@ -1,4 +1,3 @@
-use dashboard;
 
 -- =============================================
 -- Additional Reference Data Inserts
@@ -35,6 +34,8 @@ INSERT INTO TaskTypes (TaskTypeCode, TaskTypeDescription) VALUES
 ('SERVICE', 'Service Task - External service call'),
 ('SCRIPT', 'Script Task - Executes a script'),
 ('CONDITION', 'Condition Task - Evaluates a condition'),
+('LANESTART','Subprocess Lane Start'),
+('LANEEND','Subprocess Lane End'),
 ('GATEWAY', 'Gateway - Decision point');
 
 -- Task Categories
@@ -49,6 +50,7 @@ INSERT INTO TaskCategories (TaskCategoryCode, TaskCategoryDescription) VALUES
 ('NOTIFICATION', 'System Notifications'),
 ('CONFIRMATION', 'User Confirmation'),
 ('SCHEDULING', 'Scheduling and Planning'),
+('SUBPROCESS','Internal processing only'),
 ('VERIFICATION', 'Data and Status Verification');
  
  
@@ -84,6 +86,8 @@ INSERT INTO TaskStatus (StatusCode, StatusDescription) VALUES
 ('COMPLETED', 'Task Completed Successfully'),
 ('FAILED', 'Task Failed'),
 ('SKIPPED', 'Task Skipped'),
+('NEW', 'New Task Created'),
+('ON_HOLD', 'Task On Hold'),    
 ('CANCELLED', 'Task Cancelled');
 
 -- Process Message Types
@@ -109,6 +113,94 @@ GO
 -- =============================================
 
 
+-- =============================================
+-- STORED PROCEDURES
+-- =============================================
+
+-- Stored Procedure: sp_add_flow
+-- Purpose: Add a new task flow by looking up TaskDefinition IDs by TaskName
+-- Parameters: 
+--   @from_name - TaskName of the source task (can be NULL for start flows)
+--   @to_name - TaskName of the destination task
+--   @condition - Flow condition (optional)
+-- =============================================
+
+CREATE OR ALTER PROCEDURE sp_add_flow
+    @from_name NVARCHAR(100) = NULL,
+    @to_name NVARCHAR(100),
+    @condition NVARCHAR(500) = NULL
+AS
+BEGIN
+   
+    
+    DECLARE @from_task_id INT = NULL;
+    DECLARE @to_task_id INT;
+    DECLARE @error_msg NVARCHAR(500);
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        -- Look up the ToTask ID (required)
+        SELECT @to_task_id = TaskId 
+        FROM TaskDefinitions 
+        WHERE TaskName = @to_name;
+        
+        IF @to_task_id IS NULL
+        BEGIN
+            SET @error_msg = 'ToTask not found: ' + @to_name;
+            THROW 50001, @error_msg, 1;
+        END
+        
+        -- Look up the FromTask ID (optional for start flows)
+        IF @from_name IS NOT NULL
+        BEGIN
+            SELECT @from_task_id = TaskId 
+            FROM TaskDefinitions 
+            WHERE TaskName = @from_name;
+            
+            IF @from_task_id IS NULL
+            BEGIN
+                SET @error_msg = 'FromTask not found: ' + @from_name;
+                THROW 50002, @error_msg, 1;
+            END
+        END
+        
+        -- Check if flow already exists
+        IF EXISTS (
+            SELECT 1 FROM TaskFlow 
+            WHERE FromTaskId = @from_task_id 
+            AND ToTaskId = @to_task_id
+            AND ISNULL(Condition, '') = ISNULL(@condition, '')
+        )
+        BEGIN
+            SET @error_msg = 'Flow already exists from ''' + ISNULL(@from_name, 'START') + ''' to ''' + @to_name + '''';
+            THROW 50003, @error_msg, 1;
+        END
+        
+        -- Insert the new flow
+        INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
+        VALUES (@from_task_id, @to_task_id, @condition, 0);
+        
+        -- Return success message
+        SELECT 
+            SCOPE_IDENTITY() as FlowId,
+            @from_task_id as FromTaskId,
+            @to_task_id as ToTaskId,
+            @from_name as FromTaskName,
+            @to_name as ToTaskName,
+            @condition as Condition,
+            'Flow added successfully' as Message;
+            
+    END TRY
+    BEGIN CATCH
+        -- Return error information
+        SELECT 
+            ERROR_NUMBER() as ErrorNumber,
+            ERROR_MESSAGE() as ErrorMessage,
+            ERROR_SEVERITY() as ErrorSeverity,
+            ERROR_STATE() as ErrorState;
+    END CATCH
+END;
+GO
 -- =============================================
 -- 1. ProcessDefinition Insert
 -- =============================================
@@ -197,12 +289,12 @@ VALUES ('OU Certification Workflow', '1.0', 'Complete workflow for OU Kosher cer
 -- NDA Processing Lane Tasks (LaneId = 2)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Start NDA', 'START', 'COMPLETION', 4, 2, 0, 'NCRC', 15, 0, 1, 'Start NDA stage', 'system'),
+(1, 'Start NDA', 'LANESTART', 'SUBPROCESS', 4, 2, 0, 'NCRC', 15, 0, 1, 'Start NDA stage', 'system'),
 (1, 'Needs NDA', 'CONDITION', 'APPROVAL', 4, 2, 0, 'NCRC', 15, 0, 0, 'Determine if NDA is required', 'system'),
 (1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 5, 2, 0, 'LEGAL', 30, 0, 0, 'Send/Recieve non-disclosure agreement to customer', 'system'),
 (1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 0, 'LEGAL', 480, 0, 0, 'Legal review and execution of NDA', 'system'),
-(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 0, 'LEGAL', 15, 0, 0, 'Mark NDA process as completed', 'system');
-(1, 'NDA End', 'END', 'COMPLETION', 7, 2, 0, 'SYSTEM', 15, 0, 1, 'NDA completed', 'system');
+(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 0, 'LEGAL', 15, 0, 0, 'Mark NDA process as completed', 'system'),
+(1, 'NDA End', 'LANEEND', 'SUBPROCESS', 7, 2, 0, 'SYSTEM', 15, 0, 1, 'NDA completed', 'system');
 -- Task Flow for NDA Lane
 
 EXEC sp_add_flow @from_name = 'Initial Collector', @to_name = 'Start NDA', @condition = NULL;
@@ -219,7 +311,7 @@ GO
 -- Inspection Process Lane Tasks (LaneId = 3)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Inspection Needed', 'CONDITION', 'APPROVAL', 8, 3, 0, 'RC', 15, 0, 1, 'Start Inspection stage', 'system'),
+(1, 'Inspection Needed', 'LANESTART', 'SUBPROCESS', 8, 3, 0, 'RC', 15, 0, 1, 'Start Inspection stage', 'system'),
 (1, 'Set Inspection Fee', 'CONFIRM', 'CONFIRMATION', 8, 3, 0, 'INSP', 60, 1, 0, 'Calculate and set inspection fees', 'system'),
 (1, 'Send KIM Invoice', 'ACTION', 'ASSIGNMENT', 9, 3, 0, 'BILLING', 30, 1, 0, 'Send Kosher Inspection and Monitoring invoice', 'system'),
 (1, 'Invoice Paid', 'CONFIRM', 'CONFIRMATION', 10, 3, 0, 'BILLING', 60, 0, 0, 'Payment Received by Finance', 'system'),
@@ -228,7 +320,7 @@ VALUES
 (1, 'RFR Assigned', 'CONFIRM', 'CONFIRMATION', 12, 3, 0, 'RFR', 15, 1, 0, 'Confirm RFR assignment', 'system'),
 (1, 'EIR Received/Reviewed', 'CONFIRM', 'CONFIRMATION', 13, 3, 0, 'INSP', 240, 1, 0, 'Review Equipment & Ingredient Report', 'system'),
 (1, 'Notify IAR of EIR', 'SCRIPT', 'NOTIFICATION', 14, 3, 0, 'SYSTEM', 5, 1, 1, 'Notify IAR team of EIR completion', 'system'),
-(1, 'End Inspection', 'END', 'COMPLETION', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Inspection stage completed', 'system');
+(1, 'End Inspection', 'LANEEND', 'SUBPROCESS', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Inspection stage completed', 'system');
 GO
 
 -- Task Flow for Inspection Lane
@@ -248,11 +340,10 @@ GO
 -- Ingredients Review Lane Tasks (LaneId = 4)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-VALUES
-(1, 'Start Ingredients Stage', 'START', 'COMPLETION', 8, 4, 0, 'IAR', 15, 0, 1, 'Start Ingredients stage', 'system'),
+(1, 'Start Ingredients Stage', 'LANESTART', 'SUBPROCESS', 8, 4, 0, 'IAR', 15, 0, 1, 'Start Ingredients stage', 'system'),
 (1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Upload ingredient data to KASH database', 'system'),
 (1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 20, 4, 0, 'SYSTEM', 15, 1, 1, 'Verify if all ingredient reviews are complete', 'system'),
-(1, 'End Ingredients', 'END', 'COMPLETION', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Ingredients stage completed', 'system');
+(1, 'End Ingredients', 'LANEEND', 'SUBPROCESS', 14, 3, 0, 'SYSTEM', 15, 0, 1, 'Ingredients stage completed', 'system');
 
 
 --(1, "Start Ingredients Stage", 'START', 'COMPLETION', 8, 4, 0, 'IAR', 15, 0, 1, 'Start Ingredients stage', 'system'),
@@ -274,13 +365,13 @@ EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingred
 EXEC sp_add_flow @from_name = 'End Ingredients', @to_name = 'END', @condition = NULL;
 
 
-- Products Department Lane Tasks (LaneId = 5)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
+-- Products Department Lane Tasks (LaneId = 5)
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Start Products Stage', 'START', 'COMPLETION', 8, 5, 0, 'IAR', 15, 0, 1, 'Start Products stage', 'system'),
-(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 1, 'Upload product data to KASH database', 'system'),
-(1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 1, 'Verify if all product reviews are complete', 'system'),
-(1, 'End Products', 'END', 'COMPLETION', 14, 5, 0, 'SYSTEM', 15, 0, 1, 'Products stage completed', 'system');
+(1, 'Start Products Stage', 'LANESTART', 'SUBPROCESS', 8, 5, 0, 'IAR', 15, 0, 1, 'Start Products stage', 'system'),
+(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 0, 'Upload product data to KASH database', 'system'),
+(1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 20, 5, 0, 'SYSTEM', 15, 1, 0, 'Verify if all product reviews are complete', 'system'),
+(1, 'End Products', 'LANEEND', 'SUBPROCESS', 14, 5, 0, 'SYSTEM', 15, 0, 1, 'Products stage completed', 'system');
 
 
 --(1, 'Assign to Products Dept', 'USER', 'ASSIGNMENT', 21, 5, 0, 'PROD_MANAGER', 15, 1, 0, 'Assign application to Products Department'),
@@ -296,12 +387,16 @@ EXEC sp_add_flow @from_name = 'End Products', @to_name = 'END', @condition = NUL
 
 
 -- Contract Processing Lane Tasks (LaneId = 6)
-INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
+INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description, CreatedBy)
 VALUES
-(1, 'Assign to RC', 'USER', 'ASSIGNMENT', 25, 6, 0, 'RC_MANAGER', 15, 1, 0, 'Assign to Regional Coordinator for contract review'),
-(1, 'Review Completed by RC', 'USER', 'REVIEW', 26, 6, 0, 'RC', 180, 1, 0, 'Regional Coordinator completes final review'),
-(1, 'Send Certification Contract', 'USER', 'COMMUNICATION', 27, 6, 0, 'RC', 45, 1, 0, 'Send certification contract to customer'),
-(1, 'Contract Completed by Company', 'USER', 'APPROVAL', 28, 6, 0, 'RC', 30, 1, 0, 'Process completed contract from company');
+(1, 'Contract Start', 'LANESTART', 'SUBPROCESS', 25, 6, 0, 'RC_MANAGER', 15, 1, 1, 'Contract Start', 'system'),
+(1, 'Assign to RC', 'USER', 'ASSIGNMENT', 25, 6, 0, 'RC_MANAGER', 15, 1, 0, 'Assign to Regional Coordinator for contract review', 'system'),
+(1, 'Review Completed by RC', 'USER', 'REVIEW', 26, 6, 0, 'RC', 180, 1, 0, 'Regional Coordinator completes final review', 'system'),
+(1, 'Send Certification Contract', 'USER', 'COMMUNICATION', 27, 6, 0, 'RC', 45, 1, 0, 'Send certification contract to customer', 'system'),
+(1, 'Contract Completed by Company', 'USER', 'APPROVAL', 28, 6, 0, 'RC', 30, 1, 0, 'Process completed contract from company', 'system'),
+(1, 'Contract End', 'LANEEND', 'SUBPROCESS', 25, 6, 0, 'RC_MANAGER', 15, 1, 1, 'Contract Ends', 'system');
+
+-- TODO workflow
 
 -- Certification Lane Tasks (LaneId = 7)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, IsParallel, AssigneeRole, EstimatedDurationMinutes, IsRequired, AutoComplete, Description)
@@ -316,59 +411,6 @@ VALUES
 -- Note: TaskId values are assumed based on the sequence above (1-31)
 -- In a real scenario, you would need to query the TaskDefinitions table to get actual TaskIds
 
--- From Evaluate Application (TaskId = 1)
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(1, 2, NULL, 1), -- Evaluate Application -> Assign to Products
-(1, 3, NULL, 0), -- Evaluate Application -> Assign to IAR
-(1, 4, NULL, 0); -- Evaluate Application -> Contact Customer
-
--- NDA Processing Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(5, 6, NULL, 1), -- Send NDA -> NDA Executed by Legal
-(6, 7, NULL, 1); -- NDA Executed by Legal -> NDA Completed
-
--- Inspection Process Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(8, 9, NULL, 1),   -- Set Inspection Fee -> Send KIM Invoice
-(10, 11, NULL, 1), -- Payment Overdue -> Assign RFR
-(11, 12, NULL, 1), -- Assign RFR -> RFR Assigned
-(12, 13, NULL, 1), -- RFR Assigned -> EIR Received/Reviewed
-(13, 14, NULL, 1); -- EIR Received/Reviewed -> Notify IAR of EIR
-
--- Products Department Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(2, 21, NULL, 1),  -- Assign to Products -> Assign to Products Dept
-(22, 23, NULL, 1), -- Send PLA Invoice -> PLA Invoice Paid
-(23, 24, NULL, 1); -- PLA Invoice Paid -> Products Dept Complete
-
--- Ingredients Review Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(3, 15, NULL, 1),  -- Assign to IAR -> Assign to RC IAR Review
-(15, 16, NULL, 1), -- Assign to RC IAR Review -> Schedule A Verification
-(16, 17, NULL, 1), -- Schedule A Verification -> Kosher Code Verification
-(17, 18, NULL, 1), -- Kosher Code Verification -> Supplier Approval Check
-(18, 19, NULL, 1), -- Supplier Approval Check -> Approved by IAR RC Review
-(19, 20, NULL, 1); -- Approved by IAR RC Review -> IAR Completed
-
--- Contract Processing Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(25, 26, NULL, 1), -- Assign to RC -> Review Completed by RC
-(26, 27, NULL, 1), -- Review Completed by RC -> Send Certification Contract
-(27, 28, NULL, 1), -- Send Certification Contract -> Contract Completed by Company
-(28, 29, NULL, 1); -- Contract Completed by Company -> Send KCM Invoice
-
--- Certification Flow
-INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-VALUES
-(29, 30, NULL, 1), -- Send KCM Invoice -> KCM Paid
-(30, 31, NULL, 1); -- KCM Paid -> Issue Certification
-GO
 -- =============================================
 -- STORED PROCEDURES
 -- =============================================

@@ -728,7 +728,6 @@ resources:
     - name: AssignedTo
     - name: StartedDate
     - name: CompletedDate
-    - name: DurationMinutes
     - name: Result
     - name: ResultData
     - name: ErrorMessage

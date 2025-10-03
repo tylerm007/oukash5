@@ -31,11 +31,11 @@
         entity="StageInstance" 
         keys="StageInstanceId"
         parent-keys="Status:StatusCode"
-        columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;DurationDays;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
         horizontal-scroll="yes"
         detail-form-route="StageInstance" 
         edit-form-route="StageInstance"
-        visible-columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;DurationDays;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        visible-columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
         sort-columns="StageInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -76,8 +76,6 @@
           <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
           <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #DurationDays attr="DurationDays" title="DurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         

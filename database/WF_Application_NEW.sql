@@ -6,8 +6,8 @@
 -- Create Database
 
 -- CREATE DATABASE NCRC_ApplicationManagement;
--- USE NCRC_ApplicationManagement;
-use dashboard;
+-- USE NCRC_ApplicationManagement;-
+--use dashboard;--
 -- =============================================
 -- DROP TABLES (for clean setup)
 -- =============================================
@@ -82,7 +82,7 @@ DROP TABLE IF EXISTS RoleAssigment;
 DROP TABLE IF EXISTS WF_Applications;
 
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
-DROP TABLE IF
+
 DROP TABLE IF EXISTS WF_USER_ROLE;
 DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
@@ -129,8 +129,8 @@ CREATE TABLE WF_Users (
     FullName NVARCHAR(200) NOT NULL,
     IsActive BIT NOT NULL DEFAULT 1,
     CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
-    LastLoginDate DATETIME2 NULL, -- add to OKTA /auth/login on success callback
-    FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole)
+    LastLoginDate DATETIME2 NULL -- add to OKTA /auth/login on success callback
+    --FOREIGN KEY (Role) REFERENCES WF_Roles(UserRole)
 );
 -- ALTER TABLE WF_Users DROP Role;
 -- ALTER TABLE WF_Users DROP Admin;
@@ -525,7 +525,7 @@ CREATE INDEX IX_Ingredients_ApplicationID ON WF_Ingredients(ApplicationID);
 --CREATE INDEX IX_Ingredients_NCRCIngredientID ON WF_Ingredients(NCRCIngredientID);
 CREATE INDEX IX_Quotes_ApplicationID ON WF_Quotes(ApplicationID);
 CREATE INDEX IX_Files_ApplicationID ON WF_Files(ApplicationID);
-CREATE INDEX IX_Messages_ApplicationID ON WF_ApplicationMessages(ApplicationID);
+--CREATE INDEX IX_Messages_ApplicationID ON WF_ApplicationMessages(ApplicationID);
 CREATE INDEX IX_Comments_ApplicationID ON WF_ApplicationComments(ApplicationID);
 CREATE INDEX IX_ActivityLog_ApplicationID ON WF_ActivityLog(ApplicationID);
 CREATE INDEX IX_ActivityLog_ActivityDate ON WF_ActivityLog(ActivityDate);

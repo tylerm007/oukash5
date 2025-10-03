@@ -254,7 +254,7 @@ CREATE TABLE TaskInstances (
     AssignedTo NVARCHAR(100),
     StartedDate DATETIME2,
     CompletedDate DATETIME2,
-    DurationMinutes AS DATEDIFF(MINUTE, StartedDate, CompletedDate),
+    #DurationMinutes AS DATEDIFF(MINUTE, StartedDate, CompletedDate),
     Result NVARCHAR(50), -- 'Success', 'Failed', 'Retry', 'Skip'
     ResultData NVARCHAR(MAX), -- JSON result user state data
     ErrorMessage NVARCHAR(1000),

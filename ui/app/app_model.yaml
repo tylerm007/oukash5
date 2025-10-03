@@ -346,29 +346,29 @@ application:
             menu_title: StageInstance
             page:
               detail:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: StageInstance
                 typescript_name: detail_component.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
               home:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: StageInstance
                 typescript_name: home_template.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
               new:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: StageInstance
                 typescript_name: new_component.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
             template_name: module.jinja
           StageStatus:
             icon: edit_square
@@ -556,29 +556,29 @@ application:
             menu_title: TaskInstance
             page:
               detail:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: TaskInstance
                 typescript_name: detail_component.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
               home:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: TaskInstance
                 typescript_name: home_template.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
               new:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: TaskInstance
                 typescript_name: new_component.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
             template_name: module.jinja
           TaskStatus:
             icon: edit_square
@@ -2238,9 +2238,6 @@ entities:
     - name: CompletedDate
       template: text
       type: DATETIME2
-    - name: DurationDays
-      template: integer
-      type: INTEGER
     - name: RetryCount
       template: integer
       type: INTEGER
@@ -2615,9 +2612,6 @@ entities:
     - name: CompletedDate
       template: text
       type: DATETIME2
-    - name: DurationMinutes
-      template: integer
-      type: INTEGER
     - name: Result
       template: text
       type: VARCHAR

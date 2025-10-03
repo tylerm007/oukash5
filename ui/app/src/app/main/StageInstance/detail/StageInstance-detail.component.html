@@ -76,9 +76,7 @@
       <o-date-input #StartedDate attr="StartedDate" value-type="string" label="StartedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
       <o-date-input #CompletedDate attr="CompletedDate" value-type="string" label="CompletedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-integer-input #DurationDays attr="DurationDays" label="DurationDays" type="integer" editable="no" required="no" ></o-integer-input>
-      
+         
       <o-integer-input #RetryCount attr="RetryCount" label="RetryCount" type="integer" editable="no" required="no" ></o-integer-input>
       
       <o-text-input #AssignedTo attr="AssignedTo" label="AssignedTo" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
@@ -112,11 +110,11 @@
         entity="TaskInstance" 
         keys="TaskInstanceId"
         parent-keys="StageId:StageInstanceId"
-        columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
+        columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;Result;ResultData;ErrorMessage;RetryCount"  
         horizontal-scroll="yes"
         detail-form-route="TaskInstance" 
         edit-form-route="TaskInstance"
-        visible-columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
+        visible-columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;Result;ResultData;ErrorMessage;RetryCount"  
         sort-columns="TaskInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -159,8 +157,6 @@
           <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
           <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
         
