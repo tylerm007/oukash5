@@ -25,6 +25,7 @@ COPY package*.json .
 RUN npm install --force
 
 COPY . .
+COPY ../kashrus_vibe/Karshrus2 ./dist_kashrus
 
 # Generate the build of the application
 RUN npm run production
@@ -36,6 +37,7 @@ FROM nginx:latest
 
 # Copy the build output to replace the default nginx contents.
 COPY --from=build /usr/local/app/dist /usr/share/nginx/html
+copy --from=build /usr/local/app/dist_kashrus /usr/share/kashrus/html
 COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY /setenv.sh /opt
