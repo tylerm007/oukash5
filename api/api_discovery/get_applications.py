@@ -107,7 +107,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 if process_instance is None:
                     app_logger.warning(f"Process instance not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Process instance not found for application id {application_id}"}), 404
-                stages =  [stage.to_dict() for stage in StageInstance.query.filter_by(ProcessInstanceId=process_instance.InstanceId).all()]
+                stages =  [stage.to_dict() for stage in StageInstance.query.filter_by(ProcessInstanceId=process_instance.InstanceId).order_by(StageInstance.LaneId).all()]
                 if stages is None:
                     app_logger.warning(f"Stages not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Stages not found for application id {application_id}"}), 404
@@ -116,7 +116,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     tasks = []
                     task_cnt = 0
                     completed_cnt = 0
-                    task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
+                    task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).order_by(TaskInstance.Sequence).all()
                     for task in task_instances:
                         if task.TaskDef.TaskType in ['START', 'END','GATEWAY','SUBPROCESS']:
                             continue
