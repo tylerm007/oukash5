@@ -167,7 +167,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             next_task_instance = TaskInstance.query.filter_by(TaskId=next_task_id, StageId=task_instance.StageId).first()
             task_def = next_task_instance.TaskDef if next_task_instance else None
             condition = flow_to.Condition
-            if condition and result and condition.lower() != result.lower():
+            if condition and condition != 'None' and result and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
             elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, next_task_instance.StageId, result):
@@ -195,7 +195,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         priority = data.get("priority", 'NORMAL')
         message_type = data.get("message_type", 'Standard')
 
-        app_logger.debug(f'Sending message to task: {task_instance_id}')
+        app_logger.debug(f'Sending message to application: {applicationID}')
 
         # Find the task instance
         application = WFApplication.query.filter_by(ApplicationID=applicationID).first()
