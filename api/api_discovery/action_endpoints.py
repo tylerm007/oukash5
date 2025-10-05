@@ -66,8 +66,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
         
         data = request.get_json(force=True)
-        app_id = data.get('appId')   # ApplicationID
-        task_id = data.get('taskId')  # TaskInstanceId 
+        app_id = data.get('appId', type=int)   # ApplicationID
+        task_id = data.get('taskId', type=int)  # TaskInstanceId
         role = data.get('role')
         assignee = data.get('assignee')
 
@@ -101,6 +101,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             session.rollback()
             app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
             return jsonify({"error": "Failed to assign role"}), 500
+        return jsonify({"status": "ok", "message":"role assigned"}), 200
          # Log the role assignment as a TaskComment 
         '''
         task_comment = TaskComment(
