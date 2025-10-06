@@ -5,6 +5,7 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'FormulaSubmissionComponent': { 'path': '/FormulaSubmissionComponent' }
 ,'FormulaSubmissionPlant': { 'path': '/FormulaSubmissionPlant' }
 ,'LabelTb': { 'path': '/LabelTb' }
+,'LaneRole': { 'path': '/LaneRole' }
 ,'LaneDefinition': { 'path': '/LaneDefinition' }
 ,'MERCHTB': { 'path': '/MERCHTB' }
 ,'OWNSTB': { 'path': '/OWNSTB' }

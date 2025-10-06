@@ -5,6 +5,7 @@ from flask import request, jsonify
 from safrs import jsonapi_rpc
 from database import models
 
+
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
 
@@ -95,4 +96,3 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
         os.kill(os.getpid(), signal.SIGINT)
         return jsonify({ "success": True, "message": "Server is shutting down..." })
-

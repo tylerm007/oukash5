@@ -23,7 +23,19 @@ def declare_logic():
     
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
-
+    def round_decimal_amounts(row: models.WFQuoteItem, old_row: models.WFQuoteItem, logic_row: LogicRow):
+        """
+        Round decimal amounts to prevent ODBC precision errors.
+        SQL Server DECIMAL(10,2) only supports 2 decimal places.
+        """
+        if hasattr(row, 'Amount') and row.Amount is not None:
+            # Round to 2 decimal places to match DECIMAL(10,2) column definition
+            if isinstance(row.Amount, (float, Decimal)):
+                row.Amount = Decimal(str(row.Amount)).quantize(Decimal('0.01'))
+                logic_row.log(f"Rounded Amount from {old_row.Amount if old_row else 'None'} to {row.Amount}")
+    # Fix ODBC precision errors by rounding decimal fields
+    Rule.early_row_event(models.WFQuoteItem, calling=round_decimal_amounts)
+    
     if os.environ.get("WG_PROJECT"):
         # Inside WG: Load rules from docs/expprt/export.json
         load_verify_rules()
@@ -202,7 +214,8 @@ def declare_logic():
                 logic_row.update(reason="update application status to COMPLETED", row=application)
         
     Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
-    
 
+
+    Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
