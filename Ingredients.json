@@ -1,0 +1,20 @@
+[
+  {
+    "LaneName": "Ingredients",
+    "FromTaskName": "Start Ingredients Stage",
+    "ToTaskName": "Upload to KASH DB",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Ingredients",
+    "FromTaskName": "Upload to KASH DB",
+    "ToTaskName": "Verify Ingredients in DB",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Ingredients",
+    "FromTaskName": "Verify Ingredients in DB",
+    "ToTaskName": "End Ingredients",
+    "Condition": "None"
+  }
+]

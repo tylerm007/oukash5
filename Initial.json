@@ -1,0 +1,146 @@
+[
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Start_Application_Submitted",
+    "ToTaskName": "AssignNCRC",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "AssignNCRC",
+    "ToTaskName": "verify Company",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "AssignNCRC",
+    "ToTaskName": "verify Plant",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "AssignNCRC",
+    "ToTaskName": "verify Product",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "AssignNCRC",
+    "ToTaskName": "verify Ingredients",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "AssignNCRC",
+    "ToTaskName": "verify Contact",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "verify Company",
+    "ToTaskName": "All Verified Gateway",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "verify Plant",
+    "ToTaskName": "All Verified Gateway",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "verify Contact",
+    "ToTaskName": "All Verified Gateway",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "verify Product",
+    "ToTaskName": "All Verified Gateway",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "verify Ingredients",
+    "ToTaskName": "All Verified Gateway",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "All Verified Gateway",
+    "ToTaskName": "to Withdrawn Y/N",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "All Verified Gateway",
+    "ToTaskName": "to Withdrawn Y/N",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "to Withdrawn Y/N",
+    "ToTaskName": "Initial Collector",
+    "Condition": "YES"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "to Withdrawn Y/N",
+    "ToTaskName": "Assign Product",
+    "Condition": "NO"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "to Withdrawn Y/N",
+    "ToTaskName": "Assign Ingredients",
+    "Condition": "NO"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "to Withdrawn Y/N",
+    "ToTaskName": "Contact Customer",
+    "Condition": "NO"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Assign Product",
+    "ToTaskName": "Initial Collector",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Assign Ingredients",
+    "ToTaskName": "Initial Collector",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Contact Customer",
+    "ToTaskName": "Initial Collector",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Initial Collector",
+    "ToTaskName": "Start NDA",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Initial Collector",
+    "ToTaskName": "Inspection Needed",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Initial Collector",
+    "ToTaskName": "Start Ingredients Stage",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Initial",
+    "FromTaskName": "Initial Collector",
+    "ToTaskName": "Start Products Stage",
+    "Condition": "None"
+  }
+]

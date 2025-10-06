@@ -1,0 +1,20 @@
+[
+  {
+    "LaneName": "Products",
+    "FromTaskName": "Start Products Stage",
+    "ToTaskName": "Upload to KASH DB",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Products",
+    "FromTaskName": "Upload to KASH DB",
+    "ToTaskName": "Verify Products in DB",
+    "Condition": "None"
+  },
+  {
+    "LaneName": "Products",
+    "FromTaskName": "Verify Products in DB",
+    "ToTaskName": "End Products",
+    "Condition": "None"
+  }
+]

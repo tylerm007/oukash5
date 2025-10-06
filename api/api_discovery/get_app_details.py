@@ -240,10 +240,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id
         result['files'] = [
             {
-                "fileId": file.ID if hasattr(file, 'ID') else 1,
+                "fileId": file.FileID if hasattr(file, 'FileID') else 1,
                 "fileName": file.FileName if hasattr(file, 'FileName') else None,
                 "fileType": file.FileType if hasattr(file, 'FileType') else None,
-                "path": file.FilePath if hasattr(file, 'FilePath') else None,
+                "filePath": file.FilePath if hasattr(file, 'FilePath') else None,
                 "uploadedDate": file.UploadedDate.strftime('%Y-%m-%d') if hasattr(file, 'UploadedDate') else None,
                 "description": file.Description if hasattr(file, 'Description') else None
             }
