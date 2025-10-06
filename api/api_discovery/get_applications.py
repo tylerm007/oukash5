@@ -121,14 +121,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     tasks = []
                     task_cnt = 0
                     completed_cnt = 0
-                    task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).all()
+                    task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).order_by(TaskInstance.TaskInstanceId).all()
                     for task in task_instances:
-                        if task.TaskDef.TaskType in ['START', 'END','GATEWAY','SUBPROCESS']:
+                        if task.TaskDef.AutoComplete == True:
                             continue
-                        task_cnt += 1 if task.Status == 'Pending' else 0
-                        completed_cnt += 1 if task.Status == 'Completed' else 0
+                        task_cnt += 1 if task.Status == 'PENDING' else 0
+                        completed_cnt += 1 if task.Status == 'COMPLETED' else 0
                         created_date = task.StartedDate
-                        modified_date = datetime.now() if task.Status != 'Completed' else task.get("CompletedDate")
+                        modified_date = datetime.now() if task.Status != 'COMPLETED' else task.get("CompletedDate")
                         days_between = calc_days_between(created_date, modified_date)
                         tasks.append(
                             {
@@ -153,7 +153,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         lane_name = lane.to_dict()["LaneName"]
                         app_row["stages"].update({
                             lane_name: {
-                                "status": stage["Status"] if task_cnt == 0 else "In Progress", 
+                                "status": stage["Status"], 
                                 "progress": completed_cnt / task_cnt  * 100 if  completed_cnt > 0 else 0,
                                 "tasks": tasks
                             }
