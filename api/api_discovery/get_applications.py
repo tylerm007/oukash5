@@ -175,7 +175,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "messageType": msg.get("MessageType"),
                     #"isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
-           
+            files = WFFile.query.filter_by(WFFile.FilePath).all() #TODO ApplicationId=application_id 
+            app_row['files'] = []
+            for file in files:
+                app_row['files'].append({
+                    "id": file.FileId if hasattr(file, 'FileId') else None,
+                    "fileName": file.Name if hasattr(file, 'Name') else "Unknown File",
+                    "path": file.FilePath if hasattr(file, 'FilePath') else "/path/to/file",
+                    "fileType": file.FileType if hasattr(file, 'FileType') else "PDF",
+                    "fileSize": float(file.FileSize) if hasattr(file, 'FileSize') else 0.0
+                })
             result.append(app_row)
         return jsonify({"status": "ok", "data": result}), 200
     

@@ -1,6 +1,7 @@
+from pipes import quote
 from flask import request, jsonify
 from datetime import datetime
-from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFIngredient, WFProduct, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
+from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
@@ -212,6 +213,41 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "status": ingredient.Status if hasattr(ingredient, 'Status') else "Original"
             }
             for ingredient in application['Ingredients']    
+        ]
+        quotes = WFQuote.query.filter_by(ApplicationID=application_id).all()
+        quote_items = []
+        result['quotes'] = []
+        for quote in quotes:
+                items = quote.WFQuoteItemList if hasattr(quote, 'WFQuoteItemList') else []
+                for item in items:
+                    quote_items.append(
+                    {
+                        "itemId": item.QuoteItemID if hasattr(item, 'QuoteItemID') else 1,
+                        "description": item.Description if hasattr(item, 'Description') else "",
+                        "amount": float(item.Amount) if hasattr(item, 'Amount') else 0.0,
+                    })
+                result['quotes'].append(
+                  {
+                    "quoteId": quote.QuoteID,
+                    "quoteNumber": quote.QuoteNumber if hasattr(quote, 'QuoteNumber') else str(uuid.uuid4())[:8],
+                    "quoteDate": quote.CreatedDate.strftime('%Y-%m-%d') if hasattr(quote, 'CreatedDate') else None,
+                    "totalAmount": float(quote.TotalAmount) if hasattr(quote, 'TotalAmount') else 0.0,
+                    "status": quote.Status if hasattr(quote, 'Status') else "Pending",
+                    "validUntil": quote.ValidUntil.strftime('%Y-%m-%d') if hasattr(quote, 'ValidUntil') else None,
+                    "items": quote_items
+                 }
+                )
+        files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id
+        result['files'] = [
+            {
+                "fileId": file.ID if hasattr(file, 'ID') else 1,
+                "fileName": file.FileName if hasattr(file, 'FileName') else "organic_cert.pdf",
+                "fileType": file.FileType if hasattr(file, 'FileType') else "Ingredient Certificate",
+                "path": file.Path if hasattr(file, 'Path') else "John Mitchell",
+                "uploadedDate": file.UploadedDate.strftime('%Y-%m-%d') if hasattr(file, 'UploadedDate') and file.UploadedDate else "2025-07-17",
+                "description": file.Description if hasattr(file, 'Description') else "Organic certification for Jones Farms Organics"
+            }
+            for file in files
         ]
         application_info = {}
         application_info["applicationInfo"] = result
