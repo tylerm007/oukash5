@@ -241,11 +241,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         result['files'] = [
             {
                 "fileId": file.ID if hasattr(file, 'ID') else 1,
-                "fileName": file.FileName if hasattr(file, 'FileName') else "organic_cert.pdf",
-                "fileType": file.FileType if hasattr(file, 'FileType') else "Ingredient Certificate",
-                "path": file.Path if hasattr(file, 'Path') else "John Mitchell",
-                "uploadedDate": file.UploadedDate.strftime('%Y-%m-%d') if hasattr(file, 'UploadedDate') and file.UploadedDate else "2025-07-17",
-                "description": file.Description if hasattr(file, 'Description') else "Organic certification for Jones Farms Organics"
+                "fileName": file.FileName if hasattr(file, 'FileName') else None,
+                "fileType": file.FileType if hasattr(file, 'FileType') else None,
+                "path": file.FilePath if hasattr(file, 'FilePath') else None,
+                "uploadedDate": file.UploadedDate.strftime('%Y-%m-%d') if hasattr(file, 'UploadedDate') else None,
+                "description": file.Description if hasattr(file, 'Description') else None
             }
             for file in files
         ]

@@ -175,7 +175,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "messageType": msg.get("MessageType"),
                     #"isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
-            files = WFFile.query.filter_by(WFFile.FilePath).all() #TODO ApplicationId=application_id 
+            files = WFFile.query.filter_by(WFFile.FilePath != None).all() #TODO ApplicationId=application_id 
             app_row['files'] = []
             for file in files:
                 app_row['files'].append({
