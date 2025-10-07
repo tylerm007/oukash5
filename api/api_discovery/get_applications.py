@@ -128,7 +128,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         task_cnt += 1 if task.Status == 'PENDING' else 0
                         completed_cnt += 1 if task.Status == 'COMPLETED' else 0
                         created_date = task.StartedDate
-                        modified_date = datetime.now() if task.Status != 'COMPLETED' else task.get("CompletedDate")
+                        modified_date = datetime.now() if task.Status != 'COMPLETED' else task.CompletedDate
                         days_between = calc_days_between(created_date, modified_date)
                         tasks.append(
                             {
@@ -154,7 +154,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                         app_row["stages"].update({
                             lane_name: {
                                 "status": stage["Status"], 
-                                "progress": completed_cnt / task_cnt  * 100 if  completed_cnt > 0 else 0,
+                                "progress": completed_cnt / task_cnt  * 100 if task_cnt > 0 and  completed_cnt > 0 else 0,
                                 "tasks": tasks
                             }
                         })

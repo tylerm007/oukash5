@@ -186,28 +186,28 @@ def declare_logic():
         """
         Update the status of the workflow application
         """
-        if logic_row.ins_upd_dlt == 'upd' and row.Status == old_row.Status and row.Status != 'COMPLETED':
-            return
+        #if logic_row.ins_upd_dlt != 'upd': #and row.Status == old_row.Status and row.Status != 'COMPLETED':
+        #    return
         stage = row.Stage
         if stage is None:
             return
         application_id = stage.ProcessInstance.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
             
-        if row.TaskDef.TaskType == 'LANESTART':
+        if row.TaskDef.TaskType == 'LANESTART' and logic_row.ins_upd_dlt == 'ins':
             stage.Status = 'IN_PROGRESS'
             application.StartedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to INP", row=application)
-        elif row.TaskDef.TaskType == 'LANEEND':
+        elif row.TaskDef.TaskType == 'LANEEND' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
             stage.Status = 'COMPLETED'
             stage.CompletedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to COMPLETED", row=application)
-        elif row.TaskDef.TaskType == 'START':
+        elif row.TaskDef.TaskType == 'START' and logic_row.ins_upd_dlt == 'ins':
             if application is not None:
                 application.Status = 'INP'
                 application.StartedDate = datetime.datetime.now()
                 logic_row.update(reason="update application status to INP", row=application)
-        elif row.TaskDef.TaskType == 'END':
+        elif row.TaskDef.TaskType == 'END' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
