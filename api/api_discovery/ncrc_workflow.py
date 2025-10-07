@@ -443,8 +443,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
                 prior_task_instance = TaskInstance.query.filter(
-                    TaskInstance.TaskInstanceId == prior_task_id,
-                    TaskInstance.StageId.in_(stages_list)
+                    TaskInstance.TaskInstanceId == prior_task_id
+                    #,TaskInstance.StageId.in_(stages_list)
                 ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')

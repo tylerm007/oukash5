@@ -3,6 +3,7 @@ from flask_cors import cross_origin
 from datetime import datetime
 from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
 from flask import app, request, jsonify, session
+from api.api_discovery.ncrc_workflow import _complete_task
 import logging
 import safrs
 from flask import request, jsonify
@@ -50,12 +51,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             $body = @{
                 appId = 1
-                taskId = 30
+                taskId = 83
                 role = "NCRC"
-                assignee = "S.Benjamin"
+                assignee = "admin"
             } | ConvertTo-Json
 
-            Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIxNzgxMCwianRpIjoiZTM3NzY2NTgtNmQyZS00MGNlLWJlMjEtM2QxNjE0NTU5NTQ3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjE3ODEwLCJleHAiOjE3NTgyMzExMzB9.JY3xPlkUddDIwvB1AYjO5ZiYUSyObxf7a-l9vAICe4Q"}
+            Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTg2NDAyMSwianRpIjoiNzZhMjA3MWItOTY4Yi00NTAwLWEwYmMtYTcwN2Q0MDAyMmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU5ODY0MDIxLCJleHAiOjE3NTk4NzczNDF9.s18ynSqujiwbylAnzH67nPKUFOW6ph_A1akM3PTM0u0"}
             
 
            curl -X 'POST' http://localhost:5656/assignRole -d '{"appId":1, "taskId":1, "role":"NCRC", "assignee":"S.Benjamin"}' -H 'accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1ODIwMDg0MCwianRpIjoiNjY0MTNkYzItOWJhYi00NWI5LThkYzYtZTU1YjJkNjExN2Y1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU4MjAwODQwLCJleHAiOjE3NTgyMTQxNjB9.0OCQKLwr-iSxnf62LRXtpd47Pb0wiHs6v72sI66ocz4'
@@ -79,56 +80,29 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = models.WFApplication.query.filter_by(ApplicationID=app_id).first()
         if not application:
             return jsonify({"error": f"Application with ID {app_id} not found"}), 404
-        task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_id).first()
-        task_instance.Status = 'COMPLETED'
-        task_instance.AssignTo = assignee
-        session.add(task_instance)
-        try:
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            app_logger.error(f'Error completing task {task_id} for application {app_id}: {e}')
-            return jsonify({"error": f"Failed to complete task {task_id} for application {app_id}"}), 500
-        if not task_instance:    
-            return jsonify({"error": f"Task with ID {task_id} not found"}), 404
+       
         application.AssignedTo = assignee
         application.AssignedDate = datetime.utcnow()
         application.Status = 'INP'
         session.add(application)
         try:
+            
+            add_role_assignment(app_id, role, assignee)
+            if role == 'NCRC':
+                admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+                if admin_assignee is None:
+                    admin_assignee = assignee 
+                else:
+                    admin_assignee = admin_assignee.AdminUserName
+                add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
             session.commit()
+            _complete_task(task_id, 'COMPLETED', 'system', f'Role {role} assigned to {assignee}')
         except Exception as e:
             session.rollback()
             app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
             return jsonify({"error": "Failed to assign role"}), 500
-        return jsonify({"status": "ok", "message":"role assigned"}), 200
-         # Log the role assignment as a TaskComment 
-        '''
-        task_comment = TaskComment(
-            TaskId=task_id,
-            InstanceId=application.ProcessInstanceId,
-            Action=f'Role {role} assigned to {assignee}',
-            NewStatus='ROLE_ASSIGNED',
-            ActionBy='system',
-            ActionCommentText=f'Role {role} assigned to {assignee} for application {app_id}',
-            ActionReason=f'Role {role} assigned to {assignee} for application {app_id}'
-        )   
-        session.add(task_comment)
-        session.commit()
-        '''
-        #TODO add WF task history info
-        add_role_assignment(app_id, role, assignee)
-        if role == 'NCRC':
-            admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
-            if admin_assignee is None:
-                admin_assignee = assignee 
-            else:
-                admin_assignee = admin_assignee.AdminUserName
-            add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
-        # Set TaskInstance to Completed
-        
-        app_logger.info(f'TaskInstance set to Completed: {task_instance.TaskInstanceId}')
-
+          # Set TaskInstance to Completed
+        app_logger.info(f'TaskInstance set to Completed: {task_id}')
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
     
     def add_role_assignment(application_id, role, assignee):
@@ -145,10 +119,4 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             CreatedDate=datetime.utcnow()
         )
         session.add(role_assignment)
-        try:
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            app_logger.error(f'Error assigning role {role} to {assignee} for application {application_id}: {e}')
-        else:
-            app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
+        app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
