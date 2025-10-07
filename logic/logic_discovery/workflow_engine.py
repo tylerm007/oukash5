@@ -321,7 +321,7 @@ def declare_logic():
     # A TaskInstance can only be set to 'COMPLETED' if it is currently 'Pending'
 
     # A TaskInstance with TaskCategory 'START' can always be set to 'COMPLETED' 
-    Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete this task due to unmet dependencies not COMPLETED.")
+    #Rule.constraint(validate=models.TaskInstance, calling=test_complete_task, error_msg="Cannot complete this task due to unmet dependencies not COMPLETED.")
     
     # TaskInstance PreScriptJson and PostScriptJson execution are called before and after row update
     # they set the Result and ResultData fields respectively with context data

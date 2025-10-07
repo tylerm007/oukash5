@@ -434,6 +434,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             return jsonify({"status": "error", "message": f"Cannot complete task. Task is not Pending  -> {task_instance.Status}."}), 400
         
         task_name = task_def.TaskName
+        stages_list = get_stage_list(task_instance)
         app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name}')
         task_flows_from = task_def.ToTaskTaskFlowList or []
         task_flows_to = task_def.TaskFlowList or []
@@ -441,7 +442,10 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         if task_def.TaskType != "START":
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
-                prior_task_instance = TaskInstance.query.filter_by(TaskInstanceId=prior_task_id).first()
+                prior_task_instance = TaskInstance.query.filter(
+                    TaskInstance.TaskInstanceId == prior_task_id,
+                    TaskInstance.StageId.in_(stages_list)
+                ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')
                     return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
@@ -475,25 +479,27 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         # Start the next tasks
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
-            next_task_instance = TaskInstance.query.filter_by(TaskId=next_task_id, StageId=task_instance.StageId).first()
+            next_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == next_task_id,
+                                                            TaskInstance.StageId.in_(stages_list)).first()
             task_def = next_task_instance.TaskDef if next_task_instance else None
             condition = flow_to.Condition
-            if condition and condition != 'None' and result and condition.lower() != result.lower():
+            if task_def and task_def.TaskType == 'CONDITION' and \
+                 condition and condition != 'None' and result and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
-            elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, next_task_instance.StageId, result):
+            elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, stages_list, result):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.StartedDate = datetime.utcnow()
                 session.add(next_task_instance)    
                 session.commit()
-            if next_task_instance and next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, next_task_instance.StageId, result):
+            if next_task_instance and next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, stages_list, result):
                 _complete_task(next_task_instance.TaskInstanceId, result,  'system', 'Auto-completed')
 
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id}')
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
 
-def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, result: str = None) -> bool:
+def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str = None) -> bool:
         '''
         Validate that all prior tasks in the workflow (TaskFlow)are completed before allowing this task to proceed.
         '''
@@ -505,11 +511,25 @@ def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, result: str = N
         for dependency in dependencies:
             from_task_def = dependency.FromTaskId
             condition = dependency.Condition
-            if condition and result and condition.lower() != result.lower():
+            if taskDef.TaskType == 'CONDITION' and condition and condition != 'None' and result and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {taskDef.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
-            from_task_instance = TaskInstance.query.filter_by(TaskId=from_task_def, StageId=stage_id).first()
+            from_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == from_task_def, 
+                                                           TaskInstance.StageId.in_(stages_list)).first()
             if from_task_instance and from_task_instance.Status != 'COMPLETED' and taskDef.TaskType not in ['START']:
                 app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDef.TaskName} is not COMPLETED.")
                 return False
         return True
+
+def get_stage_list(taks_instance: TaskInstance) -> list:
+    '''
+    Get the list of stages for a given task instance.
+    '''
+    stages = []
+    if taks_instance is None:
+        return stages
+    
+    stage_instances = taks_instance.Stage.ProcessInstance.StageInstanceList
+    for stage_instance in stage_instances:
+        stages.append(stage_instance.StageInstanceId)
+    return stages
