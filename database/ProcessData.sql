@@ -50,6 +50,8 @@ INSERT INTO TaskCategories (TaskCategoryCode, TaskCategoryDescription) VALUES
 ('NOTIFICATION', 'System Notifications'),
 ('CONFIRMATION', 'User Confirmation'),
 ('SCHEDULING', 'Scheduling and Planning'),
+('INPUT', 'Data Input and Entry'),
+('SELECTOR', 'Selection and Decision Making'),
 ('SUBPROCESS','Internal processing only'),
 ('VERIFICATION', 'Data and Status Verification');
  
