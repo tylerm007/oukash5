@@ -16,6 +16,7 @@ from logic_bank.logic_bank import DeclareRule
 import database.models as models
 import requests
 import config.config as config
+from flask import g
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
@@ -43,7 +44,7 @@ def process_task_instance(task_instance: models.TaskInstance, old_row: models.Ta
         #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
         return
 
-def set_application_attribute(application_id, name, value) -> bool:
+def set_application_attribute(application_id, name, value, access_token:str = None) -> bool:
     ''' Set an attribute of the WFApplication to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
@@ -60,7 +61,9 @@ def set_application_attribute(application_id, name, value) -> bool:
     headers = {
         'Content-Type': 'application/json'
     }
-    
+
+    if access_token:
+        headers['Authorization'] = access_token
     args = config.Args
     server = args.swagger_host
     port = args.port
@@ -301,8 +304,11 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             se = python_engine.PythonScriptEngine()
             data = row.ResultData or {}
             task = row.to_dict()
+
+            access_token = request.headers.get("Authorization")
+            # Get current state to use in script calls
             context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id}
-            external_context = {"get_application": get_application, "set_application_attribute":set_application_attribute, "set_task_attribute":set_task_attribute,
+            external_context = {"get_application": get_application, "set_application_attribute":set_application_attribute,"access_token": access_token,"set_task_attribute":set_task_attribute,
                                 "models":models,"session":session,"db":db,"app_logger":app_logger,"Args":Args,"Config":Config,"datetime":datetime,"Decimal":Decimal,"logic_row": logic_row}
             r = se.execute(script=script, task=context, external_context=external_context)
             if r:

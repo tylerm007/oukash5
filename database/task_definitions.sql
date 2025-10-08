@@ -46,8 +46,7 @@ EXEC sp_add_flow @from_name = 'verify Contact', @to_name = 'All Verified Gateway
 EXEC sp_add_flow @from_name = 'verify Product', @to_name = 'All Verified Gateway', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'verify Ingredients', @to_name = 'All Verified Gateway', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'All Verified Gateway', @to_name = 'to Withdrawn Y/N', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'All Verified Gateway', @to_name = 'to Withdrawn Y/N', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Initial Collector', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Product', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Ingredients', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Contact Customer', @condition = 'NO'; 
@@ -92,7 +91,7 @@ VALUES
 --(1, 'Is Payment Overdue', 'CONFIRM', 'CONFIRMATION', 8, 3, 'NCRC', 2880, 'Handle overdue payment escalation', 0, 'system'),
 (1, 'Schedule Inspection', 'ACTION', 'SCHEDULING', 9, 3, 'RFR', 60, 'Schedule inspection with RFR and customer', 0, 'system'),
 (1, 'Inspection Report Submitted to IAR', 'CONFIRM', 'CONFIRMATION', 11, 3, 'RFR', 240, 'Inspection report submitted to the ingredient team (IAR)', 0, 'system'),
-(1, 'Withdraw Inspection Y/N', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 5, 'Withdraw Certification at Inspection Y/N', 0, 'system'),
+(1, 'Withdraw Application', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 5, 'Withdraw ApplicationY/N', 0, 'system'),
 (1, 'End Inspection', 'LANEEND', 'COMPLETION', 13, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
 GO
 
@@ -107,23 +106,23 @@ EXEC sp_add_flow @from_name = 'Generated Invoice and Send', @to_name = 'Mark Inv
 --EXEC sp_add_flow @from_name = 'Generated Invoice and Send', @to_name = 'Is Payment Overdue', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Schedule Inspection', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Report Submitted to IAR', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'Withdraw Inspection Y/N', @condition = 'None';
-EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'End Inspection', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'END', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'Withdraw Application', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'End Inspection', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Lane Collector', @condition = 'None';
 GO
 -- Lane: Ingredients (ID: 4)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Ingredients Stage', 'LANESTART', 'COMPLETION', 1, 4, 'SYSTEM', 15, 'Start Ingredients stage', 1, 'system'),
-(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 4, 'IAR', 15, 'Upload ingredient data to KASH database', 0, 'system'),
+(1, 'Upload Ingredients to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 4, 'IAR', 15, 'Upload ingredient data to KASH database', 0, 'system'),
 (1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 3, 4, 'IAR', 15, 'Verify if all ingredient reviews are complete', 0, 'system'),
 (1, 'End Ingredients', 'LANEEND', 'COMPLETION', 4, 4, 'SYSTEM', 15, 'Ingredients stage completed', 1, 'system');
 GO
 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Ingredients Stage', @condition = 'NO';
-EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload to KASH DB', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload Ingredients to KASH DB', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Upload Ingredients to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingredients', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'End Ingredients', @to_name = 'Lane Collector', @condition = 'None';
 
@@ -132,15 +131,15 @@ GO
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Products Stage', 'LANESTART', 'COMPLETION', 1, 5, 'SYSTEM', 15, 'Start Products stage', 1, 'system'),
-(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
+(1, 'Upload Product to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
 (1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 3, 5, 'PROD', 15, 'Verify if all product reviews are complete', 0, 'system'),
 (1, 'End Products', 'LANEEND', 'COMPLETION', 4, 5, 'SYSTEM', 15, 'Products stage completed', 1, 'system');
 
 GO
 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Products Stage', @condition = 'NO';
-EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload to KASH DB', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Products in DB', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload Product to KASH DB', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Upload Product to KASH DB', @to_name = 'Verify Products in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Products in DB', @to_name = 'End Products', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'End Products', @to_name = 'Lane Collector', @condition = 'None';
 

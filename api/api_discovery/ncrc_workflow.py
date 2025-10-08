@@ -593,9 +593,9 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             next_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == next_task_id,
                                                             TaskInstance.StageId.in_(stages_list)).first()
             task_def = next_task_instance.TaskDef if next_task_instance else None
-            condition = flow_to.Condition
-            if task_def and task_def.TaskType == 'CONDITION' and \
-                 condition and condition != 'None' and result and condition.lower() != result.lower():
+            condition = flow_to.Condition if task_def else None
+            # If this is a condition task, check the result to see if we should proceed
+            if condition and condition != 'None' and result and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
             elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, stages_list, result):

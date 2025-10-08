@@ -209,9 +209,9 @@ def declare_logic():
                 logic_row.update(reason="update application status to INP", row=application)
         elif row.TaskDef.TaskType == 'END' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
             if application is not None:
-                application.Status = 'COMPL'
+                application.Status = 'COMPL' if application.Status != 'WITHD' else 'WITHD'
                 application.CompletedDate = datetime.datetime.now()
-                logic_row.update(reason="update application status to COMPLETED", row=application)
+                logic_row.update(reason=f"update application status to {application.Status}", row=application)
         
     Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
 

@@ -96,6 +96,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 else:
                     admin_assignee = admin_assignee.AdminUserName
                 add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
+                add_role_assignment(app_id, 'IAR', admin_assignee)
+                add_role_assignment(app_id, 'PROD', admin_assignee)
             session.commit()
             _complete_task(task_id, 'Assign Role', 'system', f'Role {role} assigned to {assignee}')
         except Exception as e:
