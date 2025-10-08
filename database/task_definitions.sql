@@ -67,6 +67,7 @@ VALUES
 (1, 'NDA End', 'LANEEND', 'COMPLETION', 6, 2, 'SYSTEM', 15, 'NDA completed', 1, 'system');
 GO
 
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Needs NDA', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA Completed', @condition = 'NO'; 
@@ -95,6 +96,7 @@ VALUES
 (1, 'End Inspection', 'LANEEND', 'COMPLETION', 13, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
 GO
 
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Inspection', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Is Inspection Needed', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
@@ -121,6 +123,7 @@ VALUES
 (1, 'End Ingredients', 'LANEEND', 'COMPLETION', 4, 4, 'SYSTEM', 15, 'Ingredients stage completed', 1, 'system');
 GO
 
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Ingredients Stage', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingredients', @condition = 'None'; 
@@ -137,6 +140,7 @@ VALUES
 
 GO
 
+EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Products Stage', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload to KASH DB', @to_name = 'Verify Products in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Products in DB', @to_name = 'End Products', @condition = 'None'; 
