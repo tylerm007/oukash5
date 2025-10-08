@@ -79,30 +79,32 @@ GO
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Inspection', 'LANESTART', 'COMPLETION', 1, 3, 'NCRC', 15, 'Start Inspection stage', 1, 'system'),
-(1, 'Inspection Needed', 'CONDITION', 'APPROVAL', 2, 3, 'RC', 15, 'Start Inspection stage', 1, 'system'),
-(1, 'Set Inspection Fee', 'CONFIRM', 'CONFIRMATION', 3, 3, 'INSP', 60, 'Calculate and set inspection fees', 0, 'system'),
-(1, 'Send KIM Invoice', 'ACTION', 'ASSIGNMENT', 4, 3, 'BILLING', 30, 'Send Kosher Inspection and Monitoring invoice', 0, 'system'),
-(1, 'Invoice Paid', 'CONFIRM', 'CONFIRMATION', 5, 3, 'BILLING', 60, 'Payment Received by Finance', 0, 'system'),
-(1, 'Payment Overdue', 'CONFIRM', 'CONFIRMATION', 6, 3, 'BILLING', 60, 'Handle overdue payment escalation', 0, 'system'),
-(1, 'Assign RFR', 'CONDITION', 'APPROVAL', 7, 3, 'INSP', 30, 'Assign Regional Field Representative', 0, 'system'),
-(1, 'RFR Assigned', 'CONFIRM', 'CONFIRMATION', 8, 3, 'RFR', 15, 'Confirm RFR assignment', 0, 'system'),
-(1, 'EIR Received/Reviewed', 'CONFIRM', 'CONFIRMATION', 9, 3, 'INSP', 240, 'Review Equipment & Ingredient Report', 0, 'system'),
-(1, 'Notify IAR of EIR', 'SCRIPT', 'NOTIFICATION', 10, 3, 'SYSTEM', 5, 'Notify IAR team of EIR completion', 0, 'system'),
-(1, 'End Inspection', 'LANEEND', 'COMPLETION', 12, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
-
+(1, 'Is Inspection Needed', 'CONDITION', 'APPROVAL', 2, 3, 'NCRC', 15, 'Is Inspection needed?', 1, 'system'),
+(1, 'Assign Fee Structure', 'CONFIRM', 'CONFIRMATION', 3, 3, 'NCRC', 60, 'Calculate and set inspection fees', 0, 'system'),
+(1, 'Select RFR', 'CONDITION', 'APPROVAL', 4, 3, 'NCRC', 30, 'Assign RFR', 0, 'system'),
+(1, 'Assign Invoice Amount', 'ACTION', 'ASSIGNMENT', 5, 3, 'NCRC', 30, 'Assign Kosher Inspection and Monitoring (KIM) invoice amount', 0, 'system'),
+(1, 'Generate Invoice and Send', 'SCRIPT', 'NOTIFICATION', 6, 3, 'SYSTEM', 5, 'Send KIM invoice to customer', 0, 'system'),
+(1, 'Mark Invoice Paid', 'CONFIRM', 'CONFIRMATION', 7, 3, 'NCRC', 60, 'Payment Received by Finance', 0, 'system'),
+(1, 'Is Payment Overdue', 'CONFIRM', 'CONFIRMATION', 8, 3, 'NCRC', 2880, 'Handle overdue payment escalation', 0, 'system'),
+(1, 'Schedule Inspection', 'ACTION', 'SCHEDULING', 9, 3, 'RFR', 60, 'Schedule inspection with RFR and customer', 0, 'system'),
+(1, 'Inspection Report Submitted to IAR', 'CONFIRM', 'CONFIRMATION', 11, 3, 'RFR', 240, 'Inspection report submitted to the ingredient team (IAR)', 0, 'system'),
+(1, 'Withdraw Inspection Y/N', 'CONDITION', 'APPROVAL', 12, 3, 'SYSTEM', 5, 'Withdraw Certification at Inspection Y/N', 0, 'system'),
+(1, 'End Inspection', 'LANEEND', 'COMPLETION', 13, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Inspection Needed', @condition = 'None';
-EXEC sp_add_flow @from_name = 'Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Inspection Needed', @to_name = 'Set Inspection Fee', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'Set Inspection Fee', @to_name = 'Send KIM Invoice', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Send KIM Invoice', @to_name = 'Invoice Paid', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Invoice Paid', @to_name = 'Assign RFR', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'Invoice Paid', @to_name = 'Payment Overdue', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Assign RFR', @to_name = 'RFR Assigned', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'RFR Assigned', @to_name = 'EIR Received/Reviewed', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'EIR Received/Reviewed', @to_name = 'Notify IAR of EIR', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Notify IAR of EIR', @to_name = 'End Inspection', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Is Inspection Needed', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Assign Fee Structure', @to_name = 'Select RFR', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Select RFR', @to_name = 'Assign Invoice Amount', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Assign Invoice Amount', @to_name = 'Generate Invoice and Send', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Generate Invoice and Send', @to_name = 'Mark Invoice Paid', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Generate Invoice and Send', @to_name = 'Is Payment Overdue', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Schedule Inspection', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Is Payment Overdue', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Report Submitted to IAR', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'End Inspection', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Lane Collector', @condition = 'None';
 
 
@@ -168,10 +170,13 @@ EXEC sp_add_flow @from_name = 'Notify Customer', @to_name = 'End Certification',
 EXEC sp_add_flow @from_name = 'End Certification', @to_name = 'END', @condition = 'None'; 
 GO
 
+-- Connect Initial Lane End to other lanes
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start NDA', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Inspection', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Ingredients Stage', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Products Stage', @condition = 'None'; 
+
+-- these two can run in parallel after collector
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Contract Stage', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Certification Stage', @condition = 'None';
 
