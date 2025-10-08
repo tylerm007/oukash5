@@ -29,7 +29,8 @@ VALUES
 (1, 'Initial Collector', 'GATEWAY', 'ESCALATION', 13, 1, 'SYSTEM', NULL, 'Initial Collector', 1, 'system'),
 (1, 'Init App End', 'LANEEND', 'COMPLETION', 14, 1, 'SYSTEM', 15, 'NDA completed', 1, 'system'),
 (1, 'Lane Collector', 'GATEWAY', 'ESCALATION', 15, 1, 'SYSTEM', NULL, 'Lane Collector', 1, 'system'),
-(1, 'End', 'END', 'COMPLETION', 16, 1, 'SYSTEM', NULL, 'end task', 1, 'system');
+(1, 'Stage Collector', 'GATEWAY', 'ESCALATION', 17, 1, 'SYSTEM', NULL, 'Stage Collector', 1, 'system'),
+(1, 'End', 'END', 'COMPLETION', 16, 1, 'SYSTEM', NULL, 'End application certification task', 1, 'system');
 GO
 
 EXEC sp_add_flow @from_name = 'Start_Application_Submitted', @to_name = 'Init Lane Start', @condition = 'None'; 
@@ -74,6 +75,8 @@ EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed
 EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Lane Collector', @condition = 'None';
 
+EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';
+
 GO
 -- Lane: Inspection (ID: 3)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
@@ -112,9 +115,9 @@ GO
 -- Lane: Ingredients (ID: 4)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
-(1, 'Start Ingredients Stage', 'LANESTART', 'COMPLETION', 1, 4, 'IAR', 15, 'Start Ingredients stage', 1, 'system'),
-(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 4, 'SYSTEM', 15, 'Upload ingredient data to KASH database', 0, 'system'),
-(1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 3, 4, 'SYSTEM', 15, 'Verify if all ingredient reviews are complete', 0, 'system'),
+(1, 'Start Ingredients Stage', 'LANESTART', 'COMPLETION', 1, 4, 'SYSTEM', 15, 'Start Ingredients stage', 1, 'system'),
+(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 4, 'IAR', 15, 'Upload ingredient data to KASH database', 0, 'system'),
+(1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 3, 4, 'IAR', 15, 'Verify if all ingredient reviews are complete', 0, 'system'),
 (1, 'End Ingredients', 'LANEEND', 'COMPLETION', 4, 4, 'SYSTEM', 15, 'Ingredients stage completed', 1, 'system');
 GO
 
@@ -127,9 +130,9 @@ GO
 -- Lane: Products (ID: 5)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
-(1, 'Start Products Stage', 'LANESTART', 'COMPLETION', 1, 5, 'IAR', 15, 'Start Products stage', 1, 'system'),
-(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 5, 'SYSTEM', 15, 'Upload product data to KASH database', 0, 'system'),
-(1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 3, 5, 'SYSTEM', 15, 'Verify if all product reviews are complete', 0, 'system'),
+(1, 'Start Products Stage', 'LANESTART', 'COMPLETION', 1, 5, 'SYSTEM', 15, 'Start Products stage', 1, 'system'),
+(1, 'Upload to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
+(1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 3, 5, 'PROD', 15, 'Verify if all product reviews are complete', 0, 'system'),
 (1, 'End Products', 'LANEEND', 'COMPLETION', 4, 5, 'SYSTEM', 15, 'Products stage completed', 1, 'system');
 
 GO
@@ -146,13 +149,17 @@ VALUES
 (1, 'Start Contract Stage', 'LANESTART', 'COMPLETION', 1, 6, 'LEGAL', 15, 'Start Contract stage', 1, 'system'),
 (1, 'Prepare Contract', 'CONFIRM', 'CONFIRMATION', 2, 6, 'LEGAL', 240, 'Prepare contract for customer', 0, 'system'),
 (1, 'Send Contract', 'CONFIRM', 'CONFIRMATION', 3, 6, 'LEGAL', 30, 'Send contract to customer for signature', 0, 'system'),
+(1, 'Contract Signed Y/N', 'CONDITION', 'APPROVAL', 4, 6, 'LEGAL', 2880, 'Has the contract been signed?', 0, 'system'),
 (1, 'End Contract', 'LANEEND', 'COMPLETION', 4, 6, 'SYSTEM', 15, 'Contract stage completed', 1, 'system');
 GO
 
+EXEC sp_add_flow @from_name = 'Lane Collector', @to_name = 'Start Contract Stage', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Contract Stage', @to_name = 'Prepare Contract', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Prepare Contract', @to_name = 'Send Contract', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Send Contract', @to_name = 'End Contract', @condition = 'None';  
-EXEC sp_add_flow @from_name = 'End Contract', @to_name = 'Lane Collector', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Send Contract', @to_name = 'Contract Signed Y/N', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Contract Signed Y/N', @to_name = 'End Contract', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Contract Signed Y/N', @to_name = 'END', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'End Contract', @to_name = 'Stage Collector', @condition = 'None';
 GO
 
 -- Lane: Certification (ID: 7)
@@ -163,8 +170,8 @@ VALUES
 (1, 'Notify Customer', 'SCRIPT', 'NOTIFICATION', 3, 7, 'RFR', 15, 'Notify customer of certification', 0, 'system'),  
 (1, 'End Certification', 'LANEEND', 'COMPLETION', 4, 7, 'SYSTEM', 15, 'Certification stage completed', 1, 'system');
 GO
-EXEC sp_add_flow @from_name = 'Lane Collector', @to_name = 'Start Certification Stage', @condition = 'None';
-EXEC sp_add_flow @from_name = 'Start Certification Stage', @to_name = 'Issue Certificate', @condition = 'None'; 
+
+EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Certification Stage', @condition = 'None';   
 EXEC sp_add_flow @from_name = 'Issue Certificate', @to_name = 'Notify Customer', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Notify Customer', @to_name = 'End Certification', @condition = 'None';  
 EXEC sp_add_flow @from_name = 'End Certification', @to_name = 'END', @condition = 'None'; 
@@ -177,7 +184,7 @@ EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Ingredients Stag
 EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Products Stage', @condition = 'None'; 
 
 -- these two can run in parallel after collector
-EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Contract Stage', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Certification Stage', @condition = 'None';
+--EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Contract Stage', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Certification Stage', @condition = 'None';
 
 GO
