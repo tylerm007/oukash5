@@ -1,4 +1,5 @@
 from datetime import datetime
+from database import models
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
 import logging
@@ -8,7 +9,7 @@ from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
-from test.test_workflow import complete_task
+
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -100,7 +101,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         data = request.get_json()
         task_instance_id = data.get("task_instance_id")
         completed_by = data.get("completed_by",'system')
-        completion_notes = data.get("completion_notes",'testing')
+        completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
         app_logger.debug(f'Completing task: {task_instance_id} by {completed_by}')
         return _complete_task(task_instance_id, result, completed_by, completion_notes)
@@ -229,7 +230,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 -H "Authorization: Bearer <your_jwt_token>"
 
         Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks" -Method GET -ContentType "application/json"
-            -Headers @{Authorization = "Bearer <your_jwt_token>"}
+            -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTkyODE2MCwianRpIjoiZWYyOTdiYTQtMTlkYS00NDdiLWEzNmMtNzhmMTMzNDg0NjUyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU5OTI4MTYwLCJleHAiOjE3NTk5NDE0ODB9.kwcOIfJpWsF-UBfW087pk_9YZ4pRO9iegnEmhGSdEoM"}
         Returns:
             json: response        
         '''
@@ -368,7 +369,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     # Insert into ProcessInstances
     app_logger.info(f'New ProcessInstance InstanceId: {process_instance_id}')
 
-
+    start_instance_id = None
     # use TaskFlow to only create starting tasks
     LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_definition_id).order_by(LaneDefinition.LaneId).all()
     for lane in LaneDefinitions:
@@ -399,6 +400,8 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
                     app_logger.info(f'Created TaskInstance: {task_definition.TaskName}')
                     task_instances.append(task_instance)
+                    if task_instance.TaskId == start_task_id:
+                        start_instance_id = task_instance.TaskInstanceId
                     wf_history = WorkflowHistory(
                             InstanceId=process_instance_id,
                             TaskInstanceId=task_instance.TaskInstanceId,
@@ -411,12 +414,23 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
                     
 
-    _complete_task(task_instance.TaskInstanceId, 'Started', 'system', 'Workflow started')
+    if start_instance_id is None:
+            raise Exception(f'Start TaskInstance not found for process: {process_name}')    
+    _complete_task(start_instance_id, 'Started', 'system', 'Workflow started')
+    role_assignment = models.RoleAssigment(
+        ApplicationId=application.ApplicationID,
+        Role="DISPATCH",
+        Assignee=started_by,
+        CreatedDate=datetime.utcnow()
+    )
+    session.add(role_assignment)
+    session.commit()
+    app_logger.info(f'Role DISPATCH assigned to {started_by} for application {application.ApplicationID}')
     return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
 
 
-    
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'testing'):
+
+def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API'):
         # Find the task instance
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
         if not task_instance:

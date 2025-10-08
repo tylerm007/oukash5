@@ -51,7 +51,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             $body = @{
                 appId = 1
-                taskId = 83
+                taskId = 540
                 role = "NCRC"
                 assignee = "admin"
             } | ConvertTo-Json
@@ -81,6 +81,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"error": f"Application with ID {app_id} not found"}), 404
        
+       # move to Rule
         application.AssignedTo = assignee
         application.AssignedDate = datetime.utcnow()
         application.Status = 'INP'
@@ -96,7 +97,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     admin_assignee = admin_assignee.AdminUserName
                 add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
             session.commit()
-            _complete_task(task_id, 'COMPLETED', 'system', f'Role {role} assigned to {assignee}')
+            _complete_task(task_id, 'Assign Role', 'system', f'Role {role} assigned to {assignee}')
         except Exception as e:
             session.rollback()
             app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
@@ -105,18 +106,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f'TaskInstance set to Completed: {task_id}')
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
     
-    def add_role_assignment(application_id, role, assignee):
-        """Add a role assignment to the database.
-        Args:
-            application_id (int): The ID of the application.
-            role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
-            assignee (str): The user to whom the role is assigned.
-        """
-        role_assignment = models.RoleAssigment(
-            ApplicationId=application_id,
-            Role=role,
-            Assignee=assignee,
-            CreatedDate=datetime.utcnow()
-        )
-        session.add(role_assignment)
-        app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
+def add_role_assignment(application_id, role, assignee):
+    """Add a role assignment to the database.
+    Args:
+        application_id (int): The ID of the application.
+        role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
+        assignee (str): The user to whom the role is assigned.
+    """
+    role_assignment = models.RoleAssigment(
+        ApplicationId=application_id,
+        Role=role,
+        Assignee=assignee,
+        CreatedDate=datetime.utcnow()
+    )
+    session.add(role_assignment)
+    app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')

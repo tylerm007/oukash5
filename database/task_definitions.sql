@@ -104,8 +104,8 @@ EXEC sp_add_flow @from_name = 'Assign Invoice Amount', @to_name = 'Generate Invo
 EXEC sp_add_flow @from_name = 'Generate Invoice and Send', @to_name = 'Mark Invoice Paid', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Generate Invoice and Send', @to_name = 'Is Payment Overdue', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Schedule Inspection', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Is Payment Overdue', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Report Submitted to IAR', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'Withdraw Inspection Y/N', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'End Inspection', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Withdraw Inspection Y/N', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Lane Collector', @condition = 'None';
@@ -171,7 +171,8 @@ VALUES
 (1, 'End Certification', 'LANEEND', 'COMPLETION', 4, 7, 'SYSTEM', 15, 'Certification stage completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Certification Stage', @condition = 'None';   
+EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Certification Stage', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Start Certification Stage', @to_name = 'Issue Certificate', @condition = 'None';   
 EXEC sp_add_flow @from_name = 'Issue Certificate', @to_name = 'Notify Customer', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Notify Customer', @to_name = 'End Certification', @condition = 'None';  
 EXEC sp_add_flow @from_name = 'End Certification', @to_name = 'END', @condition = 'None'; 
