@@ -460,7 +460,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     start_task_id = task_definition.TaskId if task_definition else None
     app_logger.info(f'Start TaskDefinition TaskId: {start_task_id}') 
     if start_task_id is None:
-            raise Exception(f'Start Task definition not found for process: {process_name}')
+            raise Exception(f'Task definition type START not found for process: {process_name}')
     
     process_instance_id = process_instance.InstanceId
     # Insert into ProcessInstances
@@ -484,7 +484,9 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
             task_instances = []
             for task_definition in task_definition:
                     app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
-                    status = 'NEW' #if task_definition.TaskType != 'START' else 'COMPLETED'
+                    status = 'NEW' 
+                    if task_definition.TaskType in ['START','LANEEND','END']:
+                        status = 'PENDING'
                     task_instance = TaskInstance(
                             TaskId=task_definition.TaskId,
                             StageId=stage_instance.StageInstanceId,
@@ -550,7 +552,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_flows_from = task_def.ToTaskTaskFlowList or []
         task_flows_to = task_def.TaskFlowList or []
         # Check if all prior tasks are completed
-        if task_def.TaskType != "START":
+        if task_def.TaskType not in ["START", "LANEEND", "END"]:
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
                 prior_task_instance = TaskInstance.query.filter(
@@ -560,8 +562,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')
                     return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
-            #result = ScriptEngine.run_script(task_def.PreCompletionScript, {"task_instance": task_instance, "session": session})      
-        
+        # Complete the task
         task_instance.Status = 'COMPLETED'
         task_instance.CompletedDate = datetime.utcnow()
         task_instance.Result = result
@@ -603,8 +604,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 next_task_instance.StartedDate = datetime.utcnow()
                 session.add(next_task_instance)    
                 session.commit()
-            if next_task_instance and next_task_instance.TaskDef.AutoComplete and validate_prior_tasks(next_task_instance.TaskDef, stages_list, result):
-                _complete_task(next_task_instance.TaskInstanceId, result,  'system', 'Auto-completed')
+            if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
+                _complete_task(next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed')
 
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id}')
@@ -627,7 +628,7 @@ def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str
                 continue  # Skip this dependency as the condition does not match the result
             from_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == from_task_def, 
                                                            TaskInstance.StageId.in_(stages_list)).first()
-            if from_task_instance and from_task_instance.Status != 'COMPLETED' and taskDef.TaskType not in ['START']:
+            if from_task_instance and from_task_instance.Status != 'COMPLETED':
                 app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDef.TaskName} is not COMPLETED.")
                 return False
         return True

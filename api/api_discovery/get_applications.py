@@ -85,6 +85,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             days_between = calc_days_between(created_date, modified_date)
             #process_id = app_dict.get("ProcessId")
             assigned_roles = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
+            status = get_app_status(app_dict.get("Status"))
             app_row = {
                 "id": application_id,
                 "company": app_source.get("CompanyName"),
@@ -93,7 +94,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "applicationId": application_id,
                 "region": app_source.get("Region"),
                 "priority": app_dict.get("Priority", "Normal"),
-                "status": app_dict.get("Status", "New"),
+                "status": status,
                 "assignedRC": app_source.get("AssignedTo"),
                 "daysInStage": days_between,
                 "overdue": days_between > 10,
@@ -202,3 +203,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return script
     def getPostScript(task: TaskInstance):
         return task.TaskDef.PostScriptJson if task and task.TaskDef else {}
+    
+    def get_app_status(status_code: str):
+        status_map = {
+            "NEW": "New",
+            "INP": "In Progress",
+            "HLD": "On Hold",
+            "WTH": "Withdrawn",
+            "COMPL": "Completed",
+            "REJ": "Rejected"
+        }
+        return status_map.get(status_code, "Unknown Status")

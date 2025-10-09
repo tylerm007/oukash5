@@ -186,30 +186,30 @@ def declare_logic():
         """
         Update the status of the workflow application
         """
-        #if logic_row.ins_upd_dlt != 'upd': #and row.Status == old_row.Status and row.Status != 'COMPLETED':
-        #    return
+        if logic_row.ins_upd_dlt != 'upd' and old_row and row.Status != old_row.Status:
+            return
         stage = row.Stage
         if stage is None:
             return
         application_id = stage.ProcessInstance.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
             
-        if row.TaskDef.TaskType == 'LANESTART' and logic_row.ins_upd_dlt == 'ins':
+        if row.TaskDef.TaskType == 'LANESTART':
             stage.Status = 'IN_PROGRESS'
             application.StartedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to INP", row=application)
-        elif row.TaskDef.TaskType == 'LANEEND' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
+        elif row.TaskDef.TaskType == 'LANEEND' and row.Status == 'COMPLETED':
             stage.Status = 'COMPLETED'
             stage.CompletedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to COMPLETED", row=application)
-        elif row.TaskDef.TaskType == 'START' and logic_row.ins_upd_dlt == 'ins':
+        elif row.TaskDef.TaskType == 'START':
             if application is not None:
                 application.Status = 'INP'
                 application.StartedDate = datetime.datetime.now()
                 logic_row.update(reason="update application status to INP", row=application)
-        elif row.TaskDef.TaskType == 'END' and logic_row.ins_upd_dlt == 'upd' and row.Status == 'COMPLETED':
+        elif row.TaskDef.TaskType == 'END' and row.Status == 'COMPLETED':
             if application is not None:
-                application.Status = 'COMPL' if application.Status != 'WITHD' else 'WITHD'
+                application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
         

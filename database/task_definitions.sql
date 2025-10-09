@@ -68,11 +68,11 @@ GO
 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Needs NDA', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA Completed', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'NONE'; 
+EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Lane Collector', @condition = 'None';
 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';
