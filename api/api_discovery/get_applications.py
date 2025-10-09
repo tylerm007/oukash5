@@ -124,7 +124,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     completed_cnt = 0
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).order_by(TaskInstance.TaskInstanceId).all()
                     for task in task_instances:
-                        if task.TaskDef.AutoComplete == True:
+                        if task.TaskDef.AutoComplete == True or task.TaskDef.TaskType in ['START','END',"LANESTART",'LANEEND']:
                             continue
                         task_cnt += 1 #if task.Status == 'PENDING' else 0
                         completed_cnt += 1 if task.Status == 'COMPLETED' else 0

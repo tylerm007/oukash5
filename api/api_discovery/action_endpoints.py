@@ -3,7 +3,7 @@ from flask_cors import cross_origin
 from datetime import datetime
 from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
 from flask import app, request, jsonify, session
-from api.api_discovery.ncrc_workflow import _complete_task
+from api.api_discovery.start_workflow import _complete_task
 import logging
 import safrs
 from flask import request, jsonify

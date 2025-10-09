@@ -14,8 +14,8 @@ set COMPLETED_BY=%~3
 set NOTES=%~4
 
 REM Set defaults if not provided
-if "%RESULT%"=="" set RESULT=NO
-if "%COMPLETED_BY%"=="" set COMPLETED_BY=user1
+if "%RESULT%"=="" set RESULT=""
+if "%COMPLETED_BY%"=="" set COMPLETED_BY=tband
 if "%NOTES%"=="" set NOTES=Task completed successfully
 
 echo Completing task ID %TASK_ID%...

@@ -82,7 +82,7 @@ GO
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Inspection', 'LANESTART', 'COMPLETION', 1, 3, 'SYSTEM', 15, 'Start Inspection stage', 1, 'system'),
-(1, 'Is Inspection Needed', 'CONDITION', 'APPROVAL', 2, 3, 'NCRC', 15, 'Is Inspection needed?', 1, 'system'),
+(1, 'Is Inspection Needed', 'CONDITION', 'APPROVAL', 2, 3, 'NCRC', 15, 'Is Inspection needed?', 0, 'system'),
 (1, 'Assign Fee Structure', 'ACTION', 'SELECTOR', 3, 3, 'NCRC', 60, 'Calculate and set inspection fees', 0, 'system'),
 (1, 'Select RFR', 'ACTION', 'ASSIGNMENT', 4, 3, 'NCRC', 30, 'Assign RFR', 0, 'system'),
 (1, 'Assign Invoice Amount', 'ACTION', 'INPUT', 5, 3, 'NCRC', 30, 'Assign Kosher Inspection and Monitoring (KIM) invoice amount', 0, 'system'),

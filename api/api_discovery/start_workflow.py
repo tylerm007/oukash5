@@ -1,4 +1,5 @@
 from datetime import datetime
+from api.api_discovery.complete_task import _complete_task
 from database import models
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
@@ -55,9 +56,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @admin_required()
     def start_workflow():
         """
-        Illustrates:
-        * Use standard Flask, here for non-database endpoints.
+       Start a new workflow process for a given application.
+    Args:
+        process_name (str): The name of the ProcessDefinition to start.
+        application_id (int): The ID of the WFApplication to associate with the process.
+        started_by (str): The user who started the process.
+        priority (str): The priority level of the process.
 
+    Raises:
+        Exception: If the application or process definition is not found.
+        Exception: If the process instance already exists.
+        Exception: If the start task definition is not found.
         Test it with PowerShell POST:
 
         $body = @{
@@ -86,8 +95,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Extract variables from request.args
         data = request.get_json()
         process_name = data.get('process_name', "OU Application Init")
-        application_id = data.get('application_id', '1')
-        started_by = data.get('started_by', 'admin')
+        application_id = data.get('application_id')
+        started_by = data.get('started_by', 'system')
         priority = data.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
         app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')
         return _start_workflow(process_name, int(application_id), started_by, priority)
@@ -177,237 +186,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         return jsonify(response)
 
-    @app.route('/complete_task', methods=['POST','OPTIONS'])
-    @admin_required()
-    def complete_task():
-        """
-        Complete a task in the workflow {task_instance_id:int, result:str, completed_by:str, completion_notes:str}
-        # Example PowerShell command to complete a task in the workflow
-        $body = @{
-            task_instance_id = 102
-            result = "Approved"
-            completed_by = "user1"
-            completion_notes = "Task completed successfully"
-        } | ConvertTo-Json
-
-        Invoke-RestMethod -Uri "http://localhost:5656/complete_task" -Method POST -Body $body -ContentType "application/json"
-        """
-        if request.method == 'OPTIONS':
-            return jsonify({"status": "ok"}), 200       
-        
-        data = request.get_json()
-        task_instance_id = data.get("task_instance_id")
-        completed_by = data.get("completed_by",'system')
-        completion_notes = data.get("completion_notes",'Complete Task via API')
-        result = data.get("result", None)
-        app_logger.debug(f'Completing task: {task_instance_id} by {completed_by}')
-        return _complete_task(task_instance_id, result, completed_by, completion_notes)
-
-    
-
-    @app.route('/application_message', methods=['POST','OPTIONS'])
-    def application_message():
-        """
-        Send a message to a task in the workflow
-        """
-        data = request.get_json()
-        message = data.get("message")
-        applicationID = data.get("application_id")
-        fromUser = data.get("from_user")
-        toUser = data.get("to_user")
-        priority = data.get("priority", 'NORMAL')
-        message_type = data.get("message_type", 'Standard')
-
-        app_logger.debug(f'Sending message to application: {applicationID}')
-
-        # Find the task instance
-        application = WFApplication.query.filter_by(ApplicationID=applicationID).first()
-        if not application:
-                app_logger.error(f'Application not found: {applicationID}')
-                return jsonify({"status": "error", "message": f"Application {applicationID} not found"}), 404
-
-        # Add the message to the task instance
-        message = WFApplicationMessage(
-                ApplicationID=applicationID,
-                MessageText=message,
-                FromUser=fromUser,
-                ToUser=toUser,
-                MessageType=message_type,
-                Priority=priority
-        )
-        session.add(message)
-        session.commit()
-
-        app_logger.info(f'Message for application {applicationID} added')
-        return jsonify({"status": "ok", "data": {"application_id": applicationID}}), 200
-
-    @app.route('/process_message', methods=['POST','OPTIONS'])
-    def process_message():
-        """
-        Send a message to a task in the workflow
-        """
-        data = request.get_json()
-        message = data.get("message")
-        processID = data.get("process_id")
-        fromUser = data.get("from_user")
-        toUser = data.get("to_user")
-        subject = data.get("subject")
-        priority = data.get("priority", 'NORMAL')
-        message_type = data.get("message_type", 'Standard')
-
-        app_logger.debug(f'Sending message to task: {processID}')
-
-        # Find the task instance
-        process_instance = ProcessInstance.query.filter_by(ProcessID=processID).first()
-        if not process_instance:
-                app_logger.error(f'ProcessInstance not found: {processID}')
-                return jsonify({"status": "error", "message": f"ProcessInstance {processID} not found"}), 404
-
-        # Add the message to the task instance
-        message = ProcessMessage(
-                ProcessID=processID,
-                MessageBody=message,
-                FromUser=fromUser,
-                Subject=subject,
-                ToUser=toUser,
-                MessageType=message_type,
-                Priority=priority
-        )
-        session.add(message)
-        session.commit()
-
-        app_logger.info(f'Message added to ProcessInstance: {processID} for process {process_instance.Name}')
-        return jsonify({"status": "ok", "data": {"process_id": processID}}), 200
-
-    @app.route('/assign_task', methods=['POST','OPTIONS'])
-    def assign_task():
-        """
-        Assign a user to a task in the workflow
-        """
-        data = request.get_json()
-        task_instance_id = data.get("task_instance_id")
-        user_id = data.get("user_id")
-
-        app_logger.debug(f'Assigning user {user_id} to task: {task_instance_id}')
-
-        # Find the task instance
-        task_instance = TaskInstance.query.filter_by(InstanceId=task_instance_id).first()
-        if not task_instance:
-            app_logger.error(f'TaskInstance not found: {task_instance_id}')
-            return jsonify({"status": "error", "message": f"TaskInstance {task_instance_id} not found"}), 404
-
-        # Assign the user to the task
-        task_instance.AssignedTo = user_id
-        session.add(task_instance)
-        session.commit()
-
-        wf_history = WorkflowHistory(
-            InstanceId=task_instance.InstanceId,
-            TaskInstanceId=task_instance_id,
-            Action='AssignTask',
-            NewStatus='COMPLETED',
-            ActionBy= 'system', # Session.current_user
-            ActionReason=f'assigned user {user_id} to task {task_instance_id}'
-        )
-        session.add(wf_history)
-        session.commit()
-        app_logger.info(f'User {user_id} assigned to TaskInstance: {task_instance_id}')
-        return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
-
-    
-    @app.route('/validate_tasks', methods=['GET','OPTIONS'])
-    #@jwt_required()
-    def validate_tasks():   
-        '''
-        Validate tasks in the workflow
-        Make sure each TaskFlow is linked From/To TaskId
-
-        curl -X GET http://localhost:5656/validate_tasks?process_name="OU Certification Workflow" \
-                -H "Content-Type: application/json" \
-                -H "Authorization: Bearer <your_jwt_token>"
-
-        Invoke-RestMethod -Uri "http://localhost:5656/validate_tasks" -Method GET -ContentType "application/json"
-            -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTkyODE2MCwianRpIjoiZWYyOTdiYTQtMTlkYS00NDdiLWEzNmMtNzhmMTMzNDg0NjUyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU5OTI4MTYwLCJleHAiOjE3NTk5NDE0ODB9.kwcOIfJpWsF-UBfW087pk_9YZ4pRO9iegnEmhGSdEoM"}
-        Returns:
-            json: response        
-        '''
-        if request.method == 'OPTIONS':
-            return jsonify({"status": "ok"}), 200 
-        #data = request.args if request.args else {}
-        process_name = request.args.get('process_name',"OU Application Init")
-        if not process_name:
-            return jsonify({"status": "error", "message": "process_name is required"}), 400
-        process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
-        if not process_def:
-            return jsonify({"status": "error", "message": f"Process definition not found: {process_name}"}), 404
-        process_id = process_def.ProcessId
-        task_defs = TaskDefinition.query.filter_by(ProcessId=process_id).all()
-        if not task_defs:
-            return jsonify({"status": "error", "message": f"No Task definitions found for process: {process_name}"}), 404
-        task_flow_errors = []
-        for task in task_defs:
-            from_task = task.TaskFlowList
-            to_task = task.ToTaskTaskFlowList
-            category = task.TaskCategory
-            task_type = task.TaskType
-        
-            if not from_task and task_type != 'END':
-                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no incoming TaskFlow"})
-            if not to_task and task_type != 'START':
-                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskId}) has no outgoing TaskFlow"})
-            #print(f'Task {task.TaskName} (ID: {task.TaskId}) is valid with {len(from_task)} incoming and {len(to_task)} outgoing TaskFlows')
-        if task_flow_errors:
-            for tfe in task_flow_errors:
-                app_logger.error(tfe['message'])
-            return jsonify(task_flow_errors), 400
-        else:
-            app_logger.info(f'All TaskFlows are valid for process: {process_name}')
-        return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
-
-    @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
-    def get_application_tasks():
-        """
-        Retrieves all of the application tasks within their stages for a given application_id
-        
-        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET).Content | ConvertFrom-Json
-
-        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET
-        $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
-        $jsonString | ConvertFrom-Json
-        """
-        if request.method == 'OPTIONS':
-            return jsonify({"status": "ok"}), 200
-
-        data = request.args if request.args else {}
-        application_id = data.get('application_id', None)
-        if application_id is None:
-            return jsonify({"status": "error", "message": "application_id is required"}), 400
-        
-        app_logger.info('Retrieving NCRC dashboard data')
-        # Implement your logic to retrieve and return the NCRC dashboard data:
-        
-        app_obj = WFApplication.query.filter_by(ApplicationID=application_id).first()
-        if not app_obj:
-            return jsonify({"status": "error", "message": "Application not found"}), 404    
-        
-        process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
-        if process_instance is None:
-            return jsonify({"status": "error", "message": "Process instance not found or workflow not started"}), 404
-        result = {}
-        result['process_instance'] = process_instance.to_dict() if process_instance else {}
-        stage_list = process_instance.StageInstanceList if process_instance else []
-        result['stages'] = {}
-        #[stage.to_dict() if stage else {} for stage in stage_list]
-        for stage in stage_list:
-            result['stages'][stage.Lane.LaneName] = {
-                "stage_info": stage.to_dict() if stage else {},
-                "tasks": []
-            }
-            tasks = stage.TaskInstanceList if stage else []
-            for task in tasks:
-                result['stages'][stage.Lane.LaneName]['tasks'].append(task.to_dict() if task else {})
-        return jsonify({"status": "ok", "data": result}), 200
-
         # ==================================================
         #        END WORKFLOW ENDPOINTS (Flask)
         # ==================================================
@@ -485,7 +263,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
             for task_definition in task_definition:
                     app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
                     status = 'NEW' 
-                    if task_definition.TaskType in ['START','LANEEND','END']:
+                    if task_definition.TaskType in ['START','LANEEND','END','GATEWAY']:
                         status = 'PENDING'
                     task_instance = TaskInstance(
                             TaskId=task_definition.TaskId,
@@ -511,11 +289,10 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     )
                     session.add(wf_history)
                     session.commit()
-                    
-
     if start_instance_id is None:
-            raise Exception(f'Start TaskInstance not found for process: {process_name}')    
+        raise Exception(f'Start TaskInstance not found for process: {process_name}')    
     _complete_task(start_instance_id, 'Started', 'system', 'Workflow started')
+    
     role_assignment = models.RoleAssigment(
         ApplicationId=application.ApplicationID,
         Role="DISPATCH",
@@ -527,129 +304,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     app_logger.info(f'Role DISPATCH assigned to {started_by} for application {application.ApplicationID}')
     return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
 
-
-
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API', depth:int=0):
-        # Find the task instance
-        task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
-        if not task_instance:
-            app_logger.error(f'TaskInstance not found: {task_instance_id}')
-            return jsonify({"status": "error", "message": "TaskInstance not found"}), 404
-
-        # Go To TaskFlow from TaskId and check to see if all the prior states are completed
-        task_def = task_instance.TaskDef
-        if not task_def:
-            app_logger.error(f'TaskDefinition not found: {task_instance.TaskId}')
-            return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
-
-        if task_instance.Status != 'PENDING' and task_def.TaskType != 'START': #and depth == 0
-            app_logger.error(f'Cannot complete task {task_instance_id}. Task is not PENDING -> {task_instance.Status}.')
-            return jsonify({"status": "error", "message": f"Cannot complete task. Task is not Pending  -> {task_instance.Status}."}), 400
-        
-        task_name = task_def.TaskName
-        stages_list = get_stage_list(task_instance)
-        app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name}')
-        task_flows_from = task_def.ToTaskTaskFlowList or []
-        task_flows_to = task_def.TaskFlowList or []
-        # Check if all prior tasks are completed
-        if task_def.TaskType not in ["START", "LANEEND", "END"]:
-            for tf in task_flows_from:
-                prior_task_id = tf.FromTaskId
-                prior_task_instance = TaskInstance.query.filter(
-                    TaskInstance.TaskInstanceId == prior_task_id
-                    #,TaskInstance.StageId.in_(stages_list)
-                ).first()
-                if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
-                    app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')
-                    return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
-        # Complete the task
-        if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
-            status = 'PENDING'
-        else:
-            status = "COMPLETED"
-        task_instance.Status = status
-        task_instance.CompletedDate = datetime.utcnow()
-        task_instance.Result = result
-        session.add(task_instance)
-        try:
-            session.commit()
-            session.flush()
-        except Exception as e:
-            app_logger.error(f'Error completing task {task_instance_id}: {e}')
-            session.rollback()
-            return jsonify({"status": "error", "message": "Error completing task"}), 500
-
-        ## Get the workflow history
-        wf_history = WorkflowHistory(
-            InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
-            TaskInstanceId=task_instance.TaskInstanceId,
-            Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
-            NewStatus=status,
-            ActionBy=completed_by,
-            ActionReason=completion_notes
-        )
-        session.add(wf_history)
-        session.commit()
-        session.flush()
-        
-        # Start the next tasks
-        for flow_to in task_flows_to:
-            next_task_id = flow_to.ToTaskId
-            next_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == next_task_id,
-                                                            TaskInstance.StageId.in_(stages_list)).first()
-            task_def = next_task_instance.TaskDef if next_task_instance else None
-            condition = flow_to.Condition if task_def else None
-            # If this is a condition task, check the result to see if we should proceed
-            if condition and condition != 'None' and result and condition.lower() != result.lower():
-                app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
-                continue  # Skip this dependency as the condition does not match the result
-            elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, stages_list, result):
-                next_task_instance.Status = 'PENDING'
-                next_task_instance.StartedDate = datetime.utcnow()
-                session.add(next_task_instance)    
-                session.commit()
-            if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
-                _complete_task(next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', depth=depth+1)
-
-                
-        app_logger.info(f'Task completed:{task_name} - {task_instance_id}')
-        return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
-
-def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str = None) -> bool:
-        '''
-        Validate that all prior tasks in the workflow (TaskFlow)are completed before allowing this task to proceed.
-        '''
-        if taskDef is None:
-            return True
-        dependencies = taskDef.ToTaskTaskFlowList  # List of TaskFlow objects where this task is the ToTask
-        if dependencies is None or len(dependencies) == 0:
-            return True  # No dependencies, so it's valid to proceed
-        for dependency in dependencies:
-            from_task_def = dependency.FromTaskId
-            condition = dependency.Condition
-            if taskDef.TaskType == 'CONDITION' and condition and condition != 'None' and result and condition.lower() != result.lower():
-                app_logger.info(f"Skipping dependency check for task {taskDef.TaskName} because condition '{condition}' does not match result '{result}'.")
-                continue  # Skip this dependency as the condition does not match the result
-            from_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == from_task_def, 
-                                                           TaskInstance.StageId.in_(stages_list)).first()
-            if from_task_instance and from_task_instance.Status != 'COMPLETED':
-                app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDef.TaskName} is not COMPLETED.")
-                return False
-        return True
-
-def get_stage_list(taks_instance: TaskInstance) -> list:
-    '''
-    Get the list of stages for a given task instance.
-    '''
-    stages = []
-    if taks_instance is None:
-        return stages
-    
-    stage_instances = taks_instance.Stage.ProcessInstance.StageInstanceList
-    for stage_instance in stage_instances:
-        stages.append(stage_instance.StageInstanceId)
-    return stages
-
+                    
 def _start_workflow_background(task_id: str, process_name: str, application_id: int, started_by: str, priority: str):
     """
     Execute workflow in background thread with proper database session handling.

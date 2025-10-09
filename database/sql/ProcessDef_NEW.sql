@@ -47,14 +47,15 @@ IF OBJECT_ID('ProcessDefinitions', 'U') IS NOT NULL DELETE FROM ProcessDefinitio
 IF OBJECT_ID('TaskCategories', 'U') IS NOT NULL DELETE FROM TaskCategories;
 IF OBJECT_ID('TaskTypes', 'U') IS NOT NULL DELETE FROM TaskTypes;
 IF OBJECT_ID('LaneDefinitions', 'U') IS NOT NULL DELETE FROM LaneDefinitions;
-IF OBJECT_ID('TaskAlerts', 'U') IS NOT NULL DELETE FROM TaskAlerts;
+IF OBJECT_ID('TaskAlert', 'U') IS NOT NULL DELETE FROM TaskAlert;
 GO
 -- Drop child tables first (tables with foreign keys)
-if OBJECT_ID('TaskAlerts', 'U') IS NOT NULL DROP TABLE TaskAlerts;
+if OBJECT_ID('TaskAlert', 'U') IS NOT NULL DROP TABLE TaskAlert;
 IF OBJECT_ID('WorkflowHistory', 'U') IS NOT NULL DROP TABLE WorkflowHistory;
 IF OBJECT_ID('TaskComments', 'U') IS NOT NULL DROP TABLE TaskComments;
 IF OBJECT_ID('ProcessMessages', 'U') IS NOT NULL DROP TABLE ProcessMessages;
 IF OBJECT_ID('ValidationResults', 'U') IS NOT NULL DROP TABLE ValidationResults;
+IF OBJECT_ID('TaskAlert', 'U') IS NOT NULL DROP TABLE TaskAlert;
 IF OBJECT_ID('StageInstance', 'U') IS NOT NULL DROP TABLE StageInstance;
 IF OBJECT_ID('TaskInstances', 'U') IS NOT NULL DROP TABLE TaskInstances;
 IF OBJECT_ID('TaskStatus','U') IS NOT NULL DROP TABLE TaskStatus;
@@ -350,6 +351,7 @@ CREATE TABLE WorkflowHistory (
     FOREIGN KEY (TaskInstanceId) REFERENCES TaskInstances(TaskInstanceId)
 );
 
+GO
 -- =============================================
 -- Indexes for Performance
 -- =============================================

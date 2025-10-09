@@ -161,7 +161,7 @@ def declare_logic():
         """
         if logic_row.ins_upd_dlt != 'ins':
             return
-        from api.api_discovery.ncrc_workflow import _start_workflow as start_workflow_function
+        from api.api_discovery.start_workflow import _start_workflow as start_workflow_function
         process_name = "OU Application Init"
         application_id = row.ApplicationID        
         started_by = 'system'
