@@ -529,7 +529,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
 
 
 
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API'):
+def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API', depth:int=0):
         # Find the task instance
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
         if not task_instance:
@@ -542,7 +542,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             app_logger.error(f'TaskDefinition not found: {task_instance.TaskId}')
             return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
 
-        if task_instance.Status != 'PENDING' and task_def.TaskType != 'START':
+        if task_instance.Status != 'PENDING' and task_def.TaskType != 'START': #and depth == 0
             app_logger.error(f'Cannot complete task {task_instance_id}. Task is not PENDING -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task. Task is not Pending  -> {task_instance.Status}."}), 400
         
@@ -563,7 +563,11 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                     app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')
                     return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
         # Complete the task
-        task_instance.Status = 'COMPLETED'
+        if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
+            status = 'PENDING'
+        else:
+            status = "COMPLETED"
+        task_instance.Status = status
         task_instance.CompletedDate = datetime.utcnow()
         task_instance.Result = result
         session.add(task_instance)
@@ -579,8 +583,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         wf_history = WorkflowHistory(
             InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
             TaskInstanceId=task_instance.TaskInstanceId,
-            Action=f'{task_name}  COMPLETED with result: {result}' if result else f'{task_name} COMPLETED',
-            NewStatus='COMPLETED',
+            Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
+            NewStatus=status,
             ActionBy=completed_by,
             ActionReason=completion_notes
         )
@@ -605,7 +609,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 session.add(next_task_instance)    
                 session.commit()
             if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
-                _complete_task(next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed')
+                _complete_task(next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', depth=depth+1)
 
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id}')
