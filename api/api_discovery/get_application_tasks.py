@@ -1,9 +1,12 @@
 from datetime import datetime
-from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
+from unittest import result
+from database.database_discovery.authentication_models import User
+from database.models import LaneDefinition, WFApplicationMessage, WFFile,WFUSERROLE, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from flask import app, request, jsonify, session
 import logging
+from httpx import get
 import safrs
-from sqlalchemy import false
+from sqlalchemy import false, text
 from functools import wraps
 from flask_cors import cross_origin
 from config.config import Args
@@ -43,29 +46,146 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return (end_date - start_date).days
         return 0
     
-    @app.route('/get_applications', methods=['GET','OPTIONS'])
+
+  
+
+    @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
-    def get_applications():
+    def get_application_tasks():
         """
         Retrieves the NCRC dashboard data
-        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656_applications?filter[application_id]=1&page[limit]=10&page[offset]=0' -Method GET).Content | ConvertFrom-Json
+        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:get_application_tasks?filter[application_id]=1&page[limit]=10&page[offset]=0' -Method GET).Content | ConvertFrom-Json
 
-        $response =Invoke-WebRequest -Uri 'http://localhost:5656/get_applications' -Method GET -Headers @{
-            Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDA5NDA1NSwianRpIjoiNTA5Y2RjNzgtMzU2Mi00NGQ5LTgzZGQtNjZjZGRkZDkyMDYyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzYwMDk0MDU1LCJleHAiOjE3NjAxMDczNzV9.57vIy55dKdHwdX130fVmw0TmukcY4bgjKOGqUIhnIP8'
+        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks' -Method GET -Headers @{
+            Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDExNzM2NSwianRpIjoiNjJhY2M0NWItNjBmZS00OWM3LWE5OTYtNzgwOGQ4YTIwZTlmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzYwMTE3MzY1LCJleHAiOjE3NjAxMzA2ODV9.8ErMooyVGIz7vPh1IOPSnm6BasQk0XfQpZou1sZIVrI'
         }
         $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
         $jsonString | ConvertFrom-Json
-
+        
         To pretty-print the full JSON response in Python (like jq), you can use:
         
         print(json.dumps(response.json(), indent=2))
-        # where 'response' is the result of requests.get(...)
+        # where 'response' is the result of requests.get(..., headers={"Authorization": "Bearer <token>"})
         """
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
         
         data = request.args if request.args else {}
+        user = get_jwt().get("sub", "unknown")
+        app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
+        filter = data.get('filter', {})
+        limit = int(data.get('page[limit]', 10))
+        offset = int(data.get('page[offset]', 0))
+        result = []
+       
+        GET_TASK_ACTION_VIEW = '''
+          SELECT  [TaskInstanceId] as taskInstanceId
+            , ap.[ApplicationID] as applicationId
+            ,td.[TaskName] as taskName
+            ,td.[TaskType] as taskType
+            ,td.[AssigneeRole] as assigneeRole
+            ,ra.Assignee as assignee
+            ,ap.CompanyId as companyId
+            ,ap.PlantID as plantId
+            ,co.NAME as companyName
+            ,pl.NAME as plantName
+            ,ld.LaneName as laneName
+            ,ti.[Status] as status
+            --,ti.[StartedDate] as startedDate
+            --,ti.[CompletedDate] as completedDate
+        FROM [dashboard].[dbo].[TaskInstances] ti,
+            TaskDefinitions td,
+            StageInstance si,
+            ProcessInstances pi,
+            WF_Applications ap,
+            LaneDefinitions ld,
+            ou_kash.dbo.plant_tb pl,
+            ou_kash.dbo.COMPANY_TB co,
+            roleAssigment ra
+            where ti.TaskId = td.TaskId and
+                ti.StageId = si.StageInstanceId  and
+                si.ProcessInstanceId = pi.InstanceId and
+                si.LaneId = ld.LaneId and 
+                ap.companyId = co.COMPANY_ID and
+                ap.plantID = pl.plant_ID and
+                pi.ApplicationId = ap.ApplicationID 
+                and ra.Role = td.AssigneeRole 
+                and  ti.status = 'PENDING' 
+                and  AssigneeRole != 'SYSTEM' 
+                and ra.Assignee = :assignee
+                and td.AssigneeRole in :assignee_role
+                order by  ap.applicationId, ti.taskInstanceId
+            OFFSET :offset ROWS
+            FETCH NEXT :limit ROWS ONLY
+        
+        '''
+        role_assignment = RoleAssigment.query.filter_by(Assignee=user).all() 
+        assigned_roles = [role.WF_Role.UserRole for role in role_assignment]
+        #user_roles = [role.WF_Role.UserRole for role in WFUSERROLE.query.filter_by(UserName=user).all()]
+        
+        # Convert list to comma-separated string for STRING_SPLIT function
+        assigned_roles_str = ','.join(assigned_roles) if assigned_roles else 'NONE'
+        
+        app_logger.info(f"Calling stored procedure with: assignee={user}, assignee_role={assigned_roles_str}")
+        
+        try:
+            tasks = session.execute(text('EXEC sp_GetTasksView @assignee = :assignee, @assignee_role = :assignee_role, @include_system_roles = :include_system_roles'), 
+                                    {"assignee": user, "assignee_role": assigned_roles_str, "include_system_roles": 1})
+            tasks = tasks.fetchall()
+            app_logger.info(f"Retrieved {len(tasks)} tasks from stored procedure")
+        except Exception as e:
+            app_logger.error(f"Error executing stored procedure: {e}")
+            return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
+        fields = tasks[0]._fields if len(tasks) > 0 else []
+        
+        # Convert tasks to dictionaries and add to result
+        for task in tasks:
+            task_dict = dict(zip(fields, task))
+            # Apply additional filtering if needed
+            task_role = task_dict.get("assigneeRole", "Unknown Role") 
+            if can_user_run_task(user, task_role, task_dict.get("applicationId")):
+                result.append(task_dict)
+        
+        return jsonify({"status": "ok", "data": result}), 200
+
+    def can_user_run_task(user, task_role, application_id):
+        if Args.instance.security_enabled == False:
+            return True
+        role_assignment = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
+        assigned_roles = [role.WF_Role.UserRole for role in role_assignment]
+        user_roles = [role.WF_Role.UserRole for role in WFUSERROLE.query.filter_by(UserName=user).all()]
+        #if user in user_roles:
+        #    return True
+        if task_role in assigned_roles:
+            return True
+        return False
+    
+    @app.route('/get_application_tasks_orig', methods=['GET','OPTIONS'])
+    @cross_origin()
+    @admin_required()
+    def get_application_tasks_orig():
+        """
+        Retrieves the NCRC dashboard data
+        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:get_application_tasks?filter[application_id]=1&page[limit]=10&page[offset]=0' -Method GET).Content | ConvertFrom-Json
+
+        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks' -Method GET -Headers @{
+            Authorization = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDA5NDA1NSwianRpIjoiNTA5Y2RjNzgtMzU2Mi00NGQ5LTgzZGQtNjZjZGRkZDkyMDYyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzYwMDk0MDU1LCJleHAiOjE3NjAxMDczNzV9.57vIy55dKdHwdX130fVmw0TmukcY4bgjKOGqUIhnIP8'
+        }
+        $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
+        $jsonString | ConvertFrom-Json
+        
+        To pretty-print the full JSON response in Python (like jq), you can use:
+        
+        print(json.dumps(response.json(), indent=2))
+        # where 'response' is the result of requests.get(..., headers={"Authorization": "Bearer <token>"})
+        """
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        
+        data = request.args if request.args else {}
+        user = get_jwt().get("sub", "unknown")
+        app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))
         offset = int(data.get('page[offset]', 0))
@@ -86,7 +206,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             modified_date = app_dict.get("ModifiedDate")
             days_between = calc_days_between(created_date, modified_date)
             #process_id = app_dict.get("ProcessId")
-            assigned_roles = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
+            role_assignment = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
+            assigned_roles = [role.WF_Role.UserRole for role in role_assignment]
             status = get_app_status(app_dict.get("Status"))
             app_row = {
                 "id": application_id,
@@ -106,7 +227,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "notes": len(app_messages) if app_messages else 0,
                 "aiSuggestions": {},
                 "assignedRC": app_source.get("AssignedTo","Unassigned"),
-                "assignedRoles": [{ role.WF_Role.UserRole: role.Assignee} for role in assigned_roles]
+                "assignedRoles": [{ role.WF_Role.UserRole: role.Assignee} for role in role_assignment]
             }
             
           
@@ -116,6 +237,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     app_logger.warning(f"Process instance not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Process instance not found for application id {application_id}"}), 404
                 stages =  [stage.to_dict() for stage in StageInstance.query.filter_by(ProcessInstanceId=process_instance.InstanceId).order_by(StageInstance.StageInstanceId).all()]
+                user_roles = [role.WF_Role.UserRole for role in RoleAssigment.query.filter_by(ApplicationId=application_id, Assignee=user).all()]
                 if stages is None:
                     app_logger.warning(f"Stages not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Stages not found for application id {application_id}"}), 404
@@ -124,15 +246,24 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     tasks = []
                     task_cnt = 0
                     completed_cnt = 0
+                    # Filter by role using the user to get the roles
+                    
+                    # Get tasks for the stage
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).order_by(TaskInstance.TaskInstanceId).all()
                     for task in task_instances:
-                        if task.TaskDef.AutoComplete == True or task.TaskDef.TaskType in ['START','END',"LANESTART",'LANEEND']:
+                        if task.TaskDef.AutoComplete == True or task.TaskDef.TaskType in ['START','END',"LANESTART",'LANEEND', 'GATEWAY']:
                             continue
+                        
                         task_cnt += 1 #if task.Status == 'PENDING' else 0
                         completed_cnt += 1 if task.Status == 'COMPLETED' else 0
                         created_date = task.StartedDate
                         modified_date = datetime.now() if task.Status != 'COMPLETED' else task.CompletedDate
                         days_between = calc_days_between(created_date, modified_date)
+                        task_role = task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" 
+                        if task_role not in assigned_roles:
+                            continue
+                        if task.Status != 'PENDING':
+                            continue
                         tasks.append(
                             {
                                 "name": task.TaskDef.TaskName if task and task.TaskDef else "Unknown Task Name",
@@ -147,24 +278,21 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "PreScript": getPreScript(task),
                                 #"PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
                                 "taskRoles": [
-                                    { "taskRole": task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" },
+                                    { "taskRole": task_role},
                                 ],
                             }
                         )
                     lane = LaneDefinition.query.filter_by(LaneId=stage['LaneId']).first()
-                    if lane: # and len(tasks) > 0:
+                    if lane and len(tasks) > 0:
                         lane_name = lane.to_dict()["LaneName"]
                         app_row["stages"].update({
                             lane_name: {
                                 "status": stage["Status"], 
-                                "description": lane.to_dict()["LaneDescription"],
                                 "progress": int(completed_cnt / task_cnt * 100) if task_cnt > 0 and  completed_cnt > 0 else 0,
                                 "tasks": tasks
                             }
                         })
-            app_row["aiSuggestions"] = {}
-            app_row["plantHistory"] = {}
-            app_row["relatedTasks"] = {}
+            
             app_row["application_messages"] =[]
             #task_messages = TaskComment.query.filter_by(ApplicationId=application_id).order_by(TaskComment.CreatedOn.desc()).limit(5).all()
             for am in app_messages:
@@ -179,7 +307,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "messageType": msg.get("MessageType"),
                     #"isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
-            files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id 
+            files = [] #WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id 
             app_row['files'] = []
             for file in files:
                 app_row['files'].append({
@@ -193,15 +321,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "ok", "data": result}), 200
     
     def getPreScript(task: TaskInstance):
-        default_script = ''' 
-            {
-                "Title": "{{ Title }}",
-                "Description": "{{ Description }}",
-                "ApplicationID": "{{ ApplicationID }}",
-                "TaskInstanceId": "{{ TaskInstanceId }}"
-            }
-        '''
-        script = task.TaskDef.PreScriptJson if task and task.TaskDef and task.TaskDef.PreScriptJson else default_script
+        script = task.TaskDef.PreScriptJson if task and task.TaskDef else {}
         from jinja2 import Template
         if script and isinstance(script, str) and '{{' in script:
             template = Template(script)

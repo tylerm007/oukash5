@@ -3,6 +3,7 @@ from database import models
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
 import logging
+from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
 import safrs
 from functools import wraps
 from flask_cors import cross_origin
@@ -47,11 +48,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         # Example PowerShell command to complete a task in the workflow
         $body = @{
-            task_instance_id = 102
+            task_instance_id = 454
             result = "Approved"             --  used by Condition tasks 
             completed_by = "tband"          -- user completing the task
             completion_notes = "Task completed successfully" -- writes to WFHistory
-        } | ConvertTo-Json
+        } | ConvertTo-Json)
 
         Invoke-RestMethod -Uri "http://localhost:5656/complete_task" -Method POST -Body $body -ContentType "application/json"
         """
@@ -116,50 +117,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_logger.info(f'All TaskFlows are valid for process: {process_name}')
         return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
 
-    @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
-    def get_application_tasks():
-        """
-        Retrieves all of the application tasks within their stages for a given application_id
-        
-        Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET).Content | ConvertFrom-Json
-
-        $response = Invoke-WebRequest -Uri 'http://localhost:5656/get_application_tasks?application_id=1' -Method GET
-        $jsonString = [System.Text.Encoding]::UTF8.GetString($response.Content)
-        $jsonString | ConvertFrom-Json
-        """
-        if request.method == 'OPTIONS':
-            return jsonify({"status": "ok"}), 200
-
-        data = request.args if request.args else {}
-        application_id = data.get('application_id', None)
-        if application_id is None:
-            return jsonify({"status": "error", "message": "application_id is required"}), 400
-        
-        app_logger.info('Retrieving NCRC dashboard data')
-        # Implement your logic to retrieve and return the NCRC dashboard data:
-        
-        app_obj = WFApplication.query.filter_by(ApplicationID=application_id).first()
-        if not app_obj:
-            return jsonify({"status": "error", "message": "Application not found"}), 404    
-        
-        process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
-        if process_instance is None:
-            return jsonify({"status": "error", "message": "Process instance not found or workflow not started"}), 404
-        result = {}
-        result['process_instance'] = process_instance.to_dict() if process_instance else {}
-        stage_list = process_instance.StageInstanceList if process_instance else []
-        result['stages'] = {}
-        #[stage.to_dict() if stage else {} for stage in stage_list]
-        for stage in stage_list:
-            result['stages'][stage.Lane.LaneName] = {
-                "stage_info": stage.to_dict() if stage else {},
-                "tasks": []
-            }
-            tasks = stage.TaskInstanceList if stage else []
-            for task in tasks:
-                result['stages'][stage.Lane.LaneName]['tasks'].append(task.to_dict() if task else {})
-        return jsonify({"status": "ok", "data": result}), 200
-
         # ==================================================
         #        END WORKFLOW ENDPOINTS (Flask)
         # ==================================================
@@ -212,6 +169,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         try:
             session.commit()
             session.flush()
+            if status == 'COMPLETED':
+                call_task_script_engine(task_instance)
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
             session.rollback()

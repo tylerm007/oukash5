@@ -99,6 +99,7 @@ echo -e "\033[32mSending request to complete task...\033[0m"
 RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
     -X POST \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDEwOTE4NywianRpIjoiNzdmNWU0ZTgtMWExMi00YmE2LWI5OTktZGQ5NjQ2YTJiOTk1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzYwMTA5MTg3LCJleHAiOjE3NjAxMjI1MDd9.agBto0Y1mKyX6igWFb3YhUbiE22TYYeyaJyBqOc8VPQ" \
     -d "$JSON_BODY" \
     "http://localhost:5656/complete_task")
 

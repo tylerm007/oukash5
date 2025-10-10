@@ -75,7 +75,7 @@ def set_application_attribute(application_id, name, value, access_token:str = No
     app_logger.error(f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
     return False
 
-def set_task_attribute(task_instance_id, name, value) -> bool:
+def set_task_attribute(task_instance_id, name, value, access_token:str = None) -> bool:
     ''' Set an attribute of the TaskInstance to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
@@ -92,7 +92,8 @@ def set_task_attribute(task_instance_id, name, value) -> bool:
     headers = {
         'Content-Type': 'application/json'
     }
-    
+    if access_token:
+        headers['Authorization'] = access_token
     args = config.Args
     server = args.swagger_host
     port = args.port
@@ -105,7 +106,7 @@ def set_task_attribute(task_instance_id, name, value) -> bool:
     return False
 
 
-def set_stage_attribute(stage_id, name, value) -> bool:
+def set_stage_attribute(stage_id, name, value, access_token:str = None) -> bool:
     ''' Set an attribute of the StageInstance to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
@@ -122,7 +123,8 @@ def set_stage_attribute(stage_id, name, value) -> bool:
     headers = {
         'Content-Type': 'application/json'
     }
-    
+    if access_token:
+        headers['Authorization'] = access_token
     args = config.Args
     server = args.swagger_host
     port = args.port
@@ -321,6 +323,47 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
         else:
             app_logger.warning(f'No task found with task_id {task_id}') 
 
+def call_task_script_engine(row: models.TaskInstance, parent_instance: models.TaskInstance = None):
+        task_id = row.TaskInstanceId
+        stage_id = row.StageId
+        task_def = row.TaskDef
+        script = task_def.PreScriptJson or None
+        if not script or script == '':
+            return None
+        if parent_instance:
+            result_data = parent_instance.ResultData if "ResultData" in dir(parent_instance) else {}
+            if result_data:
+                row.ResultData.update(result_data)
+                app_logger.info(f'Inheriting ResultData from parent task {parent_instance.TaskInstanceId}')
+               
+        # collect prior context from dependent tasks and create a union of ResultData
+        application_id = row.Stage.ProcessInstance.ApplicationId
+        se = python_engine.PythonScriptEngine()
+        data = row.ResultData or {}
+        task = row.to_dict()
+        access_token = request.headers.get("Authorization")
+        # Get current state to use in script calls
+        context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
+        external_context = {"get_application": get_application,
+                            "set_application_attribute":set_application_attribute,
+                            "set_stage_attribute":set_stage_attribute,     
+                            "set_task_attribute":set_task_attribute,
+                            "models":models,
+                            "app_logger":app_logger,
+                            "datetime":datetime,
+                            "Decimal":Decimal}
+        try:
+            r = se.execute(script=script, task=context, external_context=external_context)
+            if r:
+                result = r.get('data', None)
+                app_logger.info(f'Script executed successfully for task_id {task_id}')
+                #row.ResultData = result
+                app_logger.info(f'Script execution Result: {result}')
+                return result
+        except Exception as e:
+            app_logger.error(f'Error executing script for task_id {task_id}: {e}')
+            return None
+    
 def declare_logic():
     pass
     # A TaskInstance can only be set to 'Pending' if all its from dependencies are 'COMPLETED'
@@ -332,4 +375,4 @@ def declare_logic():
     # TaskInstance PreScriptJson and PostScriptJson execution are called before and after row update
     # they set the Result and ResultData fields respectively with context data
     #Rule.row_event(on_class=models.TaskInstance,calling=update_next_task)
-    Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)
+    #Rule.after_flush_row_event(on_class=models.TaskInstance, calling=call_script_engine_post)

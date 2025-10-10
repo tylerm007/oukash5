@@ -94,9 +94,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         # Extract variables from request.args
         data = request.get_json()
+        user = get_jwt().get("sub", "unknown")
         process_name = data.get('process_name', "OU Application Init")
         application_id = data.get('application_id')
-        started_by = data.get('started_by', 'system')
+        started_by = data.get('started_by', user)
         priority = data.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
         app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')
         return _start_workflow(process_name, int(application_id), started_by, priority)
