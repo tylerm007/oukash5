@@ -692,13 +692,13 @@ INSERT INTO WF_QuoteItems (QuoteID, Description, Amount, SortOrder) VALUES
 (1, 'Ingredient Analysis (10 ingredients)', 550.00, 3);
 
 -- Insert Files
-INSERT INTO WF_Files (ApplicationID, FileName, FileType, FileSize, UploadedDate, Tag, IsProcessed, RecordCount) VALUES
-(1, 'Application for OU Kosher Certification - Test.pdf', 'APP', '245 KB', '2025-07-17', 'Application Form', 1, NULL),
-(1, 'happycow IngredientOUKosher.xlsx', 'ING', '12 KB', '2025-07-17', 'Ingredient List', 1, 2),
-(1, 'happycow BrandsOUKosher.xlsx', 'PROD', '8 KB', '2025-07-17', 'Brand/Product List', 1, 2),
-(1, 'Ingredient happycowOUKosher 1.xlsx', 'ING', '15 KB', '2025-07-17', 'Ingredient List (Additional)', 1, 5),
-(1, 'happycow BrandsOUKosher 1.xlsx', 'PROD', '9 KB', '2025-07-17', 'Brand/Product List (Additional)', 1, 2),
-(1, 'Screen List Matrix VR2Screens.csv', 'OTHER', '3 KB', '2025-07-17', 'Reference Data', 1, NULL);
+INSERT INTO WF_Files (ApplicationID, FileName, FileType, FileSize, UploadedDate, Tag, IsProcessed, RecordCount, FilePath) VALUES
+(1, 'Application for OU Kosher Certification - Test.pdf', 'APP', '245 KB', '2025-07-17', 'Application Form', 1, NULL,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\6295465435286943843.pdf'),
+(1, 'happycow IngredientOUKosher.xlsx', 'ING', '12 KB', '2025-07-17', 'Ingredient List', 1, 2,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\INGREDIENT Application_old.xls'),
+(1, 'happycow BrandsOUKosher.xlsx', 'PROD', '8 KB', '2025-07-17', 'Brand/Product List', 1, 2,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\PRODUCT Application.xlsx'),
+(1, 'Ingredient happycowOUKosher 1.xlsx', 'ING', '15 KB', '2025-07-17', 'Ingredient List (Additional)', 1, 5,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\INGREDIENT Application_old.xls'),
+(1, 'happycow BrandsOUKosher 1.xlsx', 'PROD', '9 KB', '2025-07-17', 'Brand/Product List (Additional)', 1, 2,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\PRODUCT Application.xlsx'),
+(1, 'Screen List Matrix VR2Screens.csv', 'OTHER', '3 KB', '2025-07-17', 'Reference Data', 1, NULL,'c:\Users\Tyler.Band\OneDrive - Union of Orthodox Jewish Congregations of America\NCRC Dashboard\JotFormDocs\Screen List Matrix VR2Screens.csv');
 
 -- Insert Messages
 ---NSERT INTO WF_Messages (ApplicationID, FromUser, ToUser, MessageText, MessageType, Priority, SentDate) VALUES
