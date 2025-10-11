@@ -114,7 +114,7 @@ def set_stage_attribute(stage_id, name, value, access_token:str = None) -> bool:
     data = {
         "data": {
             "attributes": {
-                "Status": f"{value}"
+                f"{name}": f"{value}"
             },
             "type": "StageInstance",
             "id": f"{stage_id}"

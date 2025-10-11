@@ -54,6 +54,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/start_workflow', methods=['POST','OPTIONS'])
     @cross_origin()
     @admin_required()
+    @jwt_required()
     def start_workflow():
         """
        Start a new workflow process for a given application.
@@ -244,7 +245,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     process_instance_id = process_instance.InstanceId
     # Insert into ProcessInstances
     app_logger.info(f'New ProcessInstance InstanceId: {process_instance_id}')
-
+    access_token = request.headers.get('Authorization')
     start_instance_id = None
     # use TaskFlow to only create starting tasks
     LaneDefinitions = LaneDefinition.query.filter_by(ProcessId=process_definition_id).order_by(LaneDefinition.LaneId).all()
@@ -292,7 +293,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
     if start_instance_id is None:
         raise Exception(f'Start TaskInstance not found for process: {process_name}')    
-    _complete_task(start_instance_id, 'Started', 'system', 'Workflow started')
+    _complete_task(start_instance_id, 'Started', 'system', 'Workflow started', access_token)
     
     role_assignment = models.RoleAssigment(
         ApplicationId=application.ApplicationID,
