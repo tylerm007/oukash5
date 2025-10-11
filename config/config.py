@@ -186,6 +186,15 @@ class Config:
     OKTA_REDIRECT_URI = os.getenv('OKTA_REDIRECT_URI', 'http://localhost:5656/auth/callback')
     ''' OKTA OAuth redirect URI '''
 
+    # Amazon Cognito
+    # Required Cognito Settings
+    COGNITO_REGION=os.getenv('COGNITO_REGION', 'us-east-1')
+    COGNITO_USER_POOL_ID=os.getenv('COGNITO_USER_POOL_ID', 'us-east-1_XXXXXXXXX')
+    COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', 'your-cognito-app-client-id')
+    COGNITO_CLIENT_SECRET=os.getenv('COGNITO_CLIENT_SECRET', 'your-cognito-app-client-secret')
+    COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'https://your-domain.auth.us-east-1.amazoncognito.com')
+    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'http://localhost:5656/auth/callback')
+
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
     SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER')  # type: ignore # type: str
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
@@ -196,11 +205,14 @@ class Config:
         from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         from security.authentication_provider.okta.auth_provider import Authentication_Provider as OKTA_Authentication_Provider
-        # typically, authentication_provider is [ keycloak | okta | sql ]
+        from security.authentication_provider.cognito.auth_provider import Authentication_Provider as COGNITO_Authentication_Provider
+        # typically, authentication_provider is [ keycloak | okta | cognito | sql ]
         if "keycloak" in str(SECURITY_PROVIDER).lower():
             SECURITY_PROVIDER = KC_Authentication_Provider
         elif "okta" in str(SECURITY_PROVIDER).lower():
             SECURITY_PROVIDER = OKTA_Authentication_Provider
+        elif "cognito" in str(SECURITY_PROVIDER).lower():
+            SECURITY_PROVIDER = COGNITO_Authentication_Provider
         else:
             SECURITY_PROVIDER = SQL_Authentication_Provider
     
@@ -349,6 +361,12 @@ class Args():
         self.n8n_producer = Config.N8N_PRODUCER
         self.verbose = False
         self.create_and_run = False
+        self.cognito_region = Config.COGNITO_REGION
+        self.cognito_user_pool_id = Config.COGNITO_USER_POOL_ID
+        self.cognito_client_id = Config.COGNITO_CLIENT_ID
+        self.cognito_client_secret = Config.COGNITO_CLIENT_SECRET
+        self.cognito_domain = Config.COGNITO_DOMAIN
+        self.cognito_redirect_uri = Config.COGNITO_REDIRECT_URI
 
     # KEYCLOAK ARGS
     @property
@@ -698,7 +716,51 @@ class Args():
     @okta_redirect_uri.setter
     def okta_redirect_uri(self, value: str):
         self.flask_app.config["OKTA_REDIRECT_URI"] = value
-    
+    # Cognito Args
+    @property
+    def cognito_region(self) -> str:
+        return self.flask_app.config["COGNITO_REGION"]
+    @cognito_region.setter
+    def cognito_region(self, value: str):
+        self.flask_app.config["COGNITO_REGION"] = value
+
+    @property
+    def cognito_user_pool_id(self) -> str:
+        return self.flask_app.config["COGNITO_USER_POOL_ID"]
+    @cognito_user_pool_id.setter
+    def cognito_user_pool_id(self, value: str):
+        self.flask_app.config["COGNITO_USER_POOL_ID"] = value
+
+    @property
+    def cognito_client_id(self) -> str:
+        return self.flask_app.config["COGNITO_CLIENT_ID"]
+
+    @cognito_client_id.setter
+    def cognito_client_id(self, value: str):
+        self.flask_app.config["COGNITO_CLIENT_ID"] = value
+
+    @property
+    def cognito_client_secret(self) -> str:
+        return self.flask_app.config["COGNITO_CLIENT_SECRET"]
+    @cognito_client_secret.setter
+    def cognito_client_secret(self, value: str):
+        self.flask_app.config["COGNITO_CLIENT_SECRET"] = value
+
+
+    @property
+    def cognito_domain(self) -> str:
+        return self.flask_app.config["COGNITO_DOMAIN"]
+    @cognito_domain.setter
+    def cognito_domain(self, value: str):
+        self.flask_app.config["COGNITO_DOMAIN"] = value
+
+    @property
+    def cognito_redirect_uri(self) -> str:
+        return self.flask_app.config["COGNITO_REDIRECT_URI"]
+    @cognito_redirect_uri.setter
+    def cognito_redirect_uri(self, value: str):
+        self.flask_app.config["COGNITO_REDIRECT_URI"] = value
+
     def __str__(self) -> str:
         rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
             f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
