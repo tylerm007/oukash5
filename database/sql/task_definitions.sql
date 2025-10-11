@@ -190,3 +190,32 @@ GO
 --EXEC sp_add_flow @from_name = 'Init App End', @to_name = 'Start Certification Stage', @condition = 'None';
 
 GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(appliction_id,"Status","INP", access_token)'
+where TaskType = 'START';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(appliction_id,"Status","COMPL", access_token)'
+where TaskType = 'END';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_stage_attribute(stage_id,"Status","IN_PROGRESS", access_token)'
+where TaskType = 'LANESTART';
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_stage_attribute(stage_id,"Status","COMPLETED", access_token)'
+where TaskType = 'LANEEND';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'if task["Result"] == "YES":\n    set_application_attribute(application_id,"Status","WTH", access_token)'
+where TaskName = 'to Withdrawn Y/N';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'if task["Result"] == "YES":\n    set_application_attribute(application_id,"Status","WTH", access_token)'
+where TaskName = 'Withdraw Application';
+GO

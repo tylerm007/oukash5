@@ -52,6 +52,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
+    @jwt_required()
     def get_application_tasks():
         """
         Retrieves the NCRC dashboard data
@@ -130,8 +131,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f"Calling stored procedure with: assignee={user}, assignee_role={assigned_roles_str}")
         
         try:
-            tasks = session.execute(text('EXEC sp_GetTasksView @assignee = :assignee, @assignee_role = :assignee_role, @include_system_roles = :include_system_roles'), 
-                                    {"assignee": user, "assignee_role": assigned_roles_str, "include_system_roles": 1})
+            tasks = session.execute(text('EXEC sp_GetTasksPerUser @username = :username'),{"username": user})
             tasks = tasks.fetchall()
             app_logger.info(f"Retrieved {len(tasks)} tasks from stored procedure")
         except Exception as e:

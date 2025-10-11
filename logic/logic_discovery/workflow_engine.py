@@ -114,7 +114,7 @@ def set_stage_attribute(stage_id, name, value, access_token:str = None) -> bool:
     data = {
         "data": {
             "attributes": {
-                f"{name}": f"{value}"
+                "Status": f"{value}"
             },
             "type": "StageInstance",
             "id": f"{stage_id}"
@@ -323,46 +323,45 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
         else:
             app_logger.warning(f'No task found with task_id {task_id}') 
 
-def call_task_script_engine(row: models.TaskInstance, parent_instance: models.TaskInstance = None):
-        task_id = row.TaskInstanceId
-        stage_id = row.StageId
-        task_def = row.TaskDef
-        script = task_def.PreScriptJson or None
-        if not script or script == '':
-            return None
-        if parent_instance:
-            result_data = parent_instance.ResultData if "ResultData" in dir(parent_instance) else {}
-            if result_data:
-                row.ResultData.update(result_data)
-                app_logger.info(f'Inheriting ResultData from parent task {parent_instance.TaskInstanceId}')
-               
-        # collect prior context from dependent tasks and create a union of ResultData
-        application_id = row.Stage.ProcessInstance.ApplicationId
-        se = python_engine.PythonScriptEngine()
-        data = row.ResultData or {}
-        task = row.to_dict()
-        access_token = request.headers.get("Authorization")
-        # Get current state to use in script calls
-        context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
-        external_context = {"get_application": get_application,
-                            "set_application_attribute":set_application_attribute,
-                            "set_stage_attribute":set_stage_attribute,     
-                            "set_task_attribute":set_task_attribute,
-                            "models":models,
-                            "app_logger":app_logger,
-                            "datetime":datetime,
-                            "Decimal":Decimal}
-        try:
-            r = se.execute(script=script, task=context, external_context=external_context)
-            if r:
-                result = r.get('data', None)
-                app_logger.info(f'Script executed successfully for task_id {task_id}')
-                #row.ResultData = result
-                app_logger.info(f'Script execution Result: {result}')
-                return result
-        except Exception as e:
-            app_logger.error(f'Error executing script for task_id {task_id}: {e}')
-            return None
+def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_instance: models.TaskInstance = None):
+    task_id = row.TaskInstanceId
+    stage_id = row.StageId
+    task_def = row.TaskDef
+    script = task_def.PostScriptJson or None
+    if not script or script == '':
+        return None
+    if parent_instance:
+        result_data = parent_instance.ResultData if "ResultData" in dir(parent_instance) else {}
+        if result_data:
+            row.ResultData.update(result_data)
+            app_logger.info(f'Inheriting ResultData from parent task {parent_instance.TaskInstanceId}')
+            
+    # collect prior context from dependent tasks and create a union of ResultData
+    application_id = row.Stage.ProcessInstance.ApplicationId
+    se = python_engine.PythonScriptEngine()
+    data = row.ResultData or {}
+    task = row.to_dict()
+    # Get current state to use in script calls
+    context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
+    external_context = {"get_application": get_application,
+                        "set_application_attribute":set_application_attribute,
+                        "set_stage_attribute":set_stage_attribute,     
+                        "set_task_attribute":set_task_attribute,
+                        "models":models,
+                        "app_logger":app_logger,
+                        "datetime":datetime,
+                        "Decimal":Decimal}
+    try:
+        r = se.execute(script=script, task=context, external_context=external_context)
+        if r:
+            result = r.get('data', None)
+            app_logger.info(f'Script executed successfully for task_id {task_id}')
+            #row.ResultData = result
+            app_logger.info(f'Script execution Result: {result}')
+            return result
+    except Exception as e:
+        app_logger.error(f'Error executing script for task_id {task_id}: {e}')
+        return None
     
 def declare_logic():
     pass

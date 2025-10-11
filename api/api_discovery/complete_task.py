@@ -42,6 +42,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
    
     @app.route('/complete_task', methods=['POST','OPTIONS'])
     @admin_required()
+    @jwt_required()
     def complete_task():
         """
         This will Complete a task in the workflow and trigger the next task(s) defined in TaskFlow as needed.
@@ -64,8 +65,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         completed_by = data.get("completed_by",'system')
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
+        access_token = request.headers.get("Authorization")
         app_logger.debug(f'Completing task: {task_instance_id} by {completed_by}')
-        return _complete_task(task_instance_id, result, completed_by, completion_notes)
+        return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, depth=0)
 
     
     @app.route('/validate_tasks', methods=['GET','OPTIONS'])
@@ -86,6 +88,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         '''
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200 
+        access_token = request.headers.get("Authorization")
         #data = request.args if request.args else {}
         process_name = request.args.get('process_name',"OU Application Init")
         if not process_name:
@@ -123,7 +126,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
   
 
 
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API', depth:int=0):
+def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
         '''Complete a task instance in the workflow and trigger the next task(s) as needed.'''
         # Find the task instance
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
@@ -169,8 +172,9 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         try:
             session.commit()
             session.flush()
+
             if status == 'COMPLETED':
-                call_task_script_engine(task_instance)
+                call_task_script_engine(task_instance, access_token)
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
             session.rollback()
@@ -207,7 +211,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 session.commit()
             if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
                 # RECURRSIVE CALL to complete the next task if AutoComplete is set
-                _complete_task(next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', depth=depth+1)
+                _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
 
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id}')

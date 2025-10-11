@@ -141,7 +141,7 @@ def declare_logic():
             row.status == 'Running'
             row.started_at = datetime.datetime.now()
     
-    Rule.row_event(on_class=models.StageInstance, calling=update_status)
+    #Rule.row_event(on_class=models.StageInstance, calling=update_status)
     #WF Application Dashboard
     '''
     Rule.count(derive=models.WFDashboard.count_completed,as_count_of=models.WFApplication, where="Status == 'Completed'")
@@ -213,7 +213,7 @@ def declare_logic():
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
         
-    Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
+    #Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
 
 
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)

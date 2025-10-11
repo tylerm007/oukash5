@@ -145,6 +145,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
                                 "TaskInstanceId": task.TaskInstanceId,
                                 "PreScript": getPreScript(task),
+                                "CompletedDate": task.CompletedDate,
                                 #"PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
                                 "taskRoles": [
                                     { "taskRole": task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" },
@@ -201,7 +202,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "TaskInstanceId": "{{ TaskInstanceId }}"
             }
         '''
-        script = task.TaskDef.PreScriptJson if task and task.TaskDef and task.TaskDef.PreScriptJson else default_script
+        script = task.TaskDef.PreScriptJson if task and task.TaskDef and task.TaskDef.PreScriptJson else {}
         from jinja2 import Template
         if script and isinstance(script, str) and '{{' in script:
             template = Template(script)
