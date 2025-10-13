@@ -27,7 +27,7 @@ RUN apt-get update && \
 
 # Install pyodbc
 RUN pip install --upgrade pip && \
-    pip install pyodbc==5.2.0
+    pip install pyodbc==5.2.0 boto3 cryptography PyJWT
 
 #RUN rmdir -r /home/api_logic_project/ui/app
 # enables docker to write into container, for sqlite

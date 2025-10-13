@@ -2,7 +2,6 @@ from datetime import datetime
 from database.models import TaskDefinition, TaskInstance
 from integration.workflow import python_engine
 from flask import app, request, jsonify, session
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 import logging
 import safrs
 from config.config import Args
@@ -17,6 +16,7 @@ import database.models as models
 import requests
 import config.config as config
 from flask import g
+from dotmap import DotMap
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
@@ -339,8 +339,8 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     # collect prior context from dependent tasks and create a union of ResultData
     application_id = row.Stage.ProcessInstance.ApplicationId
     se = python_engine.PythonScriptEngine()
-    data = row.ResultData or {}
-    task = row.to_dict()
+    data = DotMap(row.ResultData) or DotMap({})
+    task = DotMap(row.to_dict())
     # Get current state to use in script calls
     context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
     external_context = {"get_application": get_application,
@@ -354,11 +354,10 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     try:
         r = se.execute(script=script, task=context, external_context=external_context)
         if r:
-            result = r.get('data', None)
+            data = r.get('data', None)
             app_logger.info(f'Script executed successfully for task_id {task_id}')
-            #row.ResultData = result
-            app_logger.info(f'Script execution Result: {result}')
-            return result
+            app_logger.info(f'Script execution Result: {data}')
+            return data
     except Exception as e:
         app_logger.error(f'Error executing script for task_id {task_id}: {e}')
         return None

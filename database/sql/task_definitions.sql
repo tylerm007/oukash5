@@ -192,30 +192,36 @@ GO
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(application_id,"Status","INP", access_token)'
+set PostScriptJson = 'data.Result = set_application_attribute(application_id,"Status","INP", access_token)'
 where TaskType = 'START';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(application_id,"Status","COMPL", access_token)'
+set PostScriptJson = 'data.Result = set_application_attribute(application_id,"Status","COMPL", access_token)'
 where TaskType = 'END';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_stage_attribute(stage_id,"Status","IN_PROGRESS", access_token)'
+set PostScriptJson = 'data.Result = set_stage_attribute(stage_id,"Status","IN_PROGRESS", access_token)'
 where TaskType = 'LANESTART';
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_stage_attribute(stage_id,"Status","COMPLETED", access_token)'
+set PostScriptJson = 'data.Result = set_stage_attribute(stage_id,"Status","COMPLETED", access_token)'
 where TaskType = 'LANEEND';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'if task["Result"] == "YES":\n    set_application_attribute(application_id,"Status","WTH", access_token)'
+set PostScriptJson = 'if task.Result == "YES":\n    data.Result = set_application_attribute(application_id,"Status","WTH", access_token)'
 where TaskName = 'to Withdrawn Y/N';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'if task["Result"] == "YES":\n    set_application_attribute(application_id,"Status","WTH", access_token)'
+set PostScriptJson = 'if task.Result == "YES":\n    data.Result = set_application_attribute(application_id,"Status","WTH", access_token)'
 where TaskName = 'Withdraw Application';
+GO
+
+
+UPDATE TaskDefinitions
+set   PostScriptJson = 'data.Result = set_application_attribute(application_id,"verify_company","1", access_token)' 
+where TaskName = 'verify Company';
 GO

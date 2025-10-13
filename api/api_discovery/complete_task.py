@@ -170,11 +170,17 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_instance.Result = result
         session.add(task_instance)
         try:
+            # Call PostScriptJson if defined
+            if status == 'COMPLETED':
+                data = call_task_script_engine(task_instance, access_token)
+                task_instance.ResultData = data.Result if data and 'Result' in data else None
+                task_instance.Status = data.Status if data and 'Status' in data else status
+                if task_instance.ResultData and task_instance.ResultData is not None and task_instance.ResultData == False:
+                    task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'Task script returned False result'
+                    return jsonify({"status": "error", "message": f'Task script returned false result for task {task_name} - {task_instance_id}'}), 400
+                   
             session.commit()
             session.flush()
-
-            if status == 'COMPLETED':
-                call_task_script_engine(task_instance, access_token)
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
             session.rollback()

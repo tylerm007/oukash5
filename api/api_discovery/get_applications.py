@@ -84,10 +84,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             # Calculate days between CreateDate and ModifiedDate
             created_date = app_dict.get("CreatedDate")
             modified_date = app_dict.get("ModifiedDate")
-            days_between = calc_days_between(created_date, modified_date)
+            status = get_app_status(app_dict.get("Status"))
+            days_between = calc_days_between(created_date, modified_date)  if status == "INP" else 0
             #process_id = app_dict.get("ProcessId")
             assigned_roles = RoleAssigment.query.filter_by(ApplicationId=application_id).all() 
-            status = get_app_status(app_dict.get("Status"))
+            
             app_row = {
                 "id": application_id,
                 "company": app_source.get("CompanyName"),
@@ -99,7 +100,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "status": status,
                 "assignedRC": app_source.get("AssignedTo"),
                 "daysInStage": days_between,
-                "overdue": days_between > 10,
+                "overdue": days_between > 1 if status == "INP" else False,
                 "lastUpdate": modified_date,
                 "nextAction": "Follow up on contract",
                 "documents": len(files) if files else 0,
@@ -141,6 +142,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
                                 "assignee": task.AssignedTo,
                                 "daysActive": days_between,
+                                "overdue": days_between > 1 and task.Status != 'COMPLETED',
+                                "createdDate": task.StartedDate,
                                 "description": task.TaskDef.Description if task and task.TaskDef else " ",
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
                                 "TaskInstanceId": task.TaskInstanceId,

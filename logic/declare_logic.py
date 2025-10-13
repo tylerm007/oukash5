@@ -1,7 +1,5 @@
 import datetime, os
 from decimal import Decimal
-from httpcore import request
-import requests
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 import database.models as models
@@ -11,6 +9,7 @@ from logic.load_verify_rules import load_verify_rules
 import integration.kafka.kafka_producer as kafka_producer
 import logging
 from config.config import Config
+from dotmap import DotMap
 
 app_logger = logging.getLogger(__name__)
 
