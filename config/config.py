@@ -118,7 +118,14 @@ class Config:
     CREATED_PORT = "5656"
     CREATED_SWAGGER_PORT = CREATED_PORT
     """ for codespaces - see values in launch config """
-    CREATED_HTTP_SCHEME = "http"
+    CREATED_HTTP_SCHEME = "http"  # http | https - overridden by args, env variable APILOGICPROJECT_HTTP_SCHEME
+    
+    # SSL Configuration
+    SSL_CERT_PATH = environ.get("FLASK_SSL_CERT", "security/ssl/server.crt")
+    SSL_KEY_PATH = environ.get("FLASK_SSL_KEY", "security/ssl/server.key")
+    SSL_PFX_PATH = environ.get("FLASK_SSL_PFX", "security/ssl/server.pfx")
+    SSL_PFX_PASSWORD = environ.get("FLASK_SSL_PFX_PASSWORD", "flask-dev-cert")
+    USE_SSL = environ.get("FLASK_USE_SSL", "true").lower() in ("true", "1", "yes", "on")
 
 
     # General Config
@@ -183,17 +190,17 @@ class Config:
     ''' OKTA OAuth client ID '''
     OKTA_CLIENT_SECRET = os.getenv('OKTA_CLIENT_SECRET', 'your-client-secret')
     ''' OKTA OAuth client secret '''
-    OKTA_REDIRECT_URI = os.getenv('OKTA_REDIRECT_URI', 'http://localhost:5656/auth/callback')
+    OKTA_REDIRECT_URI = os.getenv('OKTA_REDIRECT_URI', 'https://192.68.13.31:5656/auth/callback')
     ''' OKTA OAuth redirect URI '''
 
     # Amazon Cognito
     # Required Cognito Settings
     COGNITO_REGION=os.getenv('COGNITO_REGION', 'us-east-1')
-    COGNITO_USER_POOL_ID=os.getenv('COGNITO_USER_POOL_ID', 'us-east-1_XXXXXXXXX')
-    COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', 'your-cognito-app-client-id')
-    COGNITO_CLIENT_SECRET=os.getenv('COGNITO_CLIENT_SECRET', 'your-cognito-app-client-secret')
-    COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'https://your-domain.auth.us-east-1.amazoncognito.com')
-    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'http://localhost:5656/auth/callback')
+    COGNITO_USER_POOL_ID=os.getenv('COGNITO_USER_POOL_ID', 'us-east-1_d38hiE2QM')
+    COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', '4daf1daa8hcs79ts7rugo362lt')
+    COGNITO_CLIENT_SECRET=os.getenv('COGNITO_CLIENT_SECRET', 'rev05ljd8067sbigkhlk153eluh78qgsh8dfptueehdalk42dmg')
+    COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com')
+    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'https://192.168.13.31:5656/auth/callback')
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
     SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER')  # type: ignore # type: str
@@ -341,6 +348,13 @@ class Args():
         self.http_scheme = Config.CREATED_HTTP_SCHEME
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
+        
+        # SSL Configuration
+        self.ssl_cert_path = Config.SSL_CERT_PATH
+        self.ssl_key_path = Config.SSL_KEY_PATH  
+        self.ssl_pfx_path = Config.SSL_PFX_PATH
+        self.ssl_pfx_password = Config.SSL_PFX_PASSWORD
+        self.use_ssl = Config.USE_SSL
         self.kafka_consumer_group = Config.KAFKA_CONSUMER_GROUP
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
@@ -484,6 +498,57 @@ class Args():
     @api_logic_server_home.setter
     def api_logic_server_home(self, a):
         self.flask_app.config["APILOGICSERVER_HOME"] = a
+
+    # SSL Properties
+    @property
+    def use_ssl(self) -> bool:
+        """ whether to use SSL/HTTPS """
+        return self.flask_app.config.get("USE_SSL", False)
+    
+    @use_ssl.setter
+    def use_ssl(self, a):
+        self.flask_app.config["USE_SSL"] = a
+        # Automatically update http_scheme when SSL is enabled
+        if a:
+            self.http_scheme = "https"
+        else:
+            self.http_scheme = "http"
+
+    @property
+    def ssl_cert_path(self) -> str:
+        """ path to SSL certificate file """
+        return self.flask_app.config.get("SSL_CERT_PATH", "security/ssl/server.crt")
+    
+    @ssl_cert_path.setter
+    def ssl_cert_path(self, a):
+        self.flask_app.config["SSL_CERT_PATH"] = a
+
+    @property
+    def ssl_key_path(self) -> str:
+        """ path to SSL private key file """
+        return self.flask_app.config.get("SSL_KEY_PATH", "security/ssl/server.key")
+    
+    @ssl_key_path.setter
+    def ssl_key_path(self, a):
+        self.flask_app.config["SSL_KEY_PATH"] = a
+
+    @property
+    def ssl_pfx_path(self) -> str:
+        """ path to SSL PFX file (Windows) """
+        return self.flask_app.config.get("SSL_PFX_PATH", "security/ssl/server.pfx")
+    
+    @ssl_pfx_path.setter
+    def ssl_pfx_path(self, a):
+        self.flask_app.config["SSL_PFX_PATH"] = a
+
+    @property
+    def ssl_pfx_password(self) -> str:
+        """ password for SSL PFX file """
+        return self.flask_app.config.get("SSL_PFX_PASSWORD", "flask-dev-cert")
+    
+    @ssl_pfx_password.setter
+    def ssl_pfx_password(self, a):
+        self.flask_app.config["SSL_PFX_PASSWORD"] = a
 
 
     @property

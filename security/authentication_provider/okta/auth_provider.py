@@ -28,8 +28,8 @@ from typing import Optional, Dict, Any
 # OKTA auth provider
 # **********************
 
-db = None
-session = None
+db = safrs.DB 
+session = db.session 
 
 logger = logging.getLogger(__name__)
 

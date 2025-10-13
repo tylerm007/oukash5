@@ -192,12 +192,12 @@ GO
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(appliction_id,"Status","INP", access_token)'
+set PostScriptJson = 'set_application_attribute(application_id,"Status","INP", access_token)'
 where TaskType = 'START';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(appliction_id,"Status","COMPL", access_token)'
+set PostScriptJson = 'set_application_attribute(application_id,"Status","COMPL", access_token)'
 where TaskType = 'END';
 GO
 

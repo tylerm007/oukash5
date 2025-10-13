@@ -12,7 +12,8 @@ from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required as jwt_required_ori
 import flask_jwt_extended as flask_jwt_extended
-from flask import jsonify, g, request, redirect, session, url_for
+from flask import jsonify, g, request, redirect, url_for
+from flask import session
 import requests
 import json
 import sys
@@ -33,9 +34,9 @@ import urllib.parse
 # **********************
 
 db = None
-session = None
+db_session = None  # Renamed to avoid conflict with Flask session
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('api_logic_server_app')
 
 class ALSError(JsonapiError):
     def __init__(self, message, status_code=HTTPStatus.BAD_REQUEST):
@@ -61,7 +62,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         flask_app.config['JWT_SECRET_KEY'] = "ApiLogicServerSecret"
         flask_app.config['JWT_ALGORITHM'] = 'HS256'
         flask_app.config['JWT_IDENTITY_CLAIM'] = 'sub'
-        flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=222)
+        flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=1440)  # 24 hours
         flask_app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
         
         logger.info("Configured Amazon Cognito JWT authentication:")
@@ -160,24 +161,53 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         @flask_app.route('/auth/login', methods=['GET', 'POST'])
         def cognito_login():
             """Redirect to Cognito Hosted UI for authentication"""
-            import secrets
-            state = secrets.token_urlsafe(32)
-            session['oauth_state'] = state
-            
-            # Build Cognito authorization URL
-            auth_params = {
-                'client_id': Args.instance.cognito_client_id,
-                'response_type': 'code',
-                'scope': 'openid profile email aws.cognito.signin.user.admin',
-                'redirect_uri': Args.instance.cognito_redirect_uri.strip('/'),
-                'state': state
-            }
-            
-            # Cognito Hosted UI URL format
-            auth_url = f"{Args.instance.cognito_domain}/oauth2/authorize?" + urllib.parse.urlencode(auth_params)
-            
-            logger.info(f"Redirecting to Cognito SSO: {auth_url}")
-            return redirect(auth_url)
+            try:
+                # Check if Cognito is properly configured
+                if not getattr(Args.instance, 'cognito_client_id', None):
+                    return jsonify({
+                        'error': 'Cognito not configured',
+                        'message': 'COGNITO_CLIENT_ID not set',
+                        'debug_url': f"{request.host_url}auth/debug"
+                    }), 500
+                
+                if not getattr(Args.instance, 'cognito_domain', None):
+                    return jsonify({
+                        'error': 'Cognito not configured', 
+                        'message': 'COGNITO_DOMAIN not set',
+                        'debug_url': f"{request.host_url}auth/debug"
+                    }), 500
+                
+                import secrets
+                state = secrets.token_urlsafe(32)
+                session['oauth_state'] = state
+                
+                # Build Cognito authorization URL
+                auth_params = {
+                    'client_id': Args.instance.cognito_client_id,
+                    'response_type': 'code',
+                    'scope': 'openid profile email phone', #aws.cognito.signin.user.admin',
+                    'redirect_uri': Args.instance.cognito_redirect_uri.strip('/'),
+                    'state': state
+                }
+                
+                # Cognito Hosted UI URL format
+                auth_url = f"{Args.instance.cognito_domain}/oauth2/authorize?" + urllib.parse.urlencode(auth_params)
+                
+                logger.info(f"Cognito login attempt:")
+                logger.info(f"  Auth URL: {auth_url}")
+                logger.info(f"  Redirect URI: {auth_params['redirect_uri']}")
+                logger.info(f"  Client ID: {auth_params['client_id'][:8]}...")
+                logger.info(f"  State: {state}")
+                
+                return redirect(auth_url)
+                
+            except Exception as e:
+                logger.error(f"Error in Cognito login: {e}")
+                return jsonify({
+                    'error': 'Login configuration error',
+                    'message': str(e),
+                    'debug_url': f"{request.host_url}auth/debug"
+                }), 500
         
         @flask_app.route('/auth/login-postman', methods=['GET'])
         def cognito_login_postman():
@@ -189,7 +219,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             auth_params = {
                 'client_id': Args.instance.cognito_client_id,
                 'response_type': 'code',
-                'scope': 'openid profile email aws.cognito.signin.user.admin',
+                'scope': 'openid profile email phone', #aws.cognito.signin.user.admin',
                 'redirect_uri': Args.instance.cognito_redirect_uri.strip('/'),
                 'state': state
             }
@@ -324,6 +354,49 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     'curl_example': f'curl -H "Authorization: Bearer {session.get("access_token", "TOKEN_HERE")}" http://localhost:5656/api/COMPANYTB'
                 }
             })
+
+        @flask_app.route('/auth/debug')
+        def cognito_debug():
+            """Debug endpoint to check Cognito configuration and troubleshoot 403 errors"""
+            try:
+                return jsonify({
+                    'cognito_configuration': {
+                        'region': getattr(Args.instance, 'cognito_region', 'NOT_SET'),
+                        'user_pool_id': getattr(Args.instance, 'cognito_user_pool_id', 'NOT_SET'),
+                        'client_id': getattr(Args.instance, 'cognito_client_id', 'NOT_SET')[:8] + '...' if getattr(Args.instance, 'cognito_client_id', None) else 'NOT_SET',
+                        'domain': getattr(Args.instance, 'cognito_domain', 'NOT_SET'),
+                        'redirect_uri': getattr(Args.instance, 'cognito_redirect_uri', 'NOT_SET'),
+                    },
+                    'current_request': {
+                        'host': request.host,
+                        'host_url': request.host_url,
+                        'url': request.url,
+                        'scheme': request.scheme
+                    },
+                    'session_info': {
+                        'session_keys': list(session.keys()) if session else [],
+                        'oauth_state': session.get('oauth_state', 'NOT_SET') if session else 'NO_SESSION',
+                        'authenticated': session.get('authenticated', False) if session else False
+                    },
+                    'troubleshooting': {
+                        'expected_callback_url': f"{request.host_url}auth/callback",
+                        'current_redirect_uri_config': getattr(Args.instance, 'cognito_redirect_uri', 'NOT_SET'),
+                        'match': f"{request.host_url}auth/callback" == getattr(Args.instance, 'cognito_redirect_uri', 'NOT_SET'),
+                        'common_issues': [
+                            '1. Redirect URI mismatch - must match exactly in Cognito app client',
+                            '2. Domain not configured in Cognito',
+                            '3. Client ID/Secret incorrect',
+                            '4. User Pool ID incorrect',
+                            '5. App client not properly configured'
+                        ]
+                    }
+                })
+            except Exception as e:
+                return jsonify({
+                    'error': 'Configuration check failed',
+                    'details': str(e),
+                    'message': 'Check your Cognito environment variables'
+                }), 500
 
     @staticmethod
     def _exchange_code_for_tokens(auth_code: str) -> Optional[Dict[str, str]]:
@@ -510,7 +583,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     def check_password(user: object, password: str) -> bool:
         """Check password for Cognito authentication"""
         if not password:
-            from flask import session, has_request_context
+            from flask import has_request_context
             if has_request_context() and 'user_id' in session:
                 return True
             return False
@@ -547,5 +620,4 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     @staticmethod
     def is_authenticated(request) -> bool:
         """Check if the current request is authenticated"""
-        from flask import session
         return 'user_id' in session and 'access_token' in session
