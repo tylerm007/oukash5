@@ -7,7 +7,7 @@ Write-Host "=============================================" -ForegroundColor Cyan
 # ⚠️ REPLACE THESE WITH YOUR REAL VALUES FROM AWS COGNITO CONSOLE ⚠️
 $env:COGNITO_REGION = "us-east-1"                                    # Your AWS region
 $env:COGNITO_USER_POOL_ID = "us-east-1_d38hiE2QM"                    # Replace with real User Pool ID
-$env:COGNITO_CLIENT_ID = "4daf1daa8hcs79ts7rugo362lt"                  # Replace with real Client ID
+$env:COGNITO_CLIENT_ID = "34sqr8ttgro6ego2117aflg9lr"                  # Replace with real Client ID
 $env:COGNITO_CLIENT_SECRET = "rev05ljd8067sbigkhlk153eluh78qgsh8dfptueehdalk42dmg"          # Replace with real Client Secret
 $env:COGNITO_DOMAIN = "https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com"  # Replace with real domain
 

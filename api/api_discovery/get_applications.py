@@ -149,6 +149,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "TaskInstanceId": task.TaskInstanceId,
                                 "PreScript": getPreScript(task),
                                 "CompletedDate": task.CompletedDate,
+                                "ErrorMessage": task.ErrorMessage,
                                 #"PostScript": task.TaskDef.PostScriptJson if task and task.TaskDef else {},
                                 "taskRoles": [
                                     { "taskRole": task.TaskDef.AssigneeRole if task and task.TaskDef else "Unknown Role" },

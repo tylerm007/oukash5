@@ -158,7 +158,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                     #,TaskInstance.StageId.in_(stages_list)
                 ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
-                    app_logger.error(f'Cannot complete task {task_name} - {task_instance_id}. Prior task {prior_task_id} is not COMPLETED.')
+                    app_logger.error(f'Cannot complete task  {task_name} - {task_instance_id}. Prior task {prior_task_instance.TaskDef.TaskName}-{prior_task_id} status is not COMPLETED.')
                     return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
         # Complete the task
         if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
@@ -170,17 +170,20 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_instance.Result = result
         session.add(task_instance)
         try:
+            session.commit()
+            session.flush()
             # Call PostScriptJson if defined
             if status == 'COMPLETED':
                 data = call_task_script_engine(task_instance, access_token)
-                task_instance.ResultData = data.Result if data and 'Result' in data else None
-                task_instance.Status = data.Status if data and 'Status' in data else status
-                if task_instance.ResultData and task_instance.ResultData is not None and task_instance.ResultData == False:
-                    task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'Task script returned False result'
-                    return jsonify({"status": "error", "message": f'Task script returned false result for task {task_name} - {task_instance_id}'}), 400
+                task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
+                if data.Result == False:
+                    task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
+                    task_instance.Status = 'PENDING'
+                    session.add(task_instance)
+                    session.commit()
+                    app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
+                    return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id}'}), 400
                    
-            session.commit()
-            session.flush()
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
             session.rollback()

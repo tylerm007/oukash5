@@ -15,12 +15,29 @@ from logic_bank.logic_bank import DeclareRule
 import database.models as models
 import requests
 import config.config as config
+from config.config import Args
 from flask import g
 from dotmap import DotMap
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
+
+def get_client_uri() -> str:
+    args = Args.instance
+    content =  '{http_type}://{swagger_host}:{port}'
+    if args.client_uri is not None:
+        content = content.replace(
+            '{http_type}://{swagger_host}:{port}',
+            args.client_uri
+        )
+        content = content.replace("{api}", args.api_prefix[1:])
+    else:
+        content = content.replace("{http_type}", args.http_scheme)
+        content = content.replace("{swagger_host}", args.swagger_host)
+        content = content.replace("{port}", str(args.swagger_port))  # note - codespaces requires 443 here (typically via args)
+        content = content.replace("{api}", args.api_prefix[1:])
+    return content
 
 def process_task_instance(task_instance: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
     new_task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
@@ -44,12 +61,12 @@ def process_task_instance(task_instance: models.TaskInstance, old_row: models.Ta
         #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
         return
 
-def set_application_attribute(application_id, name, value, access_token:str = None) -> bool:
+def set_application_attribute(application_id, name, value, data: DotMap) -> DotMap:
     ''' Set an attribute of the WFApplication to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
     '''
-    data = {
+    payload = {
         "data": {
             "attributes": {
                 f"{name}": f"{value}"
@@ -62,25 +79,27 @@ def set_application_attribute(application_id, name, value, access_token:str = No
         'Content-Type': 'application/json'
     }
 
-    if access_token:
-        headers['Authorization'] = access_token
-    args = config.Args
-    server = args.swagger_host
-    port = args.port
-    server_uri = "http://localhost:5656" #f"http://{server}:{port}"
-    response = requests.patch(f"{server_uri}/api/WFApplication/{application_id}", json=data, headers=headers)
+    if data.access_token:
+        headers['Authorization'] = data.access_token
+
+    server_uri = get_client_uri()
+    response = requests.patch(f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"Application {application_id} attribute {name} set to {value}")
-        return True
-    app_logger.error(f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
-    return False
+        data.Result = True
+        data.Message = f"Application {application_id} attribute {name} set to {value}"
+    else:
+        data.Result = False
+        data.ErrorMessage = f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
+        app_logger.error(f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
+    return data
 
-def set_task_attribute(task_instance_id, name, value, access_token:str = None) -> bool:
+def set_task_attribute(task_instance_id, name, value, data: DotMap) -> bool:
     ''' Set an attribute of the TaskInstance to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
     '''
-    data = {
+    payload = {
         "data": {
             "attributes": {
                 f"{name}": f"{value}"
@@ -92,26 +111,28 @@ def set_task_attribute(task_instance_id, name, value, access_token:str = None) -
     headers = {
         'Content-Type': 'application/json'
     }
-    if access_token:
-        headers['Authorization'] = access_token
-    args = config.Args
-    server = args.swagger_host
-    port = args.port
-    server_uri = f"http://{server}:{port}"
-    response = requests.patch(f"{server_uri}/api/TaskInstance/{task_instance_id}", json=data, headers=headers)
+    if data.access_token:
+        headers['Authorization'] = data.access_token
+   
+    server_uri = get_client_uri()
+    response = requests.patch(f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"TaskInstance {task_instance_id} attribute {name} set to {value}")
-        return True
-    app_logger.error(f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
-    return False
+        data.Result = True
+        data.Message = f"TaskInstance {task_instance_id} attribute {name} set to {value}"
+    else:
+        data.Result = False
+        data.ErrorMessage = f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
+        app_logger.error(f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
+    return data
 
 
-def set_stage_attribute(stage_id, name, value, access_token:str = None) -> bool:
+def set_stage_attribute(stage_id, name, value, data:DotMap) -> DotMap:
     ''' Set an attribute of the StageInstance to a new value
         The simple setattr does not work and we cannot commit()
         will try PATCH
     '''
-    data = {
+    payload = {
         "data": {
             "attributes": {
                 f"{name}": f"{value}"
@@ -123,18 +144,20 @@ def set_stage_attribute(stage_id, name, value, access_token:str = None) -> bool:
     headers = {
         'Content-Type': 'application/json'
     }
-    if access_token:
-        headers['Authorization'] = access_token
-    args = config.Args
-    server = args.swagger_host
-    port = args.port
-    server_uri = "http://localhost:5656" #f"http://{server}:{port}"
-    response = requests.patch(f"{server_uri}/api/StageInstance/{stage_id}", json=data, headers=headers)
+    if data.access_token:
+        headers['Authorization'] = data.access_token
+    
+    server_uri = get_client_uri()
+    response = requests.patch(f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"StageInstance {stage_id} attribute {name} set to {value}")
-        return True
-    app_logger.error(f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
-    return False
+        data.Result = True
+        data.Message = f"StageInstance {stage_id} attribute {name} set to {value}"
+    else:
+        data.Result = False
+        data.ErrorMessage = f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
+        app_logger.error(f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
+    return data
 
 
 def get_application(application_id):
@@ -339,7 +362,8 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     # collect prior context from dependent tasks and create a union of ResultData
     application_id = row.Stage.ProcessInstance.ApplicationId
     se = python_engine.PythonScriptEngine()
-    data = DotMap(row.ResultData) or DotMap({})
+    data = DotMap({})
+    data.access_token = access_token
     task = DotMap(row.to_dict())
     # Get current state to use in script calls
     context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
