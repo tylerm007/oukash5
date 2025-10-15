@@ -88,9 +88,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         session.commit()
         return jsonify({"result": f'Reset initiated for Application ID: {application_id}'})
 
-    @app.route('/cleanup_workflow_data/<application_id>/<process_id>', methods=['GET','OPTIONS'])
-    def cleanup_workflow_data(application_id, process_id):
+    @app.route('/cleanup_workflow_data/<application_id>', methods=['GET','OPTIONS'])
+    def cleanup_workflow_data(application_id):
         # Implement cleanup logic here
+        application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationID == application_id).first()
+        if not application:
+            return jsonify({"result": f'Application ID: {application_id} not found'}), 404
+        process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
+        process_id = process_instance.InstanceId if process_instance else None
+        if not process_instance:
+            return jsonify({"result": f'Process ID: {process_id} not found for Application ID: {application_id}'}), 404 
         do_cleanup(application_id, process_id)
         return jsonify({"result": f'Cleanup initiated for Application ID: {application_id}, Process ID: {process_id}'})
 
@@ -234,7 +241,7 @@ def do_cleanup(application_id, process_id):
     session.execute(text(f"""
         DELETE from RoleAssigment where ApplicationId = {application_id};
         DELETE FROM ProcessInstances where ApplicationId = {application_id};
-        DELETE FROM WFApplication where ApplicationId = {application_id};
+        DELETE FROM WF_Applications where ApplicationId = {application_id};
        
     """))
     session.commit()
