@@ -66,6 +66,15 @@ def set_application_attribute(application_id, name, value, data: DotMap) -> DotM
         The simple setattr does not work and we cannot commit()
         will try PATCH
     '''
+    application = get_application(application_id)
+    if not application:
+        data.Result = False
+        data.ErrorMessage = f"No application found with ApplicationID {application_id}"
+        return data
+    if application[0]["Status"] == 'WTH':
+        data.Result = False
+        data.ErrorMessage = f"Cannot modify application {application_id} because it is Withdrawn (WTH)"
+        return data
     payload = {
         "data": {
             "attributes": {
@@ -164,7 +173,7 @@ def get_application(application_id):
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()
     if not application:
         return None, jsonify({"success": False, "message": f"No application found with ApplicationID {application_id}"}), 404
-    return application
+    return application.to_dict(), None, None
 
 def validate_prior_tasks(taskDef: TaskDefinition, stage_id: int, logic_row: LogicRow):
     '''

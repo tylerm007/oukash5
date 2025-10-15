@@ -29,7 +29,7 @@ def prt(msg: any, test: str= None) -> None:
         test_val = test[0:25]
     if "Server Log: Behave Run Successfully Completed" in msg:
         debug_stop = 'good breakpoint'
-    msg_url = f'http://localhost:5656/server_log?msg={msg}&test={test}&dir=test/api_logic_server_behave/logs/scenario_logic_logs'
+    msg_url = f'http://192.168.13.131:5656/server_log?msg={msg}&test={test}&dir=test/api_logic_server_behave/logs/scenario_logic_logs'
     r = requests.get(msg_url)
 
 
@@ -83,7 +83,7 @@ def login(user: str = 'admin') -> dict:
         token = result_map.access_token
     elif 'keycloak' in str(Config.SECURITY_PROVIDER):
         """ different with kc
-        TOKEN_ENDPOINT: http://localhost:8080/realms/kcals/protocol/openid-connect/token 
+        TOKEN_ENDPOINT: http://192.168.13.131:8080/realms/kcals/protocol/openid-connect/token 
         TOKEN=$(curl ${TOKEN_ENDPOINT} -d 'grant_type=password&client_id=alsclient' -d 'username=u1' -d 'password=p' | jq -r .access_token)
         """
         # Correctly separate the URL from the data

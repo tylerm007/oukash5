@@ -4,13 +4,110 @@ Feature: About Sample # features/about.feature:6
     Given Sample Database                                    # features/steps/about.py:8
     When Transactions are submitted                          # features/steps/about.py:12
     Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+      Traceback (most recent call last):
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+          sock = connection.create_connection(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+          raise err
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+          sock.connect(sa)
+      TimeoutError: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+      
+      The above exception was the direct cause of the following exception:
+      
+      Traceback (most recent call last):
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+          response = self._make_request(
+                     ^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+          conn.request(
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connection.py", line 494, in request
+          self.endheaders()
+        File "C:\Python312\Lib\http\client.py", line 1333, in endheaders
+          self._send_output(message_body, encode_chunked=encode_chunked)
+        File "C:\Python312\Lib\http\client.py", line 1093, in _send_output
+          self.send(msg)
+        File "C:\Python312\Lib\http\client.py", line 1037, in send
+          self.connect()
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connection.py", line 325, in connect
+          self.sock = self._new_conn()
+                      ^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connection.py", line 207, in _new_conn
+          raise ConnectTimeoutError(
+      urllib3.exceptions.ConnectTimeoutError: (<urllib3.connection.HTTPConnection object at 0x0000024F561C7E30>, 'Connection to 192.168.13.131 timed out. (connect timeout=None)')
+      
+      The above exception was the direct cause of the following exception:
+      
+      Traceback (most recent call last):
+        File "C:\genai-logic\venv\lib\site-packages\requests\adapters.py", line 486, in send
+          resp = conn.urlopen(
+                 ^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+          retries = retries.increment(
+                    ^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\urllib3\util\retry.py", line 519, in increment
+          raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='192.168.13.131', port=5656): Max retries exceeded with url: /server_log?msg=Rules%20Report&test=Transaction%20Processing&dir=test/api_logic_server_behave/logs/scenario_logic_logs (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x0000024F561C7E30>, 'Connection to 192.168.13.131 timed out. (connect timeout=None)'))
+      
+      During handling of the above exception, another exception occurred:
+      
+      Traceback (most recent call last):
+        File "C:\genai-logic\venv\lib\site-packages\behave\model.py", line 1329, in run
+          match.run(runner.context)
+        File "C:\genai-logic\venv\lib\site-packages\behave\matchers.py", line 98, in run
+          self.func(context, *args, **kwargs)
+        File "features\steps\about.py", line 19, in step_impl
+          test_utils.prt(f'Rules Report', scenario)
+        File "C:\OUProjects\oukash5\test\api_logic_server_behave\features\steps\test_utils.py", line 33, in prt
+          r = requests.get(msg_url)
+              ^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\requests\api.py", line 73, in get
+          return request("get", url, params=params, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\requests\api.py", line 59, in request
+          return session.request(method=method, url=url, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\requests\sessions.py", line 589, in request
+          resp = self.send(prep, **send_kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\requests\sessions.py", line 703, in send
+          r = adapter.send(request, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "C:\genai-logic\venv\lib\site-packages\requests\adapters.py", line 507, in send
+          raise ConnectTimeout(e, request=request)
+      requests.exceptions.ConnectTimeout: HTTPConnectionPool(host='192.168.13.131', port=5656): Max retries exceeded with url: /server_log?msg=Rules%20Report&test=Transaction%20Processing&dir=test/api_logic_server_behave/logs/scenario_logic_logs (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x0000024F561C7E30>, 'Connection to 192.168.13.131 timed out. (connect timeout=None)'))
+
 
 Feature: Complete Task # features/task_complete.feature:2
 
   Scenario: Complete Transaction Processing  # features/task_complete.feature:4
     Given Start Task                         # features/steps/task_complete.py:18
-    When Complete Task Called                # features/steps/task_complete.py:27
-    Then Next Task is Pending                # features/steps/task_complete.py:41
+      Traceback (most recent call last):
+        File "C:\genai-logic\venv\lib\site-packages\behave\model.py", line 1329, in run
+          match.run(runner.context)
+        File "C:\genai-logic\venv\lib\site-packages\behave\matchers.py", line 98, in run
+          self.func(context, *args, **kwargs)
+        File "features\steps\task_complete.py", line 20, in step_impl
+          run_workflow_to_completion()
+        File "features\steps\task_complete.py", line 142, in run_workflow_to_completion
+          complete_task(task_instance_id)
+        File "features\steps\task_complete.py", line 123, in complete_task
+          assert response.status_code == 200
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      AssertionError
+      
+      Captured stdout:
+      Skipping System Task All Verified Gateway - 1517
+      Skipping System Task Init App End - 1523
+      Skipping System Task End - 1525
+      Skipping System Task NDA End - 1532
+      Skipping System Task End Ingredients - 1547
+      Skipping System Task End Contract - 1556
+
+    When Complete Task Called                # None
+    Then Next Task is Pending                # None
 
 &nbsp;&nbsp;
-C:\OUProjects\oukash5/test/api_logic_server_behave/behave_run.py completed at October 01, 2025 10:25:23
+C:\OUProjects\oukash5/test/api_logic_server_behave/behave_run.py completed at October 14, 2025 20:06:37

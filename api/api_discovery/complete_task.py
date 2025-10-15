@@ -66,7 +66,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
         access_token = request.headers.get("Authorization")
-        app_logger.debug(f'Completing task: {task_instance_id} by {completed_by}')
+        app_logger.debug(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
+        print(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
         return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, depth=0)
 
     
@@ -154,8 +155,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
                 prior_task_instance = TaskInstance.query.filter(
-                    TaskInstance.TaskInstanceId == prior_task_id
-                    #,TaskInstance.StageId.in_(stages_list)
+                    TaskInstance.TaskId == prior_task_id
+                    ,TaskInstance.StageId.in_(stages_list)
                 ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task  {task_name} - {task_instance_id}. Prior task {prior_task_instance.TaskDef.TaskName}-{prior_task_id} status is not COMPLETED.')
@@ -176,7 +177,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             if status == 'COMPLETED':
                 data = call_task_script_engine(task_instance, access_token)
                 task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
-                if data.Result == False:
+                if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
                     task_instance.Status = 'PENDING'
                     session.add(task_instance)

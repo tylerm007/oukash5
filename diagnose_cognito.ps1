@@ -8,7 +8,7 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host "`n1️⃣ Checking if Flask server is running..." -ForegroundColor Yellow
 
 try {
-    $response = Invoke-WebRequest -Uri "http://localhost:5656" -Method GET -TimeoutSec 5 -ErrorAction Stop
+    $response = Invoke-WebRequest -Uri "http://192.168.13.131:5656" -Method GET -TimeoutSec 5 -ErrorAction Stop
     Write-Host "   ✅ Server is running on HTTP port 5656" -ForegroundColor Green
 } catch {
     Write-Host "   ❌ Server not responding on HTTP port 5656" -ForegroundColor Red
@@ -16,7 +16,7 @@ try {
     
     # Check HTTPS
     try {
-        $response = Invoke-WebRequest -Uri "https://localhost:5656" -Method GET -TimeoutSec 5 -SkipCertificateCheck -ErrorAction Stop
+        $response = Invoke-WebRequest -Uri "https://192.168.13.131:5656" -Method GET -TimeoutSec 5 -SkipCertificateCheck -ErrorAction Stop
         Write-Host "   ✅ Server is running on HTTPS port 5656" -ForegroundColor Green
     } catch {
         Write-Host "   ❌ Server not responding on HTTPS port 5656 either" -ForegroundColor Red
@@ -28,7 +28,7 @@ try {
 Write-Host "`n2️⃣ Checking Cognito configuration..." -ForegroundColor Yellow
 
 try {
-    $debugResponse = Invoke-RestMethod -Uri "http://localhost:5656/auth/debug" -Method GET -ErrorAction Stop
+    $debugResponse = Invoke-RestMethod -Uri "http://192.168.13.131:5656/auth/debug" -Method GET -ErrorAction Stop
     
     Write-Host "   ✅ Debug endpoint accessible" -ForegroundColor Green
     Write-Host "`n📊 Configuration Analysis:" -ForegroundColor Magenta
@@ -74,7 +74,7 @@ try {
 Write-Host "`n3️⃣ Testing login endpoint..." -ForegroundColor Yellow
 
 try {
-    $loginResponse = Invoke-RestMethod -Uri "http://localhost:5656/auth/login-postman" -Method GET -ErrorAction Stop
+    $loginResponse = Invoke-RestMethod -Uri "http://192.168.13.131:5656/auth/login-postman" -Method GET -ErrorAction Stop
     
     Write-Host "   ✅ Login endpoint accessible" -ForegroundColor Green
     Write-Host "   🔗 Auth URL generated successfully" -ForegroundColor Green
@@ -102,11 +102,11 @@ try {
 Write-Host "`n🔧 Recommended Actions:" -ForegroundColor Magenta
 Write-Host "1. Check the redirect URI mismatch above" -ForegroundColor White
 Write-Host "2. Verify your Cognito App Client settings in AWS Console" -ForegroundColor White
-Write-Host "3. Ensure callback URL matches exactly: http://localhost:5656/auth/callback" -ForegroundColor White
+Write-Host "3. Ensure callback URL matches exactly: http://192.168.13.131:5656/auth/callback" -ForegroundColor White
 Write-Host "4. Check if you're using example/default values instead of real ones" -ForegroundColor White
 
 Write-Host "`n💡 Quick Fix Commands:" -ForegroundColor Magenta
-Write-Host "`$env:COGNITO_REDIRECT_URI = 'http://localhost:5656/auth/callback'" -ForegroundColor Yellow
+Write-Host "`$env:COGNITO_REDIRECT_URI = 'http://192.168.13.131:5656/auth/callback'" -ForegroundColor Yellow
 Write-Host "`$env:COGNITO_CLIENT_ID = 'your-real-client-id'" -ForegroundColor Yellow
 Write-Host "`$env:COGNITO_DOMAIN = 'https://your-domain.auth.region.amazoncognito.com'" -ForegroundColor Yellow
 

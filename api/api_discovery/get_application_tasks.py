@@ -119,8 +119,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 order by  ap.applicationId, ti.taskInstanceId
             OFFSET :offset ROWS
             FETCH NEXT :limit ROWS ONLY
-        
+          @applicationId NVARCHAR(255) = NULL,
+          @plantName NVARCHAR(255) = NULL
         '''
+        args = request.args
+        application_id = args.get('filter[applicationId]', None)
+        plant_name = args.get('filter[plantName]', None)
+        #application_id = args.get('applicationId', None)
+        #plant_name = args.get('plantName', None)
+
         role_assignment = RoleAssigment.query.filter_by(Assignee=user).all() 
         assigned_roles = [role.WF_Role.UserRole for role in role_assignment]
         #user_roles = [role.WF_Role.UserRole for role in WFUSERROLE.query.filter_by(UserName=user).all()]
@@ -131,7 +138,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f"Calling stored procedure with: assignee={user}, assignee_role={assigned_roles_str}")
         
         try:
-            tasks = session.execute(text('EXEC sp_GetTasksPerUser @username = :username'),{"username": user})
+            tasks = session.execute(text('EXEC sp_GetTasksPerUser @username = :username, @applicationId = :applicationId, @plantName = :plantName'),{"username": user, "applicationId": application_id, "plantName": plant_name})
             tasks = tasks.fetchall()
             app_logger.info(f"Retrieved {len(tasks)} tasks from stored procedure")
         except Exception as e:

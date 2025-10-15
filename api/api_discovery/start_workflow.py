@@ -101,7 +101,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         started_by = data.get('started_by', user)
         priority = data.get('priority', 'NORMAL')  # Default to 'Normal' if not provided
         app_logger.debug(f'Starting workflow: {process_name} for application_id: {application_id} by {started_by} with priority {priority}')
-        return _start_workflow(process_name, int(application_id), started_by, priority)
+        response = _start_workflow(process_name, int(application_id), started_by, priority)
+        return jsonify({"status": "ok", "data": response}), 200
 
     @app.route('/start_workflow_async', methods=['POST','OPTIONS'])
     @cross_origin()
@@ -304,7 +305,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     session.add(role_assignment)
     session.commit()
     app_logger.info(f'Role DISPATCH assigned to {started_by} for application {application.ApplicationID}')
-    return jsonify({"status": "ok", "data": {"process_instance_id": process_instance_id}}), 200     
+    return {"process_instance_id": process_instance_id}    
 
                     
 def _start_workflow_background(task_id: str, process_name: str, application_id: int, started_by: str, priority: str):
