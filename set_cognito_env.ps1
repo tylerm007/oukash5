@@ -13,7 +13,7 @@ $env:COGNITO_DOMAIN = "https://auth.oudirect-st.ou.org"
 #"https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com"  # Replace with real domain
 
 # Set redirect URI to HTTP (matching your current setup)
-$env:COGNITO_REDIRECT_URI = "http://localhost:5656/auth/callback"
+$env:COGNITO_REDIRECT_URI = "http://192.168.13.31:5656/auth/callback"
 
 Write-Host "✅ Environment variables set:" -ForegroundColor Green
 Write-Host "   COGNITO_REGION: $($env:COGNITO_REGION)" -ForegroundColor White

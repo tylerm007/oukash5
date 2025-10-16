@@ -238,9 +238,9 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
         return jsonify({"status": "error", "message": f"ProcessInstance already exists for ApplicationId: {application_id}"}), 400
     # Get StartTaskId
     task_definition = TaskDefinition.query.filter_by(ProcessId=process_definition_id, TaskType='START').order_by(TaskDefinition.TaskId).first()
-    start_task_id = task_definition.TaskId if task_definition else None
-    app_logger.info(f'Start TaskDefinition TaskId: {start_task_id}') 
-    if start_task_id is None:
+    start_task_def_id = task_definition.TaskId if task_definition else None
+    app_logger.info(f'Start TaskDefinition TaskId: {start_task_def_id}') 
+    if start_task_def_id is None:
             raise Exception(f'Task definition type START not found for process: {process_name}')
     
     process_instance_id = process_instance.InstanceId
@@ -260,27 +260,24 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
             )
             session.add(stage_instance)
             session.commit()
-
+            stage_id = stage_instance.StageInstanceId
             task_definition = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
             task_instances = []
             for task_definition in task_definition:
                     app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
-                    status = 'NEW' 
-                    if task_definition.TaskType in ['START','LANEEND','END','GATEWAY']:
-                        status = 'PENDING'
+                    status = 'PENDING' if task_definition.TaskType in ['START','LANEEND','END','GATEWAY'] else 'NEW'   
                     task_instance = TaskInstance(
                             TaskId=task_definition.TaskId,
-                            StageId=stage_instance.StageInstanceId,
+                            StageId=stage_id,
                             Status=status,
                             CreatedDate=datetime.utcnow(),
-                            CreatedBy=started_by,
-                        
+                            CreatedBy=started_by
                     )
                     session.add(task_instance)
                     session.commit()
                     app_logger.info(f'Created TaskInstance: {task_definition.TaskName}')
                     task_instances.append(task_instance)
-                    if task_instance.TaskId == start_task_id:
+                    if task_instance.TaskDef.TaskType == 'START':
                         start_instance_id = task_instance.TaskInstanceId
                     wf_history = WorkflowHistory(
                             InstanceId=process_instance_id,

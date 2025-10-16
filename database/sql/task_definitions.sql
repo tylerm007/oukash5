@@ -28,9 +28,8 @@ VALUES
 (1, 'Contact Customer', 'CONFIRM', 'CONFIRMATION', 12, 1, 'NCRC', 2880, 'Contact Customer', 0, 'system'),
 (1, 'Initial Collector', 'GATEWAY', 'ESCALATION', 13, 1, 'SYSTEM', NULL, 'Initial Collector', 1, 'system'),
 (1, 'Init App End', 'LANEEND', 'COMPLETION', 14, 1, 'SYSTEM', 15, 'NDA completed', 1, 'system'),
-(1, 'Lane Collector', 'GATEWAY', 'ESCALATION', 15, 1, 'SYSTEM', NULL, 'Lane Collector', 1, 'system'),
-(1, 'Stage Collector', 'GATEWAY', 'ESCALATION', 17, 1, 'SYSTEM', NULL, 'Stage Collector', 1, 'system'),
-(1, 'End', 'END', 'COMPLETION', 16, 1, 'SYSTEM', NULL, 'End application certification task', 1, 'system');
+(1, 'Stage Collector', 'GATEWAY', 'ESCALATION', 15, 1, 'SYSTEM', NULL, 'Stage Collector', 1, 'system'),
+(1, 'End', 'END', 'COMPLETION', 17, 1, 'SYSTEM', NULL, 'End application certification task', 1, 'system');
 GO
 
 EXEC sp_add_flow @from_name = 'Start_Application_Submitted', @to_name = 'Init Lane Start', @condition = 'None'; 
@@ -69,12 +68,10 @@ GO
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Needs NDA', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'Send NDA', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA Completed', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'Needs NDA', @to_name = 'NDA End', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'NONE'; 
 EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Lane Collector', @condition = 'None';
-
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';
 
 GO
@@ -109,7 +106,7 @@ EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Repo
 EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'Withdraw Application', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'End Inspection', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'END', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Lane Collector', @condition = 'None';
+EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Stage Collector', @condition = 'None';
 GO
 -- Lane: Ingredients (ID: 4)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
@@ -124,7 +121,7 @@ EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Ingredients 
 EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload Ingredients to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload Ingredients to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingredients', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'End Ingredients', @to_name = 'Lane Collector', @condition = 'None';
+EXEC sp_add_flow @from_name = 'End Ingredients', @to_name = 'Stage Collector', @condition = 'None';
 
 GO
 -- Lane: Products (ID: 5)
@@ -141,38 +138,37 @@ EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Products Sta
 EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload Product to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload Product to KASH DB', @to_name = 'Verify Products in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Products in DB', @to_name = 'End Products', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'End Products', @to_name = 'Lane Collector', @condition = 'None';
+EXEC sp_add_flow @from_name = 'End Products', @to_name = 'Stage Collector', @condition = 'None';
 
 GO
 -- Lane: Contract (ID: 6)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
-(1, 'Start Contract Stage', 'LANESTART', 'COMPLETION', 1, 6, 'LEGAL', 15, 'Start Contract stage', 1, 'system'),
+(1, 'Start Contract Stage', 'LANESTART', 'COMPLETION', 1, 6, 'SYSTEM', 15, 'Start Contract stage', 1, 'system'),
 (1, 'Prepare Contract', 'CONFIRM', 'CONFIRMATION', 2, 6, 'LEGAL', 240, 'Prepare contract for customer', 0, 'system'),
 (1, 'Send Contract', 'CONFIRM', 'CONFIRMATION', 3, 6, 'LEGAL', 30, 'Send contract to customer for signature', 0, 'system'), -- ALERT
 (1, 'Contract Signed Y/N', 'CONDITION', 'APPROVAL', 4, 6, 'LEGAL', 2880, 'Has the contract been signed?', 0, 'system'),
 (1, 'End Contract', 'LANEEND', 'COMPLETION', 4, 6, 'SYSTEM', 15, 'Contract stage completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'Lane Collector', @to_name = 'Start Contract Stage', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Contract Stage', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Contract Stage', @to_name = 'Prepare Contract', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Prepare Contract', @to_name = 'Send Contract', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Send Contract', @to_name = 'Contract Signed Y/N', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Contract Signed Y/N', @to_name = 'End Contract', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Contract Signed Y/N', @to_name = 'END', @condition = 'NO';
-EXEC sp_add_flow @from_name = 'End Contract', @to_name = 'Stage Collector', @condition = 'None';
+---EXEC sp_add_flow @from_name = 'End Contract', @to_name = 'Stage Collector', @condition = 'None';
 GO
 
 -- Lane: Certification (ID: 7)
 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Certification Stage', 'LANESTART', 'COMPLETION', 1, 7, 'SYSTEM', 15, 'Start Certification stage', 1, 'system'),
-(1, 'Issue Certificate', 'CONFIRM', 'CONFIRMATION', 2, 7, 'RFR', 60, 'Issue certificate to customer', 0, 'system'),
-(1, 'Notify Customer', 'SCRIPT', 'NOTIFICATION', 3, 7, 'RFR', 15, 'Notify customer of certification', 0, 'system'),  
+(1, 'Issue Certificate', 'CONFIRM', 'CONFIRMATION', 2, 7, 'NCRC', 60, 'Issue certificate to customer', 0, 'system'),
+(1, 'Notify Customer', 'CONFIRM', 'CONFIRMATION', 3, 7, 'NCRC', 15, 'Notify customer of certification', 0, 'system'),  
 (1, 'End Certification', 'LANEEND', 'COMPLETION', 4, 7, 'SYSTEM', 15, 'Certification stage completed', 1, 'system');
 GO
-
-EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Certification Stage', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'End Contract', @to_name = 'Start Certification Stage', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Certification Stage', @to_name = 'Issue Certificate', @condition = 'None';   
 EXEC sp_add_flow @from_name = 'Issue Certificate', @to_name = 'Notify Customer', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Notify Customer', @to_name = 'End Certification', @condition = 'None';  
