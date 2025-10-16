@@ -117,23 +117,27 @@ server_setup.api_logic_server_setup(flask_app, args)
 AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
 
 # ============================================
-# OneDrive Integration
+# SharePoint Integration
 # ============================================
 try:
-    from integration.onedrive_service import add_onedrive_endpoints
-    add_onedrive_endpoints(flask_app)
-    app_logger.info("✅ OneDrive integration endpoints added")
-    app_logger.info("   • GET  /onedrive/auth           - Start OAuth flow")
-    app_logger.info("   • GET  /onedrive/callback       - OAuth callback")  
-    app_logger.info("   • GET  /onedrive/files          - List files")
-    app_logger.info("   • POST /onedrive/upload         - Upload files")
-    app_logger.info("   • GET  /onedrive/download/<id>  - Download files")
-    app_logger.info("   • GET  /onedrive/share/<id>     - Create share links")
-    app_logger.info("   • POST /onedrive/folder         - Create folders")
+    from integration.sharepoint_service import add_sharepoint_endpoints
+    add_sharepoint_endpoints(flask_app)
+    app_logger.info("✅ SharePoint integration endpoints added")
+    app_logger.info("   • GET  /sharepoint              - Web interface")
+    app_logger.info("   • GET  /sharepoint/auth         - Start OAuth flow")
+    app_logger.info("   • GET  /sharepoint/callback     - OAuth callback")  
+    app_logger.info("   • GET  /sharepoint/libraries    - List document libraries")
+    app_logger.info("   • GET  /sharepoint/files        - List files")
+    app_logger.info("   • POST /sharepoint/upload       - Upload files")
+    app_logger.info("   • GET  /sharepoint/download/<id> - Download files")
+    app_logger.info("   • GET  /sharepoint/share/<id>   - Create share links")
+    app_logger.info("   • POST /sharepoint/folder       - Create folders")
+    app_logger.info("   • GET  /sharepoint/search       - Search documents")
+    app_logger.info("   • GET  /sharepoint/versions/<id> - File versions")
 except ImportError as e:
-    app_logger.info("⚠️  OneDrive integration not available - run setup_onedrive_integration.ps1 to configure")
+    app_logger.info("⚠️  SharePoint integration not available - run setup_sharepoint_integration.ps1 to configure")
 except Exception as e:
-    app_logger.warning(f"⚠️  OneDrive integration setup issue: {e}")
+    app_logger.warning(f"⚠️  SharePoint integration setup issue: {e}")
 
 if __name__ == "__main__":
     msg = f'API Logic Project loaded (not WSGI), version: 15.00.61\n'

@@ -9,7 +9,8 @@ $env:COGNITO_REGION = "us-east-1"                                    # Your AWS 
 $env:COGNITO_USER_POOL_ID = "us-east-1_d38hiE2QM"                    # Replace with real User Pool ID
 $env:COGNITO_CLIENT_ID = "34sqr8ttgro6ego2117aflg9lr"                  # Replace with real Client ID
 $env:COGNITO_CLIENT_SECRET = "rev05ljd8067sbigkhlk153eluh78qgsh8dfptueehdalk42dmg"          # Replace with real Client Secret
-$env:COGNITO_DOMAIN = "https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com"  # Replace with real domain
+$env:COGNITO_DOMAIN = "https://auth.oudirect-st.ou.org"
+#"https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com"  # Replace with real domain
 
 # Set redirect URI to HTTP (matching your current setup)
 $env:COGNITO_REDIRECT_URI = "http://localhost:5656/auth/callback"

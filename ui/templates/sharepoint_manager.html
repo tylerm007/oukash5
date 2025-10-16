@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SharePoint Document Manager - API Logic Server</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f3f2f1;
+            color: #323130;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.132), 0 0.3px 0.9px rgba(0,0,0,0.108);
+            padding: 24px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #edebe9;
+        }
+        
+        .header h1 {
+            color: #0078d4;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .auth-section {
+            background: #e1f5fe;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            border-left: 4px solid #0078d4;
+        }
+        
+        .library-selector {
+            background: #fff4e6;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            border-left: 4px solid #ff8c00;
+        }
+        
+        .upload-section {
+            background: #f3e5f5;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            border-left: 4px solid #5c2d91;
+        }
+        
+        .file-list {
+            border: 1px solid #edebe9;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .file-list-header {
+            background: #f8f9fa;
+            padding: 16px;
+            border-bottom: 1px solid #edebe9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f2f1;
+            transition: background-color 0.2s ease;
+        }
+        
+        .file-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-info {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+        }
+        
+        .file-icon.folder {
+            background: #ffd700;
+            color: #8a6914;
+        }
+        
+        .file-icon.document {
+            background: #0078d4;
+            color: white;
+        }
+        
+        .file-icon.excel {
+            background: #217346;
+            color: white;
+        }
+        
+        .file-icon.powerpoint {
+            background: #d24726;
+            color: white;
+        }
+        
+        .file-icon.image {
+            background: #8764b8;
+            color: white;
+        }
+        
+        .file-details {
+            flex-grow: 1;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: #323130;
+            margin-bottom: 4px;
+        }
+        
+        .file-meta {
+            font-size: 0.875rem;
+            color: #605e5c;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .btn {
+            padding: 8px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 400;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .btn:hover {
+            background: #f3f2f1;
+            border-color: #323130;
+        }
+        
+        .btn-primary {
+            background: #0078d4;
+            border-color: #0078d4;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #106ebe;
+            border-color: #106ebe;
+        }
+        
+        .btn-success {
+            background: #107c10;
+            border-color: #107c10;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #0e6e0e;
+            border-color: #0e6e0e;
+        }
+        
+        .btn-warning {
+            background: #ff8c00;
+            border-color: #ff8c00;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e00;
+            border-color: #e67e00;
+        }
+        
+        .status {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #dff6dd;
+            color: #0e5a0e;
+            border: 1px solid #0e5a0e;
+        }
+        
+        .status.error {
+            background: #fde7e9;
+            color: #a4262c;
+            border: 1px solid #a4262c;
+        }
+        
+        .status.info {
+            background: #deecf9;
+            color: #004578;
+            border: 1px solid #004578;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #605e5c;
+            padding: 32px;
+            font-style: italic;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #edebe9;
+        }
+        
+        .breadcrumb a {
+            color: #0078d4;
+            text-decoration: none;
+            margin-right: 8px;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .drop-zone {
+            border: 2px dashed #c7c7c7;
+            border-radius: 4px;
+            padding: 32px;
+            text-align: center;
+            margin: 16px 0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .drop-zone.dragover {
+            border-color: #0078d4;
+            background-color: #deecf9;
+        }
+        
+        .drop-zone:hover {
+            border-color: #0078d4;
+            background-color: #f8f9fa;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            font-size: 0.875rem;
+        }
+        
+        select {
+            padding: 8px 12px;
+            border: 1px solid #8a8886;
+            border-radius: 2px;
+            background: white;
+            font-size: 0.875rem;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .ms-icon {
+            font-size: 16px;
+            font-weight: 900;
+        }
+        
+        .library-info {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: #605e5c;
+        }
+        
+        .version-info {
+            background: #fff4e6;
+            padding: 8px 12px;
+            margin-top: 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #8a6914;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 SharePoint Document Manager</h1>
+            <p>Enterprise Document Management & Collaboration</p>
+        </div>
+        
+        <!-- Authentication Section -->
+        <div class="auth-section">
+            <h3>🔐 SharePoint Authentication</h3>
+            <p id="auth-status">Not connected to SharePoint</p>
+            <button id="auth-btn" class="btn btn-primary" onclick="authenticateSharePoint()">
+                Connect to SharePoint
+            </button>
+        </div>
+        
+        <!-- Library Selector -->
+        <div class="library-selector">
+            <h3>📁 Document Library</h3>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <label for="librarySelect">Select Library:</label>
+                <select id="librarySelect" onchange="onLibraryChange()">
+                    <option value="">Loading libraries...</option>
+                </select>
+                <button class="btn btn-primary" onclick="refreshLibraries()">🔄 Refresh</button>
+            </div>
+            <div id="libraryInfo" class="library-info" style="display: none;"></div>
+        </div>
+        
+        <!-- Status Messages -->
+        <div id="status" class="status"></div>
+        
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h3>📤 Upload Documents</h3>
+            <div class="drop-zone" id="dropZone">
+                <div style="font-size: 48px; margin-bottom: 16px;">📄</div>
+                <p>Drag and drop files here, or click to select</p>
+                <input type="file" id="fileInput" multiple>
+                <button class="btn btn-success" onclick="document.getElementById('fileInput').click()">
+                    <span class="ms-icon">📁</span> Select Files
+                </button>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+                <label for="folderPath">Upload to folder:</label>
+                <input type="text" id="folderPath" placeholder="/SubFolder" style="flex: 1; padding: 8px 12px; border: 1px solid #8a8886; border-radius: 2px;">
+                <button class="btn btn-primary" onclick="uploadSelectedFiles()">
+                    <span class="ms-icon">⬆</span> Upload
+                </button>
+            </div>
+        </div>
+        
+        <!-- File Browser -->
+        <div class="file-list">
+            <div class="file-list-header">
+                <h3 style="margin: 0;">📋 Documents & Folders</h3>
+                <div class="controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search documents...">
+                        <button class="btn" onclick="searchFiles()">
+                            <span class="ms-icon">🔍</span> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Breadcrumb -->
+            <div class="breadcrumb" id="breadcrumb">
+                <a href="#" onclick="navigateToFolder('')">📁 Library Root</a>
+            </div>
+            
+            <!-- Controls -->
+            <div style="padding: 16px; border-bottom: 1px solid #edebe9;">
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="refreshFiles()">
+                        <span class="ms-icon">🔄</span> Refresh
+                    </button>
+                    <button class="btn btn-success" onclick="createFolder()">
+                        <span class="ms-icon">📁</span> New Folder
+                    </button>
+                    <button class="btn" onclick="showSiteInfo()">
+                        <span class="ms-icon">ℹ</span> Site Info
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Files Container -->
+            <div id="filesContainer" class="loading">
+                <p>Connect to SharePoint to view documents</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPath = '';
+        let currentLibrary = 'Documents';
+        let isAuthenticated = false;
+        let siteInfo = null;
+        
+        // Check authentication status on load
+        window.onload = function() {
+            checkAuthStatus();
+            setupDropZone();
+        };
+        
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+        
+        function checkAuthStatus() {
+            // This is a simplified check - in production, you'd verify with server
+            isAuthenticated = localStorage.getItem('sharepoint_authenticated') === 'true';
+            updateAuthUI();
+            
+            if (isAuthenticated) {
+                loadSiteInfo();
+                loadLibraries();
+            }
+        }
+        
+        function updateAuthUI() {
+            const authStatus = document.getElementById('auth-status');
+            const authBtn = document.getElementById('auth-btn');
+            
+            if (isAuthenticated) {
+                authStatus.textContent = '✅ Connected to SharePoint';
+                authBtn.textContent = 'Disconnect';
+                authBtn.onclick = disconnectSharePoint;
+            } else {
+                authStatus.textContent = '❌ Not connected to SharePoint';
+                authBtn.textContent = 'Connect to SharePoint';
+                authBtn.onclick = authenticateSharePoint;
+            }
+        }
+        
+        async function authenticateSharePoint() {
+            try {
+                const response = await fetch('/sharepoint/auth');
+                const data = await response.json();
+                
+                if (data.auth_url) {
+                    // Open authentication window
+                    const authWindow = window.open(data.auth_url, 'sharepoint-auth', 'width=600,height=600');
+                    
+                    // Poll for completion
+                    const checkClosed = setInterval(() => {
+                        if (authWindow.closed) {
+                            clearInterval(checkClosed);
+                            // Check if authentication was successful
+                            setTimeout(() => {
+                                checkAuthenticationComplete();
+                            }, 1000);
+                        }
+                    }, 1000);
+                    
+                    showStatus('Opening SharePoint authentication...', 'info');
+                } else {
+                    showStatus('Failed to get authentication URL', 'error');
+                }
+            } catch (error) {
+                showStatus('Authentication error: ' + error.message, 'error');
+            }
+        }
+        
+        async function checkAuthenticationComplete() {
+            try {
+                // Try to access site info to verify authentication
+                const response = await fetch('/sharepoint/site');
+                
+                if (response.ok) {
+                    isAuthenticated = true;
+                    localStorage.setItem('sharepoint_authenticated', 'true');
+                    updateAuthUI();
+                    loadSiteInfo();
+                    loadLibraries();
+                    showStatus('Successfully connected to SharePoint!', 'success');
+                } else {
+                    showStatus('Authentication may not be complete', 'error');
+                }
+            } catch (error) {
+                showStatus('Error checking authentication', 'error');
+            }
+        }
+        
+        function disconnectSharePoint() {
+            isAuthenticated = false;
+            localStorage.removeItem('sharepoint_authenticated');
+            updateAuthUI();
+            document.getElementById('filesContainer').innerHTML = '<p class="loading">Connect to SharePoint to view documents</p>';
+            document.getElementById('librarySelect').innerHTML = '<option value="">Not connected</option>';
+            showStatus('Disconnected from SharePoint', 'success');
+        }
+        
+        async function loadSiteInfo() {
+            try {
+                const response = await fetch('/sharepoint/site');
+                if (response.ok) {
+                    siteInfo = await response.json();
+                    updateSiteDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading site info:', error);
+            }
+        }
+        
+        function updateSiteDisplay() {
+            if (siteInfo && siteInfo.site) {
+                const site = siteInfo.site;
+                document.querySelector('.header p').textContent = 
+                    `${site.displayName} - ${site.webUrl}`;
+            }
+        }
+        
+        async function loadLibraries() {
+            try {
+                const response = await fetch('/sharepoint/libraries');
+                const data = await response.json();
+                
+                if (response.ok && data.libraries) {
+                    displayLibraries(data.libraries);
+                } else {
+                    showStatus('Error loading document libraries', 'error');
+                }
+            } catch (error) {
+                showStatus('Error loading libraries: ' + error.message, 'error');
+            }
+        }
+        
+        function displayLibraries(libraries) {
+            const select = document.getElementById('librarySelect');
+            select.innerHTML = '';
+            
+            libraries.forEach(library => {
+                const option = document.createElement('option');
+                option.value = library.name;
+                option.textContent = library.displayName || library.name;
+                if (library.name === 'Documents') {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            if (libraries.length > 0) {
+                currentLibrary = select.value || 'Documents';
+                loadFiles();
+            }
+        }
+        
+        function onLibraryChange() {
+            const select = document.getElementById('librarySelect');
+            currentLibrary = select.value;
+            currentPath = '';
+            
+            if (currentLibrary) {
+                loadFiles();
+                updateLibraryInfo();
+            }
+        }
+        
+        function updateLibraryInfo() {
+            const info = document.getElementById('libraryInfo');
+            info.textContent = `Current Library: ${currentLibrary}`;
+            info.style.display = 'block';
+        }
+        
+        function refreshLibraries() {
+            loadLibraries();
+        }
+        
+        async function loadFiles(path = '') {
+            if (!isAuthenticated || !currentLibrary) return;
+            
+            currentPath = path;
+            document.getElementById('filesContainer').innerHTML = '<div class="loading">Loading documents...</div>';
+            
+            try {
+                const params = new URLSearchParams({
+                    library: currentLibrary,
+                    path: path
+                });
+                
+                const response = await fetch(`/sharepoint/files?${params}`);
+                const data = await response.json();
+                
+                if (response.ok && data.files) {
+                    displayFiles(data.files);
+                    updateBreadcrumb(path);
+                } else {
+                    document.getElementById('filesContainer').innerHTML = '<p class="loading">Error loading documents</p>';
+                    showStatus('Error loading documents', 'error');
+                }
+            } catch (error) {
+                document.getElementById('filesContainer').innerHTML = '<p class="loading">Error loading documents</p>';
+                showStatus('Error: ' + error.message, 'error');
+            }
+        }
+        
+        function displayFiles(files) {
+            const container = document.getElementById('filesContainer');
+            
+            if (files.length === 0) {
+                container.innerHTML = '<div class="loading">No documents found in this location</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            files.forEach(file => {
+                const isFolder = file.folder !== undefined;
+                const icon = getFileIcon(file);
+                const size = isFolder ? '' : formatFileSize(file.size || 0);
+                const modified = file.lastModifiedDateTime ? 
+                    new Date(file.lastModifiedDateTime).toLocaleDateString() : '';
+                
+                html += `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <div class="file-icon ${icon.class}">
+                                <span class="ms-icon">${icon.symbol}</span>
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-meta">
+                                    ${size ? `${size} • ` : ''}${modified}
+                                    ${file.createdBy ? ` • ${file.createdBy.user?.displayName || 'Unknown'}` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-actions">
+                            ${isFolder ? 
+                                `<button class="btn btn-primary" onclick="navigateToFolder('${currentPath}/${file.name}')">
+                                    <span class="ms-icon">📂</span> Open
+                                </button>` :
+                                `<button class="btn btn-success" onclick="downloadFile('${file.id}', '${file.name}')">
+                                    <span class="ms-icon">⬇</span> Download
+                                </button>`
+                            }
+                            <button class="btn btn-warning" onclick="shareFile('${file.id}', '${file.name}')">
+                                <span class="ms-icon">🔗</span> Share
+                            </button>
+                            ${!isFolder ? 
+                                `<button class="btn" onclick="showVersions('${file.id}', '${file.name}')">
+                                    <span class="ms-icon">📋</span> Versions
+                                </button>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function getFileIcon(file) {
+            if (file.folder) {
+                return { class: 'folder', symbol: '📁' };
+            }
+            
+            const ext = file.name.split('.').pop().toLowerCase();
+            
+            switch (ext) {
+                case 'docx':
+                case 'doc':
+                    return { class: 'document', symbol: '📄' };
+                case 'xlsx':
+                case 'xls':
+                    return { class: 'excel', symbol: '📊' };
+                case 'pptx':
+                case 'ppt':
+                    return { class: 'powerpoint', symbol: '📈' };
+                case 'pdf':
+                    return { class: 'document', symbol: '📕' };
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    return { class: 'image', symbol: '🖼️' };
+                default:
+                    return { class: 'document', symbol: '📄' };
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function updateBreadcrumb(path) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            const parts = path.split('/').filter(p => p);
+            
+            let html = `<a href="#" onclick="navigateToFolder('')">📁 ${currentLibrary}</a>`;
+            let currentPathBuild = '';
+            
+            parts.forEach(part => {
+                currentPathBuild += (currentPathBuild ? '/' : '') + part;
+                html += ` > <a href="#" onclick="navigateToFolder('${currentPathBuild}')">${part}</a>`;
+            });
+            
+            breadcrumb.innerHTML = html;
+        }
+        
+        function navigateToFolder(path) {
+            loadFiles(path);
+        }
+        
+        function refreshFiles() {
+            loadFiles(currentPath);
+        }
+        
+        async function downloadFile(fileId, fileName) {
+            try {
+                showStatus(`Downloading: ${fileName}...`, 'info');
+                
+                const response = await fetch(`/sharepoint/download/${fileId}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    showStatus(`Downloaded: ${fileName}`, 'success');
+                } else {
+                    showStatus(`Failed to download: ${fileName}`, 'error');
+                }
+            } catch (error) {
+                showStatus('Download error: ' + error.message, 'error');
+            }
+        }
+        
+        async function shareFile(fileId, fileName) {
+            try {
+                const response = await fetch(`/sharepoint/share/${fileId}?type=view&scope=organization`);
+                const data = await response.json();
+                
+                if (response.ok && data.share_link) {
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(data.share_link).then(() => {
+                        showStatus(`Share link copied to clipboard for: ${fileName}`, 'success');
+                    }).catch(() => {
+                        // Fallback: show in prompt
+                        prompt('Share Link (copy this):', data.share_link);
+                    });
+                } else {
+                    showStatus(`Failed to create share link for: ${fileName}`, 'error');
+                }
+            } catch (error) {
+                showStatus('Share error: ' + error.message, 'error');
+            }
+        }
+        
+        async function showVersions(fileId, fileName) {
+            try {
+                const response = await fetch(`/sharepoint/versions/${fileId}`);
+                const data = await response.json();
+                
+                if (response.ok && data.versions) {
+                    let message = `Version History for: ${fileName}\n\n`;
+                    data.versions.forEach((version, index) => {
+                        const date = new Date(version.lastModifiedDateTime).toLocaleString();
+                        message += `Version ${data.versions.length - index}: ${date}\n`;
+                    });
+                    
+                    alert(message);
+                } else {
+                    showStatus(`No version history available for: ${fileName}`, 'info');
+                }
+            } catch (error) {
+                showStatus('Version history error: ' + error.message, 'error');
+            }
+        }
+        
+        function setupDropZone() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                
+                const files = Array.from(e.dataTransfer.files);
+                uploadFiles(files);
+            });
+            
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                uploadFiles(files);
+            });
+        }
+        
+        function uploadSelectedFiles() {
+            const fileInput = document.getElementById('fileInput');
+            const files = Array.from(fileInput.files);
+            
+            if (files.length === 0) {
+                showStatus('Please select files to upload', 'error');
+                return;
+            }
+            
+            uploadFiles(files);
+        }
+        
+        async function uploadFiles(files) {
+            if (!isAuthenticated) {
+                showStatus('Please connect to SharePoint first', 'error');
+                return;
+            }
+            
+            if (!currentLibrary) {
+                showStatus('Please select a document library first', 'error');
+                return;
+            }
+            
+            const folderPath = document.getElementById('folderPath').value || '';
+            
+            for (const file of files) {
+                await uploadSingleFile(file, folderPath);
+            }
+            
+            // Clear file input
+            document.getElementById('fileInput').value = '';
+            
+            // Refresh file list
+            setTimeout(() => {
+                refreshFiles();
+            }, 1000);
+        }
+        
+        async function uploadSingleFile(file, folderPath) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('library', currentLibrary);
+                formData.append('folder', folderPath);
+                
+                showStatus(`Uploading: ${file.name}...`, 'info');
+                
+                const response = await fetch('/sharepoint/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showStatus(`Successfully uploaded: ${file.name}`, 'success');
+                } else {
+                    showStatus(`Failed to upload: ${file.name}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`Upload error for ${file.name}: ${error.message}`, 'error');
+            }
+        }
+        
+        async function createFolder() {
+            const folderName = prompt('Enter folder name:');
+            
+            if (!folderName) return;
+            
+            try {
+                const response = await fetch('/sharepoint/folder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: folderName,
+                        library: currentLibrary,
+                        parent_path: currentPath
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showStatus(`Folder created: ${folderName}`, 'success');
+                    refreshFiles();
+                } else {
+                    showStatus(`Failed to create folder: ${folderName}`, 'error');
+                }
+            } catch (error) {
+                showStatus('Folder creation error: ' + error.message, 'error');
+            }
+        }
+        
+        async function searchFiles() {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            if (!query) {
+                showStatus('Please enter a search term', 'error');
+                return;
+            }
+            
+            if (!isAuthenticated) {
+                showStatus('Please connect to SharePoint first', 'error');
+                return;
+            }
+            
+            try {
+                showStatus(`Searching for: ${query}...`, 'info');
+                
+                const params = new URLSearchParams({
+                    q: query,
+                    library: currentLibrary
+                });
+                
+                const response = await fetch(`/sharepoint/search?${params}`);
+                const data = await response.json();
+                
+                if (response.ok && data.results) {
+                    displayFiles(data.results);
+                    showStatus(`Found ${data.results.length} results for: ${query}`, 'success');
+                } else {
+                    showStatus('Search failed', 'error');
+                }
+            } catch (error) {
+                showStatus('Search error: ' + error.message, 'error');
+            }
+        }
+        
+        function showSiteInfo() {
+            if (siteInfo && siteInfo.site) {
+                const site = siteInfo.site;
+                const info = `
+SharePoint Site Information:
+• Name: ${site.displayName}
+• URL: ${site.webUrl}
+• Created: ${new Date(site.createdDateTime).toLocaleDateString()}
+• ID: ${site.id}
+                `.trim();
+                
+                alert(info);
+            } else {
+                showStatus('Site information not available', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

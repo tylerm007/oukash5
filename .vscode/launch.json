@@ -41,7 +41,7 @@
                 "--swagger_port=5656",
                 "--swagger_host=192.168.13.31",
                 "--verbose=False",
-                "--http_scheme=http"
+                "--http_scheme=https"
             ],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
