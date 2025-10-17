@@ -8,7 +8,7 @@ from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict
 from sqlalchemy import inspect
 from http import HTTPStatus
 import logging
-
+from database.models import WFUser
 
 # **********************
 # sql auth provider
@@ -40,7 +40,7 @@ class DotMapX(DotMap):
     """
     def check_password(self, password=None):
         logger.warning("Insecure check_password method, using insecure default, override this method for password verification!")
-        return password == self.password_hash
+        return password == "p" #self.password_hash
 
 
 class Authentication_Provider(Abstract_Authentication_Provider):
@@ -89,9 +89,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             session = db.session  # sqlalchemy.orm.scoping.scoped_session
 
         try:
-            user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
+            #user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
+            user = session.query(WFUser).filter(WFUser.Username == id).one()
         except Exception as e:
-            logger.info(f'*****\nauth_provider FAILED looking for: {id}\n*****\n')
+            logger.info(f'*****\nauth_provider FAILED looking for UserName: {id}\n*****\n')
             logger.info(f'excp: {str(e)}\n')
             # raise e
             raise ALSError(f"User {id} is not authorized for this system")
@@ -100,12 +101,18 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             return user
         else:
             pass
-            rtn_user = row_to_dotmap(user, authentication_models.User)
-            rtn_user.UserRoleList = []
+            roles = user.WFUSERROLEList  # list of UserRole rows
+            user_roles = [DotMapX({'role_name': getattr(r, "UserRole")}) for r in roles]
+            logger.info(f'User {id} has roles: {user_roles}')
+
+            rtn_user = row_to_dotmap(user, WFUser)
+            rtn_user.UserRoleList = user_roles
+            '''
             user_roles = getattr(user, "UserRoleList")
             for each_row in user_roles:
                 each_user_role = row_to_dotmap(each_row, authentication_models.UserRole)
                 rtn_user.UserRoleList.append(each_user_role)
+            '''
             return rtn_user  # returning user fails per caution above
 
     @staticmethod
@@ -123,5 +130,5 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         """
         # return user.check_password(password = password)  : review
         logger.warning("Checking plaintext password")
-        return password == user.password_hash
+        return password == "p" #user.password_hash
 

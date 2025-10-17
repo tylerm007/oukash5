@@ -197,10 +197,10 @@ class Config:
     # Required Cognito Settings
     COGNITO_REGION=os.getenv('COGNITO_REGION', 'us-east-1')
     COGNITO_USER_POOL_ID=os.getenv('COGNITO_USER_POOL_ID', 'us-east-1_d38hiE2QM')
-    COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', '4daf1daa8hcs79ts7rugo362lt')
+    COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', '6o1m2bjh8bc8iihtufmhpq79gq')
     COGNITO_CLIENT_SECRET=os.getenv('COGNITO_CLIENT_SECRET', 'rev05ljd8067sbigkhlk153eluh78qgsh8dfptueehdalk42dmg')
-    COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'https://us-east-1d38hie2qm.auth.us-east-1.amazoncognito.com')
-    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'https://192.168.13.31:5656/auth/callback')
+    COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'auth.oudirect-st.ou.org')
+    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'http//192.168.13.31:5656/auth/callback')
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
     SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER')  # type: ignore # type: str

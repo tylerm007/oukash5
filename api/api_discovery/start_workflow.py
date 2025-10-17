@@ -292,17 +292,11 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     if start_instance_id is None:
         raise Exception(f'Start TaskInstance not found for process: {process_name}')    
     _complete_task(start_instance_id, 'Started', 'system', 'Workflow started', access_token)
-    
-    role_assignment = models.RoleAssigment(
-        ApplicationId=application.ApplicationID,
-        Role="DISPATCH",
-        Assignee=started_by,
-        CreatedDate=datetime.utcnow()
-    )
-    session.add(role_assignment)
-    session.commit()
-    app_logger.info(f'Role DISPATCH assigned to {started_by} for application {application.ApplicationID}')
-    return {"process_instance_id": process_instance_id}    
+
+    from api.api_discovery.assign_role import add_role_assignment
+    add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+
+    return {"Start Workflow completed process_instance_id": process_instance_id}
 
                     
 def _start_workflow_background(task_id: str, process_name: str, application_id: int, started_by: str, priority: str):

@@ -1,4 +1,5 @@
 from functools import wraps
+from turtle import mode
 from flask_cors import cross_origin
 from datetime import datetime
 from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
@@ -108,14 +109,22 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
           # Set TaskInstance to Completed
         app_logger.info(f'TaskInstance set to Completed: {task_id}')
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
-    
-def add_role_assignment(application_id, role, assignee):
+
+def add_role_assignment(application_id:int, role:str, assignee:str):
     """Add a role assignment to the database.
     Args:
         application_id (int): The ID of the application.
         role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
         assignee (str): The user to whom the role is assigned.
     """
+    existing_role =models.RoleAssigment.query.filter_by(
+        ApplicationId=application_id,
+        Role=role,
+        Assignee=assignee
+    ).first()
+    if existing_role:
+        app_logger.info(f'Role {role} already assigned to {assignee} for application {application_id}')
+        return
     role_assignment = models.RoleAssigment(
         ApplicationId=application_id,
         Role=role,

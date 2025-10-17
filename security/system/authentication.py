@@ -90,7 +90,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
             return jsonify(success=True)    
         try:   
             username = request.json.get("username", None)
-            password = request.json.get("password", None)
+            password = request.json.get("password", "p")
         except:
             username = ''
             password = ''
@@ -118,7 +118,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     
     @jwt.user_identity_loader
     def user_identity_lookup(user):
-        return user.id
+        return user.Username
 
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):

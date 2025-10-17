@@ -26,24 +26,27 @@ class Roles():
     """ For code completion (auth data is the source of truth) 
     
     Revise these for your app's roles"""
-    manager = "manager"
-    teller = "teller"
-    tenant = "tenant"
-    customer = "customer"
+    DISPATCH = "DISPATCH"
+    NCRC = "NCRC"
+    NCRCADMIN = "NCRC-ADMIN"
+    LEGAL = "LEGAL"
+    PROD = "PROD"
+    IAR = "IAR"
+    admin = "admin"
+    RFR = "RFR"
     read_only = "readonly"
     admin = "CS_ADMIN"
-    public="public"             # p1/p (no roles, but gets public)
+    public="public"       
     sa="sa"
-    default_roles_kcals = "default-roles-kcals"
-    uma_authorization = "uma_authorization"
     
 DefaultRolePermission(to_role=Roles.sa, can_read=True, can_update=True, can_insert=True, can_delete=True)
-DefaultRolePermission(to_role=Roles.tenant, can_read=True, can_delete=True)
+DefaultRolePermission(to_role=Roles.DISPATCH, can_read=True, can_delete=False, can_insert=True, can_update=True)
 DefaultRolePermission(to_role=Roles.admin, can_read=True, can_insert=True,can_update=True, can_delete=True)
-DefaultRolePermission(to_role=Roles.manager, can_read=True, can_insert=True,can_update=True, can_delete=False)
-DefaultRolePermission(to_role=Roles.teller, can_read=True, can_insert=True,can_update=True, can_delete=False)
-DefaultRolePermission(to_role=Roles.customer, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.NCRC, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.NCRCADMIN, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.LEGAL, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.PROD, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.IAR, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.RFR, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.read_only, can_read=True, can_insert=False,can_update=False, can_delete=False)
 DefaultRolePermission(to_role=Roles.public, can_read=True, can_insert=False,can_update=False, can_delete=False)
-DefaultRolePermission(to_role=Roles.default_roles_kcals, can_read=True, can_insert=True,can_update=True, can_delete=False)
-DefaultRolePermission(to_role=Roles.uma_authorization, can_read=True, can_insert=True,can_update=True, can_delete=False)
