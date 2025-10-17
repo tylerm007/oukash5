@@ -210,6 +210,9 @@ def complete_task(task_instance):
     task_name = task_instance.TaskDef.TaskName
     access_token = request.headers.get("Authorization")
     result = 'NO' if "Withdraw" in task_name else None
+    result = 'YES' if "Needs" in task_name else result
+    result = 'YES' if "Inspection Needed" in task_name else result
+    result = '2025-11-01' if "Schedule" in task_name else result
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
 

@@ -169,6 +169,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_instance.Status = status
         task_instance.CompletedDate = datetime.utcnow()
         task_instance.Result = result
+        task_instance.CompletedBy = completed_by
         session.add(task_instance)
         try:
             session.commit()
@@ -179,9 +180,12 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
-                    task_instance.Status = 'PENDING'
+                    task_instance.Status = 'PENDING' if task_instance.TaskDef.TaskType != 'START' else status
+                    task_instance.Result = None
                     session.add(task_instance)
                     session.commit()
+                    session.flush()
+                    insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
                     return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id}'}), 400
                    
@@ -191,17 +195,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             return jsonify({"status": "error", "message": "Error completing task"}), 500
 
         ## Get the workflow history
-        wf_history = WorkflowHistory(
-            InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
-            TaskInstanceId=task_instance.TaskInstanceId,
-            Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
-            NewStatus=status,
-            ActionBy=completed_by,
-            ActionReason=completion_notes
-        )
-        session.add(wf_history)
-        session.commit()
-        session.flush()
+        insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
         
         # Start the next tasks
         for flow_to in task_flows_to:
@@ -211,11 +205,12 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             task_def = next_task_instance.TaskDef if next_task_instance else None
             condition = flow_to.Condition if task_def else None
             # If this is a condition task, check the result to see if we should proceed
-            if condition and condition != 'None' and result and condition.lower() != result.lower():
+            if condition and result and condition != 'None' and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
             elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, stages_list, result):
                 next_task_instance.Status = 'PENDING'
+                next_task_instance.AssignedTo = completed_by
                 next_task_instance.StartedDate = datetime.utcnow()
                 session.add(next_task_instance)    
                 session.commit()
@@ -237,27 +232,58 @@ def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str
         if dependencies is None or len(dependencies) == 0:
             return True  # No dependencies, so it's valid to proceed
         for dependency in dependencies:
-            from_task_def = dependency.FromTaskId
-            condition = dependency.Condition
-            if taskDef.TaskType == 'CONDITION' and condition and condition != 'None' and result and condition.lower() != result.lower():
-                app_logger.info(f"Skipping dependency check for task {taskDef.TaskName} because condition '{condition}' does not match result '{result}'.")
-                continue  # Skip this dependency as the condition does not match the result
-            from_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == from_task_def, 
+            from_task_def_id = dependency.FromTaskId
+            #condition = dependency.Condition
+            #if taskDef.TaskType == 'CONDITION' and condition and result and condition != 'None' and condition.lower() == result.lower():
+            #    app_logger.info(f"Skipping dependency check for task {taskDef.TaskName} because condition '{condition}' does matches result '{result}'.")
+            #    continue  # Skip this dependency as the condition does not match the result
+            from_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == from_task_def_id, 
                                                            TaskInstance.StageId.in_(stages_list)).first()
             if from_task_instance and from_task_instance.Status != 'COMPLETED':
-                app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDef.TaskName} is not COMPLETED.")
+                app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDef.TaskName} Status is not set to: COMPLETED.")
                 return False
         return True
 
-def get_stage_list(taks_instance: TaskInstance) -> list:
+def get_stage_list(task_instance: TaskInstance) -> list:
     '''
     Get the list of stages for a given task instance.
     '''
     stages = []
-    if taks_instance is None:
+    if task_instance is None:
         return stages
-    
-    stage_instances = taks_instance.Stage.ProcessInstance.StageInstanceList
+
+    stage_instances = task_instance.Stage.ProcessInstance.StageInstanceList
     for stage_instance in stage_instances:
         stages.append(stage_instance.StageInstanceId)
     return stages
+
+def insert_workflow_history(task_instance: TaskInstance, status: str, result: str, completed_by: str, completion_notes: str, priorStatus: str = None) -> dict:
+    """
+    Insert a message for a workflow application.
+
+    Args:
+        session: SQLAlchemy session
+        application_id: ID of the workflow application
+        process_id: ID of the process definition
+        message: Message content
+        created_by: User who created the message
+
+    Returns:
+        A dictionary containing the result of the operation.
+    """
+    task_name = task_instance.TaskDef.TaskName if task_instance and task_instance.TaskDef else 'N/A'
+    application_id = task_instance.Stage.ProcessInstance.ApplicationId
+    wf_history = WorkflowHistory(
+            InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
+            TaskInstanceId=task_instance.TaskInstanceId,
+            Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
+            NewStatus=status,
+            PreviousStatus=priorStatus,
+            ActionBy=completed_by,
+            ActionReason=completion_notes
+        )
+    session.add(wf_history)
+    session.commit()
+    session.flush()
+    app_logger.info(f'Inserted workflow message for Application ID: {application_id}')
+    
