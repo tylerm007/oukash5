@@ -79,6 +79,27 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         response3 = requests.get(f'http://localhost:5656/api/{endpoint}?filter={filter3}')
         return jsonify({"result": f'filter: {filter}', "response": response.json(), "response2": response2.json(), "response3": response3.json()})
 
+    @app.route('/create_application', methods=['GET','OPTIONS'])
+    @admin_required()
+    @jwt_required()
+    def create_application_endpoint():
+
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        args = request.args
+        applicationNumber = int(args.get('applicationNumber'))
+        jot_application = session.query(models.CompanyApplication).filter(models.CompanyApplication.ID == applicationNumber).first()
+        if jot_application is None:
+            return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} does not exist with ID: {applicationNumber}'}), 400
+        companyID = jot_application.CompanyID
+        plantID = None
+        plant = session.query(models.PLANTTB).filter(models.PLANTTB.NAME == jot_application.PlantName).first()
+        if plant:
+            plantID = plant.PLANT_ID
+        application_id = create_new_application(applicationNumber, companyID, plantID)
+        process_id = start_workflow(application_id)
+        return jsonify({"result": f'Created application with ID: {application_id}, started process ID: {process_id}'})
+
     @app.route('/run_workflow_to_completion', methods=['GET','POST','OPTIONS'])
     @admin_required()
     @jwt_required()
@@ -161,7 +182,6 @@ def start_workflow(application_id):
     priority = "HIGH"
 
     response = _start_workflow(process_name, int(application_id), started_by, priority)
-    app_logger.info(f'Started workflow for application ID: {application_id}, Process Instance ID: {response["process_instance_id"]}')
     return response['process_instance_id']
 
 
@@ -273,13 +293,17 @@ def do_cleanup(application_id, process_id):
         DELETE FROM WorkflowHistory where [InstanceId] = {process_id};
       
     """))
+    session.commit()
     stage_list = find_all_stages_for_process(process_id)
-    for stage_id in stage_list:
+    for stage in stage_list:
         session.execute(text(f"""
-            DELETE FROM TaskInstances where StageId = {stage_id};
-            DELETE FROM StageInstance where StageInstanceId = {stage_id};
-           
+            DELETE FROM TaskInstances where StageId = {stage["StageInstanceId"]};
         """))
+        session.commit()
+        session.execute(text(f"""
+            DELETE FROM StageInstance where StageInstanceId = {stage["StageInstanceId"]};
+        """))
+        session.commit()
     session.execute(text(f"""
         DELETE from RoleAssigment where ApplicationId = {application_id};
         DELETE FROM ProcessInstances where ApplicationId = {application_id};

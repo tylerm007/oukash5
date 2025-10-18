@@ -43,7 +43,7 @@ DefaultRolePermission(to_role=Roles.sa, can_read=True, can_update=True, can_inse
 DefaultRolePermission(to_role=Roles.DISPATCH, can_read=True, can_delete=False, can_insert=True, can_update=True)
 DefaultRolePermission(to_role=Roles.admin, can_read=True, can_insert=True,can_update=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.NCRC, can_read=True, can_insert=True,can_update=True, can_delete=False)
-DefaultRolePermission(to_role=Roles.NCRCADMIN, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.NCRCADMIN, can_read=True, can_insert=True,can_update=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.LEGAL, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.PROD, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.IAR, can_read=True, can_insert=True,can_update=True, can_delete=False)

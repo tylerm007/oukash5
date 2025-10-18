@@ -295,8 +295,8 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
 
     from api.api_discovery.assign_role import add_role_assignment
     add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
-
-    return {"Start Workflow completed process_instance_id": process_instance_id}
+    app_logger.info(f'Start Workflow started by {started_by} for application {application.ApplicationID} with process_id {process_instance_id}')
+    return {"process_instance_id": process_instance_id}
 
                     
 def _start_workflow_background(task_id: str, process_name: str, application_id: int, started_by: str, priority: str):
