@@ -180,7 +180,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
-                    task_instance.Status = 'PENDING' if task_instance.TaskDef.TaskType != 'START' else status
+                    task_instance.Status = 'FAILED' if task_instance.TaskDef.TaskType != 'START' else status
                     task_instance.Result = None
                     session.add(task_instance)
                     session.commit()

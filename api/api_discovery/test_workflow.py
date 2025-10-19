@@ -87,6 +87,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
         args = request.args
+        user = get_jwt().get("sub", "admin")
         applicationNumber = int(args.get('applicationNumber'))
         jot_application = session.query(models.CompanyApplication).filter(models.CompanyApplication.ID == applicationNumber).first()
         if jot_application is None:
@@ -97,17 +98,22 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if plant:
             plantID = plant.PLANT_ID
         application_id = create_new_application(applicationNumber, companyID, plantID)
-        process_id = start_workflow(application_id)
+        process_id = start_workflow(application_id, user)
         return jsonify({"result": f'Created application with ID: {application_id}, started process ID: {process_id}'})
 
     @app.route('/run_workflow_to_completion', methods=['GET','POST','OPTIONS'])
     @admin_required()
     @jwt_required()
     def run_workflow_to_completion_endpoint():
-        applicationNumber = 564
-        companyID = 11371556
-        plantID = 14055823
-        run_workflow_to_completion(applicationNumber, companyID, plantID)
+        '''
+        Invoke-RestMethod -Uri "http://localhost:5656/run_workflow_to_completion?applicationNumber=1" -Method GET -ContentType "application/json" -Headers @{Authorization = "Bearer {<your_jwt_token>}
+        '''
+        args = request.args
+        applicationNumber = args.get('applicationNumber')
+        application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationNumber == applicationNumber).first()
+        if not application:
+            return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404   
+        run_workflow_to_completion(application)
         return jsonify({"result": f'Workflow run to completion'})
 
     @app.route('/reset_task_instances/<application_id>', methods=['GET','OPTIONS'])
@@ -173,15 +179,10 @@ def create_new_application(applicationNumber: int, companyID: int, plantID: int)
     return application.ApplicationID
 
 
-def start_workflow(application_id):
+def start_workflow(application_id: int, start_by: str):
     from api.api_discovery.start_workflow import _start_workflow
-   
     process_name = "OU Application Init"
-    application_id = application_id
-    started_by = "tband"
-    priority = "HIGH"
-
-    response = _start_workflow(process_name, int(application_id), started_by, priority)
+    response = _start_workflow(process_name, int(application_id), start_by, "NORMAL")
     return response['process_instance_id']
 
 
@@ -236,9 +237,13 @@ def complete_task(task_instance):
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
 
-def run_workflow_to_completion(applicationNumber: int, companyID: int, plantID: int):
-    application_id = create_new_application(applicationNumber, companyID, plantID)
-    process_id = start_workflow(application_id)
+def run_workflow_to_completion(application: WFApplication):
+    application_id = application.ApplicationID
+    process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
+    if not process_instance:
+        app_logger.error(f'ProcessInstance not found for Application ID: {application_id}')
+        return
+    process_id = process_instance.InstanceId
     stages_list = find_all_stages_for_process(process_id)
     completed_tasks = []
     for stage in stages_list:

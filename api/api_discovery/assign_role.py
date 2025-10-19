@@ -131,4 +131,5 @@ def add_role_assignment(application_id:int, role:str, assignee:str):
         CreatedDate=datetime.utcnow()
     )
     session.add(role_assignment)
+    session.commit()
     app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
