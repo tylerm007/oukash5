@@ -76,38 +76,48 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400
 
         app_logger.info(f'Assign Role {role} to {assignee} for application {app_id} task {task_id}')
-        # Here you would add the loigic to assign the role to the user for the application   
-        application = models.WFApplication.query.filter_by(ApplicationID=app_id).first()
-        if not application:
-            return jsonify({"error": f"Application with ID {app_id} not found"}), 404
-       
-       # move to Rule
-        application.AssignedTo = assignee
-        application.AssignedDate = datetime.utcnow()
-        application.Status = 'INP'
-        session.add(application)
-        try:
-            
-            add_role_assignment(app_id, role, assignee)
-            if role == 'NCRC':
-                admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
-                if admin_assignee is None:
-                    admin_assignee = assignee 
-                else:
-                    admin_assignee = admin_assignee.AdminUserName
-                add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
-                add_role_assignment(app_id, 'IAR', admin_assignee)
-                add_role_assignment(app_id, 'PROD', admin_assignee)
-                add_role_assignment(app_id, 'LEGAL', admin_assignee)
-            session.commit()
-            _complete_task(task_id, 'Assign Role', 'system', f'Role {role} assigned to {assignee}')
-        except Exception as e:
-            session.rollback()
-            app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
-            return jsonify({"error": "Failed to assign role"}), 500
-          # Set TaskInstance to Completed
-        app_logger.info(f'TaskInstance set to Completed: {task_id}')
+        # Here you would add the loigic to assign the role to the user for the application
+
+        _assign_role(task_id, role, assignee, app_id)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
+        
+def _assign_role(task_id:int, role: str, assignee: str, app_id: int):
+    """Assign role to user for the application.
+    Args:
+        role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
+        assignee (str): The user to whom the role is assigned.
+        app_id (int): The ID of the application.
+    """
+    application = session.query(models.WFApplication).filter_by(ApplicationID=app_id).first()
+    if not application:
+        raise ValueError(f"Application with ID {app_id} not found")
+    # move to Rule
+    application.AssignedTo = assignee
+    application.AssignedDate = datetime.utcnow()
+    application.Status = 'INP'
+    session.add(application)
+    try:
+        
+        add_role_assignment(app_id, role, assignee)
+        if role == 'NCRC':
+            admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+            if admin_assignee is None:
+                admin_assignee = assignee 
+            else:
+                admin_assignee = admin_assignee.AdminUserName
+            add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
+            add_role_assignment(app_id, 'IAR', admin_assignee)
+            add_role_assignment(app_id, 'PROD', admin_assignee)
+            add_role_assignment(app_id, 'LEGAL', admin_assignee)
+        session.commit()
+        _complete_task(task_id, 'Assign Role', 'system', f'Role {role} assigned to {assignee}')
+    except Exception as e:
+        session.rollback()
+        app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
+        raise Exception({"error": "Failed to assign role"}, 500)
+        # Set TaskInstance to Completed
+    app_logger.info(f'TaskInstance set to Completed: {task_id}')
+    
 
 def add_role_assignment(application_id:int, role:str, assignee:str):
     """Add a role assignment to the database.

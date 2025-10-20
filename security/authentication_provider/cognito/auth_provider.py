@@ -420,7 +420,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             data = {
                 'grant_type': 'authorization_code',
                 'client_id': Args.instance.cognito_client_id,
-                'client_secret': Args.instance.cognito_client_secret,
+                #'client_secret': Args.instance.cognito_client_secret,
                 'code': auth_code,
                 'redirect_uri': Args.instance.cognito_redirect_uri
             }
@@ -521,10 +521,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user = DotMapX()
         
         # Cognito standard claims
-        rtn_user.name = claims.get("email") or claims.get("sub")
-        rtn_user.email = claims.get("email")
-        rtn_user.given_name = claims.get("given_name")
-        rtn_user.family_name = claims.get("family_name")
+        rtn_user.name = claims.get("Username") or claims.get("sub")
+        rtn_user.email = claims.get("Email")
+        rtn_user.given_name = claims.get("FullName")
+        rtn_user.family_name = claims.get("Username")
         rtn_user.id = claims.get("sub")
         rtn_user.password_hash = None
         

@@ -1,9 +1,11 @@
 from functools import wraps
+from api.api_discovery import assign_role
 from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
-from os import access
+from api.api_discovery.assign_role import _assign_role   
+
 from urllib import response
 from database.models import StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
 import database.models as models
@@ -109,11 +111,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         Invoke-RestMethod -Uri "http://localhost:5656/run_workflow_to_completion?applicationNumber=1" -Method GET -ContentType "application/json" -Headers @{Authorization = "Bearer {<your_jwt_token>}
         '''
         args = request.args
+        user = get_jwt().get("sub", "admin")
         applicationNumber = args.get('applicationNumber')
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationNumber == applicationNumber).first()
         if not application:
-            return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404   
-        run_workflow_to_completion(application)
+            return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404
+        run_workflow_to_completion(application, user)
         return jsonify({"result": f'Workflow run to completion'})
 
     @app.route('/reset_task_instances/<application_id>', methods=['GET','OPTIONS'])
@@ -188,7 +191,7 @@ def start_workflow(application_id: int, start_by: str):
 
 def find_all_stages_for_process(process_id):
     stages = StageInstance.query.filter(StageInstance.ProcessInstanceId == process_id).all()
-    return [stage.to_dict() for stage in stages]
+    return [stage for stage in stages]
 
 def find_all_pending_tasks(stage_id: int):
     """
@@ -201,8 +204,8 @@ def find_all_pending_tasks(stage_id: int):
     for task_instance in pending_tasks:
         taskDef = task_instance.TaskDef
         task_name = taskDef.TaskName if taskDef else 'Unknown'
-        if task_instance and taskDef and taskDef.AssigneeRole == 'SYSTEM':
-            print(f'Skipping System Task {task_name} - {task_instance}')
+        if task_instance and taskDef and taskDef.AssigneeRole.upper() == 'SYSTEM':
+            print(f'Skipping System Task {task_name} - {task_instance} Role: {taskDef.AssigneeRole}')
             pending_tasks.remove(task_instance)
     return pending_tasks
 
@@ -230,14 +233,15 @@ def complete_task(task_instance):
     task_instance_id = task_instance.TaskInstanceId
     task_name = task_instance.TaskDef.TaskName
     access_token = request.headers.get("Authorization")
-    result = 'NO' if "Withdraw" in task_name else None
-    result = 'YES' if "Needs" in task_name else result
-    result = 'YES' if "Inspection Needed" in task_name else result
+    result = 'NO' if "to Withdrawn Y/N" in task_name else None
+    result = 'NO' if "Withdraw Application" in task_name else None
+    result = 'YES' if "Needs NDA" in task_name else result
+    result = 'YES' if "Is Inspection Needed" in task_name else result
     result = '2025-11-01' if "Schedule" in task_name else result
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
 
-def run_workflow_to_completion(application: WFApplication):
+def run_workflow_to_completion(application: WFApplication, user: str):
     application_id = application.ApplicationID
     process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
     if not process_instance:
@@ -247,14 +251,82 @@ def run_workflow_to_completion(application: WFApplication):
     stages_list = find_all_stages_for_process(process_id)
     completed_tasks = []
     for stage in stages_list:
-        stage_id = stage["StageInstanceId"]
-        pending_tasks = find_all_pending_tasks(stage_id)
-        for task_instance in pending_tasks:
-            print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
-            complete_task(task_instance)
-            completed_tasks.append(task_instance.TaskInstanceId)
-            process_task_flow(task_instance, stage_id, completed_tasks)
-       
+        stage_id = stage.StageInstanceId
+        stage_state = session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
+        status = stage_state.Status # "'IN_PROGRESS'"
+        name = stage.Lane.LaneName if stage.Lane else 'Unknown'
+        app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
+        if status == 'IN_PROGRESS' and name == 'Initial':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            for task_instance in pending_tasks:
+                if task_instance.TaskDef.TaskName == 'AssignNCRC':
+                    _assign_role(task_instance.TaskInstanceId, 'NCRC', user, application_id)
+                    print(f'  Assign Role: {task_instance.TaskDef.TaskName}')
+                next_pending_tasks = find_all_pending_tasks(stage_id)
+                while len(next_pending_tasks) > 0:
+                    for next_task_instance in next_pending_tasks:
+                        complete_task(next_task_instance)
+                        completed_tasks.append(next_task_instance.TaskInstanceId)
+                        #process_task_flow(next_task_instance, stage_id, completed_tasks)
+                        next_pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'NDA':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'Inspection':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'Ingredients':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'Products':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'Contract':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+        elif status == 'IN_PROGRESS' and name == 'Certification':
+            pending_tasks = find_all_pending_tasks(stage_id)
+            while len(pending_tasks) > 0:
+                for task_instance in pending_tasks:
+                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                    complete_task(task_instance)
+                    completed_tasks.append(task_instance.TaskInstanceId)
+                    pending_tasks = find_all_pending_tasks(stage_id)
+
+    stage_list = find_all_stages_for_process(process_id)
+    for stage in stage_list:
+        print(f'Stage {stage.Lane.LaneName} Status {stage.Status}')
     print(f"Workflow for application {application_id} completed {completed_tasks}.")
     app_logger.info(f"Workflow for application {application_id} completed {completed_tasks}.")
 
@@ -269,7 +341,6 @@ def process_task_flow(task_instance, stage_instance_id, completed_tasks):
                 complete_task(next_task_instance)
                 completed_tasks.append(next_task_instance.TaskInstanceId)
                 process_task_flow(next_task_instance, stage_instance_id, completed_tasks)
-
 def do_reset(application_id):
     session.execute(text(f"""
         UPDATE TaskInstances SET Status = 'NEW', Result = NULL, ResultData = NULL, ErrorMessage = NULL 
@@ -302,11 +373,11 @@ def do_cleanup(application_id, process_id):
     stage_list = find_all_stages_for_process(process_id)
     for stage in stage_list:
         session.execute(text(f"""
-            DELETE FROM TaskInstances where StageId = {stage["StageInstanceId"]};
+            DELETE FROM TaskInstances where StageId = {stage.StageInstanceId};
         """))
         session.commit()
         session.execute(text(f"""
-            DELETE FROM StageInstance where StageInstanceId = {stage["StageInstanceId"]};
+            DELETE FROM StageInstance where StageInstanceId = {stage.StageInstanceId};
         """))
         session.commit()
     session.execute(text(f"""
