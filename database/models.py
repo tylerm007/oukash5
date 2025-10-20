@@ -1087,6 +1087,7 @@ class COMPANYTB(Base):  # type: ignore
     PLANTCOMMENTList : Mapped[List["PLANTCOMMENT"]] = relationship(back_populates="COMPANY_TB")
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="COMPANY_TB")
     LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
+    #INVOICEFEEList : Mapped[List["INVOICEFEE"]] = relationship(back_populates="COMPANY_TB")
     
 class COMPANYADDRESSTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_ADDRESS_TB'
@@ -1159,6 +1160,7 @@ class PLANTTB(Base):  # type: ignore
     PLANTCERTDETAILList : Mapped[List["PLANTCERTDETAIL"]] = relationship(back_populates="PLANT_TB")
     PLANTCOMMENTList : Mapped[List["PLANTCOMMENT"]] = relationship(back_populates="PLANT_TB")
     #USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="PLANT_TB")
+    #INVOICEFEEList : Mapped[List["INVOICEFEE"]] = relationship(back_populates="PLANT_TB") # s/b ownstb
 
 class OWNSTB(Base):  # type: ignore
     __tablename__ = 'OWNS_TB'
@@ -1793,3 +1795,95 @@ class v_Plants(Base):
     ProductJobLineItemList : Mapped[List["ProductJobLineItem"]] = relationship(back_populates=("PLANT_TB"))
     ProductList : Mapped[List["Product"]] = relationship(back_populates=("PLANT_TB"))
     '''
+
+
+class INVOICEFEE(Base):  # type: ignore
+    __tablename__ = 'INVOICE_FEES'
+    _s_collection_name = 'INVOICEFEE'  # type: ignore
+    __table_args__ = (
+        Index('INVOICE_FEES_INVOICE_ID', 'INVOICE_ID', 'COMPANY_ID', 'TYPE', 'INVOICE_DATE', 'TOTAL_AMOUNT', 'STATUS', 'BILL_TO_CO_ID', 'BILL_TO_PLANT_ID', unique=True),
+    )
+
+    INVOICE_ID = Column(Integer, primary_key=True)
+    COMPANY_ID = Column(Integer, nullable=False) #Column(ForeignKey('COMPANYTB.COMPANY_ID'), nullable=False, index=True)
+    TYPE = Column(String(4), nullable=False, index=True)
+    INVOICE_TYPE = Column(String(20))
+    INVOICE_DATE = Column(DATETIME, index=True)
+    FREQ = Column(String(20))
+    TOTAL_AMOUNT = Column(MONEY)
+    DATE_POSTED = Column(DATETIME)
+    STATUS = Column(String(20))
+    REPLACED_BY = Column(Integer)
+    PAYMENT = Column(MONEY)
+    CHECK_NO = Column(String(255))
+    CHECK_DATE = Column(DATETIME)
+    CHECK_RECEIVED = Column(DATETIME)
+    BILL_TO_CO_ID = Column(Integer)
+    BILL_TO_PLANT_ID = Column(Integer) # Column(ForeignKey('PLANT_TB.PLANT_ID'), index=True)
+    OK_TO_POST = Column(String(1))
+    WHO = Column(String(40))
+    REPLACEMENT_FOR = Column(Integer)
+    BATCH_ID_S36 = Column(String(7))
+    BATCH_DATE = Column(DATETIME)
+    TRANSFER_FLAG = Column(String(1))
+    PRINT_FLAG = Column(String(1))
+    HOLD_FLAG = Column(String(1))
+    ATTACHED_LETTER = Column(String(20))
+    TIMESTAMP = Column(BINARY(8))
+    ID = Column(Integer)
+    COMMENT = Column(String(255))
+    INVOICE_LEVEL = Column(Integer)
+    PurchaseOrder = Column(String(75), server_default=text(""))
+    DeliveryMethod = Column(String(30), server_default=text(""))
+    DeliveryDate = Column(Date)
+    OriginalInvoiceAmount = Column(MONEY)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+    achPaid = Column(Boolean, server_default=text("0"), nullable=False)
+    BatchId = Column(Integer)
+    PeriodStart = Column(DATETIME)
+    PeriodEnd = Column(DATETIME)
+    BalanceInAccounting : DECIMAL = Column(DECIMAL(18, 2), server_default=text("0"))
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+    #PLANT_TB : Mapped["PLANTTB"] = relationship(back_populates=("INVOICEFEEList"))
+    #COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("INVOICEFEEList"))
+
+    # Child relationships
+    #INVOICEFEESDETAILList = Mapped[List["INVOICEFEESDETAIL"]] = relationship(back_populates=("INVOICEFEE"))
+
+class INVOICEFEESDETAIL(Base):  # type: ignore
+    __tablename__ = 'INVOICE_FEES_DETAIL'
+    _s_collection_name = 'INVOICEFEESDETAIL'  # type: ignore
+    __table_args__ = (
+        Index('invoiceIdVisitID', 'INVOICE_ID', 'VISIT_ID'),
+        Index('XPK_INVOICE_FEES_DET', 'INVOICE_ID', 'INVOICE_LINE'),
+        Index('infd', 'INVOICE_ID', 'PERIOD_START_DATE')
+    )
+
+    ID = Column(Integer, primary_key=True)
+    INVOICE_ID = Column(Integer, nullable=False)
+    INVOICE_LINE = Column(Integer, nullable=False)
+    VISIT_ID = Column(Integer)
+    DESTINATION_TYPE = Column(String(1))
+    DESTINATION_ID = Column(Integer, index=True)
+    FEE = Column(MONEY)
+    EXPENSES = Column(MONEY)
+    VISIT_TYPE = Column(String(100))
+    VISIT_DATE = Column(DATETIME)
+    VISIT_PERSON_JOB_ID = Column(Integer)
+    PERIOD_START_DATE = Column(DATETIME)
+    PERIOD_END_DATE = Column(DATETIME)
+    REASON = Column(String(50))
+    TIMESTAMP = Column(BINARY(8))
+    ownsID = Column(Integer)
+    voided = Column(Boolean, server_default=text("((0))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    CHANGESET_ID = Column(Integer, index=True)
+    allow_client_generated_ids = True
+
+    # Parent relationships (access parent)
+    #INVOICEFEE = Mapped["INVOICEFEE"] = relationship(back_populates=("INVOICEFEESDETAILList"))

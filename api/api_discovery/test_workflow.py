@@ -113,10 +113,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         args = request.args
         user = get_jwt().get("sub", "admin")
         applicationNumber = args.get('applicationNumber')
+        scenario = args.get('scenario', 1)      
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationNumber == applicationNumber).first()
         if not application:
             return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404
-        run_workflow_to_completion(application, user)
+        run_workflow_to_completion(application, user=user, scenario=scenario)
         return jsonify({"result": f'Workflow run to completion'})
 
     @app.route('/reset_task_instances/<application_id>', methods=['GET','OPTIONS'])
@@ -209,6 +210,17 @@ def find_all_pending_tasks(stage_id: int):
             pending_tasks.remove(task_instance)
     return pending_tasks
 
+def find_lane_end(stage_id: int):
+    stage = session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
+    if not stage:
+        app_logger.error(f'StageInstance not found: {stage_id}')
+        return 'NONE'
+    task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.StageId == stage_id).all()
+    for task_instance in task_instances:
+        if task_instance.TaskDef.TaskType == 'LANEEND':
+            return task_instance.Status
+    return "NEW"
+
 def find_task_flow(task_instance:TaskInstance):
     #task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
     if not task_instance:
@@ -228,20 +240,26 @@ def find_task_flow(task_instance:TaskInstance):
     task_flows_to = task_def.TaskFlowList or []
     return task_flows_to
 
-def complete_task(task_instance):
+def complete_task(task_instance, scenario: int = 1):
     from api.api_discovery.complete_task import _complete_task
     task_instance_id = task_instance.TaskInstanceId
     task_name = task_instance.TaskDef.TaskName
     access_token = request.headers.get("Authorization")
-    result = 'NO' if "to Withdrawn Y/N" in task_name else None
-    result = 'NO' if "Withdraw Application" in task_name else None
-    result = 'YES' if "Needs NDA" in task_name else result
-    result = 'YES' if "Is Inspection Needed" in task_name else result
-    result = '2025-11-01' if "Schedule" in task_name else result
+    result = result_scenario(task_name, scenario)
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
 
-def run_workflow_to_completion(application: WFApplication, user: str):
+def result_scenario(task_name, scenario: int = 1) -> str:
+    if scenario == 2:
+        result = 'YES' if "to Withdrawn Y/N" in task_name else None
+    else:
+        result = 'NO' if "Withdraw Application" in task_name else None
+    result = 'YES' if "Needs NDA" in task_name else result
+    result = 'YES' if "Is Inspection Needed" in task_name else result
+    result = '2025-11-01' if "Schedule" in task_name else result
+    return result
+
+def run_workflow_to_completion(application: WFApplication, user: str, scenario: int = 1):
     application_id = application.ApplicationID
     process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
     if not process_instance:
@@ -263,16 +281,15 @@ def run_workflow_to_completion(application: WFApplication, user: str):
                     _assign_role(task_instance.TaskInstanceId, 'NCRC', user, application_id)
                     print(f'  Assign Role: {task_instance.TaskDef.TaskName}')
                 next_pending_tasks = find_all_pending_tasks(stage_id)
-                while len(next_pending_tasks) > 0:
+                while len(next_pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                     for next_task_instance in next_pending_tasks:
-                        complete_task(next_task_instance)
+                        complete_task(next_task_instance, scenario)
                         completed_tasks.append(next_task_instance.TaskInstanceId)
-                        #process_task_flow(next_task_instance, stage_id, completed_tasks)
                         next_pending_tasks = find_all_pending_tasks(stage_id)
 
         elif status == 'IN_PROGRESS' and name == 'NDA':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
@@ -281,7 +298,7 @@ def run_workflow_to_completion(application: WFApplication, user: str):
 
         elif status == 'IN_PROGRESS' and name == 'Inspection':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
@@ -290,7 +307,7 @@ def run_workflow_to_completion(application: WFApplication, user: str):
 
         elif status == 'IN_PROGRESS' and name == 'Ingredients':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
@@ -299,7 +316,7 @@ def run_workflow_to_completion(application: WFApplication, user: str):
 
         elif status == 'IN_PROGRESS' and name == 'Products':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
@@ -308,7 +325,7 @@ def run_workflow_to_completion(application: WFApplication, user: str):
 
         elif status == 'IN_PROGRESS' and name == 'Contract':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
@@ -317,7 +334,7 @@ def run_workflow_to_completion(application: WFApplication, user: str):
 
         elif status == 'IN_PROGRESS' and name == 'Certification':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0:
+            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
                     print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
                     complete_task(task_instance)
