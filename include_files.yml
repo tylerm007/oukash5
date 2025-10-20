@@ -36,6 +36,7 @@ include:
   - IARarchive.*
   - IARlog.*
   - INVOICE_FEES.*
+  - INVOICE_FEES_DETAIL.*
   - JewishActionProductsDirectory_TB.*
   - LabelComment.*
   - LabelOptions.*
