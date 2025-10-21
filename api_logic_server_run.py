@@ -120,7 +120,7 @@ AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = 
 # SharePoint Integration
 # ============================================
 try:
-    from integration.sharepoint_service import add_sharepoint_endpoints
+    from integration.microsoft.sharepoint_service import add_sharepoint_endpoints
     add_sharepoint_endpoints(flask_app)
     app_logger.info("✅ SharePoint integration endpoints added")
     app_logger.info("   • GET  /sharepoint              - Web interface")

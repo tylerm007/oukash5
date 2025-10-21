@@ -227,3 +227,8 @@ UPDATE TaskDefinitions
 set   PostScriptJson = 'set_application_attribute(application_id,"verify_company","1", data)' 
 where TaskName = 'verify Company';
 GO
+
+UPDATE TaskDefinitions
+set   PostScriptJson = 'create_invoice(task_instance_id,  data)'
+where TaskName = 'Assign Invoice Amount';
+GO

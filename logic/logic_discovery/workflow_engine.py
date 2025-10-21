@@ -60,6 +60,33 @@ def process_task_instance(task_instance: models.TaskInstance, old_row: models.Ta
         app_logger.error(f"Error processing TaskInstance {new_task_instance}: {e}")
         #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
         return
+    
+def create_invoice(task_instance_id, data: DotMap):
+    ''' Create an EventAction for the given TaskInstanceId and EventKey
+    '''
+    task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+    if not task_instance:
+        data.Result = False
+        data.ErrorMessage = f"No TaskInstance found with TaskInstanceId {task_instance_id}"
+        return data
+
+    from api.api_discovery.event_action import _create_invoice_fee
+    fee =  float(data.Result) if 'Result' in data else 0.0
+    application_id = task_instance.Stage.ProcessInstance.ApplicationId
+    application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
+    company_id = application.CompanyID
+    invoice_fee = _create_invoice_fee(company_id, fee)
+    if not invoice_fee:
+        data.ErrorMessage = f"Failed to create invoice fee for TaskInstanceId {task_instance_id}"
+        data.Result = False
+        return data
+    event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
+    from api.api_discovery.event_action import _create_event
+    _create_event(task_instance_id, event_key)
+    data.ResultData = {"EventKey": event_key}
+    app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
+    data.Result = True
+    return data
 
 def set_application_attribute(application_id, name, value, data: DotMap) -> DotMap:
     ''' Set an attribute of the WFApplication to a new value
@@ -357,6 +384,7 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
 
 def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_instance: models.TaskInstance = None):
     task_id = row.TaskInstanceId
+    task_instance_id = task_id
     stage_id = row.StageId
     task_def = row.TaskDef
     script = task_def.PostScriptJson or None
@@ -375,11 +403,17 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     data.access_token = access_token
     task = DotMap(row.to_dict())
     # Get current state to use in script calls
-    context = {"data": data,"application_id": application_id, "task": task, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
+    data.Result = task.Result
+    data.ResultData = task.ResultData   
+    data.application_id = application_id
+    data.task_instance_id = task_instance_id
+    data.stage_id = stage_id
+    context = {"data": data,"application_id": application_id, "task": task, "task_instance_id": task_instance_id, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
     external_context = {"get_application": get_application,
                         "set_application_attribute":set_application_attribute,
                         "set_stage_attribute":set_stage_attribute,     
                         "set_task_attribute":set_task_attribute,
+                        "create_invoice":create_invoice,
                         "models":models,
                         "app_logger":app_logger,
                         "datetime":datetime,

@@ -1,12 +1,12 @@
 about:
-  date: September 25, 2025 11:45:42
+  date: October 20, 2025 11:04:09
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
   number_relationships: 49
-  number_tables: 42
+  number_tables: 43
 info_toggle_checked: true
 resources:
   LaneDefinition:
@@ -52,215 +52,23 @@ resources:
       resource: ProcessDefinition
     type: LaneDefinition
     user_key: LaneName
-  CompanyApplication:
+  LaneRole:
     attributes:
-    - label: 'Company Name*'
-      name: CompanyName
+    - label: ' Role Description*'
+      name: RoleDescription
       required: true
       search: true
       sort: true
-    - name: ID
+    - name: RoleCode
       required: true
-    - name: PreviousCertification
-    - name: OUCertified
-    - name: CurrentlyCertified
-    - name: CompanyID
-    - name: PlantName
-    - name: Street1
-    - name: Street2
-    - name: City
-    - name: State
-    - name: Zip
-    - name: Country
-    - name: title
-    - name: FirstName
-    - name: LastName
-    - name: email
-    - name: phone
-    - name: NatureOfProducts
-    - name: HowHeardAboutUs
-    - name: Comments
-    - name: Description
-    - name: OtherCertification
-    - name: gclid
-    - name: utm_source
-    - name: utm_medium
-    - name: utm_campaign
-    - name: dateSubmitted
-    - name: Utm_Term
-    - name: Version
-    - name: Language
-    - name: Oukosher_source
-    - name: JotFormSubmissionID
-    tab_groups: []
-    type: CompanyApplication
-    user_key: CompanyName
-  COMPANYTB:
-    attributes:
-    - label: 'Company Name*'
-      name: NAME
-      required: true
-      search: true
-      sort: true
-    - name: COMPANY_ID
-      required: true
-    - name: LIST
-    - name: GP_NOTIFY
-    - name: PRODUCER
-    - name: MARKETER
-    - name: SOURCE
-    - name: IN_HOUSE
-    - name: PRIVATE_LABEL
-    - name: COPACKER
-    - name: JEWISH_OWNED
-    - name: CORPORATE
-    - name: COMPANY_TYPE
-    - name: INVOICE_TYPE
-    - name: INVOICE_FREQUENCY
-    - name: INVOICE_DTL
-    - name: TIMESTAMP
-    - name: STATUS
-    - name: RC
-    - name: PARENT_CO
-    - name: INVOICE_LAST_DATE
-    - name: COMPANY_BILL_TO_NAME
-    - name: ACTIVE
-    - name: AcquiredFrom
-    - name: UID
-    - name: MoveToGP
-    - name: DefaultPO
-    - name: POexpiry
-    - name: PrivateLabelPO
-    - name: PrivateLabelPOexpiry
-    - name: VisitPO
-    - name: VisitPOexpiry
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: CATEGORY
-    - name: OLDCOMPANYTYPE
-    - name: BoilerplateInvoiceComment
-    - name: IsPoRequired
-    - name: ShouldPropagateCompanyPo
-    - name: ShouldPropagateKscPoToPlants
-    - name: ShouldPropagateVisitPoToPlants
-    - name: PoReason
-    - name: On3rdPartyBilling
-    - name: IsTest
-    - name: ChometzEmailSentDate
     tab_groups:
     - direction: tomany
       fks:
-      - COMPANY_ID
-      name: PLANTTBList
-      resource: PLANTTB
-    - direction: tomany
-      fks:
-      - COMPANY_ID
-      name: OWNSTBList
-      resource: OWNSTB
-    type: COMPANYTB
-    user_key: NAME
-  PLANTTB:
-    attributes:
-    - label: 'Plant Name*'
-      name: NAME
-      required: true
-      search: true
-      sort: true
-    - name: PLANT_ID
-      required: true
-    - name: GP_NOTIFY
-    - name: MULTILINES
-    - name: PASSOVER
-    - name: SPECIAL_PROD
-    - name: JEWISH_OWNED
-    - name: PLANT_TYPE
-    - name: PLANT_DIRECTIONS
-    - name: ACTIVE
-    - name: USDA_CODE
-    - name: PlantUID
-    - name: DoNotAttach
-    - name: OtherCertification
-    - name: PrimaryCompany
-    - name: DesignatedRFR
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: MaxOnSiteVisits
-    - name: MaxVirtualVisits
-    - name: IsDaily
-    tab_groups:
-    - direction: toone
-      fks:
-      - PrimaryCompany
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: tomany
-      fks:
-      - PLANT_ID
-      name: OWNSTBList
-      resource: OWNSTB
-    type: PLANTTB
-    user_key: NAME
-  OWNSTB:
-    attributes:
-    - label: 'ID*'
-      name: ID
-      required: true
-      search: true
-      sort: true
-    - name: COMPANY_ID
-      required: true
-    - name: PLANT_ID
-      required: true
-    - name: START_DATE
-    - name: END_DATE
-    - name: TYPE
-    - name: VISIT_FREQUENCY
-    - name: INVOICE_TYPE
-    - name: INVOICE_FREQUENCY
-    - name: INVOICE_DTL
-    - name: HOLD
-    - name: ROYALTIES
-    - name: SPECIAL_TICKET
-    - name: STATUS
-    - name: ACTIVE
-    - name: Setup_By
-    - name: AcquiredFrom
-    - name: NoRFRneeded
-    - name: LOCtext
-    - name: MoveToGP
-    - name: DefaultPO
-    - name: VisitBilling
-    - name: PlantName
-    - name: ShareAB
-    - name: POexpiry
-    - name: BillingName
-    - name: PLANT_BILL_TO_NAME
-    - name: AutoCertification
-    - name: primaryCompany
-    - name: Override
-    - name: VisitPO
-    - name: VisitPOexpiry
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: BoilerplateInvoiceComment
-    - name: IsCertBillingOverride
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PLANT_ID
-      name: PLANT_TB
-      resource: PLANTTB
-    type: OWNSTB
-    user_key: ID
+      - LaneRole
+      name: LaneDefinitionList
+      resource: LaneDefinition
+    type: LaneRole
+    user_key: RoleDescription
   ProcessDefinition:
     attributes:
     - label: ' Process Name*'
@@ -290,11 +98,6 @@ resources:
     - direction: tomany
       fks:
       - ProcessId
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    - direction: tomany
-      fks:
-      - ProcessId
       name: TaskDefinitionList
       resource: TaskDefinition
     type: ProcessDefinition
@@ -305,10 +108,7 @@ resources:
       name: InstanceId
       search: true
       sort: true
-    - name: CurrentTaskId
     - name: Priority
-    - name: ProcessId
-      required: true
     - name: Status
       required: true
     - name: StartedDate
@@ -318,8 +118,11 @@ resources:
     - name: CompletedDate
     - name: CompletedBy
     - name: ContextData
+    - name: ProcessId
+      required: true
     - name: ApplicationId
       required: true
+    - name: CurrentTaskId
     tab_groups:
     - direction: tomany
       fks:
@@ -328,7 +131,7 @@ resources:
       resource: ProcessMessage
     - direction: tomany
       fks:
-      - InstanceId
+      - ProcessInstanceId
       name: StageInstanceList
       resource: StageInstance
     - direction: tomany
@@ -664,7 +467,6 @@ resources:
       - TaskId
       name: TaskInstanceList
       resource: TaskInstance
-    # Parent relationships (toone)
     - direction: toone
       fks:
       - LaneId
@@ -728,11 +530,17 @@ resources:
     - name: AssignedTo
     - name: StartedDate
     - name: CompletedDate
+    - name: _DurationMinutes
     - name: Result
     - name: ResultData
     - name: ErrorMessage
     - name: RetryCount
     tab_groups:
+    - direction: tomany
+      fks:
+      - TaskInstanceId
+      name: TaskAlertList
+      resource: TaskAlert
     - direction: tomany
       fks:
       - TaskInstanceId
@@ -1023,11 +831,6 @@ resources:
       - Priority
       name: WF_Priority
       resource: WFPriority
-    - direction: toone
-      fks:
-      - ToUser
-      name: WF_User1
-      resource: WFUser
     type: WFApplicationMessage
     user_key: MessageID
   WFApplicationStatus:
@@ -1489,11 +1292,6 @@ resources:
       resource: WFApplicationMessage
     - direction: tomany
       fks:
-      - ToUser
-      name: WFApplicationMessageList1
-      resource: WFApplicationMessage
-    - direction: tomany
-      fks:
       - AdminUserName
       name: WFUSERADMINList
       resource: WFUSERADMIN
@@ -1541,421 +1339,6 @@ resources:
       resource: TaskInstance
     type: WorkflowHistory
     user_key: HistoryId
-  COMPANYADDRESSTB:
-    attributes:
-    - label: 'Company Address Type*'
-      name: COMPANY_ADDRESS_TYPE
-      required: true
-      search: true
-      sort: true
-    - name: COMPANY_ID
-      required: true
-    - name: COMPANY_ADDRESS_SEQUENCE
-      required: true
-    - name: ADDRESS_TYPE
-    - name: STREET1
-    - name: STREET2
-    - name: CITY
-    - name: STATE
-    - name: ZIP
-    - name: COUNTRY
-    - name: COMMENTS
-    - name: TIMESTAMP
-    - name: ACTIVE
-    - name: ContactPersons
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    type: COMPANYADDRESSTB
-    user_key: COMPANY_ADDRESS_TYPE
-  PLANTADDRESSTB:
-    attributes:
-    - label: 'Plant Address*'
-      name: PLANT_ADDRESS_TYPE
-      required: true
-      search: true
-      sort: true
-    - name: COMPANY_ID
-      required: true
-    - name: PLANT_ID
-      required: true
-    - name: PLANT_ADDRESS_SEQUENCE
-      required: true
-    - name: ADDRESS_TYPE
-    - name: STREET1
-    - name: STREET2
-    - name: CITY
-    - name: STATE
-    - name: ZIP
-    - name: COUNTRY
-    - name: COMMENTS
-    - name: TIMESTAMP
-    - name: ACTIVE
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PLANT_ID
-      name: PLANT_TB
-      resource: PLANTTB
-    type: PLANTADDRESSTB
-    user_key: PLANT_ADDRESS_TYPE
-  USEDIN1TB:
-    attributes:
-    - label: 'Used In ID*'
-      name: ID
-      required: true
-      search: true
-      sort: true
-    - name: LabelID
-      required: true
-    - name: UsedInID
-      required: true
-    - name: START_DATE
-    - name: END_DATE
-    - name: ACTIVE
-    - name: STATUS
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    tab_groups:
-    - direction: toone
-      fks:
-      - LabelID
-      name: label_tb
-      resource: LabelTb
-    - direction: toone
-      fks:
-      - UsedInID
-      name: label_tb1
-      resource: LabelTb
-    type: USEDIN1TB
-    user_key: ID
-  MERCHTB:
-    attributes:
-    - label: 'Merchandise Name*'
-      name: NAME
-      required: true
-      search: true
-      sort: true
-    - name: MERCHANDISE_ID
-      required: true
-    - name: COMPANY_ID
-      required: true
-    - name: RMC
-    - name: ACTIVE
-    - name: STATUS
-    - name: TIMESTAMP
-    - name: PrimaryLabelID
-    - name: Category
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: IsPrimary
-    - name: SecondaryCategory
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PrimaryLabelID
-      name: label_tb
-      resource: LabelTb
-    - direction: tomany
-      fks:
-      - ComponentMerchID
-      name: FormulaSubmissionComponentList
-      resource: FormulaSubmissionComponent
-    type: MERCHTB
-    user_key: NAME
-  FormulaProduct:
-    attributes:
-    - label: 'Product Name*'
-      name: ProductName
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: FormulaSubmissionID
-      required: true
-    tab_groups: []
-    type: FormulaProduct
-    user_key: ProductName
-  LabelTb:
-    attributes:
-    - label: 'Label Name*'
-      name: LABEL_NAME
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: MERCHANDISE_ID
-      required: true
-    - name: LABEL_SEQ_NUM
-      required: true
-    - name: SYMBOL
-    - name: INSTITUTIONAL
-    - name: BLK
-    - name: SEAL_SIGN
-    - name: GRP
-    - name: SEAL_SIGN_FLAG
-    - name: BRAND_NAME
-    - name: SRC_MAR_ID
-    - name: INDUSTRIAL
-    - name: CONSUMER
-    - name: LABEL_TYPE
-    - name: ACTIVE
-    - name: SPECIAL_PRODUCTION
-    - name: CREATE_DATE
-    - name: LAST_MODIFY_DATE
-    - name: STATUS_DATE
-    - name: JEWISH_ACTION
-    - name: CREATED_BY
-    - name: MODIFIED_BY
-    - name: LABEL_NUM
-    - name: NUM_NAME
-    - name: Confidential
-    - name: AgencyID
-    - name: LOChold
-    - name: LOCholdDate
-    - name: PassoverSpecialProduction
-    - name: COMMENT
-    - name: DisplayNewlyCertifiedOnWeb
-    - name: Status
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: LastChangeDate
-    - name: LastChangeReason
-    - name: LastChangeType
-    - name: ReplacedByAgencyId
-    - name: TransferredFromAgencyId
-    - name: Kitniyot
-    - name: IsDairyEquipment
-    - name: NameNum
-    tab_groups:
-    - direction: toone
-      fks:
-      - SRC_MAR_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: tomany
-      fks:
-      - ComponentLabelID
-      name: FormulaSubmissionComponentList
-      resource: FormulaSubmissionComponent
-    - direction: tomany
-      fks:
-      - LabelID
-      name: ProducedIn1TbList
-      resource: ProducedIn1Tb
-    - direction: tomany
-      fks:
-      - LabelID
-      name: USEDIN1TBList
-      resource: USEDIN1TB
-    - direction: tomany
-      fks:
-      - UsedInID
-      name: USEDIN1TBList1
-      resource: USEDIN1TB
-    type: LabelTb
-    user_key: LABEL_NAME
-  PLANTCERTDETAIL:
-    attributes:
-    - label: 'Cert Detail Description*'
-      name: CERT_DETAIL_DESCRIPTION
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: COMPANY_ID
-      required: true
-    - name: PLANT_ID
-      required: true
-    - name: COMPANY_FEE_ID
-      required: true
-    - name: CERT_DETAIL_SEQ_NUM
-      required: true
-    - name: CERT_DETAIL_AMOUNT
-    - name: CERT_DETAIL_DATE
-    - name: CERT_DETAIL_PERSON_ID
-    - name: CERT_DETAIL_COMMENT
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PLANT_ID
-      name: PLANT_TB
-      resource: PLANTTB
-    type: PLANTCERTDETAIL
-    user_key: CERT_DETAIL_DESCRIPTION
-  PLANTCOMMENT:
-    attributes:
-    - label: 'Comment Text*'
-      name: COMMENT_TEXT
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: PLANT_ID
-      required: true
-    - name: COMPANY_ID
-      required: true
-    - name: COMMENT_ID
-      required: true
-    - name: COMMENT_TYPE
-    - name: COMMENT_DATE
-    - name: COMMENT_PERSON_ID
-    - name: TIMESTAMP
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PLANT_ID
-      name: PLANT_TB
-      resource: PLANTTB
-    type: PLANTCOMMENT
-    user_key: COMMENT_TEXT
-  FormulaSubmissionComponent:
-    attributes:
-    - label: 'Component Name*'
-      name: ComponentName
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: FormulaSubmissionID
-      required: true
-    - name: UniqueID
-    - name: RMC
-    - name: ProductNumber
-    - name: ComponentMerchID
-    - name: ComponentLabelID
-    - name: ComponentDescription
-    - name: IngredientStatement
-    - name: ActionTaken
-    - name: CreatedDate
-    - name: ModifiedDate
-    tab_groups:
-    - direction: toone
-      fks:
-      - ComponentMerchID
-      name: MERCH_TB
-      resource: MERCHTB
-    - direction: toone
-      fks:
-      - ComponentLabelID
-      name: label_tb
-      resource: LabelTb
-    type: FormulaSubmissionComponent
-    user_key: ComponentName
-  FormulaSubmissionPlant:
-    attributes:
-    - label: 'Plant Name*'
-      name: PlantName
-      required: true
-      search: true
-      sort: true
-    - name: ID
-      required: true
-    - name: FormulaSubmissionID
-      required: true
-    - name: PlantCode
-    - name: Owns_ID
-    - name: ActionTaken
-    - name: ProductionMode
-    tab_groups:
-    - direction: tomany
-      fks:
-      - FormulaSubmissionPlantID
-      name: ProducedIn1TbList
-      resource: ProducedIn1Tb
-    type: FormulaSubmissionPlant
-    user_key: PlantName
-  ProducedIn1Tb:
-    attributes:
-    - label: 'Production ID*'
-      name: ID
-      required: true
-      search: true
-      sort: true
-    - name: PROC_LINE_ID
-    - name: START_DATE
-    - name: END_DATE
-    - name: REGULAR
-    - name: SPECIAL
-    - name: PASSOVER
-    - name: PRIVATE_LABEL_FEE
-    - name: TIMESTAMP
-    - name: STATUS
-    - name: SPECIAL_STATUS_1
-    - name: RC_1
-    - name: DATE_1
-    - name: SPECIAL_STATUS_2
-    - name: RC_2
-    - name: DATE_2
-    - name: SPECIAL_STATUS_3
-    - name: RC_3
-    - name: DATE_3
-    - name: VERSION
-    - name: ACTIVE
-    - name: LabelID
-    - name: OWNS_ID
-    - name: DIST
-    - name: FeeAmount
-    - name: InvoiceAmount
-    - name: ValidFromTime
-    - name: ValidToTime
-    - name: CHANGESET_ID
-    - name: FormulaSubmissionPlantID
-    tab_groups:
-    - direction: toone
-      fks:
-      - LabelID
-      name: label_tb
-      resource: LabelTb
-    - direction: toone
-      fks:
-      - OWNS_ID
-      name: OWNS_TB
-      resource: OWNSTB
-    - direction: toone
-      fks:
-      - FormulaSubmissionPlantID
-      name: FormulaSubmissionPlant
-      resource: FormulaSubmissionPlant
-    type: ProducedIn1Tb
-    user_key: ID
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

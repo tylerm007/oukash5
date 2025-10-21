@@ -78,7 +78,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         owns = OWNSTB.query.filter_by(COMPANY_ID=company_id).all()
         if not owns:
-           return jsonify({"error": f"Ownership not found for company ID: {company_id}"}), 404
+           app_logger.error(f"Ownership not found for company ID: {company_id}")
 
         plant_id = application['PlantID'] or -9999
         planttb = PLANTTB.query.filter_by(PLANT_ID=plant_id).first()

@@ -839,7 +839,28 @@ class TaskInstance(Base):  # type: ignore
     # child relationships (access children)
     TaskCommentList : Mapped[List["TaskComment"]] = relationship(back_populates="TaskInstance")
     WorkflowHistoryList : Mapped[List["WorkflowHistory"]] = relationship(back_populates="TaskInstance")
+    EventActionList : Mapped[List["EventAction"]] = relationship(back_populates="TaskInstance")
 
+
+class EventAction(Base):  # type: ignore
+    __tablename__ = 'EventAction'
+    _s_collection_name = 'EventAction'  # type: ignore
+
+    EventId = Column(Integer, autoincrement=True, primary_key=True)
+    EventKey = Column(Unicode(250), nullable=False)
+    TaskInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'), nullable=False)
+    EventStatus = Column(Unicode(20), server_default=text('PENDING'), nullable=False)
+    EventType = Column(Unicode(20), server_default=text('External'), nullable=False)
+    EventMessage = Column(Unicode(500), nullable=False)
+    StartDate = Column(DATETIME2, server_default=text('getutcdate()'), nullable=False)
+    DueDate = Column(DATETIME2)
+    IsResolved = Column(Boolean, server_default=text('0'), nullable=False)
+    ResolvedDate = Column(DATETIME2)
+
+    # parent relationships (access parent)
+    TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("EventActionList"))
+
+    # child relationships (access children)
 
 
 class WFProduct(Base):  # type: ignore
@@ -1803,6 +1824,7 @@ class INVOICEFEE(Base):  # type: ignore
     __table_args__ = (
         Index('INVOICE_FEES_INVOICE_ID', 'INVOICE_ID', 'COMPANY_ID', 'TYPE', 'INVOICE_DATE', 'TOTAL_AMOUNT', 'STATUS', 'BILL_TO_CO_ID', 'BILL_TO_PLANT_ID', unique=True),
     )
+    __bind_key__ = 'ou'
 
     INVOICE_ID = Column(Integer, primary_key=True)
     COMPANY_ID = Column(Integer, nullable=False) #Column(ForeignKey('COMPANYTB.COMPANY_ID'), nullable=False, index=True)

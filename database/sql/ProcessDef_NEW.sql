@@ -47,15 +47,15 @@ IF OBJECT_ID('ProcessDefinitions', 'U') IS NOT NULL DELETE FROM ProcessDefinitio
 IF OBJECT_ID('TaskCategories', 'U') IS NOT NULL DELETE FROM TaskCategories;
 IF OBJECT_ID('TaskTypes', 'U') IS NOT NULL DELETE FROM TaskTypes;
 IF OBJECT_ID('LaneDefinitions', 'U') IS NOT NULL DELETE FROM LaneDefinitions;
-IF OBJECT_ID('TaskAlert', 'U') IS NOT NULL DELETE FROM TaskAlert;
+IF OBJECT_ID('EventAction', 'U') IS NOT NULL DELETE FROM EventAction;
 GO
 -- Drop child tables first (tables with foreign keys)
-if OBJECT_ID('TaskAlert', 'U') IS NOT NULL DROP TABLE TaskAlert;
+if OBJECT_ID('EventAction', 'U') IS NOT NULL DROP TABLE EventAction;
 IF OBJECT_ID('WorkflowHistory', 'U') IS NOT NULL DROP TABLE WorkflowHistory;
 IF OBJECT_ID('TaskComments', 'U') IS NOT NULL DROP TABLE TaskComments;
 IF OBJECT_ID('ProcessMessages', 'U') IS NOT NULL DROP TABLE ProcessMessages;
 IF OBJECT_ID('ValidationResults', 'U') IS NOT NULL DROP TABLE ValidationResults;
-IF OBJECT_ID('TaskAlert', 'U') IS NOT NULL DROP TABLE TaskAlert;
+IF OBJECT_ID('EventAction', 'U') IS NOT NULL DROP TABLE EventAction;
 IF OBJECT_ID('StageInstance', 'U') IS NOT NULL DROP TABLE StageInstance;
 IF OBJECT_ID('TaskInstances', 'U') IS NOT NULL DROP TABLE TaskInstances;
 IF OBJECT_ID('TaskStatus','U') IS NOT NULL DROP TABLE TaskStatus;
@@ -270,14 +270,17 @@ CREATE TABLE TaskInstances (
 -- this is used to track tasks with a timer process 
 -- the script engine will insert PENDING and resolve when Completed
 -- We can add a rule for overdue tasks to send or add WFMessage or set flags
--- set_task_alert(task_instance_id, 'Reminder', 'Task is overdue', due_date | duration_minutes)
-CREATE TABLE TaskAlert (
-    AlertId INT IDENTITY(1,1) PRIMARY KEY,
+-- create_event(task_instance_id, event_key, event_type, [due_date], [event_message])
+-- resolve_event(event_key)  -- set isResolved to True and ResolvedDate to current date _complete_task(task_instance_id)
+CREATE TABLE EventAction (
+    EventId INT IDENTITY(1,1) PRIMARY KEY,
+    EventKey NVARCHAR(250) NOT NULL, -- e.g., 'INVOICE_123456'
     TaskInstanceId INT NOT NULL,
-    AlertType NVARCHAR(20) NOT NULL DEFAULT 'Escalation', -- 'Reminder', 'Escalation', 'Timeout'
-    AlertMessage NVARCHAR(500) NOT NULL,
+    EventStatus NVARCHAR(20) NOT NULL DEFAULT 'PENDING', -- ' 'RESOLVED', 'CANCELLED' , 'FAILED'
+    EventType NVARCHAR(20) NOT NULL DEFAULT 'External', 
+    EventMessage NVARCHAR(500) NOT NULL,
     StartDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-    DueDate DATETIME2 NOT NULL,
+    DueDate DATETIME2,
     IsResolved BIT NOT NULL DEFAULT 0,
     ResolvedDate DATETIME2,
     FOREIGN KEY (TaskInstanceId) REFERENCES TaskInstances(TaskInstanceId)
