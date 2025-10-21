@@ -61,6 +61,21 @@ def process_task_instance(task_instance: models.TaskInstance, old_row: models.Ta
         #print({"success": False, "message": f"Error processing TaskInstance {new_task_instance}: {e}"})
         return
     
+def find_next_task_by_name(task_instance:TaskInstance, task_name:str) -> TaskInstance:
+    ''' Find the next TaskInstance in the workflow by TaskName
+    '''
+    #task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+    if not task_instance:
+        return None
+    stage_id = task_instance.StageId
+    task_def = models.TaskDefinition.query.filter_by(TaskName=task_name).first()
+    if not task_def:
+        app_logger.warning(f"No TaskDefinition found with TaskName {task_name}")
+        return None
+    next_task_instance = models.TaskInstance.query.filter_by(TaskId=task_def.TaskId, StageId=stage_id).first()
+    if next_task_instance:
+        return next_task_instance
+    return None
 def create_invoice(task_instance_id, data: DotMap):
     ''' Create an EventAction for the given TaskInstanceId and EventKey
     '''
@@ -71,7 +86,7 @@ def create_invoice(task_instance_id, data: DotMap):
         return data
 
     from api.api_discovery.event_action import _create_invoice_fee
-    fee =  float(data.Result) if 'Result' in data else 0.0
+    fee =  float(data.Result) if 'Result' in data else 1000.0
     application_id = task_instance.Stage.ProcessInstance.ApplicationId
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
     company_id = application.CompanyID
@@ -80,20 +95,16 @@ def create_invoice(task_instance_id, data: DotMap):
         data.ErrorMessage = f"Failed to create invoice fee for TaskInstanceId {task_instance_id}"
         data.Result = False
         return data
-    
+    task_name = "Mark Invoice Paid"
+    task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+    next_task_instance = find_next_task_by_name(task_instance, task_name)
     # We find the next task to start an EventAction
-    taskDef = task_instance.TaskDef
-    task_flow = taskDef.TaskFlowList or []
-    for flow in task_flow:
-        #if flow.TaskName == 'Send Invoice to Customer':
-        next_task_def = flow.ToTaskId
-        next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=task_instance.StageId).first()
-        if next_task_instance:
-            from api.api_discovery.event_action import _create_event
-            event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
-            _create_event(next_task_instance.TaskInstanceId, event_key)
-            data.ResultData = {"EventKey": event_key}
-            app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
+    if next_task_instance:
+        from api.api_discovery.event_action import _create_event
+        event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
+        _create_event(next_task_instance.TaskInstanceId, event_key)
+        data.ResultData = {"EventKey": event_key}
+        app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
     data.Result = True
     return data
 
