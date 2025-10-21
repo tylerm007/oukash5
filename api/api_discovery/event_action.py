@@ -1,5 +1,7 @@
 from ast import Is
 from datetime import datetime
+from os import access
+import re
 from database import models
 from database.models import INVOICEFEE, EventAction, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
@@ -66,10 +68,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "OK"}), 200
         
+        access_token = request.headers.get('Authorization')
+        user = get_jwt().get('sub')
         data = request.get_json()
         #task_instance_id = data.get('TaskInstanceId')
         event_key = data.get('EventKey')  
-        _resolve_event(event_key)
+        _resolve_event(event_key, user, access_token)
         return jsonify({"status": "Event resolved"}), 200
     
 
@@ -89,7 +93,7 @@ def _create_event(task_instance_id: int, event_key: str) -> EventAction:
     app_logger.info(f"Event created: TaskInstanceId={task_instance_id}, EventKey={event_key}")
     return event_action
 
-def _resolve_event(event_key: str):
+def _resolve_event(event_key: str, user: str, access_token: str = None):
     """Resolve an event action for a task instance."""
     event_action = session.query(EventAction).filter_by(
         EventKey=event_key,
@@ -105,6 +109,9 @@ def _resolve_event(event_key: str):
         app_logger.info(f"Event resolved: EventKey={event_key}")
     else:
         app_logger.warning(f"No matching EventAction found to resolve for EventKey={event_key}")
+        return
+    from api.api_discovery.complete_task import _complete_task
+    _complete_task(event_action.TaskInstanceId, result='Resolved', completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
 
 
 def _create_invoice_fee(company_id: int, fee_amount: float) -> INVOICEFEE:

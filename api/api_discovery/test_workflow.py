@@ -384,6 +384,11 @@ def do_reset(application_id):
 
 def do_cleanup(application_id, process_id):
     session.execute(text(f"""
+        DELETE FROM EventAction where [TaskInstanceId] IN (
+            SELECT TaskInstanceId FROM TaskInstances where StageId IN ( 
+                SELECT StageInstanceId FROM StageInstance where ProcessInstanceId = {process_id}
+            )
+        );
         DELETE FROM TaskComments where [ProcessInstanceId] = {process_id};
         DELETE FROM WorkflowHistory where [InstanceId] = {process_id};
       

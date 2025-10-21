@@ -80,11 +80,20 @@ def create_invoice(task_instance_id, data: DotMap):
         data.ErrorMessage = f"Failed to create invoice fee for TaskInstanceId {task_instance_id}"
         data.Result = False
         return data
-    event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
-    from api.api_discovery.event_action import _create_event
-    _create_event(task_instance_id, event_key)
-    data.ResultData = {"EventKey": event_key}
-    app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
+    
+    # We find the next task to start an EventAction
+    taskDef = task_instance.TaskDef
+    task_flow = taskDef.TaskFlowList or []
+    for flow in task_flow:
+        #if flow.TaskName == 'Send Invoice to Customer':
+        next_task_def = flow.ToTaskId
+        next_task_instance = models.TaskInstance.query.filter_by(TaskId=next_task_def, StageId=task_instance.StageId).first()
+        if next_task_instance:
+            from api.api_discovery.event_action import _create_event
+            event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
+            _create_event(next_task_instance.TaskInstanceId, event_key)
+            data.ResultData = {"EventKey": event_key}
+            app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
     data.Result = True
     return data
 

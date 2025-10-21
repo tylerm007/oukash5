@@ -230,5 +230,5 @@ GO
 
 UPDATE TaskDefinitions
 set   PostScriptJson = 'create_invoice(task_instance_id,  data)'
-where TaskName = 'Assign Invoice Amount';
+where TaskName = 'Generated Invoice and Send';
 GO
