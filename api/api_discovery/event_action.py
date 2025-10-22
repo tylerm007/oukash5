@@ -111,7 +111,7 @@ def _resolve_event(event_key: str, user: str, access_token: str = None):
         app_logger.warning(f"No matching EventAction found to resolve for EventKey={event_key}")
         return
     from api.api_discovery.complete_task import _complete_task
-    _complete_task(event_action.TaskInstanceId, result='Resolved', completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
+    _complete_task(event_action.TaskInstanceId, result=None, completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
 
 
 def _create_invoice_fee(company_id: int, fee_amount: float) -> INVOICEFEE:

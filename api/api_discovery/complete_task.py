@@ -169,6 +169,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_instance.Status = status
         task_instance.CompletedDate = datetime.utcnow()
         task_instance.Result = result
+        task_instance.ResultData = completion_notes
         task_instance.CompletedBy = completed_by
         session.add(task_instance)
         try:

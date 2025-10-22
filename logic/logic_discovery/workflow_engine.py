@@ -85,8 +85,9 @@ def create_invoice(task_instance_id, data: DotMap):
         data.ErrorMessage = f"No TaskInstance found with TaskInstanceId {task_instance_id}"
         return data
 
+    invoice_fee_task = find_next_task_by_name(task_instance, "Assign Invoice Amount")
     from api.api_discovery.event_action import _create_invoice_fee
-    fee =  float(data.Result) if 'Result' in data else 1000.0
+    fee =  float(invoice_fee_task.Result) if invoice_fee_task else 0.0
     application_id = task_instance.Stage.ProcessInstance.ApplicationId
     application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
     company_id = application.CompanyID
@@ -103,7 +104,7 @@ def create_invoice(task_instance_id, data: DotMap):
         from api.api_discovery.event_action import _create_event
         event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
         _create_event(next_task_instance.TaskInstanceId, event_key)
-        data.ResultData = {"EventKey": event_key}
+        data.Message = f'{{"EventKey": "{event_key}"}}'
         app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
     data.Result = True
     return data
@@ -395,7 +396,7 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             if r:
                 result = r.get('data', None)
                 app_logger.info(f'Script executed successfully for task_id {task_id}')
-                row.ResultData = result
+                row.ResultData = str(result or "")
                 logic_row.log(f'Script execution Result: {result}')
                 return result
 

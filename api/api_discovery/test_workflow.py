@@ -110,6 +110,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         '''
         Invoke-RestMethod -Uri "http://localhost:5656/run_workflow_to_completion?applicationNumber=1" -Method GET -ContentType "application/json" -Headers @{Authorization = "Bearer {<your_jwt_token>}
         '''
+        access_token = request.headers.get("Authorization")
         args = request.args
         user = get_jwt().get("sub", "admin")
         applicationNumber = args.get('applicationNumber')
@@ -117,7 +118,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationNumber == applicationNumber).first()
         if not application:
             return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404
-        run_workflow_to_completion(application, user=user, scenario=scenario)
+        run_workflow_to_completion(application, user=user, scenario=scenario, access_token=access_token)
         return jsonify({"result": f'Workflow run to completion'})
 
     @app.route('/reset_task_instances/<application_id>', methods=['GET','OPTIONS'])
@@ -261,7 +262,7 @@ def result_scenario(task_name, scenario: int = 1) -> str:
     result = 1000 if "Assign Invoice Amount" in task_name else result
     return result
 
-def run_workflow_to_completion(application: WFApplication, user: str, scenario: int = 1):
+def run_workflow_to_completion(application: WFApplication, user: str, scenario: int = 1, access_token: str = None):
     application_id = application.ApplicationID
     process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
     if not process_instance:
@@ -302,9 +303,16 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
             pending_tasks = find_all_pending_tasks(stage_id)
             while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
-                    print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
-                    complete_task(task_instance)
-                    completed_tasks.append(task_instance.TaskInstanceId)
+                    if task_instance.TaskDef.TaskName == 'Mark Invoice Paid':
+                        from api.api_discovery.event_action import _resolve_event
+                        event_key = "INVOICE_98286" 
+                        _resolve_event(event_key, user, access_token)
+                        print(f'  Resolving EventAction for Task: {task_instance.TaskDef.TaskName} EventKey: {event_key}')
+                    else:
+                        # For testing, we auto-complete the scheduling task
+                        print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                        complete_task(task_instance)
+                        completed_tasks.append(task_instance.TaskInstanceId)
                     pending_tasks = find_all_pending_tasks(stage_id)
 
         elif status == 'IN_PROGRESS' and name == 'Ingredients':
