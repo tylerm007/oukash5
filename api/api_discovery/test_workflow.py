@@ -5,7 +5,7 @@ from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from api.api_discovery.assign_role import _assign_role   
-
+import datetime
 from urllib import response
 from database.models import StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
 import database.models as models
@@ -91,16 +91,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         args = request.args
         user = get_jwt().get("sub", "admin")
         applicationNumber = int(args.get('applicationNumber'))
+        plant_id = args.get('plant_id', None)
         jot_application = session.query(models.CompanyApplication).filter(models.CompanyApplication.ID == applicationNumber).first()
         if jot_application is None:
             return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} does not exist with ID: {applicationNumber}'}), 400
         companyID = jot_application.CompanyID
-        plantID = None
-        plant = session.query(models.PLANTTB).filter(models.PLANTTB.NAME == jot_application.PlantName).first()
-        if plant:
-            plantID = plant.PLANT_ID
-        application_id = create_new_application(applicationNumber, companyID, plantID)
+        
+        plant = session.query(models.PLANTTB).filter(models.PLANTTB.PLANT_ID == plant_id).first()
+        if not plant:
+            return jsonify({"result": f'Plant with PlantID: {plant_id} not found'}), 404
+        application_id = create_new_application(applicationNumber, companyID, plant_id)
         process_id = start_workflow(application_id, user)
+        #jot_application.PlantName = plant.NAME
         return jsonify({"result": f'Created application with ID: {application_id}, started process ID: {process_id}'})
 
     @app.route('/run_workflow_to_completion', methods=['GET','POST','OPTIONS'])
@@ -163,14 +165,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         do_cleanup(application_id, process_id)
         return jsonify({"result": f'Cleanup initiated for Application ID: {application_id}, Process ID: {process_id}'})
 
-def create_new_application(applicationNumber: int, companyID: int, plantID: int):
+def create_new_application(applicationNumber: int, company_id: int, plant_id: int):
     from datetime import datetime
+    #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
     application = WFApplication(
             Name="New Application",
             Description="Description of the new application",
             Status="NEW",
-            CompanyID=companyID,
-            PlantID=plantID,
+            CompanyID=company_id,
+            PlantID=plant_id,
             SubmissionDate=datetime.now().isoformat(),
             CreatedBy="tband",
             CreatedDate=datetime.now().isoformat(),
@@ -180,10 +183,274 @@ def create_new_application(applicationNumber: int, companyID: int, plantID: int)
     )
     session.add(application)
     session.commit()
+    application_id = application.ApplicationID
+    create_products(application_id, company_id, plant_id)
+    create_ingredients(application_id, company_id, plant_id)
+    create_contacts(application_id, company_id, plant_id)
+    create_files(application_id)
+    get_company_address(company_id)
+    get_plant_address(plant_id)
     app_logger.info(f'Created new application with ID: {application.ApplicationID}')
     return application.ApplicationID
 
+def create_products(application_id: int, company_id: int, plant_id: int):
+    sql = f"""
+      SELECT TOP (1000) [PRODUCT_NAME]
+        ,[TOP_LEVEL_PRODUCT_NAME]
+        ,[MERCHANDISE_ID]
+        ,[BRAND_NAME]
+        ,[Symbol]
+        ,[STATUS]
+        ,[LABEL_COMPANY]
+        ,[INDUSTRIAL]
+        ,[PESACH]
+        ,[KITNIYOT]
+        ,[CATEGORY_NAME]
+        ,[LABEL_TYPE]
+        ,[BLK]
+        ,[SEAL_SIGN]
+        ,[LABEL_SEQ_NUM]
+        ,[DPM]
+        ,[COMPANY_ID]
+        ,[COMPANY_NAME]
+        ,[PLANT_ID]
+        ,[PLANT_NAME]
+        ,[SRC_MAR_ID]
+        ,[SRC_STREET1]
+        ,[SRC_CITY]
+        ,[SRC_STATE]
+        ,[SRC_ZIP]
+        ,[SRC_COUNTRY]
+        ,[Plant_Country]
+        ,[owns_id]
+        ,[LABEL_ID]
+        ,[PRODUCED_IN1_ID]
+        ,[ACTIVE]
+        ,[AS_STIPULATED]
+        ,[GRP]
+        ,[Confidential]
+        ,[CONFIDENTIAL_TEXT]
+        ,[OUP_REQUIRED]
+        ,[Consumer]
+        ,[LOChold]
+        ,[Repack]
+        ,[LOC_SELECTED]
+        ,[CAS]
+        ,[PassoverSpecialProduction]
+        ,[PLANT_STATUS]
+        ,[IsDairyEquipment]
+        ,[RC]
+    FROM [ou_kash].[dbo].[PRODUCT_GRID]
+        where [COMPANY_ID] = {company_id}
+        and [PLANT_ID] = {plant_id}
+    """
+    result = session.execute(text(sql))
+    products = result.fetchall()
+    if not products:
+        app_logger.info(f'No products found for company {company_id}: {plant_id}')
+    rows = [dict(zip(row._fields, row)) for row in products]
+    for row in rows:
+        product = models.WFProduct(
+            ApplicationID=application_id,
+            # basic / legacy ids
+            legacyId=row.get('MERCHANDISE_ID'),
+            action='Add',
+            doNotImport=False,
+            message=row.get('CONFIDENTIAL_TEXT') or None,
+            # label / product info
+            labelType=row.get('LABEL_TYPE') or '',
+            labelName=row.get('PRODUCT_NAME') or '',
+            brandName=row.get('BRAND_NAME') or '',
+            labelCompanyId=str(row.get('LABEL_COMPANY') or ''),
+            distributorName=str(row.get('LABEL_COMPANY') or ''),
+            group=row.get('GRP') or '',
+            symbol=row.get('Symbol') or '',
+            dpm=row.get('DPM') or '',
+            category=row.get('CATEGORY_NAME') or '',
+            # statuses / flags
+            usePlantStatus=bool(row.get('PLANT_STATUS')),
+            status=str(row.get('STATUS') or row.get('ACTIVE') or ''),
+            legacyStatus=row.get('RC') or None,
+            consumer=bool(row.get('Consumer')),
+            industrial=bool(row.get('INDUSTRIAL')),
+            finalized=bool(row.get('OUP_REQUIRED')),
+            # processing metadata
+            processedBy='system',
+            processedDate=datetime.datetime.utcnow().date(),
+            notes=row.get('CONFIDENTIAL_TEXT') or ''
+        )
+        session.add(product)
+    session.commit()
+    return rows
 
+def create_ingredients(application_id:int, company_id:int, plant_id: int):
+    sql = f"""
+        SELECT TOP (1000) [LOC]
+            ,[LabelID]
+            ,[INGREDIENT_NAME]
+            ,[MERCHANDISE_ID]
+            ,[BRAND_NAME]
+            ,[SRC_MAR_ID]
+            ,[LABEL_COMPANY]
+            ,[SYMBOL]
+            ,[GRP]
+            ,[DPM]
+            ,[BLK]
+            ,[UKDID]
+            ,[SEAL_SIGN]
+            ,[PESACH]
+            ,[AS_STIPULATED]
+            ,[LABEL_SEQ_NUM]
+            ,[COMPANY_ID]
+            ,[PLANT_ID]
+            ,[OWNS_ID]
+            ,[LABEL_ID]
+            ,[USED_IN1_ID]
+            ,[SRC_STREET]
+            ,[SRC_CITY]
+            ,[SRC_STATE]
+            ,[SRC_ZIP]
+            ,[SRC_COUNTRY]
+            ,[ACTIVE]
+            ,[RAW_MATERIAL_CODE]
+            ,[ALTERNATE_NAME]
+            ,[AgencyID]
+            ,[JobID]
+            ,[CAS]
+            ,[CTA]
+            ,[CNTA]
+            ,[LabelStatus]
+            ,[Special_Status]
+            ,[CompanyName]
+            ,[PlantName]
+            ,[PlantStatus]
+            ,[IngredientInPlantStatus]
+            ,[DateAdded]
+            ,[PassoverProductionUse]
+            ,[PlantCTA]
+        FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
+                WHERE [COMPANY_ID] = {company_id}
+                AND [PLANT_ID] = {plant_id}
+    """
+    result = session.execute(text(sql))
+    ingredients = result.fetchall()
+    
+    if not ingredients:
+        app_logger.info(f'No ingredients found for company {company_id}: {plant_id}')
+    rows = [dict(zip(row._fields, row)) for row in ingredients]
+    for row in rows:
+        ingredient = models.WFIngredient(
+            ApplicationID=application_id,
+            Source = '',
+            UKDId = row['UKDID'],
+            IngredientName=row['INGREDIENT_NAME'],
+            Manufacturer=row['LABEL_COMPANY'],
+            Brand = row['BRAND_NAME'],
+            Packaging = '',
+            Agency = '',
+            AddedDate = datetime.datetime.utcnow().date(),
+            AddedBy = 'system',
+            Status= row['IngredientInPlantStatus'],
+            NCRCId = row['LabelID']
+        )
+        session.add(ingredient)
+    session.commit()
+    return rows
+
+def get_company_address(company_id: int):
+    company = session.query(models.COMPANYADDRESSTB).filter(models.COMPANYADDRESSTB.COMPANY_ID == company_id).first()
+    if not company:
+        app_logger.error(f'Company not found: {company_id}')
+        return None
+    address = f"{company.STREET1},{company.STREET2}, {company.CITY}, {company.STATE} {company.ZIP}"
+    app_logger.info(f'Company Address: {address}')
+    return company
+
+def get_plant_address(plant_id: int):
+    plant = session.query(models.PLANTADDRESSTB).filter(models.PLANTADDRESSTB.PLANT_ID == plant_id).first()
+    if not plant:
+        app_logger.error(f'Plant Address not found: {plant_id}')
+        return None
+    address = f"{plant.STREET1}, {plant.STREET2}, {plant.CITY}, {plant.STATE} {plant.ZIP}"
+    app_logger.info(f'Plant Address: {address}')
+    return plant
+
+def create_contacts(application_id: int, company_id: int, plant_id: int):
+    sql = f"""
+        SELECT TOP (2) [pcID]
+            ,[companytitle]
+            ,[owns_ID]
+            ,[Title]
+            ,[FirstName]
+            ,[LastName]
+            ,[Voice]
+            ,[Fax]
+            ,[EMail]
+            ,[Cell]
+            ,[PrimaryCT]
+            ,[BillingCT]
+            ,[WebCT]
+            FROM [ou_kash].[dbo].[PlantContacts]
+                WHERE owns_ID IN
+                (select TOP 2 OWNS_ID from [ou_kash].[dbo].[OWNS_TB] where COMPANY_ID = {company_id} and PLANT_ID = {plant_id})
+    """
+    result = session.execute(text(sql))
+    contacts = result.fetchall()
+    if not contacts:
+        app_logger.error(f'Contact not found: {company_id} {plant_id}')
+        return None
+    rows = [dict(zip(row._fields, row)) for row in contacts]
+    primary = True
+    for row in rows:
+        contact = models.WFContact(
+            ApplicationID=application_id,
+            ContactName=f"{row['FirstName']} {row['LastName']}",
+            Title=row['Title'],
+            ContactEmail=row['EMail'],
+            ContactPhone=row['Voice'],
+            CompanyID=company_id,
+            CreatedDate=datetime.datetime.utcnow().date(),
+            IsPrimary =  primary
+        )
+        session.add(contact)
+        primary = False
+    session.commit()
+    app_logger.info(f'Contact Info: {rows}')
+    return rows
+
+def create_files(application_id:int):
+    pass
+    file= models.WFFile(
+        ApplicationID=application_id,
+        FileName="Application.pdf",
+        FileType="PDF",
+        UploadedBy="system",
+        UploadedDate=datetime.datetime.utcnow().date(),
+        Description="Test Document for Application",
+        FilePath="/path/to/Application.pdf"
+    )
+    session.add(file)
+    file2 = models.WFFile(
+        ApplicationID=application_id,
+        FileName="Product.pdf",
+        FileType="PDF",
+        UploadedBy="system",
+        UploadedDate=datetime.datetime.utcnow().date(),
+        Description="Test Document for Product",
+        FilePath="/path/to/Product.pdf"
+    )
+    session.add(file2)
+    file3 = models.WFFile(
+        ApplicationID=application_id,
+        FileName="Ingredient.pdf",
+        FileType="PDF",
+        UploadedBy="system",
+        UploadedDate=datetime.datetime.utcnow().date(),
+        Description="Test Document for Ingredient",
+        FilePath="/path/to/Ingredient.pdf"
+    )
+    session.add(file3)
+    session.commit()
 def start_workflow(application_id: int, start_by: str):
     from api.api_discovery.start_workflow import _start_workflow
     process_name = "OU Application Init"
@@ -415,6 +682,14 @@ def do_cleanup(application_id, process_id):
     session.execute(text(f"""
         DELETE from RoleAssigment where ApplicationId = {application_id};
         DELETE FROM ProcessInstances where ApplicationId = {application_id};
+        DELETE FROM WF_ApplicationComments where ApplicationID = {application_id};
+        DELETE FROM WF_ApplicationMessages where ApplicationID = {application_id};
+        DELETE FROM WF_Products where ApplicationId = {application_id};
+        DELETE FROM WF_Ingredients where ApplicationId = {application_id};   
+        DELETE FROM WF_Contacts where ApplicationId = {application_id};
+        DELETE FROM WF_QuoteItems where QuoteID in (select QuoteID from WF_Quotes where ApplicationID = {application_id});
+        DELETE FROM WF_Quotes where ApplicationId = {application_id};
+        DELETE FROM WF_Files where ApplicationId = {application_id};
         DELETE FROM WF_Applications where ApplicationId = {application_id};
        
     """))

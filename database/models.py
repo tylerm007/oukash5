@@ -867,7 +867,7 @@ class WFProduct(Base):  # type: ignore
     __tablename__ = 'WF_Products'
     _s_collection_name = 'WFProduct'  # type: ignore
 
-    ProductID = Column(Integer, server_default=text("0"), primary_key=True)
+    ProductID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False, index=True)
     action = Column(Unicode(100), server_default=text("('Add')"), nullable=False)
     legacyId = Column(Unicode(50), nullable=False)
@@ -945,7 +945,7 @@ class WFIngredient(Base):  # type: ignore
     __tablename__ = 'WF_Ingredients'
     _s_collection_name = 'WFIngredient'  # type: ignore
 
-    IngredientID = Column(Integer, server_default=text("0"), primary_key=True)
+    IngredientID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False, index=True)
     Source = Column(Unicode(100), nullable=False)
     UKDId = Column(Unicode(50))

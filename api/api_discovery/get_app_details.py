@@ -1,7 +1,7 @@
 from pipes import quote
 from flask import request, jsonify
 from datetime import datetime
-from database.models import PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
+from database.models import COMPANYADDRESSTB, PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
@@ -76,6 +76,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not company:
             return jsonify({"error": "Company not found"}), 404 
         
+        company_address = session.query(COMPANYADDRESSTB).filter_by(COMPANY_ID=company_id).first()
         owns = OWNSTB.query.filter_by(COMPANY_ID=company_id).all()
         if not owns:
            app_logger.error(f"Ownership not found for company ID: {company_id}")
@@ -123,15 +124,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
         #TO DO how to get contacts for plant? or use origin app?
         contacts = WFContact.query.filter_by(ApplicationID=application_id, IsPrimary=1).all()
-        plant_contacts =  []
-        for contact in contacts:
-            contact = contacts[0]
-            plant_contacts.append({
-                "name": contact.ContactName if hasattr(contact, 'ContactName') else "Contact Name",
-                "title": "Plant Manager",
-                "phone": contact.ContactPhone if hasattr(contact, 'ContactPhone') else "(555) 555-5555",
-                "email": contact.ContactEmail if hasattr(contact, 'ContactEmail') else "emial@co.com"
-            })
+        plant_contacts = [
+            {
+            "name": contact.ContactName,
+            "title": contact.Title,
+            "phone": contact.ContactPhone,
+            "email": contact.ContactEmail,
+            "isPrimary": bool(contact.IsPrimary)
+            }
+            for contact in contacts
+        ]
+    
         
         plant["contacts"] = plant_contacts
         application['Plants'] = plant
@@ -142,25 +145,29 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         result = {
             "applicationId": company_application.ID,
             "submissionDate": company_application.dateSubmitted.strftime('%Y-%m-%d') if hasattr(company_application, 'dateSubmitted') and company_application.dateSubmitted else "UNKNOWN",
-            "status": application.Status if hasattr(application, 'Status') else "Pending",
+            "status": application["Status"],
             "kashrusCompanyId": company_application.CompanyID if hasattr(company_application, 'CompanyID') else "NOT ENTERED",
             "kashrusStatus": 'UNKNOWN', # TODO company_application.KashrusStatus if hasattr(company_application, 'KashrusStatus') else "Company Created",
             "primaryContact": f'{company_application.FirstName} {company_application.LastName}' 
         }
+        if company_address:
+             address =  {
+                    "street": company_address.STREET1,
+                    "line2": company_address.STREET2,
+                    "city": company_address.CITY,
+                    "state": company_address.STATE,
+                    "country": company_address.COUNTRY,
+                    "zip": company_address.ZIP
+                }
+        else:
+            address = {}
         result['company'] = {
             "name": company_application.CompanyName if hasattr(company_application, 'CompanyName') else "Happy Cow Mills Inc.",
             "category": company_application.Category if hasattr(company_application, 'Category') else "Pharmaceutical / Nutraceutical",
             "currentlyCertified": company_application.CurrentlyCertified if hasattr(company_application, 'CurrentlyCertified') else False,
             "everCertified": company_application.EverCertified if hasattr(company_application, 'EverCertified') else False,
             "website": company_application.Website if hasattr(company_application, 'Website') else "www.happycowmills.com",
-            "address": {
-                "street": company_application.Street if hasattr(company_application, 'Street') else "1250 Industrial Parkway",
-                "line2": company_application.Street2 if hasattr(company_application, 'Street2') else "Building A, Suite 100",
-                "city": company_application.City if hasattr(company_application, 'City') else "Rochester",
-                "state": company_application.State if hasattr(company_application, 'State') else "NY",
-                "country": company_application.Country if hasattr(company_application, 'Country') else "USA",
-                "zip": company_application.Zip if hasattr(company_application, 'Zip') else "14624"
-            }
+            "address": address
         }
         result['address'] = {
             "street": application.Address.Street if hasattr(application, 'Address') and hasattr(application.Address, 'Street') else "Unknown",
@@ -189,30 +196,47 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         ]
         result['products'] = [
             {
-                "source": product.Source if hasattr(product, 'Source') else "Brands File 1",
-                "labelName": product.LabelName if hasattr(product, 'LabelName') else "Yecora Rojo Flour",
-                "brandName": product.BrandName if hasattr(product, 'BrandName') else "cow Mill",
-                "labelCompany": product.LabelCompany if hasattr(product, 'LabelCompany') else "cow Mill",
-                "consumerIndustrial": product.ConsumerIndustrial if hasattr(product, 'ConsumerIndustrial') else "Consumer",
-                "bulkShipped": product.BulkShipped if hasattr(product, 'BulkShipped') else True,
-                "certification": product.Certification if hasattr(product, 'Certification') else "OU"
+            "action": product.action,
+            "legacyId": product.legacyId,
+            "doNotImport": bool(product.doNotImport),
+            "message": product.message,
+            "labelType": product.labelType,
+            "labelName": product.labelName,
+            "brandName": product.brandName,
+            "labelCompanyId": product.labelCompanyId,
+            "distributorName": product.distributorName,
+            "group": product.group,
+            "symbol": product.symbol,
+            "dpm": product.dpm,
+            "category": product.category,
+            "usePlantStatus": bool(product.usePlantStatus),
+            "status": product.status,
+            "legacyStatus": product.legacyStatus,
+            "consumer": bool(product.consumer),
+            "industrial": bool(product.industrial),
+            "finalized": bool(product.finalized),
+            "processedBy": product.processedBy,
+            "processedDate": product.processedDate.strftime('%Y-%m-%d') if product.processedDate else None,
+            "notes": product.notes
             }
             for product in application['Products']
         ]
         result['ingredients'] = [
             {
-                "ncrcId": ingredient.NcrcId if hasattr(ingredient, 'NcrcId') else "ING-2025-1001",
-                "ingredient": ingredient.Ingredient if hasattr(ingredient, 'Ingredient') else "Ryman Rye Grain",
-                "manufacturer": ingredient.Manufacturer if hasattr(ingredient, 'Manufacturer') else "Jones Farms Organics",
-                "brand": ingredient.Brand if hasattr(ingredient, 'Brand') else "Jones Farms Organics",
-                "packaging": ingredient.Packaging if hasattr(ingredient, 'Packaging') else "bulk",
-                "certification": ingredient.Certification if hasattr(ingredient, 'Certification') else "OU",
-                "source": ingredient.Source if hasattr(ingredient, 'Source') else "File 1",
-                "addedDate": ingredient.AddedDate.strftime('%Y-%m-%d') if hasattr(ingredient, 'AddedDate') and ingredient.AddedDate else "2025-07-17",
-                "addedBy": ingredient.AddedBy if hasattr(ingredient, 'AddedBy') else "System Import",
-                "status": ingredient.Status if hasattr(ingredient, 'Status') else "Original"
+            "source": ingredient.Source,
+            "ukdId": ingredient.UKDId,
+            "rmc": ingredient.RMC,
+            "ingredientName": ingredient.IngredientName,
+            "manufacturer": ingredient.Manufacturer,
+            "brand": ingredient.Brand,
+            "packaging": ingredient.Packaging,
+            "agency": ingredient.Agency,
+            "addedDate": ingredient.AddedDate.strftime('%Y-%m-%d'),
+            "addedBy": ingredient.AddedBy,
+            "status": ingredient.Status,
+            "ncrcId": ingredient.NCRCId
             }
-            for ingredient in application['Ingredients']    
+            for ingredient in application['Ingredients']
         ]
         quotes = WFQuote.query.filter_by(ApplicationID=application_id).all()
         quote_items = []
