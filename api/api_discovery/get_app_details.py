@@ -194,104 +194,57 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         ]
         result['products'] = [
             {
-            "productName": product.get("PRODUCT_NAME"),
-            "topLevelProductName": product.get("TOP_LEVEL_PRODUCT_NAME"),
-            "merchandiseId": product.get("MERCHANDISE_ID"),
+            "source": "Source Temp",
+            "labelName": product.get("PRODUCT_NAME"),
             "brandName": product.get("BRAND_NAME"),
-            "symbol": product.get("Symbol") or product.get("SYMBOL"),
-            "status": product.get("STATUS"),
             "labelCompany": product.get("LABEL_COMPANY"),
-            "industrial": bool(product.get("INDUSTRIAL")),
-            "pesach": bool(product.get("PESACH")),
-            "kitniyot": bool(product.get("KITNIYOT")),
-            "categoryName": product.get("CATEGORY_NAME"),
-            "labelType": product.get("LABEL_TYPE"),
-            "blk": bool(product.get("BLK")),
-            "sealSign": product.get("SEAL_SIGN"),
-            "labelSeqNum": product.get("LABEL_SEQ_NUM"),
-            "dpm": product.get("DPM"),
-            "companyId": product.get("COMPANY_ID"),
-            "companyName": product.get("COMPANY_NAME"),
-            "plantId": product.get("PLANT_ID"),
-            "plantName": product.get("PLANT_NAME"),
-            "srcMarId": product.get("SRC_MAR_ID"),
-            "srcStreet1": product.get("SRC_STREET1"),
-            "srcCity": product.get("SRC_CITY"),
-            "srcState": product.get("SRC_STATE"),
-            "srcZip": product.get("SRC_ZIP"),
-            "srcCountry": product.get("SRC_COUNTRY"),
-            "plantCountry": product.get("Plant_Country") or product.get("PLANT_COUNTRY"),
-            "ownsId": product.get("owns_id"),
-            "labelId": product.get("LABEL_ID"),
-            "producedIn1Id": product.get("PRODUCED_IN1_ID"),
-            "active": bool(product.get("ACTIVE")),
-            "asStipulated": bool(product.get("AS_STIPULATED")),
-            "group": product.get("GRP"),
-            "confidential": bool(product.get("Confidential") or product.get("CONFIDENTIAL")),
-            "confidentialText": product.get("CONFIDENTIAL_TEXT"),
-            "oupRequired": bool(product.get("OUP_REQUIRED")),
-            "consumer": bool(product.get("Consumer")),
-            "locHold": bool(product.get("LOChold")),
-            "repack": bool(product.get("Repack")),
-            "locSelected": bool(product.get("LOC_SELECTED")),
-            "cas": product.get("CAS"),
-            "passoverSpecialProduction": bool(product.get("PassoverSpecialProduction")),
-            "plantStatus": product.get("PLANT_STATUS"),
-            "isDairyEquipment": bool(product.get("IsDairyEquipment")),
-            "rc": product.get("RC")
+            "ConsumerIndustrial": "Industrial" if bool(product.get("INDUSTRIAL")) else "Consumer",
+            "bulkShipped": bool(product.get("BLK")),
+            "certification": product.get("Symbol") or product.get("SYMBOL"),
+            "status": product.get("STATUS")
             }
             for product in products
         ]
         result['ingredients'] = [
             {
-            "loc": ingredient.get("LOC"),
-            "labelId": ingredient.get("LabelID") or ingredient.get("LABEL_ID"),
-            "ingredientName": ingredient.get("INGREDIENT_NAME"),
-            "merchandiseId": ingredient.get("MERCHANDISE_ID"),
-            "brandName": ingredient.get("BRAND_NAME"),
-            "srcMarId": ingredient.get("SRC_MAR_ID"),
-            "labelCompany": ingredient.get("LABEL_COMPANY"),
-            "symbol": ingredient.get("SYMBOL"),
-            "grp": ingredient.get("GRP"),
-            "dpm": ingredient.get("DPM"),
-            "blk": bool(ingredient.get("BLK")),
-            "ukdId": ingredient.get("UKDID"),
-            "sealSign": ingredient.get("SEAL_SIGN"),
-            "pesach": bool(ingredient.get("PESACH")),
-            "asStipulated": bool(ingredient.get("AS_STIPULATED")),
-            "labelSeqNum": ingredient.get("LABEL_SEQ_NUM"),
-            "companyId": ingredient.get("COMPANY_ID"),
-            "plantId": ingredient.get("PLANT_ID"),
-            "ownsId": ingredient.get("OWNS_ID"),
-            "usedIn1Id": ingredient.get("USED_IN1_ID"),
-            "srcStreet": ingredient.get("SRC_STREET"),
-            "srcCity": ingredient.get("SRC_CITY"),
-            "srcState": ingredient.get("SRC_STATE"),
-            "srcZip": ingredient.get("SRC_ZIP"),
-            "srcCountry": ingredient.get("SRC_COUNTRY"),
-            "active": bool(ingredient.get("ACTIVE")),
-            "rawMaterialCode": ingredient.get("RAW_MATERIAL_CODE"),
-            "alternateName": ingredient.get("ALTERNATE_NAME"),
-            "agencyId": ingredient.get("AgencyID"),
-            "jobId": ingredient.get("JobID"),
-            "cas": ingredient.get("CAS"),
-            "cta": ingredient.get("CTA"),
-            "cnta": ingredient.get("CNTA"),
-            "labelStatus": ingredient.get("LabelStatus"),
-            "specialStatus": ingredient.get("Special_Status"),
-            "companyName": ingredient.get("CompanyName"),
-            "plantName": ingredient.get("PlantName"),
-            "plantStatus": ingredient.get("PlantStatus"),
-            "ingredientInPlantStatus": ingredient.get("IngredientInPlantStatus"),
-            "dateAdded": ingredient.get("DateAdded"),
-            "passoverProductionUse": ingredient.get("PassoverProductionUse"),
-            "plantCta": ingredient.get("PlantCTA")
+
+            "addedBy": "System Import",
+            "addedDate": ingredient.get("DateAdded"),
+            "brand": ingredient.get("BRAND_NAME"),
+            "certification": ingredient.get("SYMBOL"),
+            "ingredient": ingredient.get("INGREDIENT_NAME"),
+            "manufacturer": ingredient.get("LABEL_COMPANY"),
+            "ncrcId": ingredient.get("MERCHANDISE_ID"),
+            "packaging": 'bulk' if bool(ingredient.get("BLK")) else 'non-bulk',
+            "source": "Source temp",
+            "status": ingredient.get("LabelStatus")
+
             }
             for ingredient in ingredients
         ]
-        quotes = WFQuote.query.filter_by(ApplicationID=application_id).all()
-        quote_items = []
-        result['quotes'] = []
+        #quotes = WFQuote.query.filter_by(ApplicationID=application_id).all()
+        #quote_items = []
+        result['quotes'] = [{
+            "quoteId": 1,
+            "QuoteNumber": "Q-0001",
+            "QuoteDate": "2025-10-10",
+            "TotalAmount": 1500.00,
+            "Status": "Pending Acceptance",
+            "validUntil": "2025-12-15",
+            "items": [
+                {
+                    "itemId": 1,
+                    "Description": "Application Processing Fee",
+                    "Amount": 500.00
+                },
+                {
+                    "itemId": 2,
+                    "Description": "Product Review Fee",
+                    "Amount": 1000.00
+                }
+            ]
+        }]
+        '''
         for quote in quotes:
                 items = quote.WFQuoteItemList if hasattr(quote, 'WFQuoteItemList') else []
                 for item in items:
@@ -312,6 +265,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "items": quote_items
                  }
                 )
+        '''
         files = WFFile.query.filter(WFFile.ApplicationID == application_id).all()
         result['files'] = [
             {
