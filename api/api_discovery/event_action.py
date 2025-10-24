@@ -131,7 +131,8 @@ def resolve_paid_invoices(access_token: str = None, user: str = 'system', app: f
                 try:
                     payload = {"username": "admin", "password": "p"}
                     # Fix the URL (was missing one colon)
-                    r = requests.post(f"http://localhost:5656/api/auth/login", json=payload)
+                    url = f'{Args.instance.http_scheme}://{Args.instance.swagger_host}:{Args.instance.swagger_port}/api/auth/login'
+                    r = requests.post(url, json=payload)
                     if r.status_code == 200:
                         access_token = r.json().get("access_token")
                         user = 'system'
@@ -200,10 +201,14 @@ def _resolve_event(event_key: str, user: str, access_token: str = None):
         event_action.EventStatus = 'RESOLVED'
         event_action.ResolvedDate = datetime.utcnow()
         event_action.IsResolved = True
-        session.commit()
-        app_logger.info(f"Event resolved: EventKey={event_key}")
-        from api.api_discovery.complete_task import _complete_task
-        _complete_task(event_action.TaskInstanceId, result=None, completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
+        try:
+            session.commit()
+            app_logger.info(f"Event resolved: EventKey={event_key}")
+            from api.api_discovery.complete_task import _complete_task
+            _complete_task(event_action.TaskInstanceId, result=None, completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
+        except Exception as e:
+            session.rollback()
+            app_logger.error(f"Error committing event resolution: {e}")
     else:
         app_logger.warning(f"No matching EventAction found to resolve for EventKey={event_key}")
     return

@@ -142,7 +142,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         result = {
             "applicationId": application["ApplicationID"],
             "submissionDate": application["CreatedDate"] if "CreatedDate" in application else None,
-            "status": application["Status"],
+            "status": get_app_status(application["Status"]),
             "kashrusCompanyId": company_id,
             "kashrusStatus": 'UNKNOWN', # TODO company_application.KashrusStatus if hasattr(company_application, 'KashrusStatus') else "Company Created",
             "primaryContact": primary_contact
@@ -445,3 +445,14 @@ def get_contacts(company_id: int, plant_id: int) -> list:
     rows = [dict(zip(row._fields, row)) for row in contacts]
     app_logger.info(f'Contact Info: {rows}')
     return rows
+
+def get_app_status(status_code: str):
+    status_map = {
+        "NEW": "New",
+        "INP": "In Progress",
+        "HLD": "On Hold",
+        "WTH": "Withdrawn",
+        "COMPL": "Completed",
+        "REJ": "Rejected"
+    }
+    return status_map.get(status_code, "Unknown Status")

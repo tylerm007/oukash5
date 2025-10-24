@@ -73,6 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
         
         data = request.args if request.args else {}
+        application_id = data.get('applicationId',None, type=int)
         user = get_jwt().get("sub", "unknown")
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
@@ -80,48 +81,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         offset = int(data.get('page[offset]', 0))
         result = []
        
-        GET_TASK_ACTION_VIEW = '''
-          SELECT  [TaskInstanceId] as taskInstanceId
-            , ap.[ApplicationID] as applicationId
-            ,td.[TaskName] as taskName
-            ,td.[TaskType] as taskType
-            ,td.[AssigneeRole] as assigneeRole
-            ,ra.Assignee as assignee
-            ,ap.CompanyId as companyId
-            ,ap.PlantID as plantId
-            ,co.NAME as companyName
-            ,pl.NAME as plantName
-            ,ld.LaneName as laneName
-            ,ti.[Status] as status
-            --,ti.[StartedDate] as startedDate
-            --,ti.[CompletedDate] as completedDate
-        FROM [dashboard].[dbo].[TaskInstances] ti,
-            TaskDefinitions td,
-            StageInstance si,
-            ProcessInstances pi,
-            WF_Applications ap,
-            LaneDefinitions ld,
-            ou_kash.dbo.plant_tb pl,
-            ou_kash.dbo.COMPANY_TB co,
-            roleAssigment ra
-            where ti.TaskId = td.TaskId and
-                ti.StageId = si.StageInstanceId  and
-                si.ProcessInstanceId = pi.InstanceId and
-                si.LaneId = ld.LaneId and 
-                ap.companyId = co.COMPANY_ID and
-                ap.plantID = pl.plant_ID and
-                pi.ApplicationId = ap.ApplicationID 
-                and ra.Role = td.AssigneeRole 
-                and  ti.status = 'PENDING' 
-                and  AssigneeRole != 'SYSTEM' 
-                and ra.Assignee = :assignee
-                and td.AssigneeRole in :assignee_role
-                order by  ap.applicationId, ti.taskInstanceId
-            OFFSET :offset ROWS
-            FETCH NEXT :limit ROWS ONLY
-          @applicationId NVARCHAR(255) = NULL,
-          @plantName NVARCHAR(255) = NULL
-        '''
         args = request.args
         application_id = args.get('filter[applicationId]', None)
         plant_name = args.get('filter[plantName]', None)

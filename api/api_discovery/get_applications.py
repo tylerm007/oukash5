@@ -1,9 +1,11 @@
 from datetime import datetime
-from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
+from os import name
+from token import NAME
+from database.models import COMPANYTB, PLANTTB, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from flask import app, request, jsonify, session
 import logging
 import safrs
-from sqlalchemy import false
+from sqlalchemy import false, text
 from functools import wraps
 from flask_cors import cross_origin
 from config.config import Args
@@ -69,8 +71,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))
         offset = int(data.get('page[offset]', 0))
+        name_filter = data.get('name', None) # Company or Plant Name not found in WFApplication table
         result = []
-        applications = WFApplication.query.order_by(WFApplication.CreatedDate.desc()).limit(limit).offset(offset).all() # to do add filter
+        if name_filter:
+            name_company_ids = find_company_ids_by_name(name_filter)
+            applications = WFApplication.query.filter(WFApplication.CompanyID.in_(name_company_ids)).order_by(WFApplication.CreatedDate.desc()).limit(limit).offset(offset).all()
+        #    applications = WFApplication.query.filter(WFApplication.CompanyName.ilike(f"%{name_filter}%")).order_by(WFApplication.CreatedDate.desc()).limit(limit).offset(offset).all()
+        else:
+            applications = WFApplication.query.order_by(WFApplication.CreatedDate.desc()).limit(limit).offset(offset).all()
+        total_record_count = WFApplication.query.count()
         for app in applications:
             app_dict = app.to_dict()
             company_app = CompanyApplication.query.filter_by(ID=app_dict.get("ApplicationNumber")).first()
@@ -186,8 +195,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "messageType": msg.get("MessageType"),
                     #"isSystemMessage": True if msg.get("MessageType") == "system" else False,
                 })
-            files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id 
+            #files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id 
             app_row['files'] = []
+            '''
             for file in files:
                 app_row['files'].append({
                     "id": file.FileID if hasattr(file, 'FileID') else None,
@@ -196,8 +206,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "fileType": file.FileType if hasattr(file, 'FileType') else "PDF",
                     "fileSize": file.FileSize if hasattr(file, 'FileSize') else " "
                 })
+            '''
             result.append(app_row)
-        return jsonify({"status": "ok", "data": result}), 200
+        meta = {
+            "total": total_record_count,
+            "limit": limit,
+            "offset": offset,
+            "count": len(result)
+        }
+        return jsonify({"status": "ok", "meta":meta, "data": result}), 200
     
     def getPreScript(task: TaskInstance):
         default_script = ''' 
@@ -232,3 +249,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "REJ": "Rejected"
         }
         return status_map.get(status_code, "Unknown Status")
+    
+    def find_company_ids_by_name(name: str):
+        """Find Company IDs by name"""
+        company_names = session.query(COMPANYTB).filter(text("NAME LIKE :name")).params(name=f"%{name}%").all()
+        plant_names = session.query(PLANTTB).filter(text("NAME LIKE :name")).params(name=f"%{name}%").all()
+        company_ids = [name.COMPANY_ID for name in company_names] if company_names else [] 
+        plant_ids =[name.PLANT_ID for name in plant_names] if plant_names else []
+        return company_ids + plant_ids
