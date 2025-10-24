@@ -312,7 +312,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "items": quote_items
                  }
                 )
-        files = WFFile.query.filter(WFFile.FilePath != None).all() #TODO ApplicationId=application_id
+        files = WFFile.query.filter(WFFile.ApplicationID == application_id).all()
         result['files'] = [
             {
                 "fileId": file.FileID if hasattr(file, 'FileID') else 1,

@@ -425,7 +425,7 @@ def create_files(application_id:int):
         UploadedBy="system",
         UploadedDate=datetime.datetime.utcnow().date(),
         Description="Test Document for Application",
-        FilePath="/path/to/Application.pdf"
+        FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/6295465435286943843.pdf?csf=1&web=1&e=Xgiwjd"
     )
     session.add(file)
     file2 = models.WFFile(
@@ -435,17 +435,17 @@ def create_files(application_id:int):
         UploadedBy="system",
         UploadedDate=datetime.datetime.utcnow().date(),
         Description="Test Document for Product",
-        FilePath="/path/to/Product.pdf"
+        FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/Bagel%20Chips_Onion_Garlic%20(2).pdf?csf=1&web=1&e=rJAXVr"
     )
     session.add(file2)
     file3 = models.WFFile(
         ApplicationID=application_id,
-        FileName="Ingredient.pdf",
-        FileType="PDF",
+        FileName="Ingredient.jpg",
+        FileType="JPEG",
         UploadedBy="system",
         UploadedDate=datetime.datetime.utcnow().date(),
         Description="Test Document for Ingredient",
-        FilePath="/path/to/Ingredient.pdf"
+        FilePath="https://uojca.sharepoint.com/:i:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/Crackers%20Box%207-02%20(2).jpg?csf=1&web=1&e=KK1xRb"
     )
     session.add(file3)
     session.commit()
