@@ -400,7 +400,6 @@ def create_contacts(application_id: int, company_id: int, plant_id: int):
         app_logger.error(f'Contact not found: {company_id} {plant_id}')
         return None
     rows = [dict(zip(row._fields, row)) for row in contacts]
-    primary = True
     for row in rows:
         contact = models.WFContact(
             ApplicationID=application_id,
@@ -410,10 +409,9 @@ def create_contacts(application_id: int, company_id: int, plant_id: int):
             ContactPhone=row['Voice'],
             CompanyID=company_id,
             CreatedDate=datetime.datetime.utcnow().date(),
-            IsPrimary =  primary
+            IsPrimary =  bool(row.get('PrimaryCT') == 'Y')
         )
         session.add(contact)
-        primary = False
     session.commit()
     app_logger.info(f'Contact Info: {rows}')
     return rows
