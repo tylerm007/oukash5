@@ -449,7 +449,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         # -----------------------------------------------------
         app_logger.info(f'\nStarting Backgruound Processor\n')
         from integration.background.background_tasks import initialize_background_scheduler
-        initialize_background_scheduler(flask_app)
+        #initialize_background_scheduler(flask_app)
 
         if os.getenv('APILOGICPROJECT_DEBUG'):  # temp debug since logging in config is not happening
             KAFKA_SERVER = os.getenv('KAFKA_SERVER')

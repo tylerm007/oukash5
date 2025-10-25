@@ -997,9 +997,9 @@ class CompanyApplication(Base):  # type: ignore
     __tablename__ = 'CompanyApplicationWebRequestFromAPI'
     _s_collection_name = 'CompanyApplication'   # type: ignore
     __bind_key__ = 'ou'
-    http_methods = ['GET']
+    http_methods = ['GET','POST','PUT','DELETE']
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True, nullable=False)
+    ID = Column(Integer, autoincrement=True, primary_key=True, nullable=False)
     PreviousCertification = Column(NCHAR(1), server_default=text("N"))
     OUCertified = Column(NCHAR(1), server_default=text("N"))
     CurrentlyCertified = Column(NCHAR(1), server_default=text("N"))

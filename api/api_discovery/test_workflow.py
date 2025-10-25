@@ -7,13 +7,14 @@ from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from api.api_discovery.assign_role import _assign_role   
 import datetime
 from urllib import response
-from database.models import StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
+from database.models import CompanyApplication, StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
 import database.models as models
 from flask import request, jsonify
 import requests
 import logging
 import safrs
 from sqlalchemy.sql import text
+
 """
 Various endpoints to test workflow functionality and cleanup or reset tests
 """
@@ -39,20 +40,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return decorator
         return wrapper
 
-    @app.route('/hello_newer_service')
-    def hello_newer_service():
-        """        
-        Illustrates:
-        * Use standard Flask, here for non-database endpoints.
-
-        Test it with:
-        
-                http://localhost:5656/hello_newer_service?user=ApiLogicServer
-        """
-        user = request.args.get('user')
-        app_logger.info(f'{user}')
-        return jsonify({"result": f'hello from even_newer_service! from {user}'})
-    
     @app.route('/test_parser', methods=['GET'])
     #jwt_required()
     def test_parser():
@@ -80,6 +67,34 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         filter3 = '[{"name":"ACTIVE","op":"eq","val":1},{"name":"RC","op":"ilike","val":"%Gorelik%"},{"name":"STATUS","op":"eq","val":"Certified"}]'
         response3 = requests.get(f'http://localhost:5656/api/{endpoint}?filter={filter3}')
         return jsonify({"result": f'filter: {filter}', "response": response.json(), "response2": response2.json(), "response3": response3.json()})
+
+    @app.route('/create_application_from_owns', methods=['GET','OPTIONS'])
+    @admin_required()
+    @jwt_required()
+    def create_application_from_owns():
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+
+        args = request.args
+        user = get_jwt().get("sub", "admin")
+        owns_id = int(args.get('owns_id'))
+        if not owns_id:
+            return jsonify({"result": 'owns_id parameter is required'}), 400
+        owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
+        if not owns_instance:
+            return jsonify({"result": f'Owns instance with ID: {owns_id} not found'}), 404
+        
+        application = create_new_application_from_owns(owns_instance)
+        if not application:
+            return jsonify({"result": f'Failed to create application from owns_id: {owns_id}'}), 500    
+        # Implement the logic to create an application from the owns_id
+        applicationNumber = application.ID
+        companyID = owns_instance.COMPANY_ID
+        plant_id = owns_instance.PLANT_ID
+        application_id = create_new_application(applicationNumber, companyID, plant_id)
+        process_id = start_workflow(application_id, user)
+        return jsonify({"status": f"application created successfully {application.ID} process {process_id} started"}), 200
+
 
     @app.route('/create_application', methods=['GET','OPTIONS'])
     @admin_required()
@@ -133,7 +148,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"result": f'Application ID: {application_id} not found'}), 404
         do_reset(application_id)
-        from datetime import datetime
         from api.api_discovery.complete_task import _complete_task
         start_instance_id = get_start_task(application_id)
         if not start_instance_id:
@@ -144,7 +158,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ApplicationId=application.ApplicationID,
             Role="DISPATCH",
             Assignee="system",
-            CreatedDate=datetime.utcnow()
+            CreatedDate=datetime.datetime.now(datetime.timezone.utc).date()
         )
         session.add(role_assignment)
         session.commit()
@@ -166,7 +180,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"result": f'Cleanup initiated for Application ID: {application_id}, Process ID: {process_id}'})
 
 def create_new_application(applicationNumber: int, company_id: int, plant_id: int):
-    from datetime import datetime
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
     application = WFApplication(
             Name="New Application",
@@ -174,9 +187,9 @@ def create_new_application(applicationNumber: int, company_id: int, plant_id: in
             Status="NEW",
             CompanyID=company_id,
             PlantID=plant_id,
-            SubmissionDate=datetime.now().isoformat(),
+            SubmissionDate=datetime.datetime.now().isoformat(),
             CreatedBy="tband",
-            CreatedDate=datetime.now().isoformat(),
+            CreatedDate=datetime.datetime.now().isoformat(),
             Priority="HIGH",
             ApplicationNumber=applicationNumber,
             WFDashboardID=1
@@ -276,7 +289,7 @@ def create_products(application_id: int, company_id: int, plant_id: int):
             finalized=bool(row.get('OUP_REQUIRED')),
             # processing metadata
             processedBy='system',
-            processedDate=datetime.datetime.utcnow().date(),
+            processedDate=datetime.datetime.now(datetime.timezone.utc).date(),
             notes=row.get('CONFIDENTIAL_TEXT') or ''
         )
         session.add(product)
@@ -348,7 +361,7 @@ def create_ingredients(application_id:int, company_id:int, plant_id: int):
             Brand = row['BRAND_NAME'],
             Packaging = '',
             Agency = '',
-            AddedDate = datetime.datetime.utcnow().date(),
+            AddedDate = datetime.datetime.now(datetime.timezone.utc).date(),
             AddedBy = 'system',
             Status= row['IngredientInPlantStatus'],
             NCRCId = row['LabelID']
@@ -408,7 +421,7 @@ def create_contacts(application_id: int, company_id: int, plant_id: int):
             ContactEmail=row['EMail'],
             ContactPhone=row['Voice'],
             CompanyID=company_id,
-            CreatedDate=datetime.datetime.utcnow().date(),
+            CreatedDate=datetime.datetime.now(datetime.timezone.utc).date(),
             IsPrimary =  bool(row.get('PrimaryCT') == 'Y')
         )
         session.add(contact)
@@ -423,7 +436,7 @@ def create_files(application_id:int):
         FileName="Application.pdf",
         FileType="PDF",
         UploadedBy="system",
-        UploadedDate=datetime.datetime.utcnow().date(),
+        UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
         Description="Test Document for Application",
         FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/6295465435286943843.pdf?csf=1&web=1&e=Xgiwjd"
     )
@@ -433,7 +446,7 @@ def create_files(application_id:int):
         FileName="Product.pdf",
         FileType="PDF",
         UploadedBy="system",
-        UploadedDate=datetime.datetime.utcnow().date(),
+        UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
         Description="Test Document for Product",
         FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/Bagel%20Chips_Onion_Garlic%20(2).pdf?csf=1&web=1&e=rJAXVr"
     )
@@ -443,7 +456,7 @@ def create_files(application_id:int):
         FileName="Ingredient.jpg",
         FileType="JPEG",
         UploadedBy="system",
-        UploadedDate=datetime.datetime.utcnow().date(),
+        UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
         Description="Test Document for Ingredient",
         FilePath="https://uojca.sharepoint.com/:i:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/Crackers%20Box%207-02%20(2).jpg?csf=1&web=1&e=KK1xRb"
     )
@@ -708,3 +721,91 @@ def get_start_task(application_id):
     """))
     row = response.fetchone()
     return row[0] if row else None
+
+def create_new_application_from_owns(owns_instance):
+    plant = owns_instance.PLANT_TB
+    company = owns_instance.COMPANY_TB
+    contacts = get_contact(company.COMPANY_ID, plant.PLANT_ID)
+    has_product_count = has_products(company.COMPANY_ID, plant.PLANT_ID)
+    if not has_product_count:
+        app_logger.error(f'No products found for company {company.COMPANY_ID} plant {plant.PLANT_ID}. Cannot create application.')
+        return None
+    from types import SimpleNamespace
+    contact = SimpleNamespace(**contacts[0]) if contacts else None
+    applicationNumber =  1 + CompanyApplication.query.count()
+    application = CompanyApplication(
+        PreviousCertification='N',
+        OUCertified='Y',
+        CurrentlyCertified='Y',
+        CompanyID=getattr(company, 'COMPANY_ID', 0),
+        CompanyName=getattr(company, 'COMPANY_NAME', getattr(company, 'NAME', '')),
+        PlantName=getattr(plant, 'NAME', ''),
+        Street1=getattr(company, 'STREET1', getattr(plant, 'STREET1', '')),
+        Street2=getattr(company, 'STREET2', getattr(plant, 'STREET2', '')),
+        City=getattr(company, 'CITY', getattr(plant, 'CITY', '')),
+        State=getattr(company, 'STATE', getattr(plant, 'STATE', '')),
+        Zip=getattr(company, 'ZIP', getattr(plant, 'ZIP', '')),
+        Country=getattr(company, 'COUNTRY', getattr(plant, 'COUNTRY', '')),
+        title=getattr(contact,'Title') if contact else '',
+        FirstName=getattr(contact,'FirstName') if contact else '',
+        LastName=getattr(contact,'LastName') if contact else '',
+        email=getattr(contact,'EMail') if contact else '',
+        phone=getattr(contact,'Voice') if contact else '',
+        NatureOfProducts='',
+        HowHeardAboutUs='GENERATED',
+        Comments='',
+        Description='Created from OWNS record',
+        OtherCertification='',
+        gclid='',
+        utm_source='',
+        utm_medium='',
+        utm_campaign='',
+        dateSubmitted=datetime.datetime.now(datetime.timezone.utc).date(),
+        Utm_Term='',
+        Version='NEWAPI',
+        Language='ENGLISH',
+        Oukosher_source='',
+        JotFormSubmissionID=''
+    )
+    session.add(application)
+    session.commit()
+
+    return application
+
+def has_products(company_id:int, plant_id: int) -> bool:
+    sql = f"""
+        SELECT TOP (1) [PRODUCT_NAME]
+        FROM [ou_kash].[dbo].[PRODUCT_GRID]
+            where [COMPANY_ID] = {company_id}
+            and [PLANT_ID] = {plant_id}
+    """
+    result = session.execute(text(sql))
+    products = result.fetchall()
+    return len(products) > 0
+
+def get_contact(company_id:int, plant_id: int):
+    sql = f"""
+        SELECT TOP (1) [pcID]
+            ,[companytitle]
+            ,[owns_ID]
+            ,[Title]
+            ,[FirstName]
+            ,[LastName]
+            ,[Voice]
+            ,[Fax]
+            ,[EMail]
+            ,[Cell]
+            ,[PrimaryCT]
+            ,[BillingCT]
+            ,[WebCT]
+            FROM [ou_kash].[dbo].[PlantContacts]
+                WHERE owns_ID IN
+                (select TOP 1 OWNS_ID from [ou_kash].[dbo].[OWNS_TB] where COMPANY_ID = {company_id} and PLANT_ID = {plant_id})
+    """
+    result = session.execute(text(sql))
+    contacts = result.fetchall()
+    if not contacts:
+        app_logger.error(f'Contact not found: {company_id} {plant_id}')
+        return None
+    rows = [dict(zip(row._fields, row)) for row in contacts]
+    return rows
