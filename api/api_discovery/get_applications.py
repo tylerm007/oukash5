@@ -1,3 +1,4 @@
+from ast import Continue
 from datetime import datetime
 from os import name
 from token import NAME
@@ -87,6 +88,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 app_logger.warning(f"Legacy Application source not found for application id {app_dict.get('application_id')}")
                 continue
             application_id = app_dict.get("ApplicationID", None)
+            if application_id:
+                process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
+                if process_instance is None:
+                    app_logger.warning(f"Process instance not found for application id {application_id}")
+                    continue
             files = WFFile.query.filter_by(ApplicationID=application_id).all()
             app_messages = WFApplicationMessage.query.filter_by(ApplicationID=application_id).all()
             app_source = company_app.to_dict() if company_app else {}
@@ -121,7 +127,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             
           
             if application_id:
-                process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
+                #process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
                 if process_instance is None:
                     app_logger.warning(f"Process instance not found for application id {application_id}")
                     return jsonify({"status": "error", "message": f"Workflow Process instance not found for application id {application_id}"}), 404

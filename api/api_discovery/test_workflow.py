@@ -1,16 +1,13 @@
 from functools import wraps
-from api.api_discovery import assign_role
 from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from api.api_discovery.assign_role import _assign_role   
 import datetime
-from urllib import response
 from database.models import CompanyApplication, StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
 import database.models as models
 from flask import request, jsonify
-import requests
 import logging
 import safrs
 from sqlalchemy.sql import text
@@ -135,8 +132,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationNumber == applicationNumber).first()
         if not application:
             return jsonify({"result": f'Application with ApplicationNumber: {applicationNumber} not found'}), 404
-        run_workflow_to_completion(application, user=user, scenario=scenario, access_token=access_token)
-        return jsonify({"result": f'Workflow run to completion'})
+        results, completed_tasks = run_workflow_to_completion(application, user=user, scenario=scenario, access_token=access_token)
+        return jsonify({"result": f"Workflow for application {applicationNumber} completed {completed_tasks}. Stages: {results}"})
 
     @app.route('/reset_task_instances/<application_id>', methods=['GET','OPTIONS'])
     @admin_required()
@@ -527,6 +524,7 @@ def complete_task(task_instance, scenario: int = 1):
     result = result_scenario(task_name, scenario)
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
+    print(f"Complete Task {task_name} - Response: {response}")
 
 def result_scenario(task_name, scenario: int = 1) -> str:
     if scenario == 2:
@@ -630,10 +628,11 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
                     pending_tasks = find_all_pending_tasks(stage_id)
 
     stage_list = find_all_stages_for_process(process_id)
+    results = []
     for stage in stage_list:
-        print(f'Stage {stage.Lane.LaneName} Status {stage.Status}')
+        results.append({"Stage": stage.Lane.LaneName, "Status": stage.Status})
     print(f"Workflow for application {application_id} completed {completed_tasks}.")
-    app_logger.info(f"Workflow for application {application_id} completed {completed_tasks}.")
+    return results, completed_tasks
 
 def process_task_flow(task_instance, stage_instance_id, completed_tasks):
     task_flow_instances = find_task_flow(task_instance)
@@ -646,6 +645,7 @@ def process_task_flow(task_instance, stage_instance_id, completed_tasks):
                 complete_task(next_task_instance)
                 completed_tasks.append(next_task_instance.TaskInstanceId)
                 process_task_flow(next_task_instance, stage_instance_id, completed_tasks)
+
 def do_reset(application_id):
     session.execute(text(f"""
         UPDATE TaskInstances SET Status = 'NEW', Result = NULL, ResultData = NULL, ErrorMessage = NULL 

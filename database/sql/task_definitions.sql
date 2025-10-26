@@ -229,6 +229,11 @@ where TaskName = 'verify Company';
 GO
 
 UPDATE TaskDefinitions
+set   PostScriptJson = 'set_application_attribute(application_id,"verify_plant","1", data)' 
+where TaskName = 'verify Plant';
+GO
+
+UPDATE TaskDefinitions
 set   PostScriptJson = 'create_invoice(task_instance_id,  data)'
 where TaskName = 'Generated Invoice and Send';
 GO
