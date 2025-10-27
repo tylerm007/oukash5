@@ -263,27 +263,27 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         # Build query (same logic as original)
         applications = WFApplication.query
-        
         if name_filter:
-            name_company_ids = find_company_ids_by_name(name_filter)
-            applications = applications.filter(WFApplication.CompanyID.in_(name_company_ids))
-        
+            company_ids, plant_ids = find_company_ids_by_name(name_filter)
+            if len(company_ids) > 0:
+                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
+            if len(plant_ids) > 0:
+                applications = applications.filter(WFApplication.PlantID.in_( plant_ids))
+
         if priority:
             applications = applications.filter(WFApplication.Priority == priority)
-        
-        # Get total count for metadata
+
+        applications = applications.order_by(WFApplication.Status).limit(limit).offset(offset)
         total_record_count = WFApplication.query.count()
-        
-        # Apply pagination and get applications
-        applications = applications.order_by(WFApplication.Status).limit(limit).offset(offset).all()
-        
+        applications = applications.all()
+
         if not applications:
             return jsonify({
-                "status": "ok", 
-                "meta": {"total": total_record_count, "limit": limit, "offset": offset, "count": 0, "async_enabled": True}, 
+                "status": "ok",
+                "meta": {"total": total_record_count, "limit": limit, "offset": offset, "count": 0, "async_enabled": True},
                 "data": []
             }), 200
-        
+
         # Process applications asynchronously
         try:
             from api.api_discovery.async_application_processor import async_processor

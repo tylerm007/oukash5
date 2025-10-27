@@ -73,19 +73,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
         
         data = request.args if request.args else {}
-        application_id = data.get('applicationId',None, type=int)
         user = get_jwt().get("sub", "unknown")
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))
         offset = int(data.get('page[offset]', 0))
         result = []
-       
         args = request.args
-        application_id = args.get('filter[applicationId]', None)
-        plant_name = args.get('filter[plantName]', None)
-        #application_id = args.get('applicationId', None)
-        #plant_name = args.get('plantName', None)
+        application_id = args.get('filter[applicationId]', None) or args.get('applicationId', None)
+        plant_name = args.get('filter[plantName]', None) or args.get('plantName', None)
 
         role_assignment = RoleAssigment.query.filter_by(Assignee=user).all() 
         assigned_roles = [role.WF_Role.UserRole for role in role_assignment]
