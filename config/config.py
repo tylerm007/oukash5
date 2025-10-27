@@ -134,7 +134,7 @@ class Config:
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
 
-
+    START_BACKGROUND = environ.get("START_BACKGROUND", "false").lower() in ("true", "1", "yes", "on")
     # Database
     db_path = str(project_path.joinpath('database/db.sqlite'))
     #SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://sa:Posey3861@localhost:1433/dashboard?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
@@ -381,6 +381,7 @@ class Args():
         self.cognito_client_secret = Config.COGNITO_CLIENT_SECRET
         self.cognito_domain = Config.COGNITO_DOMAIN
         self.cognito_redirect_uri = Config.COGNITO_REDIRECT_URI
+        self.start_background = Config.START_BACKGROUND
 
     # KEYCLOAK ARGS
     @property
@@ -570,6 +571,14 @@ class Args():
 
         self.flask_app.config["OPT_LOCKING"] = a
 
+    @property
+    def start_background(self) -> bool:
+        """ whether to start background tasks """
+        return self.flask_app.config.get("START_BACKGROUND", False)
+
+    @start_background.setter
+    def start_background(self, a: bool):
+        self.flask_app.config["START_BACKGROUND"] = a
 
     @property
     def api_prefix(self) -> str:

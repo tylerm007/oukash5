@@ -289,8 +289,8 @@ def create_products(application_id: int, company_id: int, plant_id: int):
             processedDate=datetime.datetime.now(datetime.timezone.utc).date(),
             notes=row.get('CONFIDENTIAL_TEXT') or ''
         )
-        session.add(product)
-    session.commit()
+        #session.add(product)
+    #session.commit()
     return rows
 
 def create_ingredients(application_id:int, company_id:int, plant_id: int):
@@ -363,8 +363,8 @@ def create_ingredients(application_id:int, company_id:int, plant_id: int):
             Status= row['IngredientInPlantStatus'],
             NCRCId = row['LabelID']
         )
-        session.add(ingredient)
-    session.commit()
+        #session.add(ingredient)
+    #session.commit()
     return rows
 
 def get_company_address(company_id: int):
@@ -460,9 +460,9 @@ def create_files(application_id:int):
     session.add(file3)
     session.commit()
 def start_workflow(application_id: int, start_by: str):
-    from api.api_discovery.start_workflow import _start_workflow
+    from api.api_discovery.start_workflow import _start_workflow_async
     process_name = "OU Application Init"
-    response = _start_workflow(process_name, int(application_id), start_by, "NORMAL")
+    response = _start_workflow_async(process_name, int(application_id), start_by, "NORMAL")
     return response['process_instance_id']
 
 
