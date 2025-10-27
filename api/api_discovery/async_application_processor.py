@@ -353,8 +353,12 @@ class AsyncApplicationProcessor:
             "INP": "In Progress",
             "HLD": "On Hold",
             "WTH": "Withdrawn",
-            "COMPL": "Completed",
-            "REJ": "Rejected"
+            "COMPL": "Certified",
+            "REJ": "Rejected",
+            "REVIEW": "Inspection Report Submitted to IAR",
+            "INSPECTION": "Inspection Scheduled",
+            "PAYPEND": "Payment Pending",
+            "CONTRACT": "Contract SENT"
         }
         return status_map.get(status_code, "Unknown Status")
 

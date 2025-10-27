@@ -47,8 +47,6 @@ IF OBJECT_ID('RoleAssigment', 'U') IS NOT NULL
     DELETE FROM RoleAssigment;
 IF OBJECT_ID('WF_Applications', 'U') IS NOT NULL
     DELETE FROM WF_Applications;
-IF OBJECT_ID('WF_Dashboard', 'U') IS NOT NULL
-    DELETE FROM WF_Dashboard;
 IF OBJECT_ID('WF_FileTypes', 'U') IS NOT NULL
     DELETE FROM WF_FileTypes;
 IF OBJECT_ID('WF_ActivityStatus', 'U') IS NOT NULL
@@ -78,7 +76,7 @@ DROP TABLE IF EXISTS WF_Companies;
 -- Drop RoleAssignments first (references both WF_Users and WF_Roles)
 DROP TABLE IF EXISTS RoleAssigment;
 
--- Drop WF_Applications (references WF_Roles, WF_Dashboard, WF_Priorities, WF_ApplicationStatus)
+-- Drop WF_Applications (references WF_Roles, WF_Priorities, WF_ApplicationStatus)
 DROP TABLE IF EXISTS WF_Applications;
 
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
@@ -88,7 +86,6 @@ DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
 
 -- Drop parent/reference tables last
-DROP TABLE IF EXISTS WF_Dashboard;
 DROP TABLE IF EXISTS WF_FileTypes;
 DROP TABLE IF EXISTS WF_ActivityStatus;
 DROP TABLE IF EXISTS WF_QuoteStatus;
@@ -179,18 +176,7 @@ INSERT INTO WF_USER_ADMINS (UserName, AdminUserName, IsPrimary) VALUES
 
 
 -- This could be the parent table to do counts and sums or we write a View 
-CREATE TABLE WF_Dashboard (
-    ID INT IDENTITY(1,1) PRIMARY KEY,
-    count_new INT DEFAULT 0, -- applications status Rule.count(WF_Applications where status='NEW')
-    count_in_progress INT DEFAULT 0,
-    count_withdrawn INT  DEFAULT 0,
-    count_completed INT  DEFAULT 0,
-    count_overdue INT  DEFAULT 0,
-    total_count INT  DEFAULT 0
-);
--- Root Record 
-INSERT INTO WF_Dashboard ( count_new, count_in_progress, count_withdrawn, count_completed, count_overdue, total_count)   
-VALUES ( 1, 0, 0, 0, 0, 1);
+
 
 CREATE TABLE WF_ApplicationStatus (
     StatusCode NVARCHAR(50) NOT NULL PRIMARY KEY,
@@ -200,10 +186,13 @@ INSERT INTO WF_ApplicationStatus (StatusCode, StatusDescription) VALUES
     ('NEW', 'Application is new'),
     ('INC', 'Application is incomplete'),
     ('DISP', 'Application has been dispatched for review'),
-    ('INP', 'Application is currently being processed'),
-    ('COMPL', 'Application processing is completed'),
-    ('REV', 'Application requires further review'),
-    ('WTH', 'Application has been withdrawn');
+    ('INP', 'Application is currently being processed - assign NCRC'),
+    ('PAYPEND', 'Payment Pending'),
+    ('CONTRACT', 'Contract SENT'),
+    ('INSPECTION', 'Inspection Scheduled'),
+    ('REVIEW', 'Inspection Report Submitted to IAR'),
+    ('COMPL', 'Application processing is certified')
+    ('WTH', 'Application has been Withdrawn');
 
 CREATE TABLE WF_Priorities (
     PriorityCode NVARCHAR(20) NOT NULL PRIMARY KEY,
@@ -225,6 +214,7 @@ CREATE TABLE WF_Applications (
     SubmissionDate DATE NOT NULL DEFAULT GETDATE(),
     Status NVARCHAR(50) NOT NULL DEFAULT 'NEW',
     Priority NVARCHAR(20) DEFAULT 'NORMAL', -- 'Low', 'Normal', 'High', 'Critical'
+    CurrentStatusMessage NVARCHAR(150),
     AssignedTo nvarchar(100) NULL, -- User email
     AssignedBy nvarchar(100) NULL, -- User email
     AssignedDate datetime2(7) NULL, -- Rule.formula when AssignedTo is not null return current_date
@@ -240,7 +230,6 @@ CREATE TABLE WF_Applications (
     verify_ingredients BIT NOT NULL DEFAULT 0, -- rule when ingredients verified set to 1
     verify_quote BIT NOT NULL DEFAULT 0, -- rule when quote verified set to 1
     assign_ncrc_rep BIT NOT NULL DEFAULT 0, -- rule when ncrc rep assigned set to 1 
-    FOREIGN KEY (WFDashboardID) REFERENCES WF_Dashboard(ID),
     FOREIGN KEY (Priority) REFERENCES WF_Priorities(PriorityCode),
     FOREIGN KEY (Status) REFERENCES WF_ApplicationStatus(StatusCode)
     --,FOREIGN KEY (CompanyID) REFERENCES COMPANYTB(CompanyID)

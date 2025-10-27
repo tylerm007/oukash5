@@ -6,7 +6,7 @@ from database.models import COMPANYTB, PLANTTB, LaneDefinition, WFApplicationMes
 from flask import app, request, jsonify, session
 import logging
 import safrs
-from sqlalchemy import false, text
+from sqlalchemy import false, text, or_
 from functools import wraps
 from flask_cors import cross_origin
 from config.config import Args
@@ -130,10 +130,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "daysInStage": days_between,
                 "overdue": days_between > 1 if status == "INP" else False,
                 "lastUpdate": modified_date,
-                "nextAction": "Follow up on contract",
+                #"nextAction": "Follow up on contract",
                 "documents": len(files) if files else 0,
                 "notes": len(app_messages) if app_messages else 0,
-                "aiSuggestions": {},
+                #"aiSuggestions": {},
                 "assignedRC": app_source.get("AssignedTo","Unassigned"),
                 "assignedRoles": [{ role.WF_Role.UserRole: role.Assignee} for role in assigned_roles]
             }
@@ -155,7 +155,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     completed_cnt = 0
                     task_instances = TaskInstance.query.filter_by(StageId=stage['StageInstanceId']).order_by(TaskInstance.TaskInstanceId).all()
                     for task in task_instances:
-                        if task.TaskDef.AutoComplete == True or task.TaskDef.TaskType in ['START','END',"LANESTART",'LANEEND']:
+                        if task.TaskDef.AutoComplete == True \
+                            or task.TaskDef.TaskType in ['START','END',"LANESTART",'LANEEND', 'SYSTEM']:
                             continue
                         task_cnt += 1 #if task.Status == 'PENDING' else 0
                         completed_cnt += 1 if task.Status == 'COMPLETED' else 0
@@ -268,10 +269,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         applications = WFApplication.query
         if name_filter:
             company_ids, plant_ids = find_company_ids_by_name(name_filter)
-            if len(plant_ids) > 0:
-                applications = applications.filter(WFApplication.PlantID.in_( plant_ids))
+            if len(plant_ids) > 0 and len(company_ids) > 0:
+                applications = applications.filter(
+                    or_(
+                        WFApplication.PlantID.in_(plant_ids),
+                        WFApplication.CompanyID.in_(company_ids)
+                    )
+                )
+            elif len(plant_ids) > 0:
+                applications = applications.filter(WFApplication.PlantID.in_(plant_ids))
             elif len(company_ids) > 0:
-                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
+                applications = applications.filter(WFApplication.CompanyID.in_(company_ids))
 
         if priority:
             applications = applications.filter(WFApplication.Priority == priority)
@@ -388,7 +396,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "HLD": "On Hold",
             "WTH": "Withdrawn",
             "COMPL": "Certified",
-            "REJ": "Rejected"
+            "REJ": "Rejected",
+            "PAYPEND": "Payment Pending",
+            "INSPECTION": "Inspection Scheduled",
+            "REVIEW": "Inspection Report Submitted to IAR",
+            "CONTRACT": "Contract SENT",
         }
         return status_map.get(status_code, "Unknown Status")
     

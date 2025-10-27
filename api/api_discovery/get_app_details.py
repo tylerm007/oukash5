@@ -1,7 +1,7 @@
 from pipes import quote
 from flask import request, jsonify
 from datetime import datetime
-from database.models import COMPANYADDRESSTB, PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
+from database.models import COMPANYADDRESSTB, PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFApplicationMessage, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
@@ -278,6 +278,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
             for file in files
         ]
+        messages = WFApplicationMessage.query.filter(WFApplicationMessage.ApplicationID == application_id).all()
+        result['messages'] = [
+            {
+                "messageId": getattr(message, "MessageID", None),
+                "fromUser": getattr(message, "FromUser", None),
+                "toUser": getattr(message, "ToUser", None),
+                "task_id": getattr(message, "TaskID", None),
+                "messageText": getattr(message, "MessageText", None),
+                "messageType": getattr(message, "MessageType", None),
+                "priority": getattr(message, "Priority", None),
+                "sentDate": message.SentDate.strftime("%Y-%m-%dT%H:%M:%S") if getattr(message, "SentDate", None) else None
+            }
+            for message in messages
+        ]
         application_info = {}
         application_info["applicationInfo"] = result
         return jsonify(application_info), 200
@@ -452,7 +466,11 @@ def get_app_status(status_code: str):
         "INP": "In Progress",
         "HLD": "On Hold",
         "WTH": "Withdrawn",
-        "COMPL": "Completed",
-        "REJ": "Rejected"
+        "COMPL": "Certified",
+        "REJ": "Rejected",
+        "REVIEW": "Inspection Report Submitted to IAR",
+        "INSPECTION": "Inspection Scheduled",
+        "PAYPEND": "Payment Pending",
+        "CONTRACT": "Contract SENT"
     }
     return status_map.get(status_code, "Unknown Status")
