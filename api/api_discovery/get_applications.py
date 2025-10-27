@@ -75,17 +75,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))
         offset = int(data.get('page[offset]', 0))
-        priority = data.get('priority', None)
-        name_filter = data.get('name', None) # Company or Plant Name not found in WFApplication table
+        priority = data.get('priority', None) or data.get('filter[priority]', None)
+        name_filter = data.get('name', None) or data.get('filter[name]', None)  # Company or Plant Name not found in WFApplication table
+        status = data.get('status', None) or data.get('filter[status]', None)
         result = []
 
         applications = WFApplication.query
         if name_filter:
             company_ids, plant_ids = find_company_ids_by_name(name_filter)
-            if len(company_ids) > 0:
-                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
             if len(plant_ids) > 0:  
                 applications = applications.filter(WFApplication.PlantID.in_( plant_ids))
+            elif len(company_ids) > 0:
+                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
 
         if priority:
             applications = applications.filter(WFApplication.Priority == priority)
@@ -258,20 +259,25 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         data = request.args if request.args else {}
         limit = int(data.get('page[limit]', 10))
         offset = int(data.get('page[offset]', 0))
-        priority = data.get('priority', None)
-        name_filter = data.get('name', None)
+        priority = data.get('priority', None) or data.get('filter[priority]', None)
+        name_filter = data.get('name', None) or data.get('filter[name]', None)
+        status = data.get('status', None) or data.get('filter[status]', None)
+        result = []
         
         # Build query (same logic as original)
         applications = WFApplication.query
         if name_filter:
             company_ids, plant_ids = find_company_ids_by_name(name_filter)
-            if len(company_ids) > 0:
-                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
             if len(plant_ids) > 0:
                 applications = applications.filter(WFApplication.PlantID.in_( plant_ids))
+            elif len(company_ids) > 0:
+                applications = applications.filter(WFApplication.CompanyID.in_( company_ids))
 
         if priority:
             applications = applications.filter(WFApplication.Priority == priority)
+
+        if status:
+            applications = applications.filter(WFApplication.Status == status)
 
         applications = applications.order_by(WFApplication.Status).limit(limit).offset(offset)
         total_record_count = WFApplication.query.count()
@@ -381,7 +387,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "INP": "In Progress",
             "HLD": "On Hold",
             "WTH": "Withdrawn",
-            "COMPL": "Completed",
+            "COMPL": "Certified",
             "REJ": "Rejected"
         }
         return status_map.get(status_code, "Unknown Status")
