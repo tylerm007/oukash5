@@ -170,7 +170,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "taskType": task.TaskDef.TaskType if task and task.TaskDef else "Unknown Task Type",
                                 "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
                                 "assignee": task.AssignedTo,
-                                "daysActive": days_between,
+                                "daysInStage": days_between,
                                 "overdue": days_between > 1 and task.Status != 'COMPLETED',
                                 "createdDate": task.StartedDate,
                                 "description": task.TaskDef.Description if task and task.TaskDef else " ",
@@ -209,6 +209,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "id": msg.get("MessageID"),
                     "fromUser": msg.get("FromUser"), 
                     "toUser": msg.get("ToUser"),
+                    "task_instance_id": getattr(msg, "TaskInstanceId", None),
                     "priority": msg.get("Priority"),
                     "text": msg.get("MessageText"),
                     "sentDate": msg.get("SentDate"),
@@ -400,7 +401,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "PAYPEND": "Payment Pending",
             "INSPECTION": "Inspection Scheduled",
             "REVIEW": "Inspection Report Submitted to IAR",
-            "CONTRACT": "Contract SENT",
+            "CONTRACT": "Contract Sent to Customer",
         }
         return status_map.get(status_code, "Unknown Status")
     

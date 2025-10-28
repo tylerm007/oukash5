@@ -623,6 +623,7 @@ class WFApplicationMessage(Base):  # type: ignore
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FromUser = Column(ForeignKey('WF_Users.Username'), nullable=False)
     ToUser = Column(String(50))
+    TaskInstanceId = Column(Integer)
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
     MessageType = Column(Unicode(50), server_default=text("('internal')"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)

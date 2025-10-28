@@ -285,6 +285,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 "fromUser": getattr(message, "FromUser", None),
                 "toUser": getattr(message, "ToUser", None),
                 "task_id": getattr(message, "TaskID", None),
+                "task_instance_id": getattr(message, "TaskInstanceId", None),
                 "messageText": getattr(message, "MessageText", None),
                 "messageType": getattr(message, "MessageType", None),
                 "priority": getattr(message, "Priority", None),
@@ -471,6 +472,6 @@ def get_app_status(status_code: str):
         "REVIEW": "Inspection Report Submitted to IAR",
         "INSPECTION": "Inspection Scheduled",
         "PAYPEND": "Payment Pending",
-        "CONTRACT": "Contract SENT"
+        "CONTRACT": "Contract Sent to Customer"
     }
     return status_map.get(status_code, "Unknown Status")

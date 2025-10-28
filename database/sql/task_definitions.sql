@@ -192,6 +192,28 @@ set PostScriptJson = 'set_application_attribute(application_id,"Status","INP", d
 where TaskType = 'START';
 GO
 
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(application_id,"Status","PAYPEND", data)'
+where TaskName = 'Generated Invoice and Send';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(application_id,"Status","INSPECT", data)'
+where TaskName = 'Schedule Inspection';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(application_id,"Status","REVIEW", data)'
+where TaskName = 'Inspection Report Submitted to IAR';
+GO
+
+
+UPDATE TaskDefinitions
+set PostScriptJson = 'set_application_attribute(application_id,"Status","CONTRACT", data)'
+where TaskName = 'Send Contract';
+GO
+
 UPDATE TaskDefinitions
 set PostScriptJson = 'set_application_attribute(application_id,"Status","COMPL", data)'
 where TaskType = 'END';

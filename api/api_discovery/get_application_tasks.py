@@ -233,7 +233,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                 "taskType": task.TaskDef.TaskType if task and task.TaskDef else "Unknown Task Type",
                                 "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
                                 "assignee": task.AssignedTo,
-                                "daysActive": days_between,
+                                "daysInStage": days_between,
                                 "description": task.TaskDef.Description if task and task.TaskDef else " ",
                                 "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
                                 "TaskInstanceId": task.TaskInstanceId,
@@ -263,6 +263,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     "id": msg.get("MessageID"),
                     "fromUser": msg.get("FromUser"), 
                     "toUser": msg.get("ToUser"),
+                    "task_instance_id": getattr(msg, "TaskInstanceId", None),
                     "priority": msg.get("Priority"),
                     "text": msg.get("MessageText"),
                     "sentDate": msg.get("SentDate"),
@@ -303,7 +304,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "INP": "In Progress",
             "HLD": "On Hold",
             "WTH": "Withdrawn",
-            "COMPL": "Completed",
-            "REJ": "Rejected"
+            "COMPL": "Certified",
+            "REJ": "Rejected",
+            "PAYPEND": "Payment Pending",
+            "INSPECTION": "Inspection Scheduled",
+            "REVIEW": "Inspection Report Submitted to IAR",
+            "CONTRACT": "Contract Sent to Customer",
         }
         return status_map.get(status_code, "Unknown Status")

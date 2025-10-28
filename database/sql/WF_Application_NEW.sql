@@ -418,6 +418,7 @@ CREATE TABLE WF_ApplicationMessages (
     ApplicationID INT NOT NULL,
     FromUser NVARCHAR(100) NOT NULL,
     ToUser NVARCHAR(100) NULL,
+    TaskInstanceId INT NULL,
     MessageText NVARCHAR(MAX) NOT NULL,
     MessageType NVARCHAR(50) NOT NULL DEFAULT 'internal',
     Priority NVARCHAR(20) NOT NULL DEFAULT 'NORMAL',
