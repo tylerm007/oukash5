@@ -117,7 +117,7 @@ VALUES
 (1, 'End Ingredients', 'LANEEND', 'COMPLETION', 4, 4, 'SYSTEM', 15, 'Ingredients stage completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Ingredients Stage', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Assign Ingredients', @to_name = 'Start Ingredients Stage', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Start Ingredients Stage', @to_name = 'Upload Ingredients to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload Ingredients to KASH DB', @to_name = 'Verify Ingredients in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Ingredients in DB', @to_name = 'End Ingredients', @condition = 'None'; 
@@ -133,8 +133,7 @@ VALUES
 (1, 'End Products', 'LANEEND', 'COMPLETION', 4, 5, 'SYSTEM', 15, 'Products stage completed', 1, 'system');
 
 GO
-
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Products Stage', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Assign Product', @to_name = 'Start Products Stage', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Start Products Stage', @to_name = 'Upload Product to KASH DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Upload Product to KASH DB', @to_name = 'Verify Products in DB', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Verify Products in DB', @to_name = 'End Products', @condition = 'None'; 

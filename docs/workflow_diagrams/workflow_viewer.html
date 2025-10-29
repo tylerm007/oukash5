@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Application Certification Workflow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .diagram { text-align: center; margin: 20px 0; }
+        .info { background: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #007acc; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .stat-card { background: #f0f8ff; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007acc; }
+        h1 { color: #333; text-align: center; }
+        .mermaid { background: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 Application Certification Workflow</h1>
+        
+        <div class="info">
+            <h3>📊 Workflow Overview</h3>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">52</div>
+                    <div>Total Tasks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">72</div>
+                    <div>Process Flows</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div>Swimlanes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div>Roles</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="diagram">
+            <div class="mermaid">
+flowchart TD
+    %% Application Certification Workflow
+
+    subgraph Lane1["Initial"]
+        Start_Application_Submitted((Start_Application_Submitted))
+        Init_Lane_start[Init Lane start]
+        AssignNCRC[AssignNCRC]
+        verify_Company[verify Company]
+        verify_Plant[verify Plant]
+        verify_Contact[verify Contact]
+        verify_Product[verify Product]
+        verify_Ingredients[verify Ingredients]
+        All_Verified_Gateway{{All Verified Gateway}}
+        to_Withdrawn_Y_N{to Withdrawn Y/N}
+        Assign_Product[Assign Product]
+        Assign_Ingredients[Assign Ingredients]
+        Contact_Customer[Contact Customer]
+        Initial_Collector{{Initial Collector}}
+        Init_App_End[Init App End]
+        Stage_Collector{{Stage Collector}}
+        End([End])
+    end
+
+    subgraph Lane2["NDA"]
+        Start_NDA[Start NDA]
+        Needs_NDA{Needs NDA}
+        Send_NDA[Send NDA]
+        NDA_Executed_by_Legal[NDA Executed by Legal]
+        NDA_Completed[NDA Completed]
+        NDA_End[NDA End]
+    end
+
+    subgraph Lane3["Inspection"]
+        Start_Inspection[Start Inspection]
+        Is_Inspection_Needed{Is Inspection Needed}
+        Assign_Fee_Structure[Assign Fee Structure]
+        Select_RFR[Select RFR]
+        Assign_Invoice_Amount[Assign Invoice Amount]
+        Generated_Invoice_and_Send[Generated Invoice and Send]
+        Mark_Invoice_Paid[Mark Invoice Paid]
+        Is_Payment_Overdue[Is Payment Overdue]
+        Schedule_Inspection[Schedule Inspection]
+        Inspection_Report_Submitted_to_IAR[Inspection Report Submitted to IAR]
+        Withdraw_Application{Withdraw Application}
+        End_Inspection[End Inspection]
+    end
+
+    subgraph Lane4["Ingredients"]
+        Start_Ingredients_Stage[Start Ingredients Stage]
+        Upload_Ingredients_to_KASH_DB[Upload Ingredients to KASH DB]
+        Verify_Ingredients_in_DB[Verify Ingredients in DB]
+        End_Ingredients[End Ingredients]
+    end
+
+    subgraph Lane5["Products"]
+        Start_Products_Stage[Start Products Stage]
+        Upload_Product_to_KASH_DB[Upload Product to KASH DB]
+        Verify_Products_in_DB[Verify Products in DB]
+        End_Products[End Products]
+    end
+
+    subgraph Lane6["Contract"]
+        Start_Contract_Stage[Start Contract Stage]
+        Prepare_Contract[Prepare Contract]
+        Send_Contract[Send Contract]
+        Contract_Signed_Y_N{Contract Signed Y/N}
+        End_Contract[End Contract]
+    end
+
+    subgraph Lane7["Certification"]
+        Start_Certification_Stage[Start Certification Stage]
+        Issue_Certificate[Issue Certificate]
+        Notify_Customer[Notify Customer]
+        End_Certification[End Certification]
+    end
+
+    %% Sequence Flows
+    Start_Application_Submitted --> Init_Lane_Start
+    Init_Lane_Start --> AssignNCRC
+    AssignNCRC --> verify_Company
+    AssignNCRC --> verify_Plant
+    AssignNCRC --> verify_Product
+    AssignNCRC --> verify_Ingredients
+    AssignNCRC --> verify_Contact
+    verify_Company --> All_Verified_Gateway
+    verify_Plant --> All_Verified_Gateway
+    verify_Contact --> All_Verified_Gateway
+    verify_Product --> All_Verified_Gateway
+    verify_Ingredients --> All_Verified_Gateway
+    All_Verified_Gateway --> to_Withdrawn_Y_N
+    to_Withdrawn_Y_N -->|YES| END
+    to_Withdrawn_Y_N -->|NO| Assign_Product
+    to_Withdrawn_Y_N -->|NO| Assign_Ingredients
+    to_Withdrawn_Y_N -->|NO| Contact_Customer
+    Assign_Product --> Initial_Collector
+    Assign_Ingredients --> Initial_Collector
+    Contact_Customer --> Initial_Collector
+    Initial_Collector --> Init_App_End
+    to_Withdrawn_Y_N -->|NO| Start_NDA
+    Start_NDA --> Needs_NDA
+    Needs_NDA -->|YES| Send_NDA
+    Needs_NDA -->|NO| NDA_End
+    Send_NDA -->|YES| NDA_Executed_by_Legal
+    NDA_Executed_by_Legal -->|NONE| NDA_Completed
+    NDA_Completed --> NDA_End
+    NDA_End --> Stage_Collector
+    to_Withdrawn_Y_N -->|NO| Start_Inspection
+    Start_Inspection --> Is_Inspection_Needed
+    Is_Inspection_Needed -->|NO| End_Inspection
+    Is_Inspection_Needed -->|YES| Assign_Fee_Structure
+    Assign_Fee_Structure --> Select_RFR
+    Select_RFR --> Assign_Invoice_Amount
+    Assign_Invoice_Amount --> Generated_Invoice_and_Send
+    Generated_Invoice_and_Send --> Mark_Invoice_Paid
+    Generated_Invoice_and_Send --> Is_Payment_Overdue
+    Mark_Invoice_Paid -->|YES| Schedule_Inspection
+    Schedule_Inspection --> Inspection_Report_Submitted_to_IAR
+    Inspection_Report_Submitted_to_IAR --> Withdraw_Application
+    Withdraw_Application -->|NO| End_Inspection
+    Withdraw_Application -->|YES| END
+    End_Inspection --> Stage_Collector
+    Assign_Ingredients --> Start_Ingredients_Stage
+    Start_Ingredients_Stage --> Upload_Ingredients_to_KASH_DB
+    Upload_Ingredients_to_KASH_DB --> Verify_Ingredients_in_DB
+    Verify_Ingredients_in_DB --> End_Ingredients
+    End_Ingredients --> Stage_Collector
+    Assign_Product --> Start_Products_Stage
+    Start_Products_Stage --> Upload_Product_to_KASH_DB
+    Upload_Product_to_KASH_DB --> Verify_Products_in_DB
+    Verify_Products_in_DB --> End_Products
+    End_Products --> Stage_Collector
+    Stage_Collector --> Start_Contract_Stage
+    Start_Contract_Stage --> Prepare_Contract
+    Prepare_Contract --> Send_Contract
+    Send_Contract --> Contract_Signed_Y_N
+    Contract_Signed_Y_N -->|YES| End_Contract
+    Contract_Signed_Y_N -->|NO| END
+    End_Contract --> Stage_Collector
+    End_Contract --> Start_Certification_Stage
+    Start_Certification_Stage --> Issue_Certificate
+    Issue_Certificate --> Notify_Customer
+    Notify_Customer --> End_Certification
+    End_Certification --> END
+    Init_App_End --> Start_NDA
+    Init_App_End --> Start_Inspection
+    Init_App_End --> Start_Ingredients_Stage
+    Init_App_End --> Start_Products_Stage
+    Init_App_End --> Start_Contract_Stage
+    Init_App_End --> Start_Certification_Stage
+
+    %% Styling
+    classDef startEnd fill:#90EE90,stroke:#333,stroke-width:2px
+    classDef userTask fill:#87CEEB,stroke:#333,stroke-width:2px
+    classDef gateway fill:#FFD700,stroke:#333,stroke-width:2px
+    classDef condition fill:#FFA500,stroke:#333,stroke-width:2px
+            </div>
+        </div>
+        
+        <div class="info">
+            <h3>🏊 Workflow Lanes</h3>
+            <ul>
+                <li><strong>Initial:</strong> 17 tasks</li>
+<li><strong>NDA:</strong> 6 tasks</li>
+<li><strong>Inspection:</strong> 12 tasks</li>
+<li><strong>Ingredients:</strong> 4 tasks</li>
+<li><strong>Products:</strong> 4 tasks</li>
+<li><strong>Contract:</strong> 5 tasks</li>
+<li><strong>Certification:</strong> 4 tasks</li>
+            </ul>
+        </div>
+        
+        <div class="info">
+            <h3>👥 Roles Involved</h3>
+            <ul>
+                <li><strong>DISPATCH:</strong> 1 tasks</li>
+<li><strong>IAR:</strong> 2 tasks</li>
+<li><strong>LEGAL:</strong> 6 tasks</li>
+<li><strong>NCRC:</strong> 16 tasks</li>
+<li><strong>NCRC-ADMIN:</strong> 5 tasks</li>
+<li><strong>PROD:</strong> 2 tasks</li>
+<li><strong>RFR:</strong> 2 tasks</li>
+<li><strong>SYSTEM:</strong> 18 tasks</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            flowchart: { useMaxWidth: true, htmlLabels: true },
+            securityLevel: 'loose'
+        });
+    </script>
+</body>
+</html>

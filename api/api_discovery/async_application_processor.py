@@ -169,26 +169,28 @@ class AsyncApplicationProcessor:
         created_date = app_dict.get("CreatedDate")
         modified_date = app_dict.get("ModifiedDate")
         status = self._get_app_status(app_dict.get("Status"))
-        days_between = self._calc_days_between(created_date, modified_date) if status == "INP" else 0
-        
+        days_between = self._calc_days_between(created_date, None) if status not in ["COMPL","WTH"] else 0
+        days_due = 5  # Fixed due days for overall application
         app_row = {
             "id": application_id,
             "company": app_source.get("CompanyName"),
             "plant": app_source.get("PlantName"),
-            "plantHistory": {},
+            #"plantHistory": {},
             "applicationId": application_id,
             "region": app_source.get("Region"),
             "priority": app_dict.get("Priority", "Normal"),
             "status": status,
             "assignedRC": app_source.get("AssignedTo"),
-            "dasyInProcess": days_between,
-            "overdue": days_between > 1 if status == "INP" else False,
-            "lastUpdate": modified_date,
-            "nextAction": "Follow up on contract",
+            "daysInProcess": days_between,
+            "daysOverdue": days_between - days_due if days_between > days_due and status != "COMPL" else 0,
+            "isOverdue": days_between > days_due if status != "COMPL" else False,
+            #"nextAction": "Follow up on contract",
             "documents": len(files) if files else 0,
+            "createdDate": created_date,
+            "lastUpdate": modified_date,
             "notes": len(app_messages) if app_messages else 0,
-            "aiSuggestions": {},
-            "assignedRC": app_source.get("AssignedTo", "Unassigned"),
+            #"aiSuggestions": {},
+            #"assignedRC": app_source.get("AssignedTo", "Unassigned"),
             "assignedRoles": [{ role.WF_Role.UserRole: role.Assignee} for role in assigned_roles]
         }
         
@@ -271,15 +273,16 @@ class AsyncApplicationProcessor:
                 created_date = task.StartedDate
                 modified_date = datetime.now() if task.Status != 'COMPLETED' else task.CompletedDate
                 days_between = self._calc_days_between(created_date, modified_date)
-                
+                days_due = int(task.TaskDef.EstimatedDurationMinutes / 60 * 24) if task.TaskDef and task.TaskDef.EstimatedDurationMinutes else 1
                 tasks.append({
                     "name": task.TaskDef.TaskName if task and task.TaskDef else "Unknown Task Name",
                     "status": task.Status,
                     "taskType": task.TaskDef.TaskType if task and task.TaskDef else "Unknown Task Type",
                     "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
                     "assignee": task.AssignedTo,
-                    "daysInStage": days_between,
-                    "overdue": days_between > 1 and task.Status != 'COMPLETED',
+                    "daysPending": days_between,
+                    "daysOverdue": days_between - days_due if days_between > days_due and task.Status != 'COMPLETED' else 0,
+                    "isOverdue": days_between > days_due and task.Status != 'COMPLETED',
                     "createdDate": task.StartedDate,
                     "description": task.TaskDef.Description if task and task.TaskDef else " ",
                     "required": task.TaskDef.IsRequired if task and task.TaskDef else False,
@@ -338,6 +341,8 @@ class AsyncApplicationProcessor:
     
     def _calc_days_between(self, start_date, end_date) -> int:
         """Calculate days between two dates"""
+        if not end_date:
+            end_date = datetime.fromisoformat(datetime.now().isoformat()).isoformat()
         if start_date and end_date:
             if isinstance(start_date, str):
                 start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))
@@ -358,7 +363,7 @@ class AsyncApplicationProcessor:
             "REVIEW": "Inspection Report Submitted to IAR",
             "INSPECTION": "Inspection Scheduled",
             "PAYPEND": "Payment Pending",
-            "CONTRACT": "Contract SENT"
+            "CONTRACT": "Contract Sent to Customer"
         }
         return status_map.get(status_code, "Unknown Status")
 
