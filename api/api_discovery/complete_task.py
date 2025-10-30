@@ -142,12 +142,12 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
 
         if task_instance.Status != 'PENDING' and task_def.TaskType != 'START': #and depth == 0
-            app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task is not PENDING -> {task_instance.Status}.')
+            app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING  -> {task_instance.Status}."}), 400
         
         task_name = task_def.TaskName
         stages_list = get_stage_list(task_instance)
-        app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name}')
+        app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
         task_flows_from = task_def.ToTaskTaskFlowList or []
         task_flows_to = task_def.TaskFlowList or []
         # Check if all prior tasks are completed
@@ -210,7 +210,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             if condition and result and condition != 'None' and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
-            elif next_task_instance and next_task_instance.Status == 'NEW' and validate_prior_tasks(task_def, stages_list, result):
+            elif next_task_instance and validate_prior_tasks(task_def, stages_list, result):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.AssignedTo = completed_by
                 next_task_instance.StartedDate = datetime.utcnow()
@@ -221,7 +221,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
 
                 
-        app_logger.info(f'Task completed:{task_name} - {task_instance_id}')
+        app_logger.info(f'Task completed:{task_name} - {task_instance_id} Status: {task_instance.Status} Result: {task_instance.Result}')
         return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
 
 def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str = None) -> bool:

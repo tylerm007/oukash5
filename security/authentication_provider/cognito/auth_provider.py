@@ -15,9 +15,6 @@ import flask_jwt_extended as flask_jwt_extended
 from flask import jsonify, g, request, redirect, url_for
 from flask import session
 import requests
-import json
-import sys
-import time
 import jwt
 from jwt.algorithms import RSAAlgorithm
 import base64
@@ -29,6 +26,7 @@ import hmac
 import hashlib
 import urllib.parse
 
+from database.models import WFUser, WFUSERROLE
 # **********************
 # Amazon Cognito auth provider
 # **********************
@@ -158,7 +156,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         """Add Cognito endpoints to Flask app"""
         from config.config import Args
         
-        @flask_app.route('/auth/login', methods=['GET', 'POST'])
+        @flask_app.route('/api/auth/login', methods=['GET', 'POST'])
         def cognito_login():
             """Redirect to Cognito Hosted UI for authentication"""
             try:
@@ -283,29 +281,33 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 user = Authentication_Provider.get_or_create_user_from_claims(claims)
                 if not user:
                     return jsonify({'error': 'User creation failed'}), 400
-                
+                user = WFUser.query.filter(WFUser.Email == claims['email']).first()
+                user_roles = ['DISPATCHER']  # Default role
+                if user:
+                    user_roles = [role.UserRole for role in user.WFUSERROLEList]
                 # Store user info in session
-                session['user_id'] = user.name
-                session['user_email'] = user.email
-                session['user_roles'] = [role.role_name for role in user.UserRoleList]
+                session['user_id'] = claims['name']
+                session['user_email'] = claims['email']
+                session['user_roles'] = user_roles
                 session['authenticated'] = True
                 session['access_token'] = tokens.get('access_token')
                 session['id_token'] = id_token
                 
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
-                
-                logger.info(f"User {user.name} successfully authenticated via Cognito SSO")
-                
+
+                logger.info(f"User {claims['name']} successfully authenticated via Cognito SSO")
+                from flask import g
+                setattr(g,'access_token',tokens.get('access_token'))
                 return jsonify({
                     'success': True,
                     'message': 'Authentication successful',
                     'access_token': tokens.get('access_token'),
                     'token_type': 'Bearer',
                     'user_info': {
-                        'user_id': user.name,
-                        'email': user.email,
-                        'roles': [role.role_name for role in user.UserRoleList]
+                        'user_id': claims['name'],
+                        'email': claims['email'],
+                        'roles': user_roles
                     },
                     'postman_setup': {
                         'instruction': 'Copy the access_token value below',

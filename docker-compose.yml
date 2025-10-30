@@ -10,12 +10,25 @@ services:
           - APILOGICPROJECT_IS_DOCKER=true
           - APILOGICPROJECT_SECURITY_ENABLED=true
           - APILOGICPROJECT_SWAGGER_HOST=172.30.3.133
+          - APILOGICPROJECT_HTTP_SCHEME=http
+          #- SECURITY_PROVIDER=OKTA
+          #- APILOGICPROJECT_SECURITY_PROVIDER = OKTA
           - OKTA_DOMAIN=https://ou.okta.com
           - OKTA_CLIENT_ID=0oa1crjfiwoxRYadi0x8
           - OKTA_CLIENT_SECRET=eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7
           - OKTA_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
-          #- SECURITY_PROVIDER=OKTA
-          #- APILOGICPROJECT_SECURITY_PROVIDER = OKTA 
+          # if HTTPS is used, set FLASK_USE_SSL=true
+          - FLASK_USE_SSL=false
+          - START_BACKGROUND=true
+          # COGNITO SETTINGS
+          - SECURITY_PROVIDER=COGNITO
+          - APILOGICPROJECT_SECURITY_PROVIDER = COGNITO
+          - COGNITO_USER_POOL_ID=us-east-1_d38hiE2QM
+          - COGNITO_CLIENT_ID=34sqr8ttgro6ego2117aflg9lr
+          #- COGNITO_CLIENT_SECRET=1h57kf5cpq17m0example  NOT USED IN PUBLIC CLIENTS
+          - COGNITO_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
+          - COGNITO_REGION=us-east-1
+          - COGNITO_DOMAIN=https://auth.oudirect-st.ou.org
           ## TODO: verify Database uri's here,
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_OU_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no

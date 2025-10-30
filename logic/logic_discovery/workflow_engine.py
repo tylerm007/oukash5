@@ -106,6 +106,12 @@ def create_invoice(task_instance_id, data: DotMap):
         _create_event(next_task_instance.TaskInstanceId, event_key)
         data.Message = f'{{"EventKey": "{event_key}"}}'
         app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
+   
+    try:
+        set_application_attribute(application_id, "Status", "PAYPEND", data)
+    except Exception as e:
+        app_logger.error(f"Error setting application attribute: {e}")
+    
     data.Result = True
     return data
 

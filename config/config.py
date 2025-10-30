@@ -106,10 +106,10 @@ class Config:
 
     # Project Creation Defaults (overridden from args, env variables)
     CREATED_API_PREFIX = "/api"
-    CREATED_FLASK_HOST   = "192.168.13.31"
+    CREATED_FLASK_HOST   = "localhost" # "192.168.13.31"
     """ where clients find  the API (eg, cloud server addr)"""
 
-    CREATED_SWAGGER_HOST = "192.168.13.31"
+    CREATED_SWAGGER_HOST = "localhost" #"192.168.13.31"
     """ where swagger (and other clients) find the API """
     if CREATED_SWAGGER_HOST == "":
         CREATED_SWAGGER_HOST = CREATED_FLASK_HOST  # 
@@ -200,7 +200,7 @@ class Config:
     COGNITO_CLIENT_ID=os.getenv('COGNITO_CLIENT_ID', '6o1m2bjh8bc8iihtufmhpq79gq')
     COGNITO_CLIENT_SECRET=os.getenv('COGNITO_CLIENT_SECRET', 'rev05ljd8067sbigkhlk153eluh78qgsh8dfptueehdalk42dmg')
     COGNITO_DOMAIN=os.getenv('COGNITO_DOMAIN', 'auth.oudirect-st.ou.org')
-    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'http//192.168.13.31:5656/auth/callback')
+    COGNITO_REDIRECT_URI=os.getenv('COGNITO_REDIRECT_URI', 'http//localhost:5656/auth/callback')
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",True)
     SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER')  # type: ignore # type: str

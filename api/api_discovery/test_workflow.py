@@ -11,6 +11,8 @@ from flask import request, jsonify
 import logging
 import safrs
 from sqlalchemy.sql import text
+from types import SimpleNamespace
+import time
 
 """
 Various endpoints to test workflow functionality and cleanup or reset tests
@@ -467,7 +469,7 @@ def start_workflow(application_id: int, start_by: str):
 
 
 def find_all_stages_for_process(process_id):
-    stages = StageInstance.query.filter(StageInstance.ProcessInstanceId == process_id).all()
+    stages = StageInstance.query.filter(StageInstance.ProcessInstanceId == process_id).order_by(StageInstance.LaneId).all()
     return [stage for stage in stages]
 
 def find_all_pending_tasks(stage_id: int):
@@ -476,7 +478,7 @@ def find_all_pending_tasks(stage_id: int):
     
     """
     pending_tasks = []
-    response = session.query(models.TaskInstance).filter(models.TaskInstance.StageId == stage_id, models.TaskInstance.Status == 'PENDING').all()
+    response = session.query(models.TaskInstance).filter(models.TaskInstance.StageId == stage_id, models.TaskInstance.Status == 'PENDING').order_by(models.TaskInstance.TaskInstanceId).all()
     pending_tasks.extend([task for task in response])
     for task_instance in pending_tasks:
         taskDef = task_instance.TaskDef
@@ -524,6 +526,8 @@ def complete_task(task_instance, scenario: int = 1):
     result = result_scenario(task_name, scenario)
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by='tband', completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
+    if result:
+        time.sleep(1)
     print(f"Complete Task {task_name} - Response: {response}")
 
 def result_scenario(task_name, scenario: int = 1) -> str:
@@ -730,7 +734,7 @@ def create_new_application_from_owns(owns_instance):
     if not has_product_count:
         app_logger.error(f'No products found for company {company.COMPANY_ID} plant {plant.PLANT_ID}. Cannot create application.')
         return None
-    from types import SimpleNamespace
+
     contact = SimpleNamespace(**contacts[0]) if contacts else None
     applicationNumber =  1 + CompanyApplication.query.count()
     application = CompanyApplication(

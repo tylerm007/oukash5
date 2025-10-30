@@ -186,6 +186,7 @@ GO
 
 GO
 
+-- IN PROGRESS
 UPDATE TaskDefinitions
 set PostScriptJson = 'set_application_attribute(application_id,"Status","INP", data)'
 where TaskType = 'START';
@@ -193,12 +194,7 @@ GO
 
 
 UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(application_id,"Status","PAYPEND", data)'
-where TaskName = 'Generated Invoice and Send';
-GO
-
-UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(application_id,"Status","INSPECT", data)'
+set PostScriptJson = 'set_application_attribute(application_id,"Status","INSPECTION", data)'
 where TaskName = 'Schedule Inspection';
 GO
 
@@ -211,11 +207,6 @@ GO
 UPDATE TaskDefinitions
 set PostScriptJson = 'set_application_attribute(application_id,"Status","CONTRACT", data)'
 where TaskName = 'Send Contract';
-GO
-
-UPDATE TaskDefinitions
-set PostScriptJson = 'set_application_attribute(application_id,"Status","COMPL", data)'
-where TaskType = 'END';
 GO
 
 UPDATE TaskDefinitions
