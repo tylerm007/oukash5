@@ -219,18 +219,23 @@ where TaskType = 'LANEEND';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = '
+set PostScriptJson = '''
 if task.Result == "YES":
     set_application_attribute(application_id,"Status","WTH", data)
-'
+'''
 where TaskName = 'to Withdrawn Y/N';
 GO
 
 UPDATE TaskDefinitions
-set PostScriptJson = '
+set PostScriptJson = 'set_application_attribute(application_id,"Status","COMPL", data)'
+where TaskName = 'Issue Certificate';
+GO
+
+UPDATE TaskDefinitions
+set PostScriptJson = '''
 if task.Result == "YES":
     set_application_attribute(application_id,"Status","WTH", data)
-'
+'''
 where TaskName = 'Withdraw Application';
 GO
 

@@ -144,7 +144,11 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         if task_instance.Status != 'PENDING' and task_def.TaskType != 'START': #and depth == 0
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING  -> {task_instance.Status}."}), 400
-        
+        application_id = task_instance.Stage.ProcessInstance.ApplicationId
+        application = WFApplication.query.filter_by(ApplicationID=application_id).first()
+        if application and application.Status in ["WTH","COMPL"]:
+            app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Application {application.ApplicationID} status is {application.Status}.')
+            return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Application status is {application.Status}."}), 400
         task_name = task_def.TaskName
         stages_list = get_stage_list(task_instance)
         app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
