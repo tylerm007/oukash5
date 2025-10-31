@@ -87,9 +87,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 row.pop('process', None)
             data.append(row)
         #data = [dict(row) for row in result]
+        total_count = WFApplication.query.count()
         end_time = time.time()
         processing_time = end_time - start_time
-        return jsonify({"status": "ok", "data": data, "meta": {"processing_time": processing_time, "async_enabled": True}}), 200
+        return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
 
 def transform_process_row(process: str) -> list:
     """
@@ -119,7 +120,7 @@ def transform_process_row(process: str) -> list:
                     task_cnt += 1
                     completed_cnt += 1 if task['Status'] == 'COMPLETED' else 0
 
-                    created_date = task['StartedDate']
+                    created_date = task['StartedDate'] if "StartedDate" in task else None
                     modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
                     days_between = _calc_days_between(created_date, modified_date)
                     days_due = int(taskdef['EstimatedDurationMinutes'] / 60 * 24) if taskdef and taskdef['EstimatedDurationMinutes'] else 1

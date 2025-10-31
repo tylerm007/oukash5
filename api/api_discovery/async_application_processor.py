@@ -279,7 +279,7 @@ class AsyncApplicationProcessor:
                     "status": task.Status,
                     "taskType": task.TaskDef.TaskType if task and task.TaskDef else "Unknown Task Type",
                     "taskCategory": task.TaskDef.TaskCategory if task and task.TaskDef else "Unknown Task Category",
-                    "assignee": task.AssignedTo,
+                    "executedBy": task.AssignedTo,
                     "daysPending": days_between,
                     "daysOverdue": days_between - days_due if days_between > days_due and task.Status != 'COMPLETED' else 0,
                     "isOverdue": days_between > days_due and task.Status != 'COMPLETED',
