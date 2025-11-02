@@ -62,7 +62,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         data = request.get_json()
         task_instance_id = data.get("task_instance_id")
-        completed_by = data.get("completed_by",'system')
+        if not task_instance_id:
+            return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
+        user = get_jwt()['sub'] if 'sub' in get_jwt() else 'system'
+        completed_by = data.get("completed_by",user)
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
         access_token = request.headers.get("Authorization")

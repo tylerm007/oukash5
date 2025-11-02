@@ -2,7 +2,7 @@ from ast import Continue
 from datetime import datetime
 from os import name
 from token import NAME
-from database.models import COMPANYTB, PLANTTB, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
+from database.models import COMPANYTB, PLANTTB, LaneDefinition, TaskDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -66,12 +66,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application_id = data.get('application_id', None) or data.get('filter[application_id]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
 
-        sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
+        #sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
         params = {'application_id': application_id, 'searchName': name_filter, 'status': status, 'priority': priority, 'limit': limit, 'offset': offset}
 
-        result = session.execute(text(sql), params).fetchall()
+        result = session.execute(text(get_SQL()), params).fetchall()
         fields = result[0]._fields if len(result) > 0 else []
         data = []
+        # = TaskDefinition.query.all() # USE CACHE HERE
+        #task_definitions = {td.TaskId: td.to_dict() for td in task_defs}
         # Convert tasks to dictionaries and add to result
         for task in result:
             row = dict(zip(fields, task))
@@ -79,18 +81,64 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if assignedRoles:
                 row['assignedRoles'] = json.loads(assignedRoles)
             files = row.get('files')
+            row['files'] = []
             if files:
                 row['files'] = json.loads(files)
+            messages = row.get('messages')
+            row['messages'] = []
+            if messages:
+                row['messages'] = json.loads(messages)
+            row['quotes'] = []
+            quotes = row.get('quotes')
+            if quotes:
+                row['quotes'] = json.loads(quotes)
             process = row.get('process')
             if process:
                 row['stages'] = transform_process_row(process)
                 row.pop('process', None)
-            data.append(row)
+            result = transform_app(row)
+            data.append(result)
         #data = [dict(row) for row in result]
         total_count = WFApplication.query.count()
         end_time = time.time()
         processing_time = end_time - start_time
         return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
+def transform_app(app) -> dict:
+    """
+    Transforms an application row dictionary by mapping status codes and processing stages.
+    """
+     # Build application data
+    company_app = session.query(CompanyApplication).filter_by(ID=app.get("ApplicationNumber")).first()
+    app_source = company_app.to_dict() if company_app else {}
+    created_date = app.get("CreatedDate")
+    modified_date = app.get("ModifiedDate")
+    status = _get_app_status(app.get("status"))
+    days_between = _calc_days_between(created_date, None) if status not in ["COMPL","WTH"] else 0
+    days_due = 5  #
+    row ={
+                "id": app.get("ApplicationID"),
+                "company": app.get("companyName", "Unknown Company"),
+                "plant": app.get("plantName", "Unknown Plant"),
+                "applicationId": app.get("ApplicationID"),
+                "status": status,
+                "priority": app.get("Priority", "Normal"),
+                "daysInProcess": days_between,
+                "daysOverdue": days_between - days_due if days_between > days_due and status != "COMPL" else 0,
+                "isOverdue": days_between > days_due if status != "COMPL" else False,
+                "createdDate": created_date,
+                "lastUpdate": app.get("ModifiedDate"),
+                "documents": 0,
+                "notes": 0,
+                "createdDate": created_date,
+                "lastUpdate": modified_date,
+                "assignedRC": "Unassigned",
+                "assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
+                "stages": app['stages'] if 'stages' in app else {},
+                "application_messages": [],
+                "files": app['files'] if 'files' in app else [],
+                "assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
+            }
+    return row
 
 def transform_process_row(process: str) -> list:
     """
@@ -118,22 +166,22 @@ def transform_process_row(process: str) -> list:
                         continue
                 
                     task_cnt += 1
-                    completed_cnt += 1 if task['Status'] == 'COMPLETED' else 0
+                    completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
 
                     created_date = task['StartedDate'] if "StartedDate" in task else None
-                    modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
+                    modified_date = datetime.now() if task['status'] != 'COMPLETED' else task['CompletedDate']
                     days_between = _calc_days_between(created_date, modified_date)
                     days_due = int(taskdef['EstimatedDurationMinutes'] / 60 * 24) if taskdef and taskdef['EstimatedDurationMinutes'] else 1
 
                     tasks.append({
                     "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
-                    "status": task['Status'],
+                    "status": task['status'] if 'status' in task else "UNKNOWN",
                     "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
                     "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
                     "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
                     "daysPending": days_between,
-                    "daysOverdue": days_between - days_due if days_between > days_due and task['Status'] != 'COMPLETED' else 0,
-                    "isOverdue": days_between > days_due and task['Status'] != 'COMPLETED',
+                    "daysOverdue": days_between - days_due if days_between > days_due and task['status'] != 'COMPLETED' else 0,
+                    "isOverdue": days_between > days_due and task['status'] != 'COMPLETED',
                     "createdDate": task['StartedDate'] if "StartedDate" in task else None,
                     "description": taskdef['Description'] if task and taskdef else " ",
                     "required": taskdef['IsRequired'] if task and taskdef else False,
@@ -226,3 +274,75 @@ def _get_pre_script(task) -> str:
             )
         
         return script
+
+def get_SQL() -> str:
+
+    return '''
+   select  pl.Name as "plantName", co.Name as "companyName",
+    (
+            select role, assignee 
+            from RoleAssigment  
+            where RoleAssigment.ApplicationID = app.ApplicationID
+            FOR JSON AUTO
+    ) as "assignedRoles",
+    (
+            select * 
+            from WF_Quotes  
+            where WF_Quotes.ApplicationID = app.ApplicationID
+            FOR JSON AUTO
+    ) as "quotes",
+    (
+            select * 
+            from WF_Files 
+            where   WF_Files.ApplicationID = app.ApplicationID
+            FOR JSON AUTO
+    ) as "files",
+    (
+            select * 
+            from WF_ApplicationMessages  
+            where WF_ApplicationMessages.ApplicationID = app.ApplicationID
+            FOR JSON AUTO
+    ) as "msgs",
+    process = ( select * 
+                       ,stages =  ( select *
+                                           ,tasks =  ( select 
+                                                        ti.TaskInstanceId,
+                                                        ti.TaskId,
+                                                        ti.status,
+                                                        ti.AssignedTo,
+                                                        ti.StartedDate,
+                                                        ti.CompletedDate,
+                                                        td.TaskName,
+                                                        td.TaskType,
+                                                        td.TaskCategory,   
+                                                        td.AssigneeRole,
+                                                        td.EstimatedDurationMinutes,
+                                                        td.AutoComplete,
+                                                        td.IsRequired,
+                                                        td.Description
+                                                       from TaskInstances ti
+                                                       INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
+                                                       where ti.StageId = si.StageInstanceId and  (td.AssigneeRole != 'SYSTEM') 
+                                                       order by td.Sequence
+                                                       FOR JSON AUTO
+                                                     )
+                                    from StageInstance si
+                                    where si.ProcessInstanceId = pi.InstanceId
+                                    order by si.StageInstanceId
+                                    FOR JSON AUTO        
+                                 )
+                FROM ProcessInstances pi
+                where   pi.ApplicationId = app.ApplicationID
+                FOR JSON AUTO
+              )
+                        
+     FROM WF_Applications  app
+         LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+         LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+     WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+           (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+     ORDER BY app.ApplicationID   
+     OFFSET :offset ROWS
+     FETCH NEXT :limit ROWS ONLY;
+
+    '''
