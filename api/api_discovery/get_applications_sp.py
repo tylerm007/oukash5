@@ -68,7 +68,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         #sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
         params = {'application_id': application_id, 'searchName': name_filter, 'status': status, 'priority': priority, 'limit': limit, 'offset': offset}
-
+        #print(get_SQL(),params)
         result = session.execute(text(get_SQL()), params).fetchall()
         fields = result[0]._fields if len(result) > 0 else []
         data = []
@@ -79,7 +79,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             row = dict(zip(fields, task))
             assignedRoles = row.get('assignedRoles')
             if assignedRoles:
-                row['assignedRoles'] = json.loads(assignedRoles)
+                assigned_roles= json.loads(assignedRoles)
+                row['assignedRoles'] = [{role.get('role'): role.get("assignee", "Unknown")} for role in assigned_roles]
             files = row.get('files')
             row['files'] = []
             if files:
@@ -112,26 +113,26 @@ def transform_app(app) -> dict:
     app_source = company_app.to_dict() if company_app else {}
     created_date = app.get("CreatedDate")
     modified_date = app.get("ModifiedDate")
-    status = _get_app_status(app.get("status"))
-    days_between = _calc_days_between(created_date, None) if status not in ["COMPL","WTH"] else 0
+    status = _get_app_status(app.get("Status"))
+    days_between = _calc_days_between(created_date, None) if app.get("Status") not in ["COMPL","WTH"] else 0
     days_due = 5  #
     row ={
-                "id": app.get("ApplicationID"),
+                #id": app.get("ApplicationID"),
                 "company": app.get("companyName", "Unknown Company"),
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("ApplicationID"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
                 "daysInProcess": days_between,
-                "daysOverdue": days_between - days_due if days_between > days_due and status != "COMPL" else 0,
-                "isOverdue": days_between > days_due if status != "COMPL" else False,
+                "daysOverdue": days_between - days_due if days_between > days_due and app.get("Status") != "COMPL" else 0,
+                "isOverdue": days_between > days_due if app.get("Status") != "COMPL" else False,
                 "createdDate": created_date,
                 "lastUpdate": app.get("ModifiedDate"),
                 "documents": 0,
                 "notes": 0,
                 "createdDate": created_date,
                 "lastUpdate": modified_date,
-                "assignedRC": "Unassigned",
+                #"assignedRC": "Unassigned",
                 "assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
                 "stages": app['stages'] if 'stages' in app else {},
                 "application_messages": [],
@@ -160,31 +161,33 @@ def transform_process_row(process: str) -> list:
                 completed_cnt = 0
                 for task in stage_tasks:
                     taskdef = task.get('td', [{}])[0]
+                    if len(taskdef) == 0:
+                        continue
                     #print(taskdef["TaskName"])
                     if (taskdef and taskdef['AutoComplete'] == True or
                         taskdef and taskdef['TaskType'] in ['START','END',"LANESTART",'LANEEND']):
                         continue
                 
                     task_cnt += 1
-                    completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
+                    completed_cnt += 1 if task['Status'] == 'COMPLETED' else 0
 
                     created_date = task['StartedDate'] if "StartedDate" in task else None
-                    modified_date = datetime.now() if task['status'] != 'COMPLETED' else task['CompletedDate']
+                    modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
                     days_between = _calc_days_between(created_date, modified_date)
                     days_due = int(taskdef['EstimatedDurationMinutes'] / 60 * 24) if taskdef and taskdef['EstimatedDurationMinutes'] else 1
 
                     tasks.append({
                     "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
-                    "status": task['status'] if 'status' in task else "UNKNOWN",
+                    "status": task['Status'] if 'Status' in task else "UNKNOWN",
                     "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
                     "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
                     "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
                     "daysPending": days_between,
-                    "daysOverdue": days_between - days_due if days_between > days_due and task['status'] != 'COMPLETED' else 0,
-                    "isOverdue": days_between > days_due and task['status'] != 'COMPLETED',
+                    "daysOverdue": days_between - days_due if days_between > days_due and task['Status'] != 'COMPLETED' else 0,
+                    "isOverdue": days_between > days_due and task['Status'] != 'COMPLETED',
                     "createdDate": task['StartedDate'] if "StartedDate" in task else None,
-                    "description": taskdef['Description'] if task and taskdef else " ",
-                    "required": taskdef['IsRequired'] if task and taskdef else False,
+                    "description": taskdef['Description'] if task and "Description" in taskdef else " ",
+                    "required": taskdef['IsRequired'] if task and "Required" in taskdef else False,
                     "TaskInstanceId": task['TaskInstanceId'],
                     #"PreScript": _get_pre_script(task),
                     "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
@@ -215,7 +218,7 @@ def get_lane_dict(stages: list) -> dict:
     lanes = session.query(LaneDefinition).filter(
         LaneDefinition.LaneId.in_(lane_ids)
     ).all()
-    lane_dict = {lane.LaneId: lane for lane in lanes}
+    lane_dict = {lane.LaneId: lane for lane in lanes} or {}
     return lane_dict
 
 def _calc_days_between(start_date, end_date) -> int:
@@ -279,6 +282,12 @@ def get_SQL() -> str:
 
     return '''
    select  pl.Name as "plantName", co.Name as "companyName",
+   app.ApplicationID,
+   app.ApplicationNumber,
+   app.CreatedDate,
+   app.ModifiedDate,
+   app.Status,
+   app.Priority,
     (
             select role, assignee 
             from RoleAssigment  
@@ -308,18 +317,18 @@ def get_SQL() -> str:
                                            ,tasks =  ( select 
                                                         ti.TaskInstanceId,
                                                         ti.TaskId,
-                                                        ti.status,
+                                                        ti.Status,
                                                         ti.AssignedTo,
                                                         ti.StartedDate,
                                                         ti.CompletedDate,
                                                         td.TaskName,
+                                                        td.Description,
                                                         td.TaskType,
                                                         td.TaskCategory,   
                                                         td.AssigneeRole,
                                                         td.EstimatedDurationMinutes,
                                                         td.AutoComplete,
-                                                        td.IsRequired,
-                                                        td.Description
+                                                        td.IsRequired
                                                        from TaskInstances ti
                                                        INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
                                                        where ti.StageId = si.StageInstanceId and  (td.AssigneeRole != 'SYSTEM') 
