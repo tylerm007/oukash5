@@ -174,7 +174,7 @@ def transform_process_row(process: str) -> list:
                     created_date = task['StartedDate'] if "StartedDate" in task else None
                     modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
                     days_between = _calc_days_between(created_date, modified_date)
-                    days_due = int(taskdef['EstimatedDurationMinutes'] / 60) * 24 if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
+                    days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
 
                     tasks.append({
                     "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
@@ -349,7 +349,9 @@ def get_SQL() -> str:
          LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
          LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
      WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
-           (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+            (:priority IS NULL OR app.Priority = :priority) and
+            (:status IS NULL OR app.Status = :status) and
+            (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
      ORDER BY app.ApplicationID   
      OFFSET :offset ROWS
      FETCH NEXT :limit ROWS ONLY;

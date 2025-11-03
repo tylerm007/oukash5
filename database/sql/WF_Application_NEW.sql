@@ -210,7 +210,8 @@ CREATE TABLE WF_Applications (
     ApplicationID INT IDENTITY(1,1) PRIMARY KEY,
     ApplicationNumber INT NOT NULL UNIQUE, -- ties back to legacy CompanyApplication.ID 
     CompanyID INT NOT NULL,
-    PlantID INT, -- becomes OWNSID CompanyID-PlantID
+    PlantID INT, 
+    OWNSID INT,-- becomes OWNSID CompanyID-PlantID
     SubmissionDate DATE NOT NULL DEFAULT GETDATE(),
     Status NVARCHAR(50) NOT NULL DEFAULT 'NEW',
     Priority NVARCHAR(20) DEFAULT 'NORMAL', -- 'Low', 'Normal', 'High', 'Critical'
@@ -222,7 +223,7 @@ CREATE TABLE WF_Applications (
     CreatedBy nvarchar(100) NOT NULL DEFAULT 'System',
     ModifiedDate datetime2(7) NULL, -- global rule on update set to current date
     ModifiedBy nvarchar(100) NULL, -- global rule on update set to current user
-    WFDashboardID INT NULL DEFAULT 1,
+    --WFDashboardID INT NULL DEFAULT 1,
     verify_company BIT NOT NULL DEFAULT 0, -- rule when company verified set to 1
     verify_plant BIT NOT NULL DEFAULT 0, -- rule when plant verified set to 1
     verify_contacts BIT NOT NULL DEFAULT 0, -- rule when contacts verified set to 1
