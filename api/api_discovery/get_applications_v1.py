@@ -41,10 +41,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     # STORED PROC OPTIMIZED VERSION
     # ============================================
     
-    @app.route('/get_applications_sp', methods=['GET','OPTIONS'])
+    @app.route('/get_applications_v1', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
-    def get_applications_sp():
+    def get_applications_v1():
         """
         OPTIMIZED ASYNC VERSION - Up to 10x faster than legacy version
         Processes applications concurrently for better performance
@@ -174,7 +174,7 @@ def transform_process_row(process: str) -> list:
                     created_date = task['StartedDate'] if "StartedDate" in task else None
                     modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
                     days_between = _calc_days_between(created_date, modified_date)
-                    days_due = int(taskdef['EstimatedDurationMinutes'] / 60 * 24) if taskdef and taskdef['EstimatedDurationMinutes'] else 1
+                    days_due = int(taskdef['EstimatedDurationMinutes'] / 60) * 24 if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
 
                     tasks.append({
                     "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
@@ -182,12 +182,12 @@ def transform_process_row(process: str) -> list:
                     "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
                     "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
                     "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
-                    "daysPending": days_between,
+                    "daysPending": days_between if task['Status'] == 'PENDING' else 0,
                     "daysOverdue": days_between - days_due if days_between > days_due and task['Status'] != 'COMPLETED' else 0,
                     "isOverdue": days_between > days_due and task['Status'] != 'COMPLETED',
                     "createdDate": task['StartedDate'] if "StartedDate" in task else None,
                     "description": taskdef['Description'] if task and "Description" in taskdef else " ",
-                    "required": taskdef['IsRequired'] if task and "Required" in taskdef else False,
+                    "required": taskdef['IsRequired'] if task and "IsRequired" in taskdef else False,
                     "TaskInstanceId": task['TaskInstanceId'],
                     #"PreScript": _get_pre_script(task),
                     "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,

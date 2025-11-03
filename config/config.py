@@ -106,10 +106,10 @@ class Config:
 
     # Project Creation Defaults (overridden from args, env variables)
     CREATED_API_PREFIX = "/api"
-    CREATED_FLASK_HOST   = "localhost" # "192.168.13.31"
+    CREATED_FLASK_HOST   = "0.0.0.0"
     """ where clients find  the API (eg, cloud server addr)"""
 
-    CREATED_SWAGGER_HOST = "localhost" #"192.168.13.31"
+    CREATED_SWAGGER_HOST = "192.168.13.31"
     """ where swagger (and other clients) find the API """
     if CREATED_SWAGGER_HOST == "":
         CREATED_SWAGGER_HOST = CREATED_FLASK_HOST  # 

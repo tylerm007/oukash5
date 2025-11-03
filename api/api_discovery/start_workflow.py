@@ -16,6 +16,8 @@ import time
 import asyncio
 import concurrent.futures
 from contextlib import contextmanager
+from sqlalchemy import text
+import json
 
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -249,12 +251,12 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
     This runs synchronously but allows us to batch operations.
     """
     try:
-        app_logger.info(f'🏊 Creating Stage from LaneDefinition: {lane_definition.LaneName}')
+        app_logger.info(f'🏊 Creating Stage from LaneDefinition: {lane_definition['LaneName']}')
         
         # Create stage instance
         stage_instance = StageInstance(
             ProcessInstanceId=process_instance_id,
-            LaneId=lane_definition.LaneId,
+            LaneId=lane_definition['LaneId'],
             Status='NEW',
             CreatedBy=started_by
         )
@@ -263,9 +265,10 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
         stage_id = stage_instance.StageInstanceId
         
         # Get all task definitions for this lane
-        task_definitions = TaskDefinition.query.filter_by(
-            LaneId=lane_definition.LaneId
-        ).order_by(TaskDefinition.Sequence).all()
+        task_definitions = lane_definition['Tasks']
+        #task_definitions = TaskDefinition.query.filter_by(
+        #    LaneId=lane_definition.LaneId
+        #).order_by(TaskDefinition.Sequence).all()
         
         # Batch create task instances and workflow history
         task_instances = []
@@ -273,12 +276,12 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
         start_instance_id = None
         
         for task_def in task_definitions:
-            app_logger.debug(f'📋 Creating TaskInstance: {task_def.TaskName}')
-            
-            status = 'PENDING' if task_def.TaskType in ['START','LANEEND','END','GATEWAY'] else 'NEW'
-            
+            app_logger.debug(f'📋 Creating TaskInstance: {task_def['TaskName']}')
+
+            status = 'PENDING' if task_def['TaskType'] in ['START','LANEEND','END','GATEWAY'] else 'NEW'
+
             task_instance = TaskInstance(
-                TaskId=task_def.TaskId,
+                TaskId=task_def['TaskId'],
                 StageId=stage_id,
                 Status=status,
                 CreatedDate=datetime.utcnow(),
@@ -290,7 +293,7 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
             task_instances.append(task_instance)
             
             # Check if this is the START task
-            if task_def.TaskType == 'START':
+            if task_def['TaskType'] == 'START':
                 start_instance_id = task_instance.TaskInstanceId
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
             
@@ -298,7 +301,7 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
             wf_history = WorkflowHistory(
                 InstanceId=process_instance_id,
                 TaskInstanceId=task_instance.TaskInstanceId,
-                Action=task_def.TaskName,
+                Action=task_def['TaskName'],
                 NewStatus='NEW',
                 ActionBy=started_by,
                 ActionReason=f'New application id: {application_id} Task added to workflow'
@@ -307,7 +310,7 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
             session.add(wf_history)
         
         return {
-            'lane_name': lane_definition.LaneName,
+            'lane_name': lane_definition['LaneName'],
             'stage_id': stage_id,
             'tasks_created': len(task_instances),
             'start_instance_id': start_instance_id,
@@ -315,7 +318,7 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
         }
         
     except Exception as e:
-        app_logger.error(f'❌ Error creating stage {lane_definition.LaneName}: {str(e)}')
+        app_logger.error(f'❌ Error creating stage {lane_definition['LaneName']}: {str(e)}')
         raise e
 
 def process_stages_batch(lane_definitions, process_instance_id, started_by, application_id):
@@ -344,11 +347,11 @@ def process_stages_batch(lane_definitions, process_instance_id, started_by, appl
                     
             except Exception as e:
                 failed_stages.append({
-                    'lane_name': lane_def.LaneName,
+                    'lane_name': lane_def['LaneName'],
                     'error': str(e)
                 })
-                app_logger.error(f'❌ Stage {lane_def.LaneName} failed: {e}')
-        
+                app_logger.error(f'❌ Stage {lane_def["LaneName"]} failed: {e}')
+
         # Single commit for all stages - this is where the real speedup comes from
         session.commit()
         
@@ -453,9 +456,9 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
             task_instances = []
             for task_definition in task_definition:
                     app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
-                    status = 'PENDING' if task_definition.TaskType in ['START','LANEEND','END','GATEWAY'] else 'NEW'   
+                    status = 'PENDING' if task_definition['TaskType'] in ['START','LANEEND','END','GATEWAY'] else 'NEW'   
                     task_instance = TaskInstance(
-                            TaskId=task_definition.TaskId,
+                            TaskId=task_definition['TaskId'],
                             StageId=stage_id,
                             Status=status,
                             CreatedDate=datetime.utcnow(),
@@ -522,8 +525,7 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
     
     process_definition_id = process_def.ProcessId
     app_logger.info(f'📋 ProcessDefinition ProcessId: {process_definition_id}')
-    
-    # Step 2: Create process instance (same as original)
+     # Step 2: Create process instance (same as original)
     process_instance = ProcessInstance.query.filter_by(ApplicationId=application_id).first()
     if process_instance is not None:
         app_logger.warning(f'ProcessInstance already exists for ApplicationId: {application_id}')
@@ -541,7 +543,7 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
     
     process_instance_id = process_instance.InstanceId
     app_logger.info(f'✅ New ProcessInstance created: {process_instance_id}')
-    
+     
     # Step 3: Validate START task exists
     start_task_def = TaskDefinition.query.filter_by(
         ProcessId=process_definition_id, TaskType='START'
@@ -553,9 +555,21 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
     app_logger.info(f'🎯 Start TaskDefinition found: {start_task_def.TaskId}')
     
     # Step 4: Get all lane definitions
-    lane_definitions = LaneDefinition.query.filter_by(
-        ProcessId=process_definition_id
-    ).order_by(LaneDefinition.LaneId).all()
+    sql = get_SQL()
+    result = session.execute(text(sql), {'process_id': process_definition_id}).all()
+    fields = result[0]._fields if len(result) > 0 else []
+    data = []
+    # = TaskDefinition.query.all() # USE CACHE HERE
+    #task_definitions = {td.TaskId: td.to_dict() for td in task_defs}
+    # Convert tasks to dictionaries and add to result
+    for task in result:
+        row = dict(zip(fields, task))
+        data.append(row)
+        lane_definitions = json.loads(row['Lanes'])
+        task_flows = json.loads(row['AllTaskFlows'])
+    #lane_definitions = LaneDefinition.query.filter_by(
+    #    ProcessId=process_definition_id
+    #).order_by(LaneDefinition.LaneId).all()
     
     if not lane_definitions:
         raise Exception(f'No lane definitions found for process: {process_name}')
@@ -813,3 +827,171 @@ def _complete_task_with_session(thread_session, task_instance_id: int, result: s
     )
     thread_session.add(wf_history)
     thread_session.commit()
+
+def get_SQL() -> str:
+
+    sql ='''
+       WITH WorkflowData AS (
+                SELECT 
+                    pd.ProcessId,
+                    pd.ProcessName,
+                    pd.ProcessVersion,
+                    pd.Description AS ProcessDescription,
+                    pd.IsActive AS ProcessIsActive,
+                    pd.CreatedDate AS ProcessCreatedDate,
+                    pd.CreatedBy AS ProcessCreatedBy,
+                    
+                    -- Lane Definition data
+                    ld.LaneId,
+                    ld.LaneName,
+                    ld.LaneDescription,
+                    ld.EstimatedDurationDays,
+                    ld.LaneRole,
+                    
+                    -- Task Definition data
+                    td.TaskId,
+                    td.TaskName,
+                    td.TaskType,
+                    td.TaskCategory,
+                    td.Sequence,
+                    td.IsParallel,
+                    td.AssigneeRole,
+                    td.EstimatedDurationMinutes,
+                    td.IsRequired,
+                    td.AutoComplete,
+                    td.Description AS TaskDescription,
+                    td.PreScriptJson,
+                    td.PostScriptJson
+                FROM ProcessDefinitions pd
+                LEFT JOIN LaneDefinitions ld ON pd.ProcessId = ld.ProcessId
+                LEFT JOIN TaskDefinitions td ON ld.LaneId = td.LaneId
+                --{where_clause}
+            ),
+            TaskFlowData AS (
+                SELECT 
+                    tf.FlowId,
+                    tf.FromTaskId,
+                    tf.ToTaskId,
+                    tf.Condition,
+                    tf.IsDefault,
+                    ft.TaskName AS FromTaskName,
+                    ft.TaskType AS FromTaskType,
+                    ft.LaneId AS FromLaneId,
+                    tt.TaskName AS ToTaskName,
+                    tt.TaskType AS ToTaskType,
+                    tt.LaneId AS ToLaneId,
+                    ft.ProcessId
+                FROM TaskFlow tf
+                LEFT JOIN TaskDefinitions ft ON tf.FromTaskId = ft.TaskId
+                LEFT JOIN TaskDefinitions tt ON tf.ToTaskId = tt.TaskId
+                WHERE ft.ProcessId IS NOT NULL
+            )
+            
+            SELECT 
+                ProcessId,
+                ProcessName,
+                ProcessVersion,
+                ProcessDescription,
+                ProcessIsActive,
+                ProcessCreatedDate,
+                ProcessCreatedBy,
+                
+                -- Nested JSON for Lanes
+                (
+                    SELECT 
+                        LaneId,
+                        LaneName,
+                        LaneDescription,
+                        EstimatedDurationDays,
+                        LaneRole,
+                        
+                        -- Nested JSON for Tasks within each Lane
+                        (
+                            SELECT 
+                                TaskId,
+                                TaskName,
+                                TaskType,
+                                TaskCategory,
+                                Sequence,
+                                IsParallel,
+                                AssigneeRole,
+                                EstimatedDurationMinutes,
+                                IsRequired,
+                                AutoComplete,
+                                TaskDescription,
+                                PreScriptJson,
+                                PostScriptJson,
+                                
+                                -- Outgoing Task Flows from this task
+                                (
+                                    SELECT 
+                                        FlowId,
+                                        ToTaskId,
+                                        ToTaskName,
+                                        ToTaskType,
+                                        ToLaneId,
+                                        Condition,
+                                        IsDefault
+                                    FROM TaskFlowData tfd1
+                                    WHERE tfd1.FromTaskId = wd2.TaskId
+                                    FOR JSON PATH
+                                ) AS OutgoingFlows,
+                                
+                                -- Incoming Task Flows to this task
+                                (
+                                    SELECT 
+                                        FlowId,
+                                        FromTaskId,
+                                        FromTaskName,
+                                        FromTaskType,
+                                        FromLaneId,
+                                        Condition,
+                                        IsDefault
+                                    FROM TaskFlowData tfd2
+                                    WHERE tfd2.ToTaskId = wd2.TaskId
+                                    FOR JSON PATH
+                                ) AS IncomingFlows
+                                
+                            FROM WorkflowData wd2
+                            WHERE wd2.LaneId = wd1.LaneId 
+                              AND wd2.TaskId IS NOT NULL
+                            ORDER BY wd2.Sequence
+                            FOR JSON PATH
+                        ) AS Tasks
+                        
+                    FROM WorkflowData wd1
+                    WHERE wd1.ProcessId = wd.ProcessId 
+                      AND wd1.LaneId IS NOT NULL
+                    GROUP BY LaneId, LaneName, LaneDescription, EstimatedDurationDays, LaneRole
+                    ORDER BY LaneId
+                    FOR JSON PATH
+                ) AS Lanes,
+                
+                -- All Task Flows for the entire Process
+                (
+                    SELECT 
+                        FlowId,
+                        FromTaskId,
+                        FromTaskName,
+                        FromTaskType,
+                        FromLaneId,
+                        ToTaskId,
+                        ToTaskName,
+                        ToTaskType,
+                        ToLaneId,
+                        Condition,
+                        IsDefault
+                    FROM TaskFlowData tfd
+                    WHERE tfd.ProcessId = wd.ProcessId
+                    ORDER BY tfd.FlowId
+                    FOR JSON PATH
+                ) AS AllTaskFlows
+
+            FROM WorkflowData wd
+            WHERE wd.ProcessId IS NOT NULL
+            GROUP BY ProcessId, ProcessName, ProcessVersion, ProcessDescription, 
+                     ProcessIsActive, ProcessCreatedDate, ProcessCreatedBy
+            ORDER BY ProcessId
+
+    '''
+    return sql
