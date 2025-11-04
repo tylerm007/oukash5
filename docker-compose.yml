@@ -19,14 +19,14 @@ services:
           - OKTA_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
           # if HTTPS is used, set FLASK_USE_SSL=true
           - FLASK_USE_SSL=false
-          - START_BACKGROUND=true
+          - START_BACKGROUND=false
           # COGNITO SETTINGS
           - SECURITY_PROVIDER=COGNITO
           - APILOGICPROJECT_SECURITY_PROVIDER = COGNITO
           - COGNITO_USER_POOL_ID=us-east-1_d38hiE2QM
           - COGNITO_CLIENT_ID=34sqr8ttgro6ego2117aflg9lr
           #- COGNITO_CLIENT_SECRET=1h57kf5cpq17m0example  NOT USED IN PUBLIC CLIENTS
-          - COGNITO_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
+          - COGNITO_REDIRECT_URI=https://devvm01:5656/auth/callback   s
           - COGNITO_REGION=us-east-1
           - COGNITO_DOMAIN=https://auth.oudirect-st.ou.org
           ## TODO: verify Database uri's here,
@@ -36,8 +36,8 @@ services:
           #- APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgresql-service/authdb
           # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
-        #volumes:
-           #- /home/tyler.band/dashboard:/home/api_logic_project
+        volumes:
+           - /home/tyler.band/oukash5:/home/api_logic_project
         expose:
           - 5656
         ports:

@@ -109,7 +109,7 @@ class Config:
     CREATED_FLASK_HOST   = "0.0.0.0"
     """ where clients find  the API (eg, cloud server addr)"""
 
-    CREATED_SWAGGER_HOST = "192.168.13.31"
+    CREATED_SWAGGER_HOST = "devvm01.nyc.ou.org"
     """ where swagger (and other clients) find the API """
     if CREATED_SWAGGER_HOST == "":
         CREATED_SWAGGER_HOST = CREATED_FLASK_HOST  # 

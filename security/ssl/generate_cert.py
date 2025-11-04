@@ -31,7 +31,7 @@ def generate_self_signed_cert():
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"Development"),
         x509.NameAttribute(NameOID.LOCALITY_NAME, u"Local"),
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"API Logic Server"),
-        x509.NameAttribute(NameOID.COMMON_NAME, u"localhost"),
+        x509.NameAttribute(NameOID.COMMON_NAME, u"devvm01.nyc.ou.org"),
     ])
     
     # Certificate valid for 365 days
@@ -51,7 +51,10 @@ def generate_self_signed_cert():
     ).add_extension(
         # Add Subject Alternative Names for localhost variations
         x509.SubjectAlternativeName([
+            x509.DNSName(u"devvm01.nyc.ou.org"),
             x509.DNSName(u"localhost"),
+            x509.DNSName(u"192.168.13.31"),
+            x509.DNSName(u"172.30.3.133"),
             x509.DNSName(u"127.0.0.1"),
             x509.DNSName(u"0.0.0.0"),
             x509.IPAddress(ipaddress.IPv4Address(u"127.0.0.1")),
@@ -78,7 +81,7 @@ def generate_self_signed_cert():
     print(f"📁 Certificate: {cert_path}")
     print(f"🔑 Private Key: {key_path}")
     print(f"⚠️  Note: This is a self-signed certificate for development only")
-    print(f"🌐 Valid for: localhost, 127.0.0.1, 0.0.0.0")
+    print(f"🌐 Valid for: localhost,devvm01.nyc.ou.org, 192.168.13.31, 172.30.3.133, 127.0.0.1, 0.0.0.0")
     
     return cert_path, key_path
 

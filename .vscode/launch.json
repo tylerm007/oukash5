@@ -22,7 +22,7 @@
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
-         { "name": "ApiLogicServer 192.168.13.31",
+         { "name": "ApiLogicServer devvm01.nyc.ou.org",
             "type": "debugpy",
             "cwd": "${workspaceFolder}",
             "env": {
@@ -36,12 +36,12 @@
             "redirectOutput": true,
             "justMyCode": false,
             "args": [
-                "--flask_host=192.168.13.31",
+                "--flask_host=devvm01.nyc.ou.org",
                 "--port=5656",
                 "--swagger_port=5656",
-                "--swagger_host=192.168.13.31",
+                "--swagger_host=devvm01.nyc.ou.org",
                 "--verbose=False",
-                "--http_scheme=http"
+                "--http_scheme=https"
             ],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
