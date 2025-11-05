@@ -40,7 +40,6 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'WFApplicationStatus': { 'path': '/WFApplicationStatus' }
 ,'WFCompany': { 'path': '/WFCompany' }
 ,'WFContact': { 'path': '/WFContact' }
-,'WFDashboard': { 'path': '/WFDashboard' }
 ,'WFFile': { 'path': '/WFFile' }
 ,'WFFileType': { 'path': '/WFFileType' }
 ,'WFIngredient': { 'path': '/WFIngredient' }

@@ -97,8 +97,6 @@ export const routes: Routes = [
     
         { path: 'WFContact', loadChildren: () => import('./WFContact/WFContact.module').then(m => m.WFContactModule) },
     
-        { path: 'WFDashboard', loadChildren: () => import('./WFDashboard/WFDashboard.module').then(m => m.WFDashboardModule) },
-    
         { path: 'WFFile', loadChildren: () => import('./WFFile/WFFile.module').then(m => m.WFFileModule) },
     
         { path: 'WFFileType', loadChildren: () => import('./WFFileType/WFFileType.module').then(m => m.WFFileTypeModule) },

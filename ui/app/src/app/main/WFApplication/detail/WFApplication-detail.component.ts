@@ -56,15 +56,22 @@ export class WFApplicationDetailComponent implements OnInit  {
       "priority": this.data.Priority 
     }
     console.log("API URL: " + apiUrl, " Payload: " + JSON.stringify(payload));
-    this.service.doRequest({method: 'POST', url: apiUrl + '/start_workflow', body:JSON.stringify(payload)}).subscribe((resp) => {
+    this.service.doRequest({method: 'POST', url: apiUrl + '/start_workflow_fast', body:JSON.stringify(payload)}).subscribe(
+      (resp) => {
       console.log("res: " + JSON.stringify(resp));
-      if (resp.code === 0) {
+      if (resp.code === 200) {
         console.log('workflow started successfully')
         this.showInfo();
       } else {
         this.dialogService.info("Error starting workflow: ", resp.message);
       }
-    });
+      },
+      (error) => {
+      console.error("Error: " + JSON.stringify(error));
+      const errorMessage = error.status === 500 ? 'Server error occurred. Please try again later.' : error.error.message;
+      this.dialogService.info("Error starting workflow: ", errorMessage);
+      }
+    );
   }
 
   showInfo() {

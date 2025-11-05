@@ -154,7 +154,6 @@
   "StatusDesc": "StatusDesc",
   "WFPriority": "WFPRIORITY",
   "WFApplicationStatus": "WFAPPLICATIONSTATUS",
-  "WFDashboard": "WFDASHBOARD",
   "ApplicationNumber": "ApplicationNumber",
   "SubmissionDate": "SubmissionDate",
   "CompanyID": "CompanyID",

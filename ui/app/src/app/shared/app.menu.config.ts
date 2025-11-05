@@ -81,8 +81,6 @@ import { WFCompanyCardComponent } from './WFCompany-card/WFCompany-card.componen
 
 import { WFContactCardComponent } from './WFContact-card/WFContact-card.component';
 
-import { WFDashboardCardComponent } from './WFDashboard-card/WFDashboard-card.component';
-
 import { WFFileCardComponent } from './WFFile-card/WFFile-card.component';
 
 import { WFFileTypeCardComponent } from './WFFileType-card/WFFileType-card.component';
@@ -137,8 +135,6 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
             , { id: 'WFApplicationMessage', name: 'Application Message', icon: 'view_list', route: '/main/WFApplicationMessage' }
 
-            , { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
-
             , { id: 'WFActivityLog', name: 'Activity Log', icon: 'view_list', route: '/main/WFActivityLog' }
 
             , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
@@ -155,7 +151,6 @@ export const MENU_CONFIG: MenuRootItem[] = [
         id: 'data', name: ' WorkFlow Definition', icon: 'remove_red_eye', opened: false,
         items: [
 
-           // { id: 'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard' }
             { id: 'WFApplication', name: 'Application', icon: 'view_list', route: '/main/WFApplication' }
             , { id: 'ProcessDefinition', name: 'Process Definition', icon: 'view_list', route: '/main/ProcessDefinition' }
             , { id: 'LaneDefinition', name: 'Lane Definition', icon: 'view_list', route: '/main/LaneDefinition' }
@@ -168,8 +163,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
     {
         id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
         items: [
-                {id:'WFDashboard', name: 'Dashboard', icon: 'view_list', route: '/main/WFDashboard'}
-            , { id: 'ProcessInstance', name: 'Process Instance', icon: 'view_list', route: '/main/ProcessInstance' }
+             { id: 'ProcessInstance', name: 'Process Instance', icon: 'view_list', route: '/main/ProcessInstance' }
             , { id: 'StageInstance', name: 'Stage Instance', icon: 'view_list', route: '/main/StageInstance' }
             , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
             , { id: 'WorkflowHistory', name: 'Workflow History', icon: 'view_list', route: '/main/WorkflowHistory' }            
@@ -334,8 +328,6 @@ export const MENU_COMPONENTS = [
     , WFCompanyCardComponent
 
     , WFContactCardComponent
-
-    , WFDashboardCardComponent
 
     ,WFFileCardComponent
 
