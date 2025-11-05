@@ -144,7 +144,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             app_logger.error(f'TaskDefinition not found: {task_instance.TaskId}')
             return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
 
-        if task_instance.Status != 'PENDING' and task_def.TaskType != 'START': #and depth == 0
+        if task_instance.Status not in ['PENDING','FAILED'] and task_def.TaskType != 'START': #and depth == 0
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING  -> {task_instance.Status}."}), 400
         application_id = task_instance.Stage.ProcessInstance.ApplicationId

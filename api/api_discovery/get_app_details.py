@@ -40,6 +40,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/get_application_detail', methods=['GET',"OPTIONS"])
     @cross_origin()
     @admin_required()
+    @jwt_required()
     def get_application_detail():
         """        
         Illustrates:

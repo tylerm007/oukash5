@@ -191,7 +191,6 @@ def create_new_application(applicationNumber: int, company_id: int, plant_id: in
             CreatedDate=datetime.datetime.now().isoformat(),
             Priority="HIGH",
             ApplicationNumber=applicationNumber,
-            WFDashboardID=1
     )
     session.add(application)
     session.commit()

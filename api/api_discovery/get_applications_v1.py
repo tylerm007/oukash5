@@ -44,6 +44,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/get_applications_v1', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
+    @jwt_required()
     def get_applications_v1():
         """
         OPTIMIZED ASYNC VERSION - Up to 10x faster than legacy version

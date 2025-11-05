@@ -18,10 +18,42 @@ import config.config as config
 from config.config import Args
 from flask import g
 from dotmap import DotMap
+# Suppress SSL warnings for self-signed certificates
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
+
+def make_secure_request(method, url, **kwargs):
+    """Make HTTP request with SSL verification disabled for self-signed certificates"""
+    kwargs['verify'] = False  # Disable SSL verification for self-signed certs
+    
+    app_logger.debug(f"Making {method.upper()} request to: {url} (SSL verification disabled)")
+    
+    try:
+        if method.lower() == 'get':
+            return requests.get(url, **kwargs)
+        elif method.lower() == 'post':
+            return requests.post(url, **kwargs)
+        elif method.lower() == 'put':
+            return requests.put(url, **kwargs)
+        elif method.lower() == 'patch':
+            return requests.patch(url, **kwargs)
+        elif method.lower() == 'delete':
+            return requests.delete(url, **kwargs)
+        else:
+            raise ValueError(f"Unsupported HTTP method: {method}")
+    except requests.exceptions.SSLError as e:
+        app_logger.error(f"SSL Error (despite verify=False): {e}")
+        raise
+    except requests.exceptions.ConnectionError as e:
+        app_logger.error(f"Connection Error: {e}")
+        raise
+    except Exception as e:
+        app_logger.error(f"Request Error: {e}")
+        raise
 
 def get_client_uri() -> str:
     args = Args.instance
@@ -146,7 +178,8 @@ def set_application_attribute(application_id, name, value, data: DotMap) -> DotM
         headers['Authorization'] = data.access_token
 
     server_uri = get_client_uri()
-    response = requests.patch(f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers)
+    # Use secure request helper for self-signed certificates
+    response = make_secure_request('patch', f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"Application {application_id} attribute {name} set to {value}")
         data.Result = True
@@ -178,7 +211,8 @@ def set_task_attribute(task_instance_id, name, value, data: DotMap) -> bool:
         headers['Authorization'] = data.access_token
    
     server_uri = get_client_uri()
-    response = requests.patch(f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers)
+    # Use secure request helper for self-signed certificates
+    response = make_secure_request('patch', f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"TaskInstance {task_instance_id} attribute {name} set to {value}")
         data.Result = True
@@ -211,7 +245,8 @@ def set_stage_attribute(stage_id, name, value, data:DotMap) -> DotMap:
         headers['Authorization'] = data.access_token
     
     server_uri = get_client_uri()
-    response = requests.patch(f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers)
+    # Use secure request helper for self-signed certificates
+    response = make_secure_request('patch', f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers)
     if response.status_code == 200:
         app_logger.info(f"StageInstance {stage_id} attribute {name} set to {value}")
         data.Result = True
@@ -454,7 +489,9 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
             return data
     except Exception as e:
         app_logger.error(f'Error executing script for task_id {task_id}: {e}')
-        return None
+        data.Result = False
+        data.ErrorMessage = f'Error executing script for task_id {task_id}: {e}'
+        return data
     
 def declare_logic():
     pass

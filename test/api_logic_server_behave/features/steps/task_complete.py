@@ -63,7 +63,6 @@ def create_new_application():
             "CreatedDate": datetime.now().isoformat(),  
             "Priority": "HIGH",
             "ApplicationNumber": 564,
-            "WFDashboardID": 1
         },
         "type": "WFApplication"
         }

@@ -660,7 +660,6 @@ resources:
     - name: Priority
     - name: Status
       required: true
-    - name: WFDashboardID
     - name: ApplicationNumber
       required: true
     - name: SubmissionDate
@@ -761,10 +760,6 @@ resources:
       name: WF_ApplicationStatus
       resource: WFApplicationStatus
     - direction: toone
-      fks:
-      - WFDashboardID
-      name: WFDashboard
-      resource: WFDashboard
     type: WFApplication
     user_key: ApplicationID
   WFApplicationComment:
@@ -896,26 +891,6 @@ resources:
       resource: WFApplication
     type: WFContact
     user_key: ContactName
-  WFDashboard:
-    attributes:
-    - label: ' I D*'
-      name: ID
-      search: true
-      sort: true
-    - name: count_new
-    - name: count_in_progress
-    - name: count_withdrawn
-    - name: count_overdue
-    - name: total_count
-    - name: count_completed
-    tab_groups:
-    - direction: tomany
-      fks:
-      - WFDashboardID
-      name: WFApplicationList
-      resource: WFApplication
-    type: WFDashboard
-    user_key: ID
   WFFile:
     attributes:
     - label: ' File Name*'

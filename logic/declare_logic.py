@@ -143,12 +143,6 @@ def declare_logic():
     #Rule.row_event(on_class=models.StageInstance, calling=update_status)
     #WF Application Dashboard
     '''
-    Rule.count(derive=models.WFDashboard.count_completed,as_count_of=models.WFApplication, where="Status == 'Completed'")
-    Rule.count(derive=models.WFDashboard.count_in_progress,as_count_of=models.WFApplication, where="Status == 'Running'")
-    Rule.count(derive=models.WFDashboard.count_new,as_count_of=models.WFApplication, where="Status == 'Pending'")
-    Rule.count(derive=models.WFDashboard.count_withdrawn,as_count_of=models.WFApplication, where="Status == 'Failed'")
-    Rule.count(derive=models.WFDashboard.total_count,as_count_of=models.WFApplication)
-   
     Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
     Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     '''

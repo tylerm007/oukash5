@@ -253,24 +253,6 @@ class WFApplicationStatus(Base):  # type: ignore
 
 
 
-class WFDashboard(Base):  # type: ignore
-    __tablename__ = 'WF_Dashboard'
-    _s_collection_name = 'WFDashboard'  # type: ignore
-
-    ID = Column(Integer, autoincrement=True, primary_key=True)
-    count_new = Column(Integer, server_default=text("0"))
-    count_in_progress = Column(Integer, server_default=text("0"))
-    count_withdrawn = Column(Integer, server_default=text("0"))
-    count_completed = Column(Integer, server_default=text("0"))
-    count_overdue = Column(Integer, server_default=text("0"))
-    total_count = Column(Integer, server_default=text("0"))
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-    WFApplicationList : Mapped[List["WFApplication"]] = relationship(back_populates="WFDashboard")
-
-
 
 class WFFileType(Base):  # type: ignore
     __tablename__ = 'WF_FileTypes'
@@ -453,7 +435,6 @@ class WFApplication(Base):  # type: ignore
     CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
-    WFDashboardID = Column(ForeignKey('WF_Dashboard.ID'), server_default=text("1"))
     verify_company = Column(Boolean, server_default=text("0"), nullable=False)
     verify_plant = Column(Boolean, server_default=text("0"), nullable=False)
     verify_contacts = Column(Boolean, server_default=text("0"), nullable=False)
@@ -465,7 +446,6 @@ class WFApplication(Base):  # type: ignore
     # parent relationships (access parent)
     WF_Priority : Mapped["WFPriority"] = relationship(back_populates=("WFApplicationList"))
     WF_ApplicationStatus : Mapped["WFApplicationStatus"] = relationship(back_populates=("WFApplicationList"))
-    WFDashboard : Mapped["WFDashboard"] = relationship(back_populates=("WFApplicationList"))
 
     # child relationships (access children)
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="Application")

@@ -65,6 +65,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         flask_app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
         flask_app.config['JWT_ERROR_MESSAGE_KEY'] = 'message'
         
+        # Configure Flask to handle SSL/connection issues better
+        flask_app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Disable caching
+        flask_app.config['SESSION_COOKIE_SECURE'] = False  # Allow HTTP for dev
+        flask_app.config['SESSION_COOKIE_HTTPONLY'] = True
+        flask_app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+        
         logger.info("Configured Hybrid Cognito/Internal JWT authentication:")
         logger.info("- Internal tokens: HS256 algorithm (Flask-JWT-Extended compatible)")
         logger.info("- Cognito tokens: RS256 algorithm (validated via JWKS)")
@@ -201,6 +207,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                         'debug_url': f"{request.host_url}auth/debug-cognito"
                     }), 500
                 
+                # Store return URL to redirect back after authentication
+                return_url = request.args.get('return_url') or request.headers.get('Referer')
+                if return_url:
+                    session['return_url'] = return_url
+                    logger.info(f"Stored return URL for post-auth redirect: {return_url}")
+                
                 import secrets
                 state = secrets.token_urlsafe(32)
                 session['oauth_state'] = state
@@ -222,8 +234,41 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 logger.info(f"  Redirect URI: {auth_params['redirect_uri']}")
                 logger.info(f"  Client ID: {auth_params['client_id'][:8]}...")
                 logger.info(f"  State: {state}")
+                logger.info(f"   return_url {return_url}")
                 
-                return redirect(auth_url)
+                # Check if this is an API request that wants JSON instead of redirect
+                accept_header = request.headers.get('Accept', '')
+                if 'application/json' in accept_header:
+                    return jsonify({
+                        'redirect_url': auth_url,
+                        'message': 'Please redirect to the provided URL',
+                        'method': 'GET'
+                    })
+                
+                # For web browsers, use JavaScript redirect to avoid SSL issues
+                html_redirect = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Redirecting to Cognito...</title>
+                    <meta http-equiv="refresh" content="0; url={auth_url}">
+                </head>
+                <body>
+                    <script>
+                        window.location.href = "{auth_url}";
+                    </script>
+                    <p>Redirecting to authentication... <a href="{auth_url}">Click here if not redirected</a></p>
+                </body>
+                </html>
+                """
+                
+                from flask import Response
+                response = Response(html_redirect, mimetype='text/html')
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                
+                return response
                 
             except Exception as e:
                 logger.error(f"Error in Cognito login: {e}")
@@ -361,31 +406,73 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 
                 logger.info(f"Generated internal HS256 token for user {claims['name']}")
                 
-                return jsonify({
-                    'success': True,
-                    'message': 'Authentication successful',
-                    'access_token': internal_access_token,  # Return internal token, not Cognito token
-                    'refresh_token': internal_refresh_token,
+                # Check if this is a JSON API request (for testing/Postman) or web browser request
+                accept_header = request.headers.get('Accept', '')
+                user_agent = request.headers.get('User-Agent', '')
+                
+                # If request explicitly wants JSON or comes from API testing tool, return JSON
+                if ('application/json' in accept_header and 'text/html' not in accept_header) or \
+                   'postman' in user_agent.lower() or \
+                   'curl' in user_agent.lower() or \
+                   request.args.get('format') == 'json':
+                    
+                    logger.info("Returning JSON response for API/testing client")
+                    return jsonify({
+                        'success': True,
+                        'message': 'Authentication successful',
+                        'access_token': internal_access_token,
+                        'refresh_token': internal_refresh_token,
+                        'token_type': 'Bearer',
+                        'expires_in': 86400,
+                        'user_info': {
+                            'user_id': claims['name'],
+                            'email': claims['email'],
+                            'roles': user_roles,
+                            'cognito_sub': claims.get('sub')
+                        }
+                    })
+                
+                # For web browsers, redirect back to Angular app
+                # Determine the redirect URL
+                redirect_url = None
+                
+                # 1. Check if there's a return_url in session (set from the original login request)
+                if 'return_url' in session:
+                    redirect_url = session.pop('return_url')
+                    logger.info(f"Using return_url from session: {redirect_url}")
+                
+                # 2. Otherwise, construct the Angular callback URL
+                else:
+                    # Get the original request host/port from the referer or construct it
+                    referer = request.headers.get('Referer', '')
+                    if referer and '5656' in referer:  # Angular dev server typically runs on 4200
+                        from urllib.parse import urlparse
+                        parsed_referer = urlparse(referer)
+                        redirect_url = f"{parsed_referer.scheme}://{parsed_referer.netloc}/auth/callback"
+                        logger.info(f"Constructed Angular callback URL from referer: {redirect_url}")
+                    else:
+                        # Default to localhost:5656 for development
+                        redirect_url = f"{Args.instance.http_scheme}://{Args.instance.swagger_host}:5656/auth/callback"
+                        logger.info(f"Using default Angular callback URL: {redirect_url}")
+                
+                # Add authentication data as URL parameters for Angular to process
+                from urllib.parse import urlencode
+                auth_params = {
+                    'access_token': internal_access_token,
                     'token_type': 'Bearer',
-                    'expires_in': 86400,  # 24 hours
-                    'user_info': {
-                        'user_id': claims['name'],
-                        'email': claims['email'],
-                        'roles': user_roles,
-                        'cognito_sub': claims.get('sub')
-                    },
-                    'postman_setup': {
-                        'instruction': 'Copy the access_token value below (NOT the Cognito token)',
-                        'authorization_type': 'Bearer Token',
-                        'token_location': 'Headers > Authorization > Bearer {access_token}',
-                        'note': 'This is an internal HS256 token, compatible with Flask-JWT-Extended'
-                    },
-                    'debug_info': {
-                        'token_algorithm': 'HS256',
-                        'cognito_validated': True,
-                        'internal_token_generated': True
-                    }
-                })
+                    'expires_in': 86400,
+                    'user_id': claims['name'],
+                    'email': claims['email'],
+                    'success': 'true'
+                }
+                
+                # Construct final redirect URL with auth parameters
+                final_redirect_url = f"{redirect_url}?{urlencode(auth_params)}"
+                
+                logger.info(f"Redirecting to Angular app: {redirect_url}")
+                logger.info(f"Auth token will be available in URL parameters")
+                
+                return redirect(final_redirect_url)
                 
             except Exception as e:
                 logger.error(f"Error processing Cognito callback: {e}")
@@ -581,6 +668,170 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     'message': 'Check your Cognito environment variables'
                 }), 500
 
+        # Add error handler for SSL issues
+        @flask_app.errorhandler(Exception)
+        def handle_ssl_errors(error):
+            """Handle SSL and connection errors gracefully"""
+            import ssl
+            error_str = str(error)
+            
+            if isinstance(error, (ssl.SSLEOFError, ConnectionError, BrokenPipeError)):
+                logger.warning(f"SSL/Connection error occurred (client likely disconnected): {error_str}")
+                # Don't return a response for connection errors - client already gone
+                return None
+            
+            # For other SSL errors, log but let Flask handle normally
+            if 'ssl' in error_str.lower() or 'eof' in error_str.lower():
+                logger.warning(f"SSL-related error: {error_str}")
+            
+            # Re-raise for normal Flask error handling
+            raise error
+
+        @flask_app.route('/auth/ontimize-session', methods=['POST'])
+        def create_ontimize_session():
+            """Create Ontimize-compatible session from Cognito token"""
+            try:
+                data = request.get_json()
+                if not data or 'cognito_token' not in data:
+                    return jsonify({
+                        'error': 'Missing cognito_token',
+                        'message': 'Request must include cognito_token in JSON body'
+                    }), 400
+                
+                cognito_token = data['cognito_token']
+                user_info = data.get('user_info', {})
+                
+                logger.info(f"Creating Ontimize session for Cognito user: {user_info.get('email', 'unknown')}")
+                
+                # Validate the Cognito token first
+                import jwt as pyjwt
+                try:
+                    # Check if it's an internal HS256 token (already processed)
+                    header = pyjwt.get_unverified_header(cognito_token)
+                    if header.get('alg') == 'HS256':
+                        logger.info("Internal HS256 token detected - validating with Flask-JWT-Extended")
+                        from flask_jwt_extended import decode_token
+                        token_claims = decode_token(cognito_token)
+                        logger.info("Internal token validated successfully")
+                    else:
+                        # It's a Cognito RS256 token
+                        logger.info("Cognito RS256 token detected - validating with Cognito JWKS")
+                        token_claims = Authentication_Provider.validate_cognito_token(cognito_token)
+                        if not token_claims:
+                            return jsonify({'error': 'Invalid Cognito token'}), 401
+                except Exception as e:
+                    return jsonify({
+                        'error': 'Token validation failed',
+                        'details': str(e)
+                    }), 401
+                
+                # Create Ontimize-compatible session data
+                session_data = {
+                    'user': user_info.get('email', token_claims.get('email')),
+                    'username': user_info.get('email', token_claims.get('email')),
+                    'id': token_claims.get('sub', user_info.get('user_id')),
+                    'roles': user_info.get('roles', token_claims.get('roles', [])),
+                    'authenticated': True,
+                    'auth_provider': 'cognito',
+                    'access_token': cognito_token,
+                    'session_key': f"cognito_{token_claims.get('sub', 'unknown')}",
+                    'permissions': ['read', 'write'],  # Default permissions
+                    'locale': 'en',
+                    'sessionData': {
+                        'user': user_info.get('email', token_claims.get('email')),
+                        'sessionId': f"cognito_{token_claims.get('sub', 'unknown')}",
+                        'roles': user_info.get('roles', [])
+                    }
+                }
+                
+                # Store in Flask session for server-side compatibility
+                session.update(session_data)
+                
+                logger.info(f"✅ Ontimize session created for user: {session_data['user']}")
+                
+                return jsonify({
+                    'success': True,
+                    'message': 'Ontimize session created successfully',
+                    'sessionData': session_data,
+                    'user': session_data['user'],
+                    'authenticated': True
+                })
+                
+            except Exception as e:
+                logger.error(f"Error creating Ontimize session: {e}")
+                return jsonify({
+                    'error': 'Session creation failed',
+                    'details': str(e)
+                }), 500
+
+        @flask_app.route('/api/users/login', methods=['POST'])
+        def ontimize_token_login():
+            """Ontimize login endpoint that accepts Cognito tokens"""
+            try:
+                data = request.get_json()
+                if not data:
+                    return jsonify({'error': 'No JSON data provided'}), 400
+                
+                username = data.get('user') or data.get('username')
+                password = data.get('password')
+                
+                if not username or not password:
+                    return jsonify({'error': 'Username and password required'}), 400
+                
+                logger.info(f"Ontimize login attempt for user: {username}")
+                
+                # Check if password is a JWT token (Cognito token)
+                if password.startswith('eyJ'):
+                    logger.info("JWT token detected in Ontimize login")
+                    
+                    # Use our existing authentication methods
+                    user = Authentication_Provider.get_user(username, password)
+                    if user and Authentication_Provider.check_password(user, password):
+                        logger.info(f"✅ Token authentication successful for user: {username}")
+                        
+                        # Create Ontimize-compatible response
+                        response_data = {
+                            'code': 0,  # Ontimize success code
+                            'message': 'Authentication successful',
+                            'sessionId': f"cognito_{getattr(user, 'id', username)}",
+                            'user': username,
+                            'data': {
+                                'user': username,
+                                'sessionId': f"cognito_{getattr(user, 'id', username)}",
+                                'roles': [role.role_name for role in getattr(user, 'UserRoleList', [])] if hasattr(user, 'UserRoleList') else []
+                            }
+                        }
+                        
+                        # Store in session for future requests
+                        session['user'] = username
+                        session['authenticated'] = True
+                        session['sessionId'] = response_data['sessionId']
+                        
+                        return jsonify(response_data)
+                    else:
+                        logger.warning(f"❌ Token authentication failed for user: {username}")
+                        return jsonify({
+                            'code': 1,  # Ontimize error code
+                            'message': 'Authentication failed',
+                            'error': 'Invalid token or user'
+                        }), 401
+                else:
+                    # Handle regular password authentication (fall back to standard behavior)
+                    logger.info("Regular password authentication - not implemented in Cognito provider")
+                    return jsonify({
+                        'code': 1,
+                        'message': 'Regular password authentication not supported with Cognito provider',
+                        'error': 'Use Cognito authentication'
+                    }), 401
+                
+            except Exception as e:
+                logger.error(f"Error in Ontimize token login: {e}")
+                return jsonify({
+                    'code': 1,
+                    'message': 'Login error',
+                    'error': str(e)
+                }), 500
+
         # Log available endpoints for reference
         logger.info("🔗 Cognito Authentication Endpoints registered:")
         logger.info("   GET  /api/auth/login - Redirect to Cognito login")
@@ -589,6 +840,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         logger.info("   GET  /auth/logout - Logout and redirect to Cognito logout")
         logger.info("   GET  /auth/token - Get current session token")
         logger.info("   POST /auth/validate-cognito - Validate JWT tokens")
+        logger.info("   POST /auth/ontimize-session - Create Ontimize session from Cognito token")
+        logger.info("   POST /api/users/login - Ontimize login with Cognito tokens")
         logger.info("   GET  /auth/debug-cognito - Debug Cognito configuration")
 
     @staticmethod
@@ -736,7 +989,13 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             each_user_role = DotMapX()
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
-            
+        user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
+        if user:
+            for role in user.WFUSERROLEList: 
+                each_user_role = DotMapX()
+                each_user_role.role_name = role.UserRole
+                rtn_user.UserRoleList.append(each_user_role)
+
         return rtn_user
 
     @staticmethod
