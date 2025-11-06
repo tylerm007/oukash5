@@ -347,23 +347,27 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 claims = Authentication_Provider.validate_cognito_token(id_token)
                 if not claims:
                     return jsonify({'error': 'Invalid ID token'}), 400
-                
+                wfuser = WFUser.query.filter(WFUser.Email == claims['email']).first()
+                if wfuser and wfuser.IsActive == False:
+                    return jsonify({'error': 'User account is inactive'}), 403
+                user_id = wfuser.Username if wfuser else "unknown"
+                claims["user_id"] = user_id
                 # Find or create user in database
                 user = Authentication_Provider.get_or_create_user_from_claims(claims)
                 if not user:
                     return jsonify({'error': 'User creation failed'}), 400
-                wfuser = WFUser.query.filter(WFUser.Email == claims['email']).first()
                 user_roles = ['DISPATCHER']  # Default role
                 if wfuser:
                     user_roles = [role.UserRole for role in wfuser.WFUSERROLEList]
                 # Store user info in session
-                session['user_id'] = claims['name']
+                
+                session['user_id'] = user_id
                 session['user_email'] = claims['email']
                 session['user_roles'] = user_roles
                 session['authenticated'] = True
                 session['access_token'] = tokens.get('access_token')
                 session['id_token'] = id_token
-                
+                user['user_id'] = user_id
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
 
@@ -378,6 +382,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     'email': claims.get('email'),
                     'name': claims.get('name'),
                     'roles': user_roles,
+                    "user_id": user_id,
                     'cognito_sub': claims.get('sub'),
                     'auth_provider': 'cognito',
                     'cognito_token_id': claims.get('jti', 'unknown')
@@ -971,7 +976,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.email = claims.get("email")
         rtn_user.given_name = claims.get("name")
         rtn_user.family_name = claims.get("custom:app_username")
-        rtn_user.id = claims.get("sub") or claims.get("email")
+        rtn_user.id = claims.get("user_id")
         rtn_user.Username = claims.get("email")
         rtn_user.password_hash = None
         

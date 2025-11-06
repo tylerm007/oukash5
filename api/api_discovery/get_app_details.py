@@ -193,7 +193,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
             #for plant in plants
         ]
-        result['products'] = [
+        result['products'] = products
+        '''
+        [
             {
             "source": "Source Temp",
             "labelName": product.get("PRODUCT_NAME"),
@@ -206,7 +208,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
             for product in products
         ]
-        result['ingredients'] = [
+        '''
+        result['ingredients'] = ingredients
+        '''[
             {
 
             "addedBy": "System Import",
@@ -223,6 +227,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
             for ingredient in ingredients
         ]
+        '''
         #quotes = WFQuote.query.filter_by(ApplicationID=application_id).all()
         #quote_items = []
         result['quotes'] = [{
@@ -301,54 +306,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 def get_products(company_id: int, plant_id: int) -> list:
     sql = f"""
-      SELECT TOP (10) [PRODUCT_NAME]
-        ,[TOP_LEVEL_PRODUCT_NAME]
-        ,[MERCHANDISE_ID]
-        ,[BRAND_NAME]
-        ,[Symbol]
-        ,[STATUS]
-        ,[LABEL_COMPANY]
-        ,[INDUSTRIAL]
-        ,[PESACH]
-        ,[KITNIYOT]
-        ,[CATEGORY_NAME]
-        ,[LABEL_TYPE]
-        ,[BLK]
-        ,[SEAL_SIGN]
-        ,[LABEL_SEQ_NUM]
-        ,[DPM]
-        ,[COMPANY_ID]
-        ,[COMPANY_NAME]
-        ,[PLANT_ID]
-        ,[PLANT_NAME]
-        ,[SRC_MAR_ID]
-        ,[SRC_STREET1]
-        ,[SRC_CITY]
-        ,[SRC_STATE]
-        ,[SRC_ZIP]
-        ,[SRC_COUNTRY]
-        ,[Plant_Country]
-        ,[owns_id]
-        ,[LABEL_ID]
-        ,[PRODUCED_IN1_ID]
-        ,[ACTIVE]
-        ,[AS_STIPULATED]
-        ,[GRP]
-        ,[Confidential]
-        ,[CONFIDENTIAL_TEXT]
-        ,[OUP_REQUIRED]
-        ,[Consumer]
-        ,[LOChold]
-        ,[Repack]
-        ,[LOC_SELECTED]
-        ,[CAS]
-        ,[PassoverSpecialProduction]
-        ,[PLANT_STATUS]
-        ,[IsDairyEquipment]
-        ,[RC]
-    FROM [ou_kash].[dbo].[PRODUCT_GRID]
-        where [COMPANY_ID] = {company_id}
-        and [PLANT_ID] = {plant_id}
+        SELECT TOP (100) 
+            [PRODUCT_NAME] as labelName,
+            [BRAND_NAME] as brandName,
+            [LABEL_COMPANY] as labelCompany,
+            [INDUSTRIAL] as ConsumerIndustrial,
+            [BLK] as bulkShipped,
+            [Symbol] as certification,
+            [STATUS] as status
+        FROM [ou_kash].[dbo].[PRODUCT_GRID]
+        WHERE [COMPANY_ID] = {company_id}
+        AND [PLANT_ID] = {plant_id}
     """
     result = session.execute(text(sql))
     products = result.fetchall()
@@ -360,52 +328,20 @@ def get_products(company_id: int, plant_id: int) -> list:
 
 def get_ingredients(company_id:int, plant_id: int) -> list:
     sql = f"""
-        SELECT TOP (20) [LOC]
-            ,[LabelID]
-            ,[INGREDIENT_NAME]
-            ,[MERCHANDISE_ID]
-            ,[BRAND_NAME]
-            ,[SRC_MAR_ID]
-            ,[LABEL_COMPANY]
-            ,[SYMBOL]
-            ,[GRP]
-            ,[DPM]
-            ,[BLK]
-            ,[UKDID]
-            ,[SEAL_SIGN]
-            ,[PESACH]
-            ,[AS_STIPULATED]
-            ,[LABEL_SEQ_NUM]
-            ,[COMPANY_ID]
-            ,[PLANT_ID]
-            ,[OWNS_ID]
-            ,[LABEL_ID]
-            ,[USED_IN1_ID]
-            ,[SRC_STREET]
-            ,[SRC_CITY]
-            ,[SRC_STATE]
-            ,[SRC_ZIP]
-            ,[SRC_COUNTRY]
-            ,[ACTIVE]
-            ,[RAW_MATERIAL_CODE]
-            ,[ALTERNATE_NAME]
-            ,[AgencyID]
-            ,[JobID]
-            ,[CAS]
-            ,[CTA]
-            ,[CNTA]
-            ,[LabelStatus]
-            ,[Special_Status]
-            ,[CompanyName]
-            ,[PlantName]
-            ,[PlantStatus]
-            ,[IngredientInPlantStatus]
-            ,[DateAdded]
-            ,[PassoverProductionUse]
-            ,[PlantCTA]
+        SELECT TOP (100) 
+            [INGREDIENT_NAME] as ingredient
+            ,[MERCHANDISE_ID] as ncrcId
+            ,[BRAND_NAME] as brand
+            ,[SYMBOL] as certification
+            ,[LABEL_COMPANY] as manufacturer
+            ,[BLK] as packaging
+            ,[DateAdded] as addedDate
+            ,[LabelStatus] as status
+            ,[COMPANY_ID] as companyId
+            ,[PLANT_ID] as plantId
         FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
-                WHERE [COMPANY_ID] = {company_id}
-                AND [PLANT_ID] = {plant_id}
+        WHERE [COMPANY_ID] = {company_id}
+        AND [PLANT_ID] = {plant_id}
     """
     result = session.execute(text(sql))
     ingredients = result.fetchall()
@@ -476,3 +412,47 @@ def get_app_status(status_code: str):
         "CONTRACT": "Contract Sent to Customer"
     }
     return status_map.get(status_code, "Unknown Status")
+
+def get_SQL() ->str:
+    return '''
+    
+    SELECT 
+        wa.ApplicationID as applicationId,
+        wa.CreatedDate as submissionDate,
+        wa.Status as status,
+        c.COMPANY_ID as kashrusCompanyId,
+        'UNKNOWN' as kashrusStatus,
+        pc.FirstName + ' ' + pc.LastName as primaryContact,
+        c.NAME as companyName,
+        c.CATEGORY as companyCategory,
+        c.CurrentlyCertified as currentlyCertified,
+        c.EverCertified as everCertified,
+        ISNULL(c.Website, 'www.' + c.NAME + '.com') as website,
+        ca.STREET1 as companyStreet,
+        ca.STREET2 as companyLine2,
+        ca.CITY as companyCity,
+        ca.STATE as companyState,
+        ca.COUNTRY as companyCountry,
+        ca.ZIP as companyZip,
+        pa.STREET1 as plantStreet,
+        pa.STREET2 as plantLine2,
+        pa.CITY as plantCity,
+        pa.STATE as plantState,
+        pa.COUNTRY as plantCountry,
+        pa.ZIP as plantZip,
+        pt.NAME as plantName,
+        ca2.FirstName as contactFirstName,
+        ca2.LastName as contactLastName,
+        ca2.Phone as contactPhone,
+        ca2.Email as contactEmail
+    FROM WF_APPLICATION wa
+    LEFT JOIN COMPANY_TB c ON wa.COMPANY_ID = c.COMPANY_ID
+    LEFT JOIN COMPANY_ADDRESS_TB ca ON c.COMPANY_ID = ca.COMPANY_ID
+    LEFT JOIN OWNS_TB o ON c.COMPANY_ID = o.COMPANY_ID
+    LEFT JOIN PLANT_TB pt ON wa.PLANT_ID = pt.PLANT_ID
+    LEFT JOIN PLANT_ADDRESS_TB pa ON pt.PLANT_ID = pa.PLANT_ID
+    LEFT JOIN PLANT_CONTACTS pc ON o.OWNS_ID = pc.OWNS_ID AND pc.PrimaryCT = 'Y'
+    LEFT JOIN COMPANY_APPLICATION ca2 ON wa.ApplicationNumber = ca2.ID
+    WHERE wa.ApplicationID = @application_id
+    FOR JSON PATH, ROOT('applicationInfo')
+    '''

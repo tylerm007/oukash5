@@ -1,7 +1,9 @@
 from datetime import datetime
+from tkinter import W
 from unittest import result
 from database.database_discovery.authentication_models import User
 from database.models import LaneDefinition, WFApplicationMessage, WFFile,WFUSERROLE, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
+from security.system.authorization import Security
 from flask import app, request, jsonify, session
 import logging
 from httpx import get
@@ -71,9 +73,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
-        
+        from database.models import WFUser
         data = request.args if request.args else {}
-        user = get_jwt().get("sub", "unknown")
+        user_jwt = get_jwt().get("sub", "unknown")
+        #current_user = Security.current_user()
+        #user_id = current_user.id if "id" in current_user else user_jwt
+        if  "@" in user_jwt:
+            user = WFUser.query.filter_by(Email=user_jwt).first().Username
+        else:
+            user = user_jwt
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))
@@ -93,9 +101,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f"Calling stored procedure with: assignee={user}, assignee_role={assigned_roles_str}")
         
         try:
-            tasks = session.execute(text('EXEC sp_GetTasksPerUser @username = :username, @applicationId = :applicationId, @plantName = :plantName'),{"username": user, "applicationId": application_id, "plantName": plant_name})
-            tasks = tasks.fetchall()
-            app_logger.info(f"Retrieved {len(tasks)} tasks from stored procedure")
+            sql = get_SQL()
+            #tasks = session.execute(text('EXEC sp_GetTasksPerUser @username = :username, @applicationId = :applicationId, @plantName = :plantName'),{"username": user, "applicationId": application_id, "plantName": plant_name})
+            params = {"username": user, "applicationId": application_id, "plantName": plant_name}
+            tasks = session.execute(text(sql),params).fetchall()
+
         except Exception as e:
             app_logger.error(f"Error executing stored procedure: {e}")
             return jsonify({"status": "error", "message": f"Database error: {str(e)}"}), 500
@@ -312,3 +322,56 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "CONTRACT": "Contract Sent to Customer",
         }
         return status_map.get(status_code, "Unknown Status")
+    def get_SQL():
+
+        return '''
+        SELECT  
+            ap.[ApplicationID] as applicationId,
+            ti.[TaskInstanceId] as taskInstanceId,
+            td.[TaskName] as taskName,
+            td.[Description] as taskDescription,
+            td.[TaskType] as taskType,
+            td.[TaskCategory] as TaskCategory,
+            td.[AssigneeRole] as assigneeRole,
+            ra.Assignee as assignee,
+            ap.CompanyId as companyId,
+            ap.PlantID as plantId,
+            co.NAME as companyName,
+            pl.NAME as plantName,
+            ld.LaneName as stageName,
+            ti.[Status] as status,
+            ti.[StartedDate] as startedDate,
+            ti.[CompletedDate] as completedDate,
+            pi.InstanceId as processInstanceId,
+            si.StageInstanceId as stageInstanceId,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
+                ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
+            END as daysPending,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN null 
+                ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+            END as daysOverdue
+
+        FROM [dashboard].[dbo].[TaskInstances] ti
+            INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
+            INNER JOIN StageInstance si ON ti.StageId = si.StageInstanceId
+            INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId
+            INNER JOIN WF_Applications ap ON pi.ApplicationId = ap.ApplicationID
+            INNER JOIN LaneDefinitions ld ON si.LaneId = ld.LaneId
+            LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
+            LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
+            INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole AND ra.Assignee = :username 
+            and ra.ApplicationId = ap.ApplicationID
+        WHERE 
+            ap.status not in ('COMPL', 'WTH') and
+            -- Required filters
+            ti.status = 'PENDING' AND 
+            (td.AssigneeRole != 'SYSTEM') AND
+            (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
+            (:plantName IS NULL OR pl.Name = :plantName) and
+        (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+        
+        ORDER BY ap.applicationId, ti.taskInstanceId
+
+        '''

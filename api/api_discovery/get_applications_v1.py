@@ -172,20 +172,21 @@ def transform_process_row(process: str) -> list:
                     task_cnt += 1
                     completed_cnt += 1 if task['Status'] == 'COMPLETED' else 0
 
-                    created_date = task['StartedDate'] if "StartedDate" in task else None
-                    modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
-                    days_between = _calc_days_between(created_date, modified_date)
-                    days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
-
+                    #created_date = task['StartedDate'] if "StartedDate" in task else None
+                    #modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
+                    #days_between = _calc_days_between(created_date, modified_date)
+                    #days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
+                    days_pending = task['daysPending'] if 'daysPending' in task else 0
+                    days_overdue = task['daysOverdue'] if 'daysOverdue' in task else 0
                     tasks.append({
                     "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
                     "status": task['Status'] if 'Status' in task else "UNKNOWN",
                     "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
                     "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
                     "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
-                    "daysPending": days_between if task['Status'] == 'PENDING' else 0,
-                    "daysOverdue": days_between - days_due if days_between > days_due and task['Status'] != 'COMPLETED' else 0,
-                    "isOverdue": days_between > days_due and task['Status'] != 'COMPLETED',
+                    "daysPending": days_pending,
+                    "daysOverdue": days_overdue,
+                    "isOverdue": days_overdue > days_pending and task['Status'] != 'COMPLETED',
                     "createdDate": task['StartedDate'] if "StartedDate" in task else None,
                     "description": taskdef['Description'] if task and "Description" in taskdef else " ",
                     "required": taskdef['IsRequired'] if task and "IsRequired" in taskdef else False,
@@ -322,6 +323,15 @@ def get_SQL() -> str:
                                                         ti.AssignedTo,
                                                         ti.StartedDate,
                                                         ti.CompletedDate,
+                                                        CASE
+                                                            WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
+                                                            ELSE NULL
+                                                        END as daysPending,
+                                                        CASE
+                                                            WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
+                                                               DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                            ELSE NULL
+                                                        END as daysOverdue,
                                                         td.TaskName,
                                                         td.Description,
                                                         td.TaskType,
