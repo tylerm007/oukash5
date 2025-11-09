@@ -46,6 +46,30 @@
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
+          { "name": "ApiLogicServer 192.168.13.31",
+            "type": "debugpy",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
+                "APILOGICPROJECT_STOP_OK": "True",
+                "APILOGICPROJECT_DEBUG": "False"},
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": [
+                "--flask_host=192.168.13.31",
+                "--port=5656",
+                "--swagger_port=5656",
+                "--swagger_host=192.168.13.31",
+                "--verbose=False",
+                "--http_scheme=https"
+            ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
         {
             "name": "ApiLogicServer DEBUG",
             "type": "debugpy",

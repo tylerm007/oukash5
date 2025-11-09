@@ -42,6 +42,7 @@ IF OBJECT_ID('TaskInstances', 'U') IS NOT NULL DELETE FROM TaskInstances;
 IF OBJECT_ID('TaskStatus','U') IS NOT NULL DELETE FROM TaskStatus;
 IF OBJECT_ID('ProcessInstances', 'U') IS NOT NULL DELETE FROM ProcessInstances;
 IF OBJECT_ID('TaskFlow', 'U') IS NOT NULL DELETE FROM TaskFlow;
+IF OBJECT_ID('StageDefinitions', 'U') IS NOT NULL DELETE FROM StageDefinitions;
 IF OBJECT_ID('TaskDefinitions', 'U') IS NOT NULL DELETE FROM TaskDefinitions;
 IF OBJECT_ID('ProcessDefinitions', 'U') IS NOT NULL DELETE FROM ProcessDefinitions;
 IF OBJECT_ID('TaskCategories', 'U') IS NOT NULL DELETE FROM TaskCategories;
@@ -73,14 +74,16 @@ IF OBJECT_ID('TaskCommentTypes', 'U') IS NOT NULL DROP TABLE TaskCommentTypes;
 IF OBJECT_ID('ProcessMessageTypes', 'U') IS NOT NULL DROP TABLE ProcessMessageTypes;
 IF OBJECT_ID('ValidationRules', 'U') IS NOT NULL DROP TABLE ValidationRules;
 IF OBJECT_ID('ProcessDefinitions', 'U') IS NOT NULL DROP TABLE ProcessDefinitions;
+IF OBJECT_ID('StageDefinitions', 'U') IS NOT NULL DROP TABLE StageDefinitions;
 IF OBJECT_ID('ProcessStatus', 'U') IS NOT NULL DROP TABLE ProcessStatus;
 IF OBJECT_ID('ProcessPriorities', 'U') IS NOT NULL DROP TABLE IF EXISTS ProcessPriorities;
 GO
 PRINT 'All tables, views, procedures, functions, and triggers dropped successfully.';
 
 -- ==================================
--- Workflow Process Definitions
+-- BPMN Workflow Process Definitions
 -- ==================================
+-- Root Definition for one or more BPMN processes
 CREATE TABLE ProcessDefinitions (
     ProcessId INT IDENTITY(1,1) PRIMARY KEY,
     ProcessName NVARCHAR(100) NOT NULL,
@@ -99,10 +102,11 @@ CREATE TABLE LaneRoles (
     RoleDescription NVARCHAR(255) NOT NULL
 );
 
+-- Lane Definitions for BPMN processes 
 CREATE TABLE LaneDefinitions(
 	LaneId INT IDENTITY(1,1) PRIMARY KEY,
 	ProcessId INT NOT NULL,
-	LaneName nvarchar(100) NOT NULL,
+	LaneName nvarchar(100) NOT NULL, -- AKA Stage
 	LaneDescription nvarchar(500) NULL,
 	EstimatedDurationDays int NULL,
     LaneRole NVARCHAR(20) NOT NULL DEFAULT 'NCRC', -- NCRC, Sales, Legal, Finance, Ingredients, Products
@@ -119,21 +123,34 @@ CREATE TABLE TaskTypes (
     TaskTypeDescription NVARCHAR(255) NOT NULL
 );
 
-
 CREATE TABLE TaskCategories (
     TaskCategoryCode NVARCHAR(20) NOT NULL PRIMARY KEY,
     TaskCategoryDescription NVARCHAR(255) NOT NULL
 );  
 
--- Task Definitions within Processes
+-- Stages are used by the User Interface
+CREATE TABLE StageDefinitions(
+	StageId INT IDENTITY(1,1) PRIMARY KEY,
+	ProcessId INT NOT NULL,
+	StageName nvarchar(100) NOT NULL, -- AKA Stage
+	StageDescription nvarchar(500) NULL,
+	EstimatedDurationDays int NULL
+	CreatedDate datetime2(7) NOT NULL DEFAULT GETUTCDATE(),
+	CreatedBy nvarchar(100) NOT NULL,
+    ModifiedDate datetime2(7) NULL,
+    ModifiedBy nvarchar(100) NULL,
+    FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
+);
+-- Task Definitions within StageDefinition 
 CREATE TABLE TaskDefinitions (
     TaskId INT IDENTITY(1,1) PRIMARY KEY,
-    ProcessId INT NOT NULL,
+    --ProcessId INT NOT NULL,
+    --LaneId INT NOT NULL,
+    StageId INT NOT NULL,
     TaskName NVARCHAR(100) NOT NULL,
     TaskType NVARCHAR(20) NOT NULL, -- 'UserTask', 'ServiceTask', 'ScriptTask', 'Gateway', 'Event'
     TaskCategory NVARCHAR(20), -- 'Validation', 'Action', 'Decision', 'Notification'
     Sequence INT NOT NULL,
-    LaneId INT NOT NULL,
     IsParallel BIT NOT NULL DEFAULT 0,
     AssigneeRole NVARCHAR(20), -- Inherited role for process definition 
     EstimatedDurationMinutes INT,
@@ -149,7 +166,8 @@ CREATE TABLE TaskDefinitions (
     FOREIGN KEY (TaskCategory) REFERENCES TaskCategories(TaskCategoryCode),
     FOREIGN KEY (TaskType) REFERENCES TaskTypes(TaskTypeCode),
     FOREIGN KEY (LaneId) REFERENCES LaneDefinitions(LaneId),
-    FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
+    FOREIGN KEY (StageId) REFERENCES StageDefinitions(StageId)
+    --FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
 );
 -- Add additional columns to TaskDefinitions for Pre and Post processing
 -- ALTER TABLE TaskDefinitions 
@@ -162,6 +180,7 @@ CREATE TABLE TaskDefinitions (
     --PostScriptJson NVARCHAR(MAX); -- POST JSON configuration for task-specific settings
 
 -- Task Dependencies and Flow
+-- Stored procedure used to map by name
 CREATE TABLE TaskFlow (
     FlowId INT IDENTITY(1,1) PRIMARY KEY,
     FromTaskId INT,
@@ -175,37 +194,37 @@ GO
 -- =============================================
 -- Workflow Instance Tables
 -- =============================================
-CREATE TABLE ProcessStatus (
-    StatusCode NVARCHAR(10) NOT NULL PRIMARY KEY,   
-    StatusDescription NVARCHAR(255) NOT NULL
-);
+--CREATE TABLE ProcessStatus (
+--    StatusCode NVARCHAR(10) NOT NULL PRIMARY KEY,   
+--    StatusDescription NVARCHAR(255) NOT NULL
+--);
 
 
-CREATE TABLE ProcessPriorities (
-    PriorityCode NVARCHAR(10) NOT NULL PRIMARY KEY,
-    PriorityDescription NVARCHAR(255) NOT NULL
-);  
+--CREATE TABLE ProcessPriorities (
+--    PriorityCode NVARCHAR(10) NOT NULL PRIMARY KEY,
+--    PriorityDescription NVARCHAR(255) NOT NULL
+--);  
 
 -- ==================================
 -- Application Workflow Instances
 -- Only 1 Process per ApplicationId
-CREATE TABLE ProcessInstances (
-    InstanceId INT IDENTITY(1,1) PRIMARY KEY,
-    ProcessId INT NOT NULL,
-    ApplicationId INT NOT NULL, -- wf_application reference
-    Status NVARCHAR(10) NOT NULL DEFAULT 'NEW', -- 'Active', 'Completed', 'Suspended', 'Terminated'
-    CurrentTaskId INT, -- ? NOT SURE HOW TO MAKE THIS WORK
-    StartedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-    StartedBy NVARCHAR(100) NOT NULL,
-    CompletedDate DATETIME2,
-    CompletedBy NVARCHAR(100),
-    Priority NVARCHAR(10) DEFAULT 'NORMAL', -- 'Low', 'Normal', 'High', 'Critical' ProcessPriorities FK
-    ContextData NVARCHAR(MAX), -- JSON data for workflow context
-    FOREIGN KEY (Priority) REFERENCES ProcessPriorities(PriorityCode),
-    FOREIGN KEY (Status) REFERENCES ProcessStatus(StatusCode)
+-- CREATE TABLE ProcessInstances (
+--    InstanceId INT IDENTITY(1,1) PRIMARY KEY,
+--    ProcessId INT NOT NULL,
+--    ApplicationId INT NOT NULL, -- wf_application reference
+--    Status NVARCHAR(10) NOT NULL DEFAULT 'NEW', -- 'Active', 'Completed', 'Suspended', 'Terminated'
+--    CurrentTaskId INT, -- ? NOT SURE HOW TO MAKE THIS WORK
+--    StartedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+--    StartedBy NVARCHAR(100) NOT NULL,
+--    CompletedDate DATETIME2,
+--    CompletedBy NVARCHAR(100),
+--    Priority NVARCHAR(10) DEFAULT 'NORMAL', -- 'Low', 'Normal', 'High', 'Critical' ProcessPriorities FK
+--    ContextData NVARCHAR(MAX), -- JSON data for workflow context
+--    FOREIGN KEY (Priority) REFERENCES ProcessPriorities(PriorityCode),
+--    FOREIGN KEY (Status) REFERENCES ProcessStatus(StatusCode)
     --FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
     --FOREIGN KEY (CurrentTaskId) REFERENCES TaskDefinitions(TaskId)
-);
+--);
 
 -- Stage Status Lookup Table
 CREATE TABLE StageStatus (
@@ -218,24 +237,25 @@ CREATE TABLE StageStatus (
 -- Each StageInstance is linked to a ProcessInstance
 CREATE TABLE StageInstance(
     StageInstanceId INT IDENTITY(1,1) PRIMARY KEY,
-    ProcessInstanceId INT NOT NULL,
-    LaneId INT NOT NULL, -- link back to LaneDefinitions
+    --ProcessInstanceId INT NOT NULL,
+    ApplicationId INT NOT NULL,
+    StageId INT NOT NULL, -- link back to StageDefinitions
     Status nvarchar(20) NOT NULL DEFAULT 'NEW',
     StartedDate datetime2(7) NULL,
     CompletedDate datetime2(7) NULL, -- RULE.formula when Status == Completed return current_date
     DurationDays  AS (datediff(day,StartedDate,CompletedDate)),
-    RetryCount int NULL,
-    AssignedTo nvarchar(100) NULL, -- User email
-    AssignedBy nvarchar(100) NULL, -- User email
-    AssignedDate datetime2(7) NULL, -- Rule.formula when AssignedTo is not null return current_date
-    CompletedCount int NULL, -- Rule to Count Completed Tasks
-    TotalCount int NULL, -- Rule to Count Total Tasks
+    --RetryCount int NULL,
+    --AssignedTo nvarchar(100) NULL, -- User email
+    --AssignedBy nvarchar(100) NULL, -- User email
+    --AssignedDate datetime2(7) NULL, -- Rule.formula when AssignedTo is not null return current_date
+    --CompletedCount int NULL, -- Rule to Count Completed Tasks
+    --TotalCount int NULL, -- Rule to Count Total Tasks
     CreatedDate datetime2(7) NOT NULL DEFAULT GETUTCDATE(),
     CreatedBy nvarchar(100) NOT NULL DEFAULT 'System',
     ModifiedDate datetime2(7) NULL,
     ModifiedBy nvarchar(100) NULL,
-    FOREIGN KEY (ProcessInstanceId) REFERENCES ProcessInstances(InstanceId),
-    FOREIGN KEY (LaneId) REFERENCES LaneDefinitions(LaneId),
+    --FOREIGN KEY (ProcessInstanceId) REFERENCES ProcessInstances(InstanceId),
+    FOREIGN KEY (StageId) REFERENCES StageDefinitions(StageId),
     FOREIGN KEY (Status) REFERENCES StageStatus(StatusCode)
 );
 
@@ -245,13 +265,12 @@ CREATE TABLE TaskStatus (
     StatusDescription NVARCHAR(255) NOT NULL
 );
 
-
-
 -- Task Instance Execution
 -- Task instance is linked to TaskDefinition and StageInstance
 CREATE TABLE TaskInstances (
     TaskInstanceId INT IDENTITY(1,1) PRIMARY KEY,
     TaskId INT NOT NULL, -- TaskDefinition
+    ApplicationId INT NOT NULL,
     StageId INT NOT NULL, -- StageInstance
     Status NVARCHAR(20) NOT NULL DEFAULT 'Pending', -- 'Pending', 'InProgress', 'Completed', 'Failed', 'Skipped'
     AssignedTo NVARCHAR(100),
@@ -296,23 +315,6 @@ CREATE TABLE ProcessMessageTypes (
 );
 
 
--- ProcessMessages
-CREATE TABLE ProcessMessages (
-    MessageId INT IDENTITY(1,1) PRIMARY KEY,
-    InstanceId INT NOT NULL,
-    FromUser NVARCHAR(100) NOT NULL,
-    ToUser NVARCHAR(100),
-    ToRole NVARCHAR(50),
-    MessageType NVARCHAR(20) DEFAULT 'Standard', -- 'Standard', 'Urgent', 'System', 'Notification'
-    Subject NVARCHAR(200),
-    MessageBody NVARCHAR(MAX) NOT NULL,
-    SentDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-    ReadDate DATETIME2,
-    IsRead BIT NOT NULL DEFAULT 0,
-    FOREIGN KEY (MessageType) REFERENCES ProcessMessageTypes(MessageTypeCode),
-    FOREIGN KEY (InstanceId) REFERENCES ProcessInstances(InstanceId)
-);
-
 -- Comment Types Lookup Table
 CREATE TABLE TaskCommentTypes (
     CommentTypeCode NVARCHAR(10) NOT NULL PRIMARY KEY,
@@ -322,7 +324,7 @@ CREATE TABLE TaskCommentTypes (
 -- TaskComments
 CREATE TABLE TaskComments (
     CommentId INT IDENTITY(1,1) PRIMARY KEY,
-    ProcessInstanceId INT NOT NULL,
+    ApplicationId INT NOT NULL,
     TaskInstanceId INT,
     CommentType NVARCHAR(10) DEFAULT 'Internal', -- 'Internal', 'External', 'System'
     CommentText NVARCHAR(MAX) NOT NULL,
@@ -330,7 +332,7 @@ CREATE TABLE TaskComments (
     CreatedDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     IsVisible BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (CommentType) REFERENCES TaskCommentTypes(CommentTypeCode),
-    FOREIGN KEY (ProcessInstanceId) REFERENCES ProcessInstances(InstanceId),
+    --FOREIGN KEY (ProcessInstanceId) REFERENCES ProcessInstances(InstanceId),
     FOREIGN KEY (TaskInstanceId) REFERENCES TaskInstances(TaskInstanceId)
 );
 
@@ -341,7 +343,7 @@ CREATE TABLE TaskComments (
 -- Workflow History
 CREATE TABLE WorkflowHistory (
     HistoryId INT IDENTITY(1,1) PRIMARY KEY,
-    InstanceId INT NOT NULL,
+    --InstanceId INT NOT NULL,
     TaskInstanceId INT,
     Action NVARCHAR(100) NOT NULL,
     PreviousStatus NVARCHAR(50),
@@ -350,7 +352,7 @@ CREATE TABLE WorkflowHistory (
     ActionDate DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
     ActionReason NVARCHAR(500),
     Details NVARCHAR(MAX), -- JSON details
-    FOREIGN KEY (InstanceId) REFERENCES ProcessInstances(InstanceId),
+    --FOREIGN KEY (InstanceId) REFERENCES ProcessInstances(InstanceId),
     FOREIGN KEY (TaskInstanceId) REFERENCES TaskInstances(TaskInstanceId)
 );
 
@@ -359,16 +361,16 @@ GO
 -- Indexes for Performance
 -- =============================================
 
-CREATE INDEX IX_ProcessInstances_ApplicationId ON ProcessInstances(ApplicationId);
-CREATE INDEX IX_ProcessInstances_Status ON ProcessInstances(Status);
-CREATE INDEX IX_ProcessInstances_StartedDate ON ProcessInstances(StartedDate);
+--CREATE INDEX IX_ProcessInstances_ApplicationId ON ProcessInstances(ApplicationId);
+--CREATE INDEX IX_ProcessInstances_Status ON ProcessInstances(Status);
+--CREATE INDEX IX_ProcessInstances_StartedDate ON ProcessInstances(StartedDate);
 
 CREATE INDEX IX_TaskInstances_Status ON TaskInstances(Status);
 CREATE INDEX IX_TaskInstances_AssignedTo ON TaskInstances(AssignedTo);
 CREATE INDEX IX_TaskInstances_StartedDate ON TaskInstances(StartedDate);
 
-CREATE INDEX IX_ProcessMessages_ToUser ON ProcessMessages(ToUser);
-CREATE INDEX IX_ProcessMessages_IsRead ON ProcessMessages(IsRead);
+--CREATE INDEX IX_ProcessMessages_ToUser ON ProcessMessages(ToUser);
+--CREATE INDEX IX_ProcessMessages_IsRead ON ProcessMessages(IsRead);
 
 CREATE INDEX IX_WorkflowHistory_InstanceId ON WorkflowHistory(InstanceId);
 CREATE INDEX IX_WorkflowHistory_ActionDate ON WorkflowHistory(ActionDate);

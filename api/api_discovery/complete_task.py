@@ -1,6 +1,6 @@
 from datetime import datetime
 from database import models
-from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
+from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WFUser, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
 import logging
 from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
@@ -62,15 +62,34 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         data = request.get_json()
         task_instance_id = data.get("task_instance_id")
+        status = data.get("status", 'COMPLETED')
         if not task_instance_id:
             return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
-        user = get_jwt()['sub'] if 'sub' in get_jwt() else 'system'
+        #user = get_jwt()['sub'] if 'sub' in get_jwt() else 'system'
+        user_jwt = get_jwt().get("sub", "unknown")
+        #current_user = Security.current_user()
+        #user_id = current_user.id if "id" in current_user else user_jwt
+        if  "@" in user_jwt:
+            user = WFUser.query.filter_by(Email=user_jwt).first().Username
+        else:
+            user = user_jwt
         completed_by = data.get("completed_by",user)
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
         access_token = request.headers.get("Authorization")
         app_logger.debug(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
         print(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
+        if status in ['PENDING', 'IN_PROGRESS']:
+            task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+            if not task_instance:
+                return jsonify({"status": "error", "message": "Task instance not found"}), 404
+            if task_instance.Status == 'COMPLETED':
+                return jsonify({"status": "error", "message": "Task is already completed"}), 400
+            task_instance.Status = status
+            session.add(task_instance)
+            session.commit()
+            return jsonify({"status": "success", "message": f"Task status updated to {status} successfully"}), 200
+
         return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, depth=0)
 
     
@@ -144,9 +163,9 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             app_logger.error(f'TaskDefinition not found: {task_instance.TaskId}')
             return jsonify({"status": "error", "message": "TaskDefinition not found"}), 404
 
-        if task_instance.Status not in ['PENDING','FAILED'] and task_def.TaskType != 'START': #and depth == 0
-            app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING -> {task_instance.Status}.')
-            return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING  -> {task_instance.Status}."}), 400
+        if task_instance.Status not in ['PENDING','FAILED', 'IN_PROGRESS'] and task_def.TaskType != 'START': #and depth == 0
+            app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING or IN_PROGRESS -> {task_instance.Status}.')
+            return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING or IN_PROGRESS -> {task_instance.Status}."}), 400
         application_id = task_instance.Stage.ProcessInstance.ApplicationId
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         if application and application.Status in ["WTH","COMPL"]:
@@ -189,14 +208,14 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
-                    task_instance.Status = 'FAILED' if task_instance.TaskDef.TaskType != 'START' else status
+                    task_instance.Status = 'IN_PROGRESS' if task_instance.TaskDef.TaskType != 'START' else status
                     task_instance.Result = None
                     session.add(task_instance)
                     session.commit()
                     session.flush()
                     insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
-                    return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id}'}), 400
+                    return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id} message: {task_instance.ErrorMessage}'}), 400
                    
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')

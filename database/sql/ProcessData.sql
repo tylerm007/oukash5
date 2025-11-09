@@ -36,6 +36,7 @@ INSERT INTO TaskTypes (TaskTypeCode, TaskTypeDescription) VALUES
 ('CONDITION', 'Condition Task - Evaluates a condition'),
 ('LANESTART','Subprocess Lane Start'),
 ('LANEEND','Subprocess Lane End'),
+('PROGRESS', 'Subprocess Progress'),
 ('GATEWAY', 'Gateway - Decision point');
 
 -- Task Categories
@@ -53,6 +54,7 @@ INSERT INTO TaskCategories (TaskCategoryCode, TaskCategoryDescription) VALUES
 ('INPUT', 'Data Input and Entry'),
 ('SELECTOR', 'Selection and Decision Making'),
 ('SUBPROCESS','Internal processing only'),
+('PROGRESS_TASK', 'Subprocess Progress'),
 ('VERIFICATION', 'Data and Status Verification');
  
  
@@ -106,26 +108,8 @@ INSERT INTO TaskCommentTypes (CommentTypeCode, CommentTypeDescription) VALUES
     ('SYSTEM', 'System-generated comment');
 
 GO
--- =============================================
--- 1. ProcessDefinition Insert
--- =============================================
-INSERT INTO ProcessDefinitions (ProcessName, ProcessVersion, Description, IsActive, CreatedBy)
-VALUES ('OU Application Init', '1.0', 'OU Kosher initial application process', 1, 'SYSTEM');
-GO
--- =============================================
--- 2. LaneDefinition Inserts
--- =============================================
-INSERT INTO LaneDefinitions (ProcessId, LaneName, LaneDescription, EstimatedDurationDays, LaneRole, CreatedBy)
-VALUES 
-(1, 'Initial', 'Initial application review and task assignment', 2, 'NCRC', 'system'),
-(1, 'NDA', 'Non-disclosure agreement handling and execution', 3, 'LEGAL', 'system'),
-(1, 'Inspection', 'Plant inspection and RFR assignment process', 10, 'RC', 'system'),
-(1, 'Ingredients', 'IAR ingredients and kosher code review process', 7, 'IAR', 'system'),
-(1, 'Products', 'Product evaluation and PLA processing', 5, 'PROD', 'system'),
-(1, 'Contract', 'Contract review and certification agreement', 3, 'LEGAL', 'system'),
-(1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
-GO
--- =============================================
+
+
 -- Insert Process Definition and Tasks
 -- =============================================
 
@@ -241,6 +225,19 @@ VALUES
 (1, 'Contract', 'Contract review and certification agreement', 3, 'LEGAL', 'system'),
 (1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
 GO
+-- =============================================
+-- 3. StageDefinitions Inserts
+-- =============================================
+INSERT INTO StageDefinitions (ProcessId, StageName, StageDescription, EstimatedDurationDays, CreatedBy)
+VALUES
+(1, 'Initial', 'Initial application review and task assignment', 2, 'system'),
+(1, 'NDA', 'Non-disclosure agreement handling and execution', 3, 'system'),
+(1, 'Inspection', 'Plant inspection and RFR assignment process', 10, 'system'),
+(1, 'Ingredients', 'IAR ingredients and kosher code review process', 7, 'system'),
+(1, 'Products', 'Product evaluation and PLA processing', 5, 'system'),
+(1, 'Contract', 'Contract review and certification agreement', 3, 'system'),
+(1, 'Certification', 'Final certification and invoice processing', 2, 'system');
+GO
 -- 
 -- =============================================
 -- 4. TaskFlow Inserts
@@ -248,93 +245,7 @@ GO
 -- Note: TaskId values are assumed based on the sequence above (1-31)
 -- In a real scenario, you would need to query the TaskDefinitions table to get actual TaskIds
 
--- =============================================
--- STORED PROCEDURES
--- =============================================
-
--- Stored Procedure: sp_add_flow
--- Purpose: Add a new task flow by looking up TaskDefinition IDs by TaskName
--- Parameters: 
---   @from_name - TaskName of the source task (can be NULL for start flows)
---   @to_name - TaskName of the destination task
---   @condition - Flow condition (optional)
--- =============================================
-
-CREATE OR ALTER PROCEDURE sp_add_flow
-    @from_name NVARCHAR(100) = NULL,
-    @to_name NVARCHAR(100),
-    @condition NVARCHAR(500) = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    DECLARE @from_task_id INT = NULL;
-    DECLARE @to_task_id INT;
-    DECLARE @error_msg NVARCHAR(500);
-    
-    BEGIN TRY
-        -- Look up the ToTask ID (required)
-        SELECT @to_task_id = TaskId 
-        FROM TaskDefinitions 
-        WHERE TaskName = @to_name;
-        
-        IF @to_task_id IS NULL
-        BEGIN
-            SET @error_msg = 'ToTask not found: ' + @to_name;
-            THROW 50001, @error_msg, 1;
-        END
-        
-        -- Look up the FromTask ID (optional for start flows)
-        IF @from_name IS NOT NULL
-        BEGIN
-            SELECT @from_task_id = TaskId 
-            FROM TaskDefinitions 
-            WHERE TaskName = @from_name;
-            
-            IF @from_task_id IS NULL
-            BEGIN
-                SET @error_msg = 'FromTask not found: ' + @from_name;
-                THROW 50002, @error_msg, 1;
-            END
-        END
-        
-        -- Check if flow already exists
-        IF EXISTS (
-            SELECT 1 FROM TaskFlow 
-            WHERE FromTaskId = @from_task_id 
-            AND ToTaskId = @to_task_id
-            AND ISNULL(Condition, '') = ISNULL(@condition, '')
-        )
-        BEGIN
-            SET @error_msg = 'Flow already exists from ''' + ISNULL(@from_name, 'START') + ''' to ''' + @to_name + '''';
-            THROW 50003, @error_msg, 1;
-        END
-        
-        -- Insert the new flow
-        INSERT INTO TaskFlow (FromTaskId, ToTaskId, Condition, IsDefault)
-        VALUES (@from_task_id, @to_task_id, @condition, 0);
-        
-        -- Return success message
-        SELECT 
-            SCOPE_IDENTITY() as FlowId,
-            @from_task_id as FromTaskId,
-            @to_task_id as ToTaskId,
-            @from_name as FromTaskName,
-            @to_name as ToTaskName,
-            @condition as Condition,
-            'Flow added successfully' as Message;
-            
-    END TRY
-    BEGIN CATCH
-        -- Return error information
-        SELECT 
-            ERROR_NUMBER() as ErrorNumber,
-            ERROR_MESSAGE() as ErrorMessage,
-            ERROR_SEVERITY() as ErrorSeverity,
-            ERROR_STATE() as ErrorState;
-    END CATCH
-END;
-GO
+-- RUN task_definitions.sql
 
 -- Example usage:
 -- EXEC sp_add_flow @from_name = 'Application Received', @to_name = 'Initial Review', @condition = NULL;

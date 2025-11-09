@@ -1,6 +1,4 @@
 from datetime import datetime
-from tkinter import W
-from unittest import result
 from database.database_discovery.authentication_models import User
 from database.models import LaneDefinition, WFApplicationMessage, WFFile,WFUSERROLE, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
 from security.system.authorization import Security
@@ -79,7 +77,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         #current_user = Security.current_user()
         #user_id = current_user.id if "id" in current_user else user_jwt
         if  "@" in user_jwt:
-            user = WFUser.query.filter_by(Email=user_jwt).first().Username
+            user = WFUser.query.filter_by(Email=user_jwt).first() or user_jwt
         else:
             user = user_jwt
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")

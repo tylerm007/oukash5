@@ -224,13 +224,13 @@ CREATE TABLE WF_Applications (
     ModifiedDate datetime2(7) NULL, -- global rule on update set to current date
     ModifiedBy nvarchar(100) NULL, -- global rule on update set to current user
     --WFDashboardID INT NULL DEFAULT 1,
-    verify_company BIT NOT NULL DEFAULT 0, -- rule when company verified set to 1
-    verify_plant BIT NOT NULL DEFAULT 0, -- rule when plant verified set to 1
-    verify_contacts BIT NOT NULL DEFAULT 0, -- rule when contacts verified set to 1
-    verify_products BIT NOT NULL DEFAULT 0, -- rule when products verified set to 1
-    verify_ingredients BIT NOT NULL DEFAULT 0, -- rule when ingredients verified set to 1
-    verify_quote BIT NOT NULL DEFAULT 0, -- rule when quote verified set to 1
-    assign_ncrc_rep BIT NOT NULL DEFAULT 0, -- rule when ncrc rep assigned set to 1 
+    --verify_company BIT NOT NULL DEFAULT 0, -- rule when company verified set to 1
+    --verify_plant BIT NOT NULL DEFAULT 0, -- rule when plant verified set to 1
+    --verify_contacts BIT NOT NULL DEFAULT 0, -- rule when contacts verified set to 1
+    --verify_products BIT NOT NULL DEFAULT 0, -- rule when products verified set to 1
+    --verify_ingredients BIT NOT NULL DEFAULT 0, -- rule when ingredients verified set to 1
+    --verify_quote BIT NOT NULL DEFAULT 0, -- rule when quote verified set to 1
+    --assign_ncrc_rep BIT NOT NULL DEFAULT 0, -- rule when ncrc rep assigned set to 1 
     FOREIGN KEY (Priority) REFERENCES WF_Priorities(PriorityCode),
     FOREIGN KEY (Status) REFERENCES WF_ApplicationStatus(StatusCode)
     --,FOREIGN KEY (CompanyID) REFERENCES COMPANYTB(CompanyID)

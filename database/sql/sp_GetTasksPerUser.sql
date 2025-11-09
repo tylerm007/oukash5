@@ -26,7 +26,7 @@ BEGIN
     END
 
     SELECT  
-        ap.[ApplicationID] as applicationId,
+        ti.[ApplicationId] as applicationId,
         ti.[TaskInstanceId] as taskInstanceId,
         td.[TaskName] as taskName,
         td.[TaskType] as taskType,
@@ -46,8 +46,8 @@ BEGIN
     FROM [dashboard].[dbo].[TaskInstances] ti
         INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
         INNER JOIN StageInstance si ON ti.StageId = si.StageInstanceId
-        INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId
-        INNER JOIN WF_Applications ap ON pi.ApplicationId = ap.ApplicationID
+        --INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId
+        INNER JOIN WF_Applications ap ON ti.ApplicationId = ti.ApplicationId
         INNER JOIN LaneDefinitions ld ON si.LaneId = ld.LaneId
         LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
         LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID

@@ -177,7 +177,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args
         import urllib.parse
         
-        @flask_app.route('/auth/login', methods=['GET', 'POST'])
+        @flask_app.route('/api/auth/login', methods=['GET', 'POST'])
         def okta_login():
             """Redirect to OKTA for SSO authentication"""
             # Generate state for CSRF protection
@@ -188,7 +188,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             # Generate nonce for replay protection
             nonce = secrets.token_urlsafe(32)
             session['oauth_nonce'] = nonce
-            
+            # Store return URL to redirect back after authentication
+            return_url = request.args.get('return_url') or request.headers.get('Referer')
+            if return_url:
+                session['return_url'] = return_url
+                logger.info(f"Stored return URL for post-auth redirect: {return_url}")
+                
             # Build OKTA authorization URL using v1 endpoints (not default)
             auth_params = {
                 'client_id': Args.instance.okta_client_id,
@@ -317,11 +322,29 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 session.pop('oauth_nonce', None)
                 
                 logger.info(f"User {user.name} successfully authenticated via OKTA SSO {g.access_token}")
+                if 'return_url' in session:
+                    redirect_url = session.pop('return_url')
+                    logger.info(f"Using return_url from session: {redirect_url}")
+                
+                # 2. Otherwise, construct the Angular callback URL
+                else:
+                    # Get the original request host/port from the referer or construct it
+                    referer = request.headers.get('Referer', '')
+                    if referer and '5656' in referer:  # Angular dev server typically runs on 4200
+                        from urllib.parse import urlparse
+                        parsed_referer = urlparse(referer)
+                        redirect_url = f"{parsed_referer.scheme}://{parsed_referer.netloc}/auth/callback"
+                        logger.info(f"Constructed Angular callback URL from referer: {redirect_url}")
+                    else:
+                        # Default to localhost:5656 for development
+                        redirect_url = f"{Args.instance.http_scheme}://{Args.instance.swagger_host}:5656/auth/callback"
+                        logger.info(f"Using default Angular callback URL: {redirect_url}")
                 
                 # Redirect to application home or intended destination
                 next_url = session.pop('next_url', '/') 
                 #return redirect(next_url)
-                return jsonify({
+                from urllib.parse import urlencode
+                auth_params = {
                             'success': True,
                             'message': 'Authentication successful',
                             'access_token': tokens.get('access_token'),
@@ -337,9 +360,16 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                                 'token_location': 'Headers > Authorization > Bearer {access_token}'
                             },
                             'test_api_call': f'GET http://localhost:5656/api/COMPANYTB with Authorization: Bearer {tokens.get("access_token")}'
-                        })
+                        }
                 
-                return jsonify({'error': 'Token validation failed'}), 400
+                #return jsonify({'error': 'Token validation failed'}), 400
+                # Construct final redirect URL with auth parameters
+                final_redirect_url = f"{redirect_url}?{urlencode(auth_params)}"
+                
+                logger.info(f"Redirecting to Angular app: {redirect_url}")
+                logger.info(f"Auth token will be available in URL parameters")
+                
+                return redirect(final_redirect_url)
                 
             except Exception as e:
                 logger.error(f"Error processing OKTA callback: {e}")
@@ -584,6 +614,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         Returns:
             object: ApiLogicServer user (with roles) DotMapX object
         """
+        from database.models import WFUser, WFUSERROLE
         rtn_user = DotMapX()
         rtn_user.client_id = 1  # hack until user data in place
         
@@ -616,7 +647,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             each_user_role = DotMapX()
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
-            
+        user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
+        if user:
+            for role in user.WFUSERROLEList: 
+                each_user_role = DotMapX()
+                each_user_role.role_name = role.UserRole
+                rtn_user.UserRoleList.append(each_user_role)     
         return rtn_user
     
     @staticmethod

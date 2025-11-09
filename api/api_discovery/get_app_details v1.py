@@ -277,11 +277,17 @@ def get_SQL() ->str:
         app.CreatedBy,
         app.ModifiedDate,
       (
-            select * 
-            from WF_Quotes  
-            where WF_Quotes.ApplicationID = app.ApplicationID
+            select q.*,
+            (
+                select *
+                from WF_QuoteItems qi
+                where qi.QuoteID = q.QuoteID
+                for JSON AUTO
+            ) as quote_items
+            from WF_Quotes q
+            where q.ApplicationID = app.ApplicationID
             FOR JSON AUTO
-      ) as "quotes",
+      ) as quotes,
       (
             select * 
             from WF_Files 
