@@ -383,7 +383,6 @@
   "StatusDesc": "Status Description",
   "WFPriority": "Workflow Priority",
   "WFApplicationStatus": "Workflow Application Status",
-  "WFDashboard": "Workflow Dashboard",
   "ApplicationNumber": "Application Number",
   "SubmissionDate": "Submission Date",
   "verify_company": "verify_company",

@@ -706,29 +706,29 @@ application:
             menu_title: WFApplication
             page:
               detail:
-                columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: WFApplication
                 typescript_name: detail_component.jinja
-                visible_columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                visible_columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
               home:
-                columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: WFApplication
                 typescript_name: home_template.jinja
-                visible_columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                visible_columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
               new:
-                columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: WFApplication
                 typescript_name: new_component.jinja
-                visible_columns: ApplicationID,Priority,Status,WFDashboardID,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
+                visible_columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
             template_name: module.jinja
           WFApplicationComment:
             icon: edit_square
@@ -879,36 +879,6 @@ application:
                 title: WFContact
                 typescript_name: new_component.jinja
                 visible_columns: ContactID,ApplicationID,CreatedDate
-            template_name: module.jinja
-          WFDashboard:
-            icon: edit_square
-            menu_name: WFDashboard
-            menu_title: WFDashboard
-            page:
-              detail:
-                columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFDashboard
-                typescript_name: detail_component.jinja
-                visible_columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
-              home:
-                columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFDashboard
-                typescript_name: home_template.jinja
-                visible_columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
-              new:
-                columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFDashboard
-                typescript_name: new_component.jinja
-                visible_columns: ID,count_new,count_in_progress,count_withdrawn,count_overdue,total_count,count_completed
             template_name: module.jinja
           WFFile:
             icon: edit_square
@@ -2806,7 +2776,6 @@ entities:
       template: text
       type: VARCHAR
     - default: '1'
-      name: WFDashboardID
       template: integer
       type: INTEGER
     - name: ApplicationNumber
@@ -2915,10 +2884,6 @@ entities:
       name: WF_ApplicationStatus
       resource: WFApplicationStatus
     - direction: toone
-      fks:
-      - WFDashboardID
-      name: WFDashboard
-      resource: WFDashboard
     type: WFApplication
   WFApplicationComment:
     columns:
@@ -3113,50 +3078,6 @@ entities:
       name: Application
       resource: WFApplication
     type: WFContact
-  WFDashboard:
-    columns:
-    - label: ' I D*'
-      name: ID
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: count_new
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: count_in_progress
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: count_withdrawn
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: count_overdue
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: total_count
-      template: integer
-      type: INTEGER
-    - default: '0'
-      name: count_completed
-      template: integer
-      type: INTEGER
-    favorite: ID
-    hidden: {}
-    label: WFDashboard
-    primary_key:
-    - ID
-    tab_groups:
-    - direction: tomany
-      fks:
-      - WFDashboardID
-      name: WFApplicationList
-      resource: WFApplication
-    type: WFDashboard
   WFFile:
     columns:
     - label: ' File Name*'

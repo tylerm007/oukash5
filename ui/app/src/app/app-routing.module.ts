@@ -1,14 +1,17 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from 'ontimize-web-ngx';
+import { CognitoCallbackComponent } from './login/cognito-callback.component';
+import { CognitoAuthGuardService } from './shared/cognito-auth-guard.service';
 
 export const routes: Routes = [
   {
     path: 'main',
-    canActivate: [AuthGuardService],
+    canActivate: [CognitoAuthGuardService],
     loadChildren: () => import('./main/main.module').then(m => m.MainModule)
   },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
+  { path: 'auth/callback', component: CognitoCallbackComponent },
   { path: '', redirectTo: 'main', pathMatch: 'full' }
 ];
 
