@@ -343,8 +343,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 id_token = tokens.get('id_token')
                 if not id_token:
                     return jsonify({'error': 'No ID token received'}), 400
-                
-                claims = Authentication_Provider.validate_cognito_token(id_token)
+
+                claims = Authentication_Provider.get_claims_from_token(id_token)
                 if not claims:
                     return jsonify({'error': 'Invalid ID token'}), 400
                 wfuser = WFUser.query.filter(WFUser.Email == claims['email']).first()
@@ -356,7 +356,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 user = Authentication_Provider.get_or_create_user_from_claims(claims)
                 if not user:
                     return jsonify({'error': 'User creation failed'}), 400
-                user_roles = ['DISPATCHER']  # Default role
+                user_roles = [] # ['DISPATCHER']  # Default role
                 if wfuser:
                     user_roles = [role.UserRole for role in wfuser.WFUSERROLEList]
                 # Store user info in session
@@ -899,6 +899,17 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         ).digest()
         return base64.b64encode(dig).decode()
 
+    @staticmethod
+    def get_claims_from_token(token: str) -> Optional[Dict[str, Any]]:
+        """Get claims from a JWT token without validation"""
+        try:
+            import jwt as pyjwt
+            claims = pyjwt.decode(token, options={"verify_signature": False})
+            return claims
+        except Exception as e:
+            logger.error(f"Error decoding token claims: {e}")
+            return None
+        
     @staticmethod
     def validate_cognito_token(token: str) -> Optional[Dict[str, Any]]:
         """Validate a Cognito JWT token"""
