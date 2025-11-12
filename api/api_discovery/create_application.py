@@ -1,5 +1,4 @@
 from functools import wraps
-from tkinter import N
 from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
