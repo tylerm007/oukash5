@@ -365,7 +365,7 @@ class LaneDefinition(Base):  # type: ignore
     LaneDescription = Column(Unicode(500))
     EstimatedDurationDays = Column(Integer)
     LaneRole = Column(ForeignKey('LaneRoles.RoleCode'), server_default=text("('NCRC')"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(100), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
@@ -376,9 +376,21 @@ class LaneDefinition(Base):  # type: ignore
 
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="Lane")
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Lane")
+    #StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Lane")
 
 
+class StageDefinition(Base):  # type: ignore
+    __tablename__ = 'StageDefinitions'
+    _s_collection_name = 'StageDefinition'  # type: ignore
+
+    StageId = Column(Integer, autoincrement=True, primary_key=True)
+    StageName = Column(Unicode(100), nullable=False)
+    StageDescription = Column(Unicode(500))
+    EstimatedDurationDays = Column(Integer)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    CreatedBy = Column(Unicode(100), nullable=False)
+    ModifiedDate = Column(DATETIME2)
+    ModifiedBy = Column(Unicode(100))
 
 class TaskDefinition(Base):  # type: ignore
     __tablename__ = 'TaskDefinitions'
@@ -786,7 +798,7 @@ class StageInstance(Base):  # type: ignore
     ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
-    Lane : Mapped["LaneDefinition"] = relationship(back_populates=("StageInstanceList"))
+    #Lane : Mapped["LaneDefinition"] = relationship(back_populates=("StageInstanceList"))
     ProcessInstance : Mapped["ProcessInstance"] = relationship(back_populates=("StageInstanceList"))
     StageStatus : Mapped["StageStatus"] = relationship(back_populates=("StageInstanceList"))
 

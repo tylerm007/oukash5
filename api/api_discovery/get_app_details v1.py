@@ -64,9 +64,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
        
         from database.models import CompanyApplication, WFApplication, COMPANYTB, OWNSTB, PLANTTB, PLANTADDRESSTB, LabelTb, MERCHTB, USEDIN1TB
-        wf_application = WFApplication.query.filter_by(ApplicationID=application_id).first()
-        if not wf_application:
-            return jsonify({"error": f"Application for id {application_id} not found"}), 404
+        #wf_application = WFApplication.query.filter_by(ApplicationID=application_id).first()
+        #if not wf_application:
+        #    return jsonify({"error": f"Application for id {application_id} not found"}), 404
         sql = get_SQL()
         params = {"application_id": application_id}
         results = session.execute(text(sql), params).fetchall()
@@ -149,101 +149,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application_info = {}
         application_info["applicationInfo"] = result
         return jsonify(application_info), 200
-
-
-def get_products(company_id: int, plant_id: int) -> list:
-    sql = f"""
-        SELECT TOP (100) 
-            [PRODUCT_NAME] as labelName,
-            [BRAND_NAME] as brandName,
-            [LABEL_COMPANY] as labelCompany,
-            [INDUSTRIAL] as ConsumerIndustrial,
-            [BLK] as bulkShipped,
-            [Symbol] as certification,
-            [STATUS] as status
-        FROM [ou_kash].[dbo].[PRODUCT_GRID]
-        WHERE [COMPANY_ID] = {company_id}
-        AND [PLANT_ID] = {plant_id}
-    """
-    result = session.execute(text(sql))
-    products = result.fetchall()
-    if not products or len(products) == 0:
-        app_logger.info(f'No products found for company {company_id}: {plant_id}')
-        return []
-    rows = [dict(zip(row._fields, row)) for row in products]
-    return rows
-
-def get_ingredients(company_id:int, plant_id: int) -> list:
-    sql = f"""
-        SELECT TOP (100) 
-            [INGREDIENT_NAME] as ingredient
-            ,[MERCHANDISE_ID] as ncrcId
-            ,[BRAND_NAME] as brand
-            ,[SYMBOL] as certification
-            ,[LABEL_COMPANY] as manufacturer
-            ,[BLK] as packaging
-            ,[DateAdded] as addedDate
-            ,[LabelStatus] as status
-            ,[COMPANY_ID] as companyId
-            ,[PLANT_ID] as plantId
-        FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
-        WHERE [COMPANY_ID] = {company_id}
-        AND [PLANT_ID] = {plant_id}
-    """
-    result = session.execute(text(sql))
-    ingredients = result.fetchall()
-    
-    if not ingredients or len(ingredients) == 0:
-        app_logger.info(f'No ingredients found for company {company_id}: {plant_id}')
-        return []
-    rows = [dict(zip(row._fields, row)) for row in ingredients]
-    return rows
-
-def get_company_address(company_id: int):
-    company = session.query(COMPANYADDRESSTB).filter(COMPANYADDRESSTB.COMPANY_ID == company_id).first()
-    if not company:
-        app_logger.error(f'Company not found: {company_id}')
-        return None
-    address = f"{company.STREET1},{company.STREET2}, {company.CITY}, {company.STATE} {company.ZIP}"
-    app_logger.info(f'Company Address: {address}')
-    return company
-
-def get_plant_address(plant_id: int):
-    plant = session.query(PLANTADDRESSTB).filter(PLANTADDRESSTB.PLANT_ID == plant_id).first()
-    if not plant:
-        app_logger.error(f'Plant Address not found: {plant_id}')
-        return None
-    address = f"{plant.STREET1}, {plant.STREET2}, {plant.CITY}, {plant.STATE} {plant.ZIP}"
-    app_logger.info(f'Plant Address: {address}')
-    return plant
-
-def get_contacts(company_id: int, plant_id: int) -> list:
-    sql = f"""
-        SELECT TOP (3) [pcID]
-            ,[companytitle]
-            ,[owns_ID]
-            ,[Title]
-            ,[FirstName]
-            ,[LastName]
-            ,[Voice]
-            ,[Fax]
-            ,[EMail]
-            ,[Cell]
-            ,[PrimaryCT]
-            ,[BillingCT]
-            ,[WebCT]
-            FROM [ou_kash].[dbo].[PlantContacts]
-                WHERE owns_ID IN
-                (select TOP 3 OWNS_ID from [ou_kash].[dbo].[OWNS_TB] where COMPANY_ID = {company_id} and PLANT_ID = {plant_id})
-    """
-    result = session.execute(text(sql))
-    contacts = result.fetchall()
-    if not contacts:
-        app_logger.error(f'Contact not found: {company_id} {plant_id}')
-        return []
-    rows = [dict(zip(row._fields, row)) for row in contacts]
-    app_logger.info(f'Contact Info: {rows}')
-    return rows
 
 def get_app_status(status_code: str):
     status_map = {

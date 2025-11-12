@@ -49,11 +49,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
   
 
-    @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
+    @app.route('/get_application_tasks_OLD', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
     @jwt_required()
-    def get_application_tasks():
+    def get_application_tasks_OLD():
         """
         Retrieves the NCRC dashboard data
         Returns JSON data only - use: (Invoke-WebRequest -Uri 'http://localhost:get_application_tasks?filter[application_id]=1&page[limit]=10&page[offset]=0' -Method GET).Content | ConvertFrom-Json

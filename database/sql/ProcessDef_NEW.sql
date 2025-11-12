@@ -131,21 +131,19 @@ CREATE TABLE TaskCategories (
 -- Stages are used by the User Interface
 CREATE TABLE StageDefinitions(
 	StageId INT IDENTITY(1,1) PRIMARY KEY,
-	ProcessId INT NOT NULL,
 	StageName nvarchar(100) NOT NULL, -- AKA Stage
 	StageDescription nvarchar(500) NULL,
-	EstimatedDurationDays int NULL
+	EstimatedDurationDays int NULL,
 	CreatedDate datetime2(7) NOT NULL DEFAULT GETUTCDATE(),
 	CreatedBy nvarchar(100) NOT NULL,
     ModifiedDate datetime2(7) NULL,
-    ModifiedBy nvarchar(100) NULL,
-    FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
+    ModifiedBy nvarchar(100) NULL
 );
 -- Task Definitions within StageDefinition 
 CREATE TABLE TaskDefinitions (
     TaskId INT IDENTITY(1,1) PRIMARY KEY,
     --ProcessId INT NOT NULL,
-    --LaneId INT NOT NULL,
+    LaneId INT NOT NULL, -- SUPPORT BPMN Notation that a task can appear in a Lane and multiple Stages
     StageId INT NOT NULL,
     TaskName NVARCHAR(100) NOT NULL,
     TaskType NVARCHAR(20) NOT NULL, -- 'UserTask', 'ServiceTask', 'ScriptTask', 'Gateway', 'Event'
@@ -169,6 +167,10 @@ CREATE TABLE TaskDefinitions (
     FOREIGN KEY (StageId) REFERENCES StageDefinitions(StageId)
     --FOREIGN KEY (ProcessId) REFERENCES ProcessDefinitions(ProcessId)
 );
+-- =============================================
+ALTER TABLE TaskDefinitions ADD COLUMN StageId INT NOT NULL;
+ALTER TABLE TaskDefinitions ADD CONSTRAINT FK__TaskDefin__StageId__5D41AAD6 FOREIGN KEY (StageId) REFERENCES StageDefinitions(StageId);
+GO
 -- Add additional columns to TaskDefinitions for Pre and Post processing
 -- ALTER TABLE TaskDefinitions 
 -- ADD 

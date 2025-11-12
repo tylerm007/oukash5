@@ -64,7 +64,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         offset = int(data.get('page[offset]', 0))
         priority = data.get('priority', None) or data.get('filter[priority]', None)
         name_filter = data.get('name', None) or data.get('filter[name]', None)
-        application_id = data.get('application_id', None) or data.get('filter[application_id]', None)   
+        application_id = data.get('application_id', None) or data.get('filter[applicationId]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
 
         #sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
@@ -101,7 +101,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             result = transform_app(row)
             data.append(result)
         #data = [dict(row) for row in result]
-        total_count = WFApplication.query.count()
+        wf_count =session.execute(text(get_total_count()), params).fetchone()[0]
+        total_count = wf_count # len(data) if name or priority or status else 1 if  application_id else wf_count
         end_time = time.time()
         processing_time = end_time - start_time
         return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
@@ -367,4 +368,16 @@ def get_SQL() -> str:
      OFFSET :offset ROWS
      FETCH NEXT :limit ROWS ONLY;
 
+    '''
+
+def get_total_count() -> str:
+    return '''
+    SELECT COUNT(*) as total_count
+    FROM WF_Applications  app
+         LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+         LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+     WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+            (:priority IS NULL OR app.Priority = :priority) and
+            (:status IS NULL OR app.Status = :status) and
+            (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
     '''

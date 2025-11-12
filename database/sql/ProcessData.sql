@@ -225,6 +225,12 @@ VALUES
 (1, 'Contract', 'Contract review and certification agreement', 3, 'LEGAL', 'system'),
 (1, 'Certification', 'Final certification and invoice processing', 2, 'CERT', 'system');
 GO
+
+-- StageDefinitions Inserts based on LaneDefinitions
+insert into StageDefinitions ( StageName, StageDescription, EstimatedDurationDays, CreatedBy)
+select  LaneName, LaneDescription, EstimatedDurationDays, CreatedBy
+from LaneDefinitions;
+GO
 -- =============================================
 -- 3. StageDefinitions Inserts
 -- =============================================

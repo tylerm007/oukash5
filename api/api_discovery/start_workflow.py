@@ -482,14 +482,14 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
     if start_instance_id is None:
         raise Exception(f'Start TaskInstance not found for process: {process_name}')    
-    _complete_task(start_instance_id, 'Started', 'system', 'Workflow started', access_token)
+    _complete_task(start_instance_id, 'Started', started_by, 'Workflow started', access_token)
 
     from api.api_discovery.assign_role import add_role_assignment
     add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
     app_logger.info(f'Start Workflow started by {started_by} for application {application.ApplicationID} with process_id {process_instance_id}')
     return {"process_instance_id": process_instance_id}
 
-def _start_workflow_async(process_name: str, application_id: int, started_by: str, priority: str):
+def _start_workflow_async(process_name: str, application_id: int, started_by: str, priority: str, access_token: str = None):
     """
     BATCH OPTIMIZED VERSION - Process stages with optimized batch operations for better performance.
     
@@ -587,8 +587,8 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
         start_instance_id = stage_results['start_instance_id']
         
         # Step 7: Complete the start task
-        access_token = request.headers.get('Authorization')
-        _complete_task(start_instance_id, 'Started', 'system', 'Workflow started', access_token)
+        access_token = request.headers.get('Authorization') if access_token is None else access_token
+        _complete_task(start_instance_id, result='Started', completed_by=started_by, completion_notes='Workflow started', access_token=access_token, depth=0)
         
         # Step 8: Add role assignment
         from api.api_discovery.assign_role import add_role_assignment
@@ -778,7 +778,7 @@ def _start_workflow_with_session(thread_session, process_name: str, application_
         
         # Complete the start task
         if start_instance_id:
-            _complete_task_with_session(thread_session, start_instance_id, 'Started', 'system', 'Workflow started')
+            _complete_task_with_session(thread_session, start_instance_id, 'Started', started_by, 'Workflow started')
         
         # Add role assignment
         role_assignment = models.RoleAssigment(
@@ -798,7 +798,7 @@ def _start_workflow_with_session(thread_session, process_name: str, application_
         thread_session.rollback()
         raise e
 
-def _complete_task_with_session(thread_session, task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API'):
+def _complete_task_with_session(thread_session, task_instance_id: int, result: str = None, completed_by: str = None, completion_notes: str = 'Complete Task via API'):
     """
     Complete task using specific database session (for background execution).
     This is a simplified version - you may need to adapt based on your full _complete_task logic.

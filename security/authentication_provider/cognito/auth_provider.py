@@ -1022,7 +1022,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         if isinstance(password, dict):
             jwt_data = password
         elif isinstance(password, str) and password.startswith('eyJ'):
-            jwt_data = Authentication_Provider.validate_cognito_token(password)
+            # jwt_data = Authentication_Provider.validate_cognito_token(password)
+            jwt_data = Authentication_Provider.get_claims_from_token(password)
             if not jwt_data:
                 rtn_user = DotMapX()
                 rtn_user.id = id
@@ -1059,7 +1060,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         if isinstance(password, str) and password.startswith('eyJ'):
             # Try Cognito validation
-            claims = Authentication_Provider.validate_cognito_token(password)
+            #claims = Authentication_Provider.validate_cognito_token(password)
+            claims = Authentication_Provider.get_claims_from_token(password)
             if claims:
                 token_user_id = claims.get('sub') or claims.get('email')
                 user_id = getattr(user, 'id', None) or getattr(user, 'name', None)
