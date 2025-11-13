@@ -73,7 +73,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @admin_required()
     @jwt_required()
     def deleteApplication():
-        application_id = request.args.get('application_id') or request.args.get('applicationId') or None
+
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        application_id = request.args.get('application_id') or request.args.get('applicationId') or  request.args.get('applicationID') or None
         if not application_id:
             return jsonify({"result": 'applicationId parameter is required'}), 400
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationID == application_id).first()

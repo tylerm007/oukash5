@@ -40,6 +40,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/assignRole', methods=['OPTIONS','POST'])
     @cross_origin()
     @admin_required()
+    @jwt_required()
     def assignRole():
         """        
             new custom end point to retrive admin for given ncrc
@@ -71,31 +72,31 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         task_id = data.get('taskId')  # TaskInstanceId
         role = data.get('role')
         assignee = data.get('assignee')
-
+        user_jwt = get_jwt().get("sub", "unknown")
+        #current_user = Security.current_user()
+        #user_id = current_user.id if "id" in current_user else user_jwt
+        if  "@" in user_jwt:
+            user = models.WFUser.query.filter_by(Email=user_jwt).first().Username
+        else:
+            user = user_jwt
+        access_token = request.headers.get('Authorization')
         if not data or 'appId' not in data or 'taskId' not in data or 'role' not in data or 'assignee' not in data:
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400
 
         app_logger.info(f'Assign Role {role} to {assignee} for application {app_id} task {task_id}')
         # Here you would add the loigic to assign the role to the user for the application
 
-        _assign_role(task_id, role, assignee, app_id)
+        _assign_role(task_id, role, assignee, app_id, user, access_token)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
-        
-def _assign_role(task_id:int, role: str, assignee: str, app_id: int):
+
+def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, access_token: str):
     """Assign role to user for the application.
     Args:
         role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
         assignee (str): The user to whom the role is assigned.
         app_id (int): The ID of the application.
     """
-    application = session.query(models.WFApplication).filter_by(ApplicationID=app_id).first()
-    if not application:
-        raise ValueError(f"Application with ID {app_id} not found")
-    # move to Rule
-    application.AssignedTo = assignee
-    application.AssignedDate = datetime.utcnow()
-    application.Status = 'INP'
-    session.add(application)
+    
     try:
         
         add_role_assignment(app_id, role, assignee)
@@ -110,7 +111,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int):
             add_role_assignment(app_id, 'PROD', admin_assignee)
             add_role_assignment(app_id, 'LEGAL', admin_assignee)
         session.commit()
-        _complete_task(task_id, 'Assign Role', 'system', f'Role {role} assigned to {assignee}')
+        _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
     except Exception as e:
         session.rollback()
         app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')

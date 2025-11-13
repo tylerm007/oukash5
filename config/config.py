@@ -118,7 +118,7 @@ class Config:
     CREATED_PORT = "5656"
     CREATED_SWAGGER_PORT = CREATED_PORT
     """ for codespaces - see values in launch config """
-    CREATED_HTTP_SCHEME = "http"  # http | https - overridden by args, env variable APILOGICPROJECT_HTTP_SCHEME
+    CREATED_HTTP_SCHEME = "https"  # http | https - overridden by args, env variable APILOGICPROJECT_HTTP_SCHEME
     
     # SSL Configuration
     SSL_CERT_PATH = environ.get("FLASK_SSL_CERT", "security/ssl/server.crt")

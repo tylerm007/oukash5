@@ -78,7 +78,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         result = data.get("result", None)
         access_token = request.headers.get("Authorization")
         app_logger.debug(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
-        print(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
+        #print(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
         if status in ['PENDING', 'IN_PROGRESS']:
             task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
             if not task_instance:
@@ -149,7 +149,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
   
 
 
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'system', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
+def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'SYSTEM', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
         '''Complete a task instance in the workflow and trigger the next task(s) as needed.'''
         # Find the task instance
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
@@ -194,7 +194,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             status = "COMPLETED"
             task_instance.CompletedDate = datetime.utcnow()
             task_instance.ResultData = completion_notes
-            task_instance.CompletedBy = completed_by
+            task_instance.AssignedTo = completed_by
         task_instance.ModifiedDate = datetime.utcnow()
         task_instance.Status = status
         task_instance.Result = result

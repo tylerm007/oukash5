@@ -179,7 +179,7 @@ def set_application_attribute(application_id, name, value, data: DotMap) -> DotM
 
     server_uri = get_client_uri()
     # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers)
+    response = make_secure_request('patch', f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers, verify=False)
     if response.status_code == 200:
         app_logger.info(f"Application {application_id} attribute {name} set to {value}")
         data.Result = True
@@ -212,7 +212,7 @@ def set_task_attribute(task_instance_id, name, value, data: DotMap) -> bool:
    
     server_uri = get_client_uri()
     # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers)
+    response = make_secure_request('patch', f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers, verify=False)
     if response.status_code == 200:
         app_logger.info(f"TaskInstance {task_instance_id} attribute {name} set to {value}")
         data.Result = True
@@ -246,7 +246,7 @@ def set_stage_attribute(stage_id, name, value, data:DotMap) -> DotMap:
     
     server_uri = get_client_uri()
     # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers)
+    response = make_secure_request('patch', f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers, verify=False)
     if response.status_code == 200:
         app_logger.info(f"StageInstance {stage_id} attribute {name} set to {value}")
         data.Result = True
