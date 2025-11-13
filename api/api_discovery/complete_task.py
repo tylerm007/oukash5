@@ -79,13 +79,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         access_token = request.headers.get("Authorization")
         app_logger.debug(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
         #print(f'Completing task: {task_instance_id} by {completed_by} using result: {result}')
-        if status in ['PENDING', 'IN_PROGRESS']:
+        if status in ['PENDING', 'IN_PROGRESS', 'In Progress']:
             task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
             if not task_instance:
                 return jsonify({"status": "error", "message": "Task instance not found"}), 404
             if task_instance.Status == 'COMPLETED':
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
-            task_instance.Status = status
+            task_instance.Status = 'IN_PROGRESS' if status == 'In Progress' else status
+            task_instance.ModifiedDate = datetime.utcnow()
+            task_instance.AssignedTo = completed_by
             session.add(task_instance)
             session.commit()
             return jsonify({"status": "success", "message": f"Task status updated to {status} successfully"}), 200
