@@ -376,7 +376,7 @@ class LaneDefinition(Base):  # type: ignore
 
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="Lane")
-    #StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Lane")
+    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Lane")
 
 
 class StageDefinition(Base):  # type: ignore
@@ -798,7 +798,7 @@ class StageInstance(Base):  # type: ignore
     ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
-    #Lane : Mapped["LaneDefinition"] = relationship(back_populates=("StageInstanceList"))
+    Lane : Mapped["LaneDefinition"] = relationship(back_populates=("StageInstanceList"))
     ProcessInstance : Mapped["ProcessInstance"] = relationship(back_populates=("StageInstanceList"))
     StageStatus : Mapped["StageStatus"] = relationship(back_populates=("StageInstanceList"))
 
