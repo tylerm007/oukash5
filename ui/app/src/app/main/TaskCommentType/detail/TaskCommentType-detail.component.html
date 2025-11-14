@@ -31,11 +31,11 @@
         entity="TaskComment" 
         keys="CommentId"
         parent-keys="CommentType:CommentTypeCode"
-        columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
         horizontal-scroll="yes"
         detail-form-route="TaskComment" 
         edit-form-route="TaskComment"
-        visible-columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        visible-columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
         sort-columns="CommentId" 
         query-rows="25" 
         quick-filter="yes"
@@ -53,16 +53,16 @@
         
           <o-table-column #CommentId attr="CommentId" title=" Comment Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
-    <o-table-cell-renderer-service attr="ProcessInstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="CommentTypeCode:ProcessInstanceId"
-        value-column="InstanceId" keys="ProcessInstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="CommentTypeCode:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
+        
+          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column attr="TaskInstanceId" title="TaskInstance">
     <o-table-cell-renderer-service attr="TaskInstanceId" 

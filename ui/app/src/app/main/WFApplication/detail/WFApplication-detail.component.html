@@ -54,15 +54,7 @@
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       
-      <o-integer-input #ApplicationNumber attr="ApplicationNumber" label="ApplicationNumber" type="integer" editable="no" required="yes" ></o-integer-input>
-      
-      <o-date-input #SubmissionDate attr="SubmissionDate" value-type="string" label="SubmissionDate" enabled="yes" required="yes" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-text-input #AssignedTo attr="AssignedTo" label="AssignedTo" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-text-input #AssignedBy attr="AssignedBy" label="AssignedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-date-input #AssignedDate attr="AssignedDate" value-type="string" label="AssignedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      <o-integer-input #ApplicationNumber attr="ApplicationNumber" label="ApplicationNumber" type="integer" editable="no" required="no" ></o-integer-input>
       
       <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
@@ -72,46 +64,29 @@
       
       <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
-      <o-checkbox #verify_company attr="verify_company" label="verify_company" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #verify_plant attr="verify_plant" label="verify_plant" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #verify_contacts attr="verify_contacts" label="verify_contacts" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #verify_products attr="verify_products" label="verify_products" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #verify_ingredients attr="verify_ingredients" label="verify_ingredients" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #verify_quote attr="verify_quote" label="verify_quote" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-checkbox #assign_ncrc_rep attr="assign_ncrc_rep" label="assign_ncrc_rep" read-only="no" enabled="yes"></o-checkbox>
-      
       <o-integer-input #CompanyID attr="CompanyID" label="CompanyID" type="integer" editable="no" required="yes" ></o-integer-input>
       
       <o-integer-input #PlantID attr="PlantID" label="PlantID" type="integer" editable="no" required="no" ></o-integer-input>
-      <o-button (click)="start_workflow()" fxFlex="30%"
-      label="Start Workflow" 
-      icon="download_file" color="primary" type="raised"></o-button>
+      
     </div>
-
   </o-row>
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ROLEASSIGMENT-ApplicationId">
+        <mat-tab label="ROLEASSIGNMENT-ApplicationId">
     <div layout-padding>
       <o-table 
-        attr="RoleAssigmentTable" 
-        service="RoleAssigment" 
-        entity="RoleAssigment" 
-        keys="RoleAssigmentID"
+        attr="RoleAssignmentTable" 
+        service="RoleAssignment" 
+        entity="RoleAssignment" 
+        keys="RoleAssignmentID"
         parent-keys="ApplicationId:ApplicationID"
-        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
         horizontal-scroll="yes"
-        detail-form-route="RoleAssigment" 
-        edit-form-route="RoleAssigment"
-        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
-        sort-columns="RoleAssigmentID" 
+        detail-form-route="RoleAssignment" 
+        edit-form-route="RoleAssignment"
+        visible-columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        sort-columns="RoleAssignmentID" 
         query-rows="25" 
         quick-filter="yes"
         row-height="medium" 
@@ -126,7 +101,7 @@
         edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         
-          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #RoleAssignmentID attr="RoleAssignmentID" title=" Role Assignment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column attr="ApplicationId" title="Application">
     <o-table-cell-renderer-service attr="ApplicationId" 
@@ -144,6 +119,141 @@
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
           <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="STAGEINSTANCE-ApplicationId">
+    <div layout-padding>
+      <o-table 
+        attr="StageInstanceTable" 
+        service="StageInstance" 
+        entity="StageInstance" 
+        keys="StageInstanceId"
+        parent-keys="ApplicationId:ApplicationID"
+        columns="StageInstanceId;ApplicationId;StageId;Status;StartedDate;CompletedDate;DurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        horizontal-scroll="yes"
+        detail-form-route="StageInstance" 
+        edit-form-route="StageInstance"
+        visible-columns="StageInstanceId;ApplicationId;StageId;Status;StartedDate;CompletedDate;DurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        sort-columns="StageInstanceId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #StageInstanceId attr="StageInstanceId" title=" Stage Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="ApplicationID:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="StageId" title="Stage">
+    <o-table-cell-renderer-service attr="StageId" 
+        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
+        parent-keys="ApplicationID:StageId"
+        value-column="StageName" keys="StageId"
+        visible-columns="StageName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #DurationDays attr="DurationDays" title="DurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="TASKCOMMENT-ApplicationId">
+    <div layout-padding>
+      <o-table 
+        attr="TaskCommentTable" 
+        service="TaskComment" 
+        entity="TaskComment" 
+        keys="CommentId"
+        parent-keys="ApplicationId:ApplicationID"
+        columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        horizontal-scroll="yes"
+        detail-form-route="TaskComment" 
+        edit-form-route="TaskComment"
+        visible-columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        sort-columns="CommentId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #CommentId attr="CommentId" title=" Comment Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="ApplicationID:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="TaskInstanceId" title="TaskInstance">
+    <o-table-cell-renderer-service attr="TaskInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="ApplicationID:TaskInstanceId"
+        value-column="TaskInstanceId" keys="TaskInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #CommentText attr="CommentText" title="CommentText" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Author attr="Author" title="Author" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column attr="IsVisible" title="IsVisible">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
@@ -208,66 +318,6 @@
     </div>
 </mat-tab>
         
-        <mat-tab label="WFAPPLICATIONCOMMENT-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFApplicationCommentTable" 
-        service="WFApplicationComment" 
-        entity="WFApplicationComment" 
-        keys="CommentID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="CommentID;ApplicationID;Author;CommentText;CommentType;Category;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
-        horizontal-scroll="yes"
-        detail-form-route="WFApplicationComment" 
-        edit-form-route="WFApplicationComment"
-        visible-columns="CommentID;ApplicationID;Author;CommentText;CommentType;Category;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
-        sort-columns="CommentID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #CommentID attr="CommentID" title=" Comment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Author attr="Author" title="Author" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CommentText attr="CommentText" title="CommentText" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Category attr="Category" title="Category" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
         <mat-tab label="WFAPPLICATIONMESSAGE-ApplicationID">
     <div layout-padding>
       <o-table 
@@ -276,11 +326,11 @@
         entity="WFApplicationMessage" 
         keys="MessageID"
         parent-keys="ApplicationID:ApplicationID"
-        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         horizontal-scroll="yes"
         detail-form-route="WFApplicationMessage" 
         edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         sort-columns="MessageID" 
         query-rows="25" 
         quick-filter="yes"
@@ -319,112 +369,7 @@
         
           <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
-        <mat-tab label="WFCOMPANY-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFCompanyTable" 
-        service="WFCompany" 
-        entity="WFCompany" 
-        keys="CompanyID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="CompanyID;ApplicationID;CreatedDate;KashrusCompanyID"  
-        horizontal-scroll="yes"
-        detail-form-route="WFCompany" 
-        edit-form-route="WFCompany"
-        visible-columns="CompanyID;ApplicationID;CreatedDate;KashrusCompanyID"  
-        sort-columns="CompanyID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #CompanyID attr="CompanyID" title=" Company I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #KashrusCompanyID attr="KashrusCompanyID" title="KashrusCompanyID" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
-        <mat-tab label="WFCONTACT-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFContactTable" 
-        service="WFContact" 
-        entity="WFContact" 
-        keys="ContactID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="ContactName;ApplicationID;Title;ContactPhone;ContactEmail;IsPrimary;CreatedDate;ContactID"  
-        horizontal-scroll="yes"
-        detail-form-route="WFContact" 
-        edit-form-route="WFContact"
-        visible-columns="ContactName;ApplicationID;Title;ContactPhone;ContactEmail;IsPrimary;CreatedDate;ContactID"  
-        sort-columns="ContactName" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #ContactName attr="ContactName" title=" Contact Name" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Title attr="Title" title="Title" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #ContactPhone attr="ContactPhone" title="ContactPhone" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #ContactEmail attr="ContactEmail" title="ContactEmail" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column attr="IsPrimary" title="IsPrimary">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #ContactID attr="ContactID" title="ContactID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
@@ -493,181 +438,6 @@
           <o-table-column #FileID attr="FileID" title="FileID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column attr="IsProcessed" title="IsProcessed">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
-        <mat-tab label="WFINGREDIENT-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFIngredientTable" 
-        service="WFIngredient" 
-        entity="WFIngredient" 
-        keys="IngredientID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="IngredientName;ApplicationID;Source;RMC;Manufacturer;Packaging;Agency;AddedDate;AddedBy;Status;CreatedDate;ModifiedDate;IngredientID;UKDId;Brand;NCRCId"  
-        horizontal-scroll="yes"
-        detail-form-route="WFIngredient" 
-        edit-form-route="WFIngredient"
-        visible-columns="IngredientName;ApplicationID;Source;RMC;Manufacturer;Packaging;Agency;AddedDate;AddedBy;Status;CreatedDate;ModifiedDate;IngredientID;UKDId;Brand;NCRCId"  
-        sort-columns="IngredientName" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #IngredientName attr="IngredientName" title=" Ingredient Name" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Source attr="Source" title="Source" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #RMC attr="RMC" title="RMC" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #Manufacturer attr="Manufacturer" title="Manufacturer" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Packaging attr="Packaging" title="Packaging" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Agency attr="Agency" title="Agency" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #AddedDate attr="AddedDate" title="AddedDate" type="DATE" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #AddedBy attr="AddedBy" title="AddedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #IngredientID attr="IngredientID" title="IngredientID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #UKDId attr="UKDId" title="UKDId" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #Brand attr="Brand" title="Brand" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #NCRCId attr="NCRCId" title="NCRCId" editable="no" required="yes" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-
-        <mat-tab label="WFPRODUCT-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFProductTable" 
-        service="WFProduct" 
-        entity="WFProduct" 
-        keys="ProductID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="labelName;ApplicationID;action;doNotImport;message;labelType;brandName;distributorName;group;symbol;dpm;category;usePlantStatus;status;legacyStatus;consumer;industrial;processedBy;processedDate;notes;ProductID;legacyId;labelCompanyId;finalized"  
-        horizontal-scroll="yes"
-        detail-form-route="WFProduct" 
-        edit-form-route="WFProduct"
-        visible-columns="labelName;ApplicationID;action;doNotImport;message;labelType;brandName;distributorName;group;symbol;dpm;category;usePlantStatus;status;legacyStatus;consumer;industrial;processedBy;processedDate;notes;ProductID;legacyId;labelCompanyId;finalized"  
-        sort-columns="labelName" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #labelName attr="labelName" title=" label Name" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #action attr="action" title="action" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="doNotImport" title="doNotImport">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #message attr="message" title="message" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #labelType attr="labelType" title="labelType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #brandName attr="brandName" title="brandName" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #distributorName attr="distributorName" title="distributorName" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #group attr="group" title="group" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #symbol attr="symbol" title="symbol" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #dpm attr="dpm" title="dpm" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #category attr="category" title="category" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="usePlantStatus" title="usePlantStatus">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #status attr="status" title="status" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #legacyStatus attr="legacyStatus" title="legacyStatus" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column attr="consumer" title="consumer">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column attr="industrial" title="industrial">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #processedBy attr="processedBy" title="processedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #processedDate attr="processedDate" title="processedDate" type="DATE" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #notes attr="notes" title="notes" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ProductID attr="ProductID" title="ProductID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #legacyId attr="legacyId" title="legacyId" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #labelCompanyId attr="labelCompanyId" title="labelCompanyId" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="finalized" title="finalized">
     <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
         render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
 </o-table-column>

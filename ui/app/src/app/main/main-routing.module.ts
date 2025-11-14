@@ -13,51 +13,19 @@ export const routes: Routes = [
         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
       
     
-        { path: 'COMPANYADDRESSTB', loadChildren: () => import('./COMPANYADDRESSTB/COMPANYADDRESSTB.module').then(m => m.COMPANYADDRESSTBModule) },
-    
-        { path: 'COMPANYTB', loadChildren: () => import('./COMPANYTB/COMPANYTB.module').then(m => m.COMPANYTBModule) },
-    
-        { path: 'CompanyApplication', loadChildren: () => import('./CompanyApplication/CompanyApplication.module').then(m => m.CompanyApplicationModule) },
-    
-        { path: 'FormulaProduct', loadChildren: () => import('./FormulaProduct/FormulaProduct.module').then(m => m.FormulaProductModule) },
-    
-        { path: 'FormulaSubmissionComponent', loadChildren: () => import('./FormulaSubmissionComponent/FormulaSubmissionComponent.module').then(m => m.FormulaSubmissionComponentModule) },
-    
-        { path: 'FormulaSubmissionPlant', loadChildren: () => import('./FormulaSubmissionPlant/FormulaSubmissionPlant.module').then(m => m.FormulaSubmissionPlantModule) },
-    
-        { path: 'LabelTb', loadChildren: () => import('./LabelTb/LabelTb.module').then(m => m.LabelTbModule) },
+        { path: 'EventAction', loadChildren: () => import('./EventAction/EventAction.module').then(m => m.EventActionModule) },
     
         { path: 'LaneDefinition', loadChildren: () => import('./LaneDefinition/LaneDefinition.module').then(m => m.LaneDefinitionModule) },
     
         { path: 'LaneRole', loadChildren: () => import('./LaneRole/LaneRole.module').then(m => m.LaneRoleModule) },
-        { path: 'MERCHTB', loadChildren: () => import('./MERCHTB/MERCHTB.module').then(m => m.MERCHTBModule) },
-    
-        { path: 'OWNSTB', loadChildren: () => import('./OWNSTB/OWNSTB.module').then(m => m.OWNSTBModule) },
-    
-        { path: 'PLANTADDRESSTB', loadChildren: () => import('./PLANTADDRESSTB/PLANTADDRESSTB.module').then(m => m.PLANTADDRESSTBModule) },
-    
-        { path: 'PLANTCERTDETAIL', loadChildren: () => import('./PLANTCERTDETAIL/PLANTCERTDETAIL.module').then(m => m.PLANTCERTDETAILModule) },
-    
-        { path: 'PLANTCOMMENT', loadChildren: () => import('./PLANTCOMMENT/PLANTCOMMENT.module').then(m => m.PLANTCOMMENTModule) },
-    
-        { path: 'PLANTTB', loadChildren: () => import('./PLANTTB/PLANTTB.module').then(m => m.PLANTTBModule) },
-    
     
         { path: 'ProcessDefinition', loadChildren: () => import('./ProcessDefinition/ProcessDefinition.module').then(m => m.ProcessDefinitionModule) },
     
-        { path: 'ProcessInstance', loadChildren: () => import('./ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule) },
-    
-        { path: 'ProcessMessage', loadChildren: () => import('./ProcessMessage/ProcessMessage.module').then(m => m.ProcessMessageModule) },
-    
         { path: 'ProcessMessageType', loadChildren: () => import('./ProcessMessageType/ProcessMessageType.module').then(m => m.ProcessMessageTypeModule) },
     
-        { path: 'ProcessPriority', loadChildren: () => import('./ProcessPriority/ProcessPriority.module').then(m => m.ProcessPriorityModule) },
+        { path: 'RoleAssignment', loadChildren: () => import('./RoleAssignment/RoleAssignment.module').then(m => m.RoleAssignmentModule) },
     
-        { path: 'ProcessStatus', loadChildren: () => import('./ProcessStatus/ProcessStatus.module').then(m => m.ProcessStatusModule) },
-    
-        { path: 'ProducedIn1Tb', loadChildren: () => import('./ProducedIn1Tb/ProducedIn1Tb.module').then(m => m.ProducedIn1TbModule) },
-    
-        { path: 'RoleAssigment', loadChildren: () => import('./RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule) },
+        { path: 'StageDefinition', loadChildren: () => import('./StageDefinition/StageDefinition.module').then(m => m.StageDefinitionModule) },
     
         { path: 'StageInstance', loadChildren: () => import('./StageInstance/StageInstance.module').then(m => m.StageInstanceModule) },
     
@@ -79,33 +47,21 @@ export const routes: Routes = [
     
         { path: 'TaskType', loadChildren: () => import('./TaskType/TaskType.module').then(m => m.TaskTypeModule) },
     
-        { path: 'USEDIN1TB', loadChildren: () => import('./USEDIN1TB/USEDIN1TB.module').then(m => m.USEDIN1TBModule) },
-    
         { path: 'WFActivityLog', loadChildren: () => import('./WFActivityLog/WFActivityLog.module').then(m => m.WFActivityLogModule) },
     
         { path: 'WFActivityStatus', loadChildren: () => import('./WFActivityStatus/WFActivityStatus.module').then(m => m.WFActivityStatusModule) },
     
         { path: 'WFApplication', loadChildren: () => import('./WFApplication/WFApplication.module').then(m => m.WFApplicationModule) },
     
-        { path: 'WFApplicationComment', loadChildren: () => import('./WFApplicationComment/WFApplicationComment.module').then(m => m.WFApplicationCommentModule) },
-    
         { path: 'WFApplicationMessage', loadChildren: () => import('./WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule) },
     
         { path: 'WFApplicationStatus', loadChildren: () => import('./WFApplicationStatus/WFApplicationStatus.module').then(m => m.WFApplicationStatusModule) },
-    
-        { path: 'WFCompany', loadChildren: () => import('./WFCompany/WFCompany.module').then(m => m.WFCompanyModule) },
-    
-        { path: 'WFContact', loadChildren: () => import('./WFContact/WFContact.module').then(m => m.WFContactModule) },
     
         { path: 'WFFile', loadChildren: () => import('./WFFile/WFFile.module').then(m => m.WFFileModule) },
     
         { path: 'WFFileType', loadChildren: () => import('./WFFileType/WFFileType.module').then(m => m.WFFileTypeModule) },
     
-        { path: 'WFIngredient', loadChildren: () => import('./WFIngredient/WFIngredient.module').then(m => m.WFIngredientModule) },
-    
         { path: 'WFPriority', loadChildren: () => import('./WFPriority/WFPriority.module').then(m => m.WFPriorityModule) },
-    
-        { path: 'WFProduct', loadChildren: () => import('./WFProduct/WFProduct.module').then(m => m.WFProductModule) },
     
         { path: 'WFQuote', loadChildren: () => import('./WFQuote/WFQuote.module').then(m => m.WFQuoteModule) },
     
@@ -115,11 +71,11 @@ export const routes: Routes = [
     
         { path: 'WFRole', loadChildren: () => import('./WFRole/WFRole.module').then(m => m.WFRoleModule) },
     
-        { path: 'WFUSERADMIN', loadChildren: () => import('./WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule) },
-    
-        { path: 'WFUSERROLE', loadChildren: () => import('./WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule) },
-    
         { path: 'WFUser', loadChildren: () => import('./WFUser/WFUser.module').then(m => m.WFUserModule) },
+    
+        { path: 'WFUserAdmin', loadChildren: () => import('./WFUserAdmin/WFUserAdmin.module').then(m => m.WFUserAdminModule) },
+    
+        { path: 'WFUserRole', loadChildren: () => import('./WFUserRole/WFUserRole.module').then(m => m.WFUserRoleModule) },
     
         { path: 'WorkflowHistory', loadChildren: () => import('./WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule) },
     

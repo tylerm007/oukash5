@@ -24,26 +24,25 @@
             
             <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
-            
             <o-table-column attr="StageId" title="Stage">
-            <!-- o-table-cell-renderer-service attr="StageId" 
-                service="StageInstance" entity="StageInstanceType" columns="StageId;StageInstanceId"
-                parent-keys="TaskInstanceId:StageId"
-                value-column="StageId" keys="StageId"
-                visible-columns="StageInstanceId" separator=" - " width="680px">
-            </o-table-cell-renderer-service -->
-            </o-table-column>
-                    
+    <o-table-cell-renderer-service attr="StageId" 
+        service="StageInstance" entity="StageInstanceType" columns="StageInstanceId;StageInstanceId"
+        parent-keys="TaskInstanceId:StageId"
+        value-column="StageInstanceId" keys="StageId"
+        visible-columns="StageInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
             <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
             
-        <o-table-column attr="TaskId" title="Task">
-            <o-table-cell-renderer-service attr="TaskId" 
-                service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
-                parent-keys="TaskInstanceId:TaskId"
-                value-column="TaskName" keys="TaskId"
-                visible-columns="TaskId;TaskName" separator=" - " width="680px">
-            </o-table-cell-renderer-service>
-        </o-table-column>
+            <o-table-column attr="TaskId" title="Task">
+    <o-table-cell-renderer-service attr="TaskId" 
+        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
+        parent-keys="TaskInstanceId:TaskId"
+        value-column="TaskName" keys="TaskId"
+        visible-columns="TaskName" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
             
             <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
             
@@ -58,7 +57,7 @@
             <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-    
+            
             <o-table-context-menu></o-table-context-menu>
             <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
         </o-table>

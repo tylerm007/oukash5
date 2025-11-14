@@ -13,14 +13,7 @@ const routes: Routes = [
         permissionId: 'ProcessMessageType-detail-permissions'
       }
     }
-  },{
-    path: ':MessageType/ProcessMessage', loadChildren: () => import('../ProcessMessage/ProcessMessage.module').then(m => m.ProcessMessageModule),
-    data: {
-        oPermission: {
-            permissionId: 'ProcessMessage-detail-permissions'
-        }
-    }
-}
+  }
 ];
 
 export const PROCESSMESSAGETYPE_MODULE_DECLARATIONS = [

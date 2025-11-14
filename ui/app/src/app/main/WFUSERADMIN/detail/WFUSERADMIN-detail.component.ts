@@ -3,11 +3,11 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 
 
 @Component({
-  selector: 'WFUSERADMIN-detail',
-  templateUrl: './WFUSERADMIN-detail.component.html',
-  styleUrls: ['./WFUSERADMIN-detail.component.scss']
+  selector: 'WFUserAdmin-detail',
+  templateUrl: './WFUserAdmin-detail.component.html',
+  styleUrls: ['./WFUserAdmin-detail.component.scss']
 })
-export class WFUSERADMINDetailComponent implements OnInit  {
+export class WFUserAdminDetailComponent implements OnInit  {
   protected service: OntimizeService;
 
   @ViewChild('oDetailForm') form: OFormComponent;
@@ -22,7 +22,7 @@ export class WFUSERADMINDetailComponent implements OnInit  {
 
   protected configureService() {
     const conf = this.service.getDefaultServiceConfiguration();
-    conf['path'] = '/WFUSERADMIN';
+    conf['path'] = '/WFUserAdmin';
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {

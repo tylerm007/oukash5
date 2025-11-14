@@ -16,8 +16,6 @@
       
       <o-integer-input #TaskInstanceId attr="TaskInstanceId" label=" Task Instance Id" type="integer" editable="no" required="no" ></o-integer-input>
       
-      
-      
       <o-list-picker 
         attr="StageId"
         service="StageInstance" 
@@ -88,13 +86,74 @@
       <o-text-input #ErrorMessage attr="ErrorMessage" label="ErrorMessage" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
       <o-integer-input #RetryCount attr="RetryCount" label="RetryCount" type="integer" editable="no" required="no" ></o-integer-input>
-       <o-button (click)="complete_task()" fxFlex="30%"
-      label="Complete Workflow Task" 
-      icon="download_file" color="primary" type="raised"></o-button>
+      
     </div>
   </o-row>
       
       <mat-tab-group fxFill>
+        
+        <mat-tab label="EVENTACTION-TaskInstanceId">
+    <div layout-padding>
+      <o-table 
+        attr="EventActionTable" 
+        service="EventAction" 
+        entity="EventAction" 
+        keys="EventId"
+        parent-keys="TaskInstanceId:TaskInstanceId"
+        columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved"  
+        horizontal-scroll="yes"
+        detail-form-route="EventAction" 
+        edit-form-route="EventAction"
+        visible-columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved"  
+        sort-columns="EventId" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #EventId attr="EventId" title=" Event Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="TaskInstanceId" title="TaskInstance">
+    <o-table-cell-renderer-service attr="TaskInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="TaskInstanceId:TaskInstanceId"
+        value-column="TaskInstanceId" keys="TaskInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #EventKey attr="EventKey" title="EventKey" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #EventStatus attr="EventStatus" title="EventStatus" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #EventType attr="EventType" title="EventType" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #EventMessage attr="EventMessage" title="EventMessage" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #StartDate attr="StartDate" title="StartDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #DueDate attr="DueDate" title="DueDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column #ResolvedDate attr="ResolvedDate" title="ResolvedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+        
+          <o-table-column attr="IsResolved" title="IsResolved">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
         
         <mat-tab label="TASKCOMMENT-TaskInstanceId">
     <div layout-padding>
@@ -104,11 +163,11 @@
         entity="TaskComment" 
         keys="CommentId"
         parent-keys="TaskInstanceId:TaskInstanceId"
-        columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
         horizontal-scroll="yes"
         detail-form-route="TaskComment" 
         edit-form-route="TaskComment"
-        visible-columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
+        visible-columns="CommentId;ApplicationId;CommentType;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
         sort-columns="CommentId" 
         query-rows="25" 
         quick-filter="yes"
@@ -126,16 +185,16 @@
         
           <o-table-column #CommentId attr="CommentId" title=" Comment Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
-    <o-table-cell-renderer-service attr="ProcessInstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="TaskInstanceId:ProcessInstanceId"
-        value-column="InstanceId" keys="ProcessInstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="TaskInstanceId:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
+        
+          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column attr="TaskInstanceId" title="TaskInstance">
     <o-table-cell-renderer-service attr="TaskInstanceId" 
@@ -161,7 +220,6 @@
       </o-table>
     </div>
 </mat-tab>
-  
         
         <mat-tab label="WORKFLOWHISTORY-TaskInstanceId">
     <div layout-padding>
@@ -171,11 +229,11 @@
         entity="WorkflowHistory" 
         keys="HistoryId"
         parent-keys="TaskInstanceId:TaskInstanceId"
-        columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
+        columns="HistoryId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
         horizontal-scroll="yes"
         detail-form-route="WorkflowHistory" 
         edit-form-route="WorkflowHistory"
-        visible-columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
+        visible-columns="HistoryId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
         sort-columns="HistoryId" 
         query-rows="25" 
         quick-filter="yes"
@@ -192,15 +250,6 @@
         horizontal-scroll="yes" class="fill-form">
         
           <o-table-column #HistoryId attr="HistoryId" title=" History Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="InstanceId" title="Instance">
-    <o-table-cell-renderer-service attr="InstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="TaskInstanceId:InstanceId"
-        value-column="InstanceId" keys="InstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
         
           <o-table-column attr="TaskInstanceId" title="TaskInstance">
     <o-table-cell-renderer-service attr="TaskInstanceId" 

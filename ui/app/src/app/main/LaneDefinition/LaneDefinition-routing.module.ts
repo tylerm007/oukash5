@@ -13,21 +13,7 @@ const routes: Routes = [
         permissionId: 'LaneDefinition-detail-permissions'
       }
     }
-  },{
-    path: ':LaneId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
-    data: {
-        oPermission: {
-            permissionId: 'StageInstance-detail-permissions'
-        }
-    }
-},{
-    path: ':LaneId/TaskDefinition', loadChildren: () => import('../TaskDefinition/TaskDefinition.module').then(m => m.TaskDefinitionModule),
-    data: {
-        oPermission: {
-            permissionId: 'TaskDefinition-detail-permissions'
-        }
-    }
-}
+  }
 ];
 
 export const LANEDEFINITION_MODULE_DECLARATIONS = [

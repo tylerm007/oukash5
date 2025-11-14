@@ -6,9 +6,9 @@
             entity="WFApplicationMessage" 
             title="WFAPPLICATIONMESSAGE"
             keys="MessageID"
-            columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate" 
+            columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId" 
             header-actions="R;D"
-            visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+            visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
             sort-columns="MessageID" 
             query-rows="20" 
             quick-filter="yes"
@@ -44,6 +44,8 @@
             <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
             
             <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
             <o-table-context-menu></o-table-context-menu>
             <o-table-paginator page-size-options="24;48;96"></o-table-paginator>

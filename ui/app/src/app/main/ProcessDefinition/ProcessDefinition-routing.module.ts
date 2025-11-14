@@ -21,17 +21,10 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':ProcessId/ProcessInstance', loadChildren: () => import('../ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule),
+    path: ':ProcessId/StageDefinition', loadChildren: () => import('../StageDefinition/StageDefinition.module').then(m => m.StageDefinitionModule),
     data: {
         oPermission: {
-            permissionId: 'ProcessInstance-detail-permissions'
-        }
-    }
-},{
-    path: ':ProcessId/TaskDefinition', loadChildren: () => import('../TaskDefinition/TaskDefinition.module').then(m => m.TaskDefinitionModule),
-    data: {
-        oPermission: {
-            permissionId: 'TaskDefinition-detail-permissions'
+            permissionId: 'StageDefinition-detail-permissions'
         }
     }
 }

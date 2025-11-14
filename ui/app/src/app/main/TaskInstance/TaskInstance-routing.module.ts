@@ -14,6 +14,13 @@ const routes: Routes = [
       }
     }
   },{
+    path: ':TaskInstanceId/EventAction', loadChildren: () => import('../EventAction/EventAction.module').then(m => m.EventActionModule),
+    data: {
+        oPermission: {
+            permissionId: 'EventAction-detail-permissions'
+        }
+    }
+},{
     path: ':TaskInstanceId/TaskComment', loadChildren: () => import('../TaskComment/TaskComment.module').then(m => m.TaskCommentModule),
     data: {
         oPermission: {

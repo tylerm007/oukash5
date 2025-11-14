@@ -31,20 +31,20 @@
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ROLEASSIGMENT-Assignee">
+        <mat-tab label="ROLEASSIGNMENT-Assignee">
     <div layout-padding>
       <o-table 
-        attr="RoleAssigmentTable" 
-        service="RoleAssigment" 
-        entity="RoleAssigment" 
-        keys="RoleAssigmentID"
+        attr="RoleAssignmentTable" 
+        service="RoleAssignment" 
+        entity="RoleAssignment" 
+        keys="RoleAssignmentID"
         parent-keys="Assignee:Username"
-        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
         horizontal-scroll="yes"
-        detail-form-route="RoleAssigment" 
-        edit-form-route="RoleAssigment"
-        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
-        sort-columns="RoleAssigmentID" 
+        detail-form-route="RoleAssignment" 
+        edit-form-route="RoleAssignment"
+        visible-columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        sort-columns="RoleAssignmentID" 
         query-rows="25" 
         quick-filter="yes"
         row-height="medium" 
@@ -59,7 +59,7 @@
         edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         
-          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #RoleAssignmentID attr="RoleAssignmentID" title=" Role Assignment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column attr="ApplicationId" title="Application">
     <o-table-cell-renderer-service attr="ApplicationId" 
@@ -91,11 +91,11 @@
         entity="WFApplicationMessage" 
         keys="MessageID"
         parent-keys="FromUser:Username"
-        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         horizontal-scroll="yes"
         detail-form-route="WFApplicationMessage" 
         edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         sort-columns="MessageID" 
         query-rows="25" 
         quick-filter="yes"
@@ -133,6 +133,8 @@
           <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
         
           <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+        
+          <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
@@ -147,11 +149,11 @@
         entity="WFApplicationMessage" 
         keys="MessageID"
         parent-keys="ToUser:Username"
-        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         horizontal-scroll="yes"
         detail-form-route="WFApplicationMessage" 
         edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
+        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
         sort-columns="MessageID" 
         query-rows="25" 
         quick-filter="yes"
@@ -190,6 +192,8 @@
         
           <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
+          <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
@@ -198,15 +202,15 @@
         <mat-tab label="WFUSERADMIN-AdminUserName">
     <div layout-padding>
       <o-table 
-        attr="WFUSERADMINTable" 
-        service="WFUSERADMIN" 
-        entity="WFUSERADMIN" 
+        attr="WFUserAdminTable" 
+        service="WFUserAdmin" 
+        entity="WFUserAdmin" 
         keys="UserName;AdminUserName"
         parent-keys="AdminUserName:Username"
         columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
         horizontal-scroll="yes"
-        detail-form-route="WFUSERADMIN" 
-        edit-form-route="WFUSERADMIN"
+        detail-form-route="WFUserAdmin" 
+        edit-form-route="WFUserAdmin"
         visible-columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
         sort-columns="UserName" 
         query-rows="25" 
@@ -242,15 +246,15 @@
         <mat-tab label="WFUSERADMIN-UserName">
     <div layout-padding>
       <o-table 
-        attr="WFUSERADMINTable" 
-        service="WFUSERADMIN" 
-        entity="WFUSERADMIN" 
+        attr="WFUserAdminTable" 
+        service="WFUserAdmin" 
+        entity="WFUserAdmin" 
         keys="UserName;AdminUserName"
         parent-keys="UserName:Username"
         columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
         horizontal-scroll="yes"
-        detail-form-route="WFUSERADMIN" 
-        edit-form-route="WFUSERADMIN"
+        detail-form-route="WFUserAdmin" 
+        edit-form-route="WFUserAdmin"
         visible-columns="UserName;AdminUserName;IsPrimary;CreatedDate"  
         sort-columns="UserName" 
         query-rows="25" 
@@ -286,15 +290,15 @@
         <mat-tab label="WFUSERROLE-UserName">
     <div layout-padding>
       <o-table 
-        attr="WFUSERROLETable" 
-        service="WFUSERROLE" 
-        entity="WFUSERROLE" 
+        attr="WFUserRoleTable" 
+        service="WFUserRole" 
+        entity="WFUserRole" 
         keys="UserName;UserRole"
         parent-keys="UserName:Username"
         columns="UserName;UserRole;CreatedDate"  
         horizontal-scroll="yes"
-        detail-form-route="WFUSERROLE" 
-        edit-form-route="WFUSERROLE"
+        detail-form-route="WFUserRole" 
+        edit-form-route="WFUserRole"
         visible-columns="UserName;UserRole;CreatedDate"  
         sort-columns="UserName" 
         query-rows="25" 

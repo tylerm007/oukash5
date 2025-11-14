@@ -31,11 +31,11 @@
         entity="TaskDefinition" 
         keys="TaskId"
         parent-keys="TaskCategory:TaskCategoryCode"
-        columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
+        columns="TaskName;StageId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
         horizontal-scroll="yes"
         detail-form-route="TaskDefinition" 
         edit-form-route="TaskDefinition"
-        visible-columns="TaskName;LaneId;ProcessId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
+        visible-columns="TaskName;StageId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
         sort-columns="TaskName" 
         query-rows="25" 
         quick-filter="yes"
@@ -53,21 +53,12 @@
         
           <o-table-column #TaskName attr="TaskName" title=" Task Name" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column attr="LaneId" title="Lane">
-    <o-table-cell-renderer-service attr="LaneId" 
-        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
-        parent-keys="TaskCategoryCode:LaneId"
-        value-column="LaneName" keys="LaneId"
-        visible-columns="LaneName" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column attr="ProcessId" title="Process">
-    <o-table-cell-renderer-service attr="ProcessId" 
-        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
-        parent-keys="TaskCategoryCode:ProcessId"
-        value-column="ProcessName" keys="ProcessId"
-        visible-columns="ProcessName" separator=" - " width="680px">
+          <o-table-column attr="StageId" title="Stage">
+    <o-table-cell-renderer-service attr="StageId" 
+        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
+        parent-keys="TaskCategoryCode:StageId"
+        value-column="StageName" keys="StageId"
+        visible-columns="StageName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
         
@@ -93,17 +84,17 @@
         
           <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
         
-          <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-          <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
         
           <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
           <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         

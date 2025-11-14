@@ -3,11 +3,11 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 
 
 @Component({
-  selector: 'WFUSERROLE-detail',
-  templateUrl: './WFUSERROLE-detail.component.html',
-  styleUrls: ['./WFUSERROLE-detail.component.scss']
+  selector: 'WFUserRole-detail',
+  templateUrl: './WFUserRole-detail.component.html',
+  styleUrls: ['./WFUserRole-detail.component.scss']
 })
-export class WFUSERROLEDetailComponent implements OnInit  {
+export class WFUserRoleDetailComponent implements OnInit  {
   protected service: OntimizeService;
 
   @ViewChild('oDetailForm') form: OFormComponent;
@@ -22,7 +22,7 @@ export class WFUSERROLEDetailComponent implements OnInit  {
 
   protected configureService() {
     const conf = this.service.getDefaultServiceConfiguration();
-    conf['path'] = '/WFUSERROLE';
+    conf['path'] = '/WFUserRole';
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {

@@ -1,6 +1,6 @@
 <o-form-layout-manager attr="TaskFlow" mode="tab" title="TASKFLOW">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
-        <o-table attr="TaskFlowTable" service="TaskFlow" entity="TaskFlow" title="TASKFLOW" keys="FlowId"
+        <o-table attr="TaskFlowTable" service="TaskFlow" entity="TaskFlow" title="Task Flow" keys="FlowId"
             columns="FlowId;FromTaskId;ToTaskId;Condition;IsDefault" header-actions="R;D"
             visible-columns="FlowId;FromTaskId;ToTaskId;Condition;IsDefault" sort-columns="FlowId" query-rows="20"
             quick-filter="yes" row-height="medium" select-all-checkbox="true" pageable="yes" auto-adjust="true"
@@ -11,14 +11,14 @@
 
             <o-table-column attr="FromTaskId" title="FromTask">
                 <o-table-cell-renderer-service attr="FromTaskId" service="TaskDefinition" entity="TaskDefinitionType"
-                    columns="TaskId;TaskName" parent-keys="TaskId:FromTaskId" value-column="TaskName" keys="FromTaskId"
+                    columns="TaskId;TaskName" parent-keys="FlowId:FromTaskId" value-column="TaskName" keys="FromTaskId"
                     visible-columns="TaskName" separator=" - " width="680px">
                 </o-table-cell-renderer-service>
             </o-table-column>
 
             <o-table-column attr="ToTaskId" title="ToTask">
                 <o-table-cell-renderer-service attr="ToTaskId" service="TaskDefinition" entity="TaskDefinitionType"
-                    columns="TaskId;TaskName" parent-keys="TaskId:ToTaskId" value-column="TaskName" keys="ToTaskId"
+                    columns="TaskId;TaskName" parent-keys="FlowId:ToTaskId" value-column="TaskName" keys="ToTaskId"
                     visible-columns="TaskName" separator=" - " width="680px">
                 </o-table-cell-renderer-service>
             </o-table-column>

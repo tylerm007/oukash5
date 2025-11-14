@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { WFUSERADMINHomeComponent } from './home/WFUSERADMIN-home.component';
-import { WFUSERADMINNewComponent } from './new/WFUSERADMIN-new.component';
-import { WFUSERADMINDetailComponent } from './detail/WFUSERADMIN-detail.component';
+import { WFUserAdminHomeComponent } from './home/WFUserAdmin-home.component';
+import { WFUserAdminNewComponent } from './new/WFUserAdmin-new.component';
+import { WFUserAdminDetailComponent } from './detail/WFUserAdmin-detail.component';
 
 const routes: Routes = [
-  {path: '', component: WFUSERADMINHomeComponent},
-  { path: 'new', component: WFUSERADMINNewComponent },
-  { path: ':UserName/:AdminUserName', component: WFUSERADMINDetailComponent,
+  {path: '', component: WFUserAdminHomeComponent},
+  { path: 'new', component: WFUserAdminNewComponent },
+  { path: ':UserName/:AdminUserName', component: WFUserAdminDetailComponent,
     data: {
       oPermission: {
-        permissionId: 'WFUSERADMIN-detail-permissions'
+        permissionId: 'WFUserAdmin-detail-permissions'
       }
     }
   }
 ];
 
 export const WFUSERADMIN_MODULE_DECLARATIONS = [
-    WFUSERADMINHomeComponent,
-    WFUSERADMINNewComponent,
-    WFUSERADMINDetailComponent 
+    WFUserAdminHomeComponent,
+    WFUserAdminNewComponent,
+    WFUserAdminDetailComponent 
 ];
 
 
@@ -27,4 +27,4 @@ export const WFUSERADMIN_MODULE_DECLARATIONS = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class WFUSERADMINRoutingModule { }
+export class WFUserAdminRoutingModule { }

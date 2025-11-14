@@ -25,20 +25,20 @@
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ROLEASSIGMENT-Role">
+        <mat-tab label="ROLEASSIGNMENT-Role">
     <div layout-padding>
       <o-table 
-        attr="RoleAssigmentTable" 
-        service="RoleAssigment" 
-        entity="RoleAssigment" 
-        keys="RoleAssigmentID"
+        attr="RoleAssignmentTable" 
+        service="RoleAssignment" 
+        entity="RoleAssignment" 
+        keys="RoleAssignmentID"
         parent-keys="Role:UserRole"
-        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
         horizontal-scroll="yes"
-        detail-form-route="RoleAssigment" 
-        edit-form-route="RoleAssigment"
-        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
-        sort-columns="RoleAssigmentID" 
+        detail-form-route="RoleAssignment" 
+        edit-form-route="RoleAssignment"
+        visible-columns="RoleAssignmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
+        sort-columns="RoleAssignmentID" 
         query-rows="25" 
         quick-filter="yes"
         row-height="medium" 
@@ -53,7 +53,7 @@
         edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         
-          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #RoleAssignmentID attr="RoleAssignmentID" title=" Role Assignment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column attr="ApplicationId" title="Application">
     <o-table-cell-renderer-service attr="ApplicationId" 
@@ -80,15 +80,15 @@
         <mat-tab label="WFUSERROLE-UserRole">
     <div layout-padding>
       <o-table 
-        attr="WFUSERROLETable" 
-        service="WFUSERROLE" 
-        entity="WFUSERROLE" 
+        attr="WFUserRoleTable" 
+        service="WFUserRole" 
+        entity="WFUserRole" 
         keys="UserName;UserRole"
         parent-keys="UserRole:UserRole"
         columns="UserName;UserRole;CreatedDate"  
         horizontal-scroll="yes"
-        detail-form-route="WFUSERROLE" 
-        edit-form-route="WFUSERROLE"
+        detail-form-route="WFUserRole" 
+        edit-form-route="WFUserRole"
         visible-columns="UserName;UserRole;CreatedDate"  
         sort-columns="UserName" 
         query-rows="25" 

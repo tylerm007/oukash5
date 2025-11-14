@@ -14,10 +14,10 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':Assignee/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
+    path: ':Assignee/RoleAssignment', loadChildren: () => import('../RoleAssignment/RoleAssignment.module').then(m => m.RoleAssignmentModule),
     data: {
         oPermission: {
-            permissionId: 'RoleAssigment-detail-permissions'
+            permissionId: 'RoleAssignment-detail-permissions'
         }
     }
 },{
@@ -35,24 +35,24 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':AdminUserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
+    path: ':AdminUserName/WFUserAdmin', loadChildren: () => import('../WFUserAdmin/WFUserAdmin.module').then(m => m.WFUserAdminModule),
     data: {
         oPermission: {
-            permissionId: 'WFUSERADMIN-detail-permissions'
+            permissionId: 'WFUserAdmin-detail-permissions'
         }
     }
 },{
-    path: ':UserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
+    path: ':UserName/WFUserAdmin', loadChildren: () => import('../WFUserAdmin/WFUserAdmin.module').then(m => m.WFUserAdminModule),
     data: {
         oPermission: {
-            permissionId: 'WFUSERADMIN-detail-permissions'
+            permissionId: 'WFUserAdmin-detail-permissions'
         }
     }
 },{
-    path: ':UserName/WFUSERROLE', loadChildren: () => import('../WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule),
+    path: ':UserName/WFUserRole', loadChildren: () => import('../WFUserRole/WFUserRole.module').then(m => m.WFUserRoleModule),
     data: {
         oPermission: {
-            permissionId: 'WFUSERROLE-detail-permissions'
+            permissionId: 'WFUserRole-detail-permissions'
         }
     }
 }

@@ -14,17 +14,17 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':Role/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
+    path: ':Role/RoleAssignment', loadChildren: () => import('../RoleAssignment/RoleAssignment.module').then(m => m.RoleAssignmentModule),
     data: {
         oPermission: {
-            permissionId: 'RoleAssigment-detail-permissions'
+            permissionId: 'RoleAssignment-detail-permissions'
         }
     }
 },{
-    path: ':UserRole/WFUSERROLE', loadChildren: () => import('../WFUSERROLE/WFUSERROLE.module').then(m => m.WFUSERROLEModule),
+    path: ':UserRole/WFUserRole', loadChildren: () => import('../WFUserRole/WFUserRole.module').then(m => m.WFUserRoleModule),
     data: {
         oPermission: {
-            permissionId: 'WFUSERROLE-detail-permissions'
+            permissionId: 'WFUserRole-detail-permissions'
         }
     }
 }

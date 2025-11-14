@@ -1,25 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { WFUSERROLEHomeComponent } from './home/WFUSERROLE-home.component';
-import { WFUSERROLENewComponent } from './new/WFUSERROLE-new.component';
-import { WFUSERROLEDetailComponent } from './detail/WFUSERROLE-detail.component';
+import { WFUserRoleHomeComponent } from './home/WFUserRole-home.component';
+import { WFUserRoleNewComponent } from './new/WFUserRole-new.component';
+import { WFUserRoleDetailComponent } from './detail/WFUserRole-detail.component';
 
 const routes: Routes = [
-  {path: '', component: WFUSERROLEHomeComponent},
-  { path: 'new', component: WFUSERROLENewComponent },
-  { path: ':UserName/:UserRole', component: WFUSERROLEDetailComponent,
+  {path: '', component: WFUserRoleHomeComponent},
+  { path: 'new', component: WFUserRoleNewComponent },
+  { path: ':UserName/:UserRole', component: WFUserRoleDetailComponent,
     data: {
       oPermission: {
-        permissionId: 'WFUSERROLE-detail-permissions'
+        permissionId: 'WFUserRole-detail-permissions'
       }
     }
   }
 ];
 
 export const WFUSERROLE_MODULE_DECLARATIONS = [
-    WFUSERROLEHomeComponent,
-    WFUSERROLENewComponent,
-    WFUSERROLEDetailComponent 
+    WFUserRoleHomeComponent,
+    WFUserRoleNewComponent,
+    WFUserRoleDetailComponent 
 ];
 
 
@@ -27,4 +27,4 @@ export const WFUSERROLE_MODULE_DECLARATIONS = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class WFUSERROLERoutingModule { }
+export class WFUserRoleRoutingModule { }

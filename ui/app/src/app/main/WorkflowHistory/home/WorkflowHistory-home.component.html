@@ -6,9 +6,9 @@
             entity="WorkflowHistory" 
             title="WORKFLOWHISTORY"
             keys="HistoryId"
-            columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details" 
+            columns="HistoryId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details" 
             header-actions="R;D"
-            visible-columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
+            visible-columns="HistoryId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
             sort-columns="HistoryId" 
             query-rows="20" 
             quick-filter="yes"
@@ -23,15 +23,6 @@
             export-button="yes">
             
             <o-table-column #HistoryId attr="HistoryId" title=" History Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            <o-table-column attr="InstanceId" title="Instance">
-    <o-table-cell-renderer-service attr="InstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="HistoryId:InstanceId"
-        value-column="InstanceId" keys="InstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
             
             <o-table-column attr="TaskInstanceId" title="TaskInstance">
     <o-table-cell-renderer-service attr="TaskInstanceId" 

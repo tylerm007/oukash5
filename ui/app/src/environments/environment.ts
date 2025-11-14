@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  apiEndpoint: "https://devvm01.nyc.ou.org:5656/api",
+  apiEndpoint: "http://localhost:5656/api",
   production: false,
   versions: {
     core: '15.2.10',

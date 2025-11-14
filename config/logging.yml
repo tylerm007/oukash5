@@ -33,7 +33,7 @@ loggers:
         propagate: no
 
     logic_logger:
-        level: INFO
+        level: DEBUG
         handlers: [console]
         propagate: no
 
@@ -78,7 +78,7 @@ loggers:
         propagate: no
 
     security.declare_security:   
-        level: INFO
+#        level: DEBUG
         handlers: [console]
         propagate: no
 
@@ -98,7 +98,7 @@ loggers:
         propagate: no
 
     security.system.authentication:   
-        level: INFO
+#        level: DEBUG
         handlers: [console]
         propagate: no
 

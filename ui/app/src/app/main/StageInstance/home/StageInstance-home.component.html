@@ -6,9 +6,9 @@
             entity="StageInstance" 
             title="STAGEINSTANCE"
             keys="StageInstanceId"
-            columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy" 
+            columns="StageInstanceId;ApplicationId;StageId;Status;StartedDate;CompletedDate;DurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy" 
             header-actions="R;D"
-            visible-columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+            visible-columns="StageInstanceId;ApplicationId;StageId;Status;StartedDate;CompletedDate;DurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
             sort-columns="StageInstanceId" 
             query-rows="20" 
             quick-filter="yes"
@@ -24,21 +24,21 @@
             
             <o-table-column #StageInstanceId attr="StageInstanceId" title=" Stage Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
-            <o-table-column attr="LaneId" title="Lane">
-    <o-table-cell-renderer-service attr="LaneId" 
-        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
-        parent-keys="StageInstanceId:LaneId"
-        value-column="LaneName" keys="LaneId"
-        visible-columns="LaneName" separator=" - " width="680px">
+            <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="StageInstanceId:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
             
-            <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
-    <o-table-cell-renderer-service attr="ProcessInstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="StageInstanceId:ProcessInstanceId"
-        value-column="InstanceId" keys="ProcessInstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
+            <o-table-column attr="StageId" title="Stage">
+    <o-table-cell-renderer-service attr="StageId" 
+        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
+        parent-keys="StageInstanceId:StageId"
+        value-column="StageName" keys="StageId"
+        visible-columns="StageName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
             
@@ -48,17 +48,7 @@
             
             <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
             
-            <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #AssignedBy attr="AssignedBy" title="AssignedBy" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #AssignedDate attr="AssignedDate" title="AssignedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-            
-            <o-table-column #CompletedCount attr="CompletedCount" title="CompletedCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            <o-table-column #TotalCount attr="TotalCount" title="TotalCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            <o-table-column #DurationDays attr="DurationDays" title="DurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
             <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
             

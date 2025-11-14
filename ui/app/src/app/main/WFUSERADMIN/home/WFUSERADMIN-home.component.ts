@@ -5,11 +5,11 @@ import {OReportModule,OReportStoreService} from 'ontimize-web-ngx-report'
 import { OGridComponent } from 'ontimize-web-ngx';
 
 @Component({
-  selector: 'WFUSERADMIN-home',
-  templateUrl: './WFUSERADMIN-home.component.html',
-  styleUrls: ['./WFUSERADMIN-home.component.scss']
+  selector: 'WFUserAdmin-home',
+  templateUrl: './WFUserAdmin-home.component.html',
+  styleUrls: ['./WFUserAdmin-home.component.scss']
 })
-export class WFUSERADMINHomeComponent implements AfterViewInit {
+export class WFUserAdminHomeComponent implements AfterViewInit {
 
   @ViewChild('table', { static: true }) table: OTableComponent;
 

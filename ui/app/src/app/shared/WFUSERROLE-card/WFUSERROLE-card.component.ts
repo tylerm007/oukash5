@@ -2,15 +2,15 @@ import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'transactions-card',
-  templateUrl: './WFUSERROLE-card.component.html',
-  styleUrls: ['./WFUSERROLE-card.component.scss'],
+  templateUrl: './WFUserRole-card.component.html',
+  styleUrls: ['./WFUserRole-card.component.scss'],
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.WFUSERROLE-card]': 'true'
+    '[class.WFUserRole-card]': 'true'
   }
 })
 
-export class WFUSERROLECardComponent {
+export class WFUserRoleCardComponent {
 
 
 }
