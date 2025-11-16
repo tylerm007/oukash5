@@ -949,15 +949,16 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             public_key = RSAAlgorithm.from_jwk(signing_key)
             
             # Validate token
+            # Note: Skipping audience validation to allow multiple app clients from the same User Pool
+            # All clients must be from the correct User Pool (verified via issuer)
             claims = jwt.decode(
                 token,
                 public_key,
                 algorithms=["RS256"],
-                audience=Args.instance.cognito_client_id,
                 options={
                     "verify_exp": True,
                     "verify_iat": True,
-                    "verify_aud": True,
+                    "verify_aud": False,  # Skip audience check - accept any client from this User Pool
                     "verify_iss": True
                 },
                 issuer=f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}",
