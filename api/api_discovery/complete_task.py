@@ -165,7 +165,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         task_name = task_def.TaskName
         application_id = task_instance.Stage.ProcessInstance.ApplicationId
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
-        if application and application.Status in ["WTH","COMPL"] and task_name != "Notify Customer":
+        if application and application.Status in ["WTH","COMPL"] and task_name != "Notify Customer" and task_name != 'End Certification':
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Application {application.ApplicationID} status is {application.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Application status is {application.Status}."}), 400
        
