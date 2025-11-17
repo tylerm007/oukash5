@@ -10,6 +10,7 @@ from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
+from security.system.authorization import Security
 
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -65,14 +66,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         status = data.get("status", 'COMPLETED')
         if not task_instance_id:
             return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
-        #user = get_jwt()['sub'] if 'sub' in get_jwt() else 'system'
-        user_jwt = get_jwt().get("sub", "unknown")
-        #current_user = Security.current_user()
-        #user_id = current_user.id if "id" in current_user else user_jwt
-        if  "@" in user_jwt:
-            user = WFUser.query.filter_by(Email=user_jwt).first().Username
-        else:
-            user = user_jwt
+        user = Security.current_user().id
         completed_by = data.get("completed_by",user)
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)

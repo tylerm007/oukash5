@@ -1,7 +1,7 @@
 from functools import wraps
 from flask_cors import cross_origin
 from datetime import datetime
-from database.models import LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication
+from database.models import WFUSERROLE, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, WFUser
 from flask import app, request, jsonify, session
 from api.api_discovery.start_workflow import _complete_task
 import logging
@@ -12,6 +12,7 @@ from safrs import jsonapi_rpc
 from database import models
 from config.config import Args
 from config.config import Config
+from security.system.authorization import Security
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -72,13 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         task_id = data.get('taskId')  # TaskInstanceId
         role = data.get('role')
         assignee = data.get('assignee')
-        user_jwt = get_jwt().get("sub", "unknown")
-        #current_user = Security.current_user()
-        #user_id = current_user.id if "id" in current_user else user_jwt
-        if  "@" in user_jwt:
-            user = models.WFUser.query.filter_by(Email=user_jwt).first().Username
-        else:
-            user = user_jwt
+        user = Security.current_user().id
         access_token = request.headers.get('Authorization')
         if not data or 'appId' not in data or 'taskId' not in data or 'role' not in data or 'assignee' not in data:
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400
@@ -106,16 +101,17 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
                 admin_assignee = assignee 
             else:
                 admin_assignee = admin_assignee.AdminUserName
-            add_role_assignment(app_id, 'NCRC-ADMIN', admin_assignee)
-            add_role_assignment(app_id, 'IAR', admin_assignee)
-            add_role_assignment(app_id, 'PROD', admin_assignee)
-            add_role_assignment(app_id, 'LEGAL', admin_assignee)
+           
+            roles = WFUSERROLE.query.filter_by(UserName=assignee).all()
+            for role in roles:
+                add_role_assignment(app_id, role.UserRole, admin_assignee)
+
         session.commit()
         _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
     except Exception as e:
         session.rollback()
         app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
-        raise Exception({"error": "Failed to assign role"}, 500)
+        raise Exception({"error": f"Failed to assign role {role} to {assignee} error: {e}"}, 500)
         # Set TaskInstance to Completed
     app_logger.info(f'TaskInstance set to Completed: {task_id}')
     

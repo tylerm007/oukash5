@@ -37,26 +37,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return wrapper
  
  
- 
     @app.route('/get_application_tasks', methods=['GET','OPTIONS'])
+    @app.route('/get_application_tasks_v1', methods=['GET','OPTIONS'])
     @cross_origin()
     @admin_required()
     @jwt_required()
-    def get_application_tasks():
+    def get_application_tasks_v1():
  
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
         from database.models import WFUser
         data = request.args if request.args else {}
-        user_jwt = get_jwt().get("sub", "unknown")
-        #current_user = Security.current_user()
-        #user_id = current_user.id if "id" in current_user else user_jwt
-        if  "@" in user_jwt:
-            from database.models import WFUser
-            user = WFUser.query.filter_by(Email=user_jwt).first()
-            user = user.Username if user else user_jwt
-        else:
-            user = user_jwt
+        user = Security.current_user().id
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 10))

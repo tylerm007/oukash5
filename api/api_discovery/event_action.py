@@ -18,6 +18,8 @@ from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from datetime import timedelta
 
+from security.system.authorization import Security
+
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -71,7 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "OK"}), 200
         
         access_token = request.headers.get('Authorization')
-        user = get_jwt().get('sub')
+        user = Security.current_user().id
         data = request.get_json()
         #task_instance_id = data.get('TaskInstanceId')
         event_key = data.get('EventKey')  
@@ -86,7 +88,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "OK"}), 200
         access_token = request.headers.get('Authorization') 
-        user = get_jwt().get('sub') or 'system'
+        user = Security.current_user().id
         resolve_paid_invoices(access_token=access_token, user=user)
         return jsonify({"status": 'ok', "message": "All EventActions resolved"}), 200
     
@@ -120,7 +122,7 @@ def resolve_paid_invoices(access_token: str = None, user: str = 'system', app: f
                     # Only try to access request if we're in a request context
                     if has_request_context():
                         access_token = request.headers.get('Authorization')
-                        user = get_jwt().get('sub') if get_jwt() else None
+                        user = Security.current_user().id
                 except RuntimeError:
                     # Working outside of request context - this is expected for background tasks
                     pass

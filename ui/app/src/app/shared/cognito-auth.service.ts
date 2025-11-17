@@ -216,50 +216,13 @@ export class CognitoAuthService {
   }
 
   private tryOntimizeAuthService(token: string, userInfo: CognitoUser): void {
-    try {
-      const authService = this.injector.get(AuthService);
-      
-      console.log('� Attempting Ontimize AuthService login...');
-      console.log('📊 AuthService type:', authService.constructor.name);
-      
-      // Try the authentication
-      authService.login(userInfo.email, token).subscribe({
-        next: (response) => {
-          console.log('✅ Ontimize AuthService authentication successful:', response);
-          console.log('🎯 User should now be able to access protected routes');
-          
-          // Verify that AuthService now recognizes the user as logged in
-          setTimeout(() => {
-            const isLoggedIn = authService.isLoggedIn();
-            console.log('🔍 Ontimize AuthService login check:', isLoggedIn);
-            
-            if (isLoggedIn) {
-              console.log('🎉 Full authentication success - ready for /main navigation');
-            } else {
-              console.log('⚠️ Ontimize not recognizing login - trying session establishment');
-              this.establishOntimizeSession(token, userInfo);
-            }
-          }, 100);
-        },
-        error: (error) => {
-          console.error('❌ Ontimize AuthService authentication failed:', error);
-          console.log('� Error details:', {
-            status: error.status,
-            statusText: error.statusText,
-            message: error.message,
-            error: error.error
-          });
-          
-          console.log('🔄 Trying alternative session establishment...');
-          this.establishOntimizeSession(token, userInfo);
-        }
-      });
-      
-    } catch (error) {
-      console.error('💥 Error getting AuthService:', error);
-      console.log('🔄 Falling back to direct session establishment');
-      this.establishOntimizeSession(token, userInfo);
-    }
+    console.log('⏭️ Skipping Ontimize AuthService.login() to avoid error popup');
+    console.log('📝 Reason: AuthService.login() expects traditional username/password, not Cognito tokens');
+    console.log('🔄 Proceeding directly to session establishment...');
+    
+    // Skip the authService.login() call that triggers the "Login failed" popup
+    // Instead, go directly to establishing the session
+    this.establishOntimizeSession(token, userInfo);
   }
 
   /**

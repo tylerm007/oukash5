@@ -10,6 +10,7 @@ import database.models as models
 from flask import request, jsonify
 import logging
 import safrs
+from security.system.authorization import Security
 from sqlalchemy.sql import text
 from types import SimpleNamespace
 import time
@@ -54,13 +55,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         access_token = request.headers.get("Authorization")
         args = request.args
         global completed_by
-        user_jwt = get_jwt().get("sub", "unknown")
-        #current_user = Security.current_user()
-        #user_id = current_user.id if "id" in current_user else user_jwt
-        if  "@" in user_jwt:
-            user = models.WFUser.query.filter_by(Email=user_jwt).first().Username
-        else:
-            user = user_jwt
+        user = Security.current_user().id
         completed_by =user
         application_id = args.get('application_id') or args.get('applicationId') or args.get('applicationID') or None
         scenario = args.get('scenario', 1)      

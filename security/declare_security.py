@@ -1,4 +1,4 @@
-from security.system.authorization import Grant, Security, Security, DefaultRolePermission, GlobalFilter
+from security.system.authorization import Grant, Security, DefaultRolePermission, GlobalFilter
 import logging
 from database import models
 import safrs

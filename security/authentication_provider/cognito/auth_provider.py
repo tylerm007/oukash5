@@ -504,7 +504,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             if 'user_id' not in session:
                 return jsonify({
                     'error': 'Not authenticated',
-                    'message': 'Please login first at /auth/login'
+                    'message': 'Please login first at /api/auth/login'
                 }), 401
             
             # Prefer internal token over Cognito token for API compatibility
@@ -536,7 +536,79 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     'has_id_token': bool(session.get('cognito_id_token'))
                 }
             })
-        
+        @flask_app.route('/auth/exchange-cognito-token', methods=['POST', 'GET'])
+        def cognito_exchange_token():
+            access_token = None
+            try:
+                id_token = None
+                
+                # Try to get token from request
+                if request.method == 'POST' and request.is_json:
+                    data = request.get_json()
+                    id_token = data.get('token')
+                elif request.method == 'GET':
+                    token = request.args.get('token')
+                
+                # Try Authorization header if no token in body/params
+                if not id_token:
+                    auth_header = request.headers.get('Authorization', '')
+                    if auth_header.startswith('Bearer '):
+                        id_token = auth_header.replace('Bearer ', '')
+                
+                if not id_token:
+                    return jsonify({
+                        'valid': False,
+                        'error': 'No token provided',
+                        'usage': [
+                            'POST /auth/validate-cognito with {"token": "your_token"}',
+                            'GET /auth/validate-cognito?token=your_token',
+                            'Any method with Authorization: Bearer <token> header'
+                        ]
+                    }), 400
+            except Exception as e:
+                return jsonify({
+                    'valid': False,
+                    'error': f'Error processing request: {str(e)}'
+                }), 500 
+            
+            claims = Authentication_Provider.get_claims_from_token(id_token)
+            
+            if not claims:
+                return jsonify({'error': 'Invalid ID token'}), 400
+            email = claims.get('email')
+            wfuser = WFUser.query.filter(WFUser.Email == email).first()
+            if wfuser and wfuser.IsActive == False:
+                return jsonify({'error': 'User account is inactive'}), 403
+            user_id = wfuser.Username if wfuser else "unknown"
+            claims["user_id"] = user_id
+            # Find or create user in database
+            user = Authentication_Provider.get_or_create_user_from_claims(claims)
+            if not user:
+                return jsonify({'error': 'User creation failed'}), 400
+            user_roles = [] # ['DISPATCHER']  # Default role
+            if wfuser:
+                user_roles = [role.UserRole for role in wfuser.WFUSERROLEList]
+            # Store user info in session
+            access_token = id_token.get('access_token')
+            session['user_id'] = user_id
+            session['user_email'] = claims['email']
+            session['user_roles'] = user_roles
+            session['authenticated'] = True
+            session['access_token'] = access_token
+            session['id_token'] = id_token
+            user['user_id'] = user_id
+            from flask_jwt_extended import create_access_token
+
+            internal_access_token = create_access_token(
+                identity=user,
+                additional_claims=claims
+            )
+            
+            return jsonify({
+                'valid': True, 
+                "access_token": internal_access_token,
+                'message': 'Token received successfully. Use /auth/validate-cognito to validate and decode the token details.'})
+
         @flask_app.route('/auth/validate-cognito', methods=['POST', 'GET'])
         def cognito_validate_token():
             """Validate a JWT token and show its details (Cognito-specific)"""

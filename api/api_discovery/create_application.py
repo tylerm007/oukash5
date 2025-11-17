@@ -13,6 +13,7 @@ import safrs
 from sqlalchemy.sql import text
 from types import SimpleNamespace
 import time
+from security.system.authorization import Security
 
 """
 Various endpoints to test workflow functionality and cleanup or reset tests
@@ -47,13 +48,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
 
         args = request.args
-        user_jwt = get_jwt().get("sub", "unknown")
-        #current_user = Security.current_user()
-        #user_id = current_user.id if "id" in current_user else user_jwt
-        if  "@" in user_jwt:
-            user = models.WFUser.query.filter_by(Email=user_jwt).first().Username
-        else:
-            user = user_jwt
+        user = Security.current_user().id
         owns_id = args.get('owns_id') or args.get('ownsId') or None
         if owns_id is None:
             return jsonify({"result": 'ownsId parameter is required'}), 400
