@@ -75,6 +75,7 @@ DROP TABLE IF EXISTS WF_Companies;
 
 -- Drop RoleAssignments first (references both WF_Users and WF_Roles)
 DROP TABLE IF EXISTS RoleAssigment;
+DROP TABLE IF EXISTS RoleAssignment;
 
 -- Drop WF_Applications (references WF_Roles, WF_Priorities, WF_ApplicationStatus)
 DROP TABLE IF EXISTS WF_Applications;
@@ -82,6 +83,7 @@ DROP TABLE IF EXISTS WF_Applications;
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
 
 DROP TABLE IF EXISTS WF_USER_ROLE;
+DROP TABLE IF EXISTS WF_User_Role;
 DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
 

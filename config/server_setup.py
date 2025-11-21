@@ -456,17 +456,21 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             initialize_background_scheduler(flask_app)
 
         # Initialize application cache systems
-        '''
-        app_logger.info("Initializing application caches...")
-        try:
-            from database.cache import initialize_caches
-            cache_success = initialize_caches(flask_app)
-            if cache_success:
-                app_logger.info("✅ Application caches initialized successfully")
-            else:
-                app_logger.warning("⚠️ Some caches failed to initialize")
-        except Exception as e:
-            app_logger.error(f"❌ Cache initialization failed: {str(e)}")
+        if args.start_background:
+            app_logger.info("\n📦 Initializing database cache service...")
+            try:
+                from database.cache_service import get_cache
+                cache = get_cache()
+                cache.load(flask_app)
+                stats = cache.get_stats()
+                app_logger.info(f"✅ Database cache loaded successfully:")
+                app_logger.info(f"   - TaskDefinitions: {stats['task_definitions_count']}")
+                app_logger.info(f"   - StageDefinitions: {stats['stage_definitions_count']}")
+                app_logger.info(f"   - TaskFlows: {stats['task_flows_count']}")
+            except Exception as e:
+                app_logger.error(f"❌ Database cache initialization failed: {str(e)}")
+                import traceback
+                app_logger.error(traceback.format_exc())
         '''
         if os.getenv('APILOGICPROJECT_DEBUG'):  # temp debug since logging in config is not happening
             KAFKA_SERVER = os.getenv('KAFKA_SERVER')
