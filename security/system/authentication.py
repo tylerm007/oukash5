@@ -122,8 +122,17 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
 
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
-        identity = jwt_data["sub"]
-        return authentication_provider.get_user(identity, jwt_data)
+        """
+        Called by Flask-JWT-Extended to load user from JWT token.
+        This populates flask_jwt_extended.current_user (LocalProxy).
+        
+        For Cognito: jwt_data contains the decoded token claims.
+        """
+        identity = jwt_data.get("sub") or jwt_data.get("user_id")
+        security_logger.debug(f"user_lookup_callback: identity={identity}, jwt_data keys={jwt_data.keys()}")
+        user = authentication_provider.get_user(identity, jwt_data)
+        security_logger.debug(f"user_lookup_callback: loaded user={user.name if user else None}, roles={len(user.UserRoleList) if user and hasattr(user, 'UserRoleList') else 0}")
+        return user
 
     method_decorators.append(jwt_required())
     security_logger.info("\nAuthentication loaded -- api calls now require authorization header")

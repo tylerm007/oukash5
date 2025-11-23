@@ -25,12 +25,25 @@ app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
 session = db.session 
 _project_dir = None
+from functools import wraps
+from flask import request, jsonify
+from jose import jwt, JWTError
+import requests
+
+COGNITO_REGION = 'us-east-1'
+COGNITO_POOL_ID = Config.COGNITO_USER_POOL_ID #'us-east-1_xxxxxx'
+JWKS_URL = f'https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_POOL_ID}/.well-known/jwks.json'
+
+# Cache JWKS
+jwks = requests.get(JWKS_URL).json()
+
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     global _project_dir
     _project_dir = project_dir
     pass
-
+    #Working with AWS Cognito Tokens
+    #Since you're using Cognito, you'll also need to configure Flask-JWT-Extended to work with Cognito's tokens:
     def admin_required():
         """
         Support option to bypass security (see cats, below).
@@ -44,7 +57,39 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return fn(*args, **kwargs)
             return decorator
         return wrapper
+
+    def require_cognito_jwt(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            auth_header = request.headers.get('Authorization', '')
+            
+            if not auth_header.startswith('Bearer '):
+                return jsonify({'error': 'Missing token'}), 401
+            
+            token = auth_header.split(' ')[1]
+            
+            try:
+                claims = jwt.decode(
+                    token,
+                    jwks,
+                    algorithms=['RS256'],
+                    audience=Config.COGNITO_CLIENT_ID,
+                    issuer=f'https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_POOL_ID}'
+                )
+                # Attach claims to request context
+                request.cognito_claims = claims
+                return f(*args, **kwargs)
+            except JWTError as e:
+                return jsonify({'error': f'Invalid token - {str(e)}'}), 401
+        
+        return decorated_function
     
+    @app.route('/api/protected')
+    @require_cognito_jwt
+    def protected():
+        claims = request.cognito_claims
+        return {'user_name': claims['app_username']}
+
     # ==================================================
     #        WORKFLOW EventAction ENDPOINTS (Flask)
     # ==================================================

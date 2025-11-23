@@ -39,7 +39,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return wrapper
 
     @app.route('/assignRole', methods=['OPTIONS','POST'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def assignRole():

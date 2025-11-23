@@ -33,7 +33,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return wrapper
 
     @app.route('/workflow_json', methods=['GET', 'OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def get_workflow_hierarchy_json():
@@ -128,7 +128,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_json/<int:process_id>', methods=['GET', 'OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def get_specific_workflow_json(process_id: int):
@@ -192,7 +192,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_stats', methods=['GET', 'OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def get_workflow_statistics():
@@ -252,7 +252,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_json/export', methods=['GET', 'OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def export_workflow_json():

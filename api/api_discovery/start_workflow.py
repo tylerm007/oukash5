@@ -58,7 +58,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     #        WORKFLOW ENDPOINTS (Flask)
     # ==================================================
     @app.route('/start_workflow', methods=['POST','OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def start_workflow():
@@ -113,7 +113,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "ok", "data": response}), 200
 
     @app.route('/start_workflow_fast', methods=['POST','OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     @jwt_required()
     def start_workflow_fast():
@@ -154,7 +154,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "error", "message": str(e)}), 500
 
     @app.route('/start_workflow_async', methods=['POST','OPTIONS'])
-    @cross_origin()
+    #@cross_origin()
     @admin_required()
     def start_workflow_async():
         """

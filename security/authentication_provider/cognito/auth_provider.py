@@ -1,3 +1,4 @@
+from re import U
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
 import database.database_discovery.authentication_models as authentication_models
@@ -25,8 +26,11 @@ from botocore.exceptions import ClientError, NoCredentialsError
 import hmac
 import hashlib
 import urllib.parse
+import ssl
 
 from database.models import WFUser, WFUSERROLE
+import threading
+
 # **********************
 # Amazon Cognito auth provider
 # **********************
@@ -35,6 +39,14 @@ db = None
 db_session = None  # Renamed to avoid conflict with Flask session
 
 logger = logging.getLogger('api_logic_server_app')
+
+# JWKS cache to prevent rate limiting from Cognito
+_jwks_cache = {
+    'data': None,
+    'timestamp': None,
+    'lock': threading.Lock()
+}
+_JWKS_CACHE_DURATION = 3600  # Cache JWKS for 1 hour (in seconds)
 
 class ALSError(JsonapiError):
     def __init__(self, message, status_code=HTTPStatus.BAD_REQUEST):
@@ -58,7 +70,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         """
         # Configure JWT for hybrid Cognito/Internal token support
         flask_app.config['JWT_SECRET_KEY'] = "ApiLogicServerSecret"
-        flask_app.config['JWT_ALGORITHM'] = 'HS256'  # For internal tokens
+        flask_app.config['JWT_ALGORITHM'] = 'HS256'  # For internal tokens (symmetric key)
         flask_app.config['JWT_DECODE_ALGORITHMS'] = ['HS256', 'RS256']  # Support both algorithms
         flask_app.config['JWT_IDENTITY_CLAIM'] = 'sub'
         flask_app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=1440)  # 24 hours
@@ -391,7 +403,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 # Generate internal access token (HS256 compatible)
                 internal_access_token = create_access_token(
                     identity=user,
-                    additional_claims=additional_claims
+                    additional_claims=additional_claims,
+                    expires_delta=timedelta(minutes=1440)  # 24 hours
                 )
                 
                 # Optional: Create refresh token
@@ -576,37 +589,39 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             if not claims:
                 return jsonify({'error': 'Invalid ID token'}), 400
             email = claims.get('email')
-            wfuser = WFUser.query.filter(WFUser.Email == email).first()
-            if wfuser and wfuser.IsActive == False:
-                return jsonify({'error': 'User account is inactive'}), 403
-            user_id = wfuser.Username if wfuser else "unknown"
-            claims["user_id"] = user_id
+            username = claims.get("app_username")
+            
             # Find or create user in database
             user = Authentication_Provider.get_or_create_user_from_claims(claims)
             if not user:
                 return jsonify({'error': 'User creation failed'}), 400
-            user_roles = [] # ['DISPATCHER']  # Default role
-            if wfuser:
-                user_roles = [role.UserRole for role in wfuser.WFUSERROLEList]
+            
             # Store user info in session
-            access_token = id_token.get('access_token')
-            session['user_id'] = user_id
-            session['user_email'] = claims['email']
-            session['user_roles'] = user_roles
+            session['user_id'] = user.Username
+            session['user_email'] = user.Email if hasattr(user, 'Email') and user.Email else claims.get('email')   
+            session['user_roles'] = user.UserRoleList if hasattr(user, 'UserRoleList') else []
             session['authenticated'] = True
-            session['access_token'] = access_token
             session['id_token'] = id_token
-            user['user_id'] = user_id
+            
             from flask_jwt_extended import create_access_token
 
             internal_access_token = create_access_token(
                 identity=user,
-                additional_claims=claims
+                additional_claims=claims,
+                expires_delta=timedelta(minutes=1440)  # 24 hours
             )
-            
+            session['access_token'] = internal_access_token
+            user_info = {
+                'user_id': claims.get('name') or user.Username if hasattr(user, 'Username') else None,
+                'email': claims.get('email') or user.Email if hasattr(user, 'Email') else None,
+                'roles': user.UserRoleList if hasattr(user, 'UserRoleList') else [],
+                'cognito_sub': claims.get('sub')
+            }
             return jsonify({
                 'valid': True, 
+                'token_type': 'Bearer',
                 "access_token": internal_access_token,
+                'user_info': user_info,
                 'message': 'Token received successfully. Use /auth/validate-cognito to validate and decode the token details.'})
 
         @flask_app.route('/auth/validate-cognito', methods=['POST', 'GET'])
@@ -749,17 +764,22 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         @flask_app.errorhandler(Exception)
         def handle_ssl_errors(error):
             """Handle SSL and connection errors gracefully"""
-            import ssl
             error_str = str(error)
+            error_type = type(error).__name__
             
+            # Check for SSL EOF errors (client disconnected)
             if isinstance(error, (ssl.SSLEOFError, ConnectionError, BrokenPipeError)):
-                logger.warning(f"SSL/Connection error occurred (client likely disconnected): {error_str}")
-                # Don't return a response for connection errors - client already gone
-                return None
+                logger.debug(f"Client disconnected during response (SSL/Connection error): {error_type}")
+                # Don't return a response or log as error - client already disconnected
+                # Return empty response to satisfy Flask
+                from flask import Response
+                return Response('', status=200)
             
-            # For other SSL errors, log but let Flask handle normally
+            # For other SSL errors, log but don't spam the console
             if 'ssl' in error_str.lower() or 'eof' in error_str.lower():
-                logger.warning(f"SSL-related error: {error_str}")
+                logger.debug(f"SSL-related error (likely client disconnect): {error_str}")
+                from flask import Response
+                return Response('', status=200)
             
             # Re-raise for normal Flask error handling
             raise error
@@ -947,10 +967,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'code': auth_code,
                 'redirect_uri': Args.instance.cognito_redirect_uri
             }
-            
+            logger.info(f"Exchanging code for tokens at: {token_url} using: {data}")
             response = requests.post(token_url, headers=headers, data=data, timeout=10)
             
             if response.status_code == 200:
+                logger.info("Token exchange successful")
                 return response.json()
             else:
                 logger.error(f"Token exchange failed: {response.status_code} - {response.text}")
@@ -986,22 +1007,49 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     def validate_cognito_token(token: str) -> Optional[Dict[str, Any]]:
         """Validate a Cognito JWT token"""
         from config.config import Args
-        
+
         try:
-            # Get Cognito JWKS
+            # Get Cognito JWKS (with caching to prevent rate limiting)
             region = Args.instance.cognito_region
             user_pool_id = Args.instance.cognito_user_pool_id
-            
+
             jwks_url = f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}/.well-known/jwks.json"
-            
-            logger.info(f"Fetching Cognito JWKS from: {jwks_url}")
-            
-            jwks_response = requests.get(jwks_url, timeout=10)
-            if jwks_response.status_code != 200:
-                logger.error(f"Could not retrieve Cognito JWKS: {jwks_response.status_code}")
+
+            # Check cache first
+            current_time = datetime.now()
+            jwks_data = None
+
+            with _jwks_cache['lock']:
+                # Check if cache is valid (exists and not expired)
+                if (_jwks_cache['data'] is not None and
+                    _jwks_cache['timestamp'] is not None and
+                    (current_time - _jwks_cache['timestamp']).total_seconds() < _JWKS_CACHE_DURATION):
+
+                    logger.debug(f"Using cached Cognito JWKS (age: {(current_time - _jwks_cache['timestamp']).total_seconds():.0f}s)")
+                    jwks_data = _jwks_cache['data']
+                else:
+                    # Cache is expired or empty, fetch new JWKS
+                    logger.info(f"Fetching Cognito JWKS from: {jwks_url} (cache expired or empty)")
+
+                    jwks_response = requests.get(jwks_url, timeout=10)
+                    if jwks_response.status_code != 200:
+                        logger.error(f"Could not retrieve Cognito JWKS: {jwks_response.status_code}")
+                        # If we have stale cache data, use it as fallback
+                        if _jwks_cache['data'] is not None:
+                            logger.warning("Using stale JWKS cache as fallback")
+                            jwks_data = _jwks_cache['data']
+                        else:
+                            return None
+                    else:
+                        jwks_data = jwks_response.json()
+                        # Update cache
+                        _jwks_cache['data'] = jwks_data
+                        _jwks_cache['timestamp'] = current_time
+                        logger.info(f"Cognito JWKS cached successfully (will expire in {_JWKS_CACHE_DURATION}s)")
+
+            if jwks_data is None:
+                logger.error("No JWKS data available")
                 return None
-            
-            jwks_data = jwks_response.json()
             
             # Get the signing key
             unverified_header = jwt.get_unverified_header(token)
@@ -1025,6 +1073,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             # All clients must be from the correct User Pool (verified via issuer)
             claims = jwt.decode(
                 token,
+                #jwks,
                 public_key,
                 algorithms=["RS256"],
                 options={
@@ -1036,7 +1085,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 issuer=f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}",
                 leeway=timedelta(minutes=2)
             )
-            
+            app_username = claims.get('app_username')
             logger.info(f"Successfully validated Cognito token for user: {claims.get('sub', 'unknown')}")
             return claims
             
@@ -1056,12 +1105,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user = DotMapX()
         
         # Cognito standard claims
-        rtn_user.name = claims.get("custom:app_username") or claims.get("sub")
+        rtn_user.name = claims.get("app_username") or claims.get("custom:app_username") or  claims.get("sub")
         rtn_user.email = claims.get("email")
         rtn_user.given_name = claims.get("name")
         rtn_user.family_name = claims.get("custom:app_username")
-        rtn_user.id = claims.get("user_id")
-        rtn_user.Username = claims.get("email")
+        rtn_user.id = claims.get("user_id") or claims.get("sub")
+        rtn_user.Username = claims.get("app_username") or claims.get("email")
         rtn_user.password_hash = None
         
         # Handle Cognito groups/roles
@@ -1074,30 +1123,60 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         elif "groups" in claims:
             role_names = claims["groups"]
         
+        # Add Cognito groups as roles
         for each_role_name in role_names:
             each_user_role = DotMapX()
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
-        user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
+        
+        # Check database for additional roles
+        user = WFUser.query.filter(WFUser.Username == rtn_user.Username).first()
+        if user is None and rtn_user.email:
+            user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
+        
         if user:
+            logger.debug(f"Found WFUser in database: {user.Username}, adding {len(user.WFUSERROLEList)} roles")
             for role in user.WFUSERROLEList: 
                 each_user_role = DotMapX()
                 each_user_role.role_name = role.UserRole
                 rtn_user.UserRoleList.append(each_user_role)
+        else:
+            logger.debug(f"WFUser not found in database for: {rtn_user.Username} / {rtn_user.email}")
+        
+        logger.info(f"User created from claims: {rtn_user.name}, email: {rtn_user.email}, total roles: {len(rtn_user.UserRoleList)}")
+        if rtn_user.UserRoleList:
+            role_list = [r.role_name for r in rtn_user.UserRoleList]
+            logger.info(f"  Roles: {role_list}")
 
         return rtn_user
 
     @staticmethod
     def get_user(id: str, password: str = "") -> object:
-        """Get user for Cognito authentication"""
+        """Get user for Cognito authentication
+        
+        Args:
+            id: user identifier (email, username, or sub)
+            password: can be:
+                - JWT token string (starts with 'eyJ')
+                - dict of JWT claims (from user_lookup_loader)
+                - empty string
+        
+        Returns:
+            DotMapX user object with UserRoleList
+        """
         jwt_data = {}
         
+        # Handle different password parameter types
         if isinstance(password, dict):
+            # Called from @jwt.user_lookup_loader with decoded JWT claims
             jwt_data = password
+            logger.debug(f"get_user called with dict claims for user: {id}")
         elif isinstance(password, str) and password.startswith('eyJ'):
-            # jwt_data = Authentication_Provider.validate_cognito_token(password)
+            # JWT token string - decode it
             jwt_data = Authentication_Provider.get_claims_from_token(password)
+            logger.debug(f"get_user called with JWT token for user: {id}")
             if not jwt_data:
+                logger.warning(f"Failed to decode JWT token for user: {id}")
                 rtn_user = DotMapX()
                 rtn_user.id = id
                 rtn_user.name = id
@@ -1105,6 +1184,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 rtn_user.UserRoleList = []
                 return rtn_user
         elif not password:
+            # No password provided - return minimal user object
+            logger.debug(f"get_user called without password for user: {id}")
             rtn_user = DotMapX()
             rtn_user.id = id
             rtn_user.name = id
@@ -1114,6 +1195,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         # Get user/roles from Cognito JWT data
         rtn_user = Authentication_Provider.get_or_create_user_from_claims(jwt_data)
+        logger.debug(f"Created user from claims: {rtn_user.name}, roles: {len(rtn_user.UserRoleList)}")
         
         if not rtn_user.name:
             rtn_user.name = id
@@ -1159,7 +1241,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     def get_sso_login_url() -> str:
         """Get the Cognito SSO login URL"""
         from flask import request
-        return f"{request.host_url}auth/login"
+        return f"{request.host_url}/api/auth/login"
     
     @staticmethod
     def is_authenticated(request) -> bool:
