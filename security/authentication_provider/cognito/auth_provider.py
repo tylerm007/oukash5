@@ -613,7 +613,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             user_info = {
                 'user_id': claims.get('name') or user.Username if hasattr(user, 'Username') else None,
                 'email': claims.get('email') or user.Email if hasattr(user, 'Email') else None,
-                'roles': user.UserRoleList if hasattr(user, 'UserRoleList') else [],
+                'roles': [{"role_name": role.role_name} for role in user.UserRoleList] if hasattr(user, 'UserRoleList') else [],
                 'cognito_sub': claims.get('sub')
             }
             return jsonify({
@@ -1120,10 +1120,6 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         # Cognito uses 'cognito:groups' claim for roles
         role_names = []
-        #if "cognito:groups" in claims:
-        #    role_names = claims["cognito:groups"]
-        #elif "groups" in claims:
-        #    role_names = claims["groups"]
         
         # Add Cognito groups as roles
         for each_role_name in role_names:
@@ -1132,7 +1128,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             rtn_user.UserRoleList.append(each_user_role)
         
         # Check database for additional roles and email
-        user = WFUser.query.filter(WFUser.Username == rtn_user.Username).first()
+        user = WFUser.query.filter(WFUser.Username == rtn_user.name).first()
         if user is None and rtn_user.email:
             user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
         
