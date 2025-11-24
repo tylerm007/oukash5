@@ -1,4 +1,4 @@
-from ast import Is
+#from ast import Is
 from datetime import datetime
 from os import access
 import re
@@ -27,7 +27,6 @@ session = db.session
 _project_dir = None
 from functools import wraps
 from flask import request, jsonify
-from jose import jwt, JWTError
 import requests
 
 COGNITO_REGION = 'us-east-1'
@@ -57,7 +56,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return fn(*args, **kwargs)
             return decorator
         return wrapper
-
+    '''
     def require_cognito_jwt(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -83,9 +82,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return jsonify({'error': f'Invalid token - {str(e)}'}), 401
         
         return decorated_function
-    
+    ''' 
     @app.route('/api/protected')
-    @require_cognito_jwt
+    #@require_cognito_jwt
     def protected():
         claims = request.cognito_claims
         return {'user_name': claims['app_username']}

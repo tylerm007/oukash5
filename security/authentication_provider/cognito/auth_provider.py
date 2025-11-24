@@ -608,7 +608,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             internal_access_token = create_access_token(
                 identity=user,
                 additional_claims=claims,
-                expires_delta=timedelta(minutes=1440)  # 24 hours
+                expires_delta=timedelta(days=1)  # 24 hours
             )
             session['access_token'] = internal_access_token
             user_info = {
@@ -775,9 +775,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 from flask import Response
                 return Response('', status=200)
             
-            # For other SSL errors, log but don't spam the console
-            if 'ssl' in error_str.lower() or 'eof' in error_str.lower():
-                logger.debug(f"SSL-related error (likely client disconnect): {error_str}")
+            # Check for SSL/PEM key errors (often from client disconnect during handshake)
+            if ('ssl' in error_str.lower() or 'eof' in error_str.lower() or 
+                'PEM routines' in error_str or 'no start line' in error_str or
+                'Could not deserialize key data' in error_str or
+                'OpenSSL' in error_str):
+                logger.debug(f"SSL-related error (likely client disconnect or handshake failure): {error_str[:200]}")
                 from flask import Response
                 return Response('', status=200)
             
@@ -1110,7 +1113,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.given_name = claims.get("name")
         rtn_user.family_name = claims.get("custom:app_username")
         rtn_user.id = claims.get("user_id") or claims.get("sub")
-        rtn_user.Username = claims.get("app_username") or claims.get("email")
+        rtn_user.Username = claims.get("app_username") or claims.get("email") or claims.get("name")
         rtn_user.password_hash = None
         
         # Handle Cognito groups/roles
@@ -1118,10 +1121,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         # Cognito uses 'cognito:groups' claim for roles
         role_names = []
-        if "cognito:groups" in claims:
-            role_names = claims["cognito:groups"]
-        elif "groups" in claims:
-            role_names = claims["groups"]
+        #if "cognito:groups" in claims:
+        #    role_names = claims["cognito:groups"]
+        #elif "groups" in claims:
+        #    role_names = claims["groups"]
         
         # Add Cognito groups as roles
         for each_role_name in role_names:
@@ -1129,12 +1132,16 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
         
-        # Check database for additional roles
+        # Check database for additional roles and email
         user = WFUser.query.filter(WFUser.Username == rtn_user.Username).first()
         if user is None and rtn_user.email:
             user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
         
         if user:
+            # Update user object with database info
+            if not rtn_user.email and user.Email:
+                rtn_user.email = user.Email
+            
             logger.debug(f"Found WFUser in database: {user.Username}, adding {len(user.WFUSERROLEList)} roles")
             for role in user.WFUSERROLEList: 
                 each_user_role = DotMapX()
