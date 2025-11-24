@@ -71,8 +71,7 @@ def declare_logic():
                 row.CreatedDate = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
-                row.CreatedBy = Security.current_user().id
-                #    if Config.SECURITY_ENABLED == True else 'public'
+                row.CreatedBy = Security.current_user().Username                #    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "ModifiedDate"):
                 row.ModifiedDate = datetime.datetime.now()

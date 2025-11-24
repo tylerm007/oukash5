@@ -48,7 +48,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
 
         args = request.args
-        user = Security.current_user().id
+        user = Security.current_user().Username
         owns_id = args.get('owns_id') or args.get('ownsId') or None
         if owns_id is None:
             return jsonify({"result": 'ownsId parameter is required'}), 400
@@ -94,9 +94,9 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = 
             Status="NEW",
             CompanyID=company_id,
             PlantID=plant_id,
-            SubmissionDate=datetime.datetime.now().isoformat(),
+            SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
-            CreatedDate=datetime.datetime.now().isoformat(),
+            CreatedDate=datetime.datetime.now(datetime.timezone.utc),
             Priority="HIGH",
             ApplicationNumber=applicationNumber,
     )

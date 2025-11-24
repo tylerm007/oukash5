@@ -1,4 +1,3 @@
-from re import U
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
 import database.database_discovery.authentication_models as authentication_models
@@ -608,7 +607,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             internal_access_token = create_access_token(
                 identity=user,
                 additional_claims=claims,
-                expires_delta=timedelta(days=1)  # 24 hours
+                expires_delta=timedelta(minutes=1440)  # 24 hours
             )
             session['access_token'] = internal_access_token
             user_info = {

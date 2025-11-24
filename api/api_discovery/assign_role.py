@@ -73,7 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         task_id = data.get('taskId')  # TaskInstanceId
         role = data.get('role')
         assignee = data.get('assignee')
-        user = Security.current_user().id
+        user = Security.current_user().Username
         access_token = request.headers.get('Authorization')
         if not data or 'appId' not in data or 'taskId' not in data or 'role' not in data or 'assignee' not in data:
             return jsonify({"error": "appId, taskId, role, and assignee are required"}), 400

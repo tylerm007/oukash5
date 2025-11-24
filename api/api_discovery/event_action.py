@@ -117,7 +117,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "OK"}), 200
         
         access_token = request.headers.get('Authorization')
-        user = Security.current_user().id
+        user = Security.current_user().Username
         data = request.get_json()
         #task_instance_id = data.get('TaskInstanceId')
         event_key = data.get('EventKey')  
@@ -132,7 +132,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({"status": "OK"}), 200
         access_token = request.headers.get('Authorization') 
-        user = Security.current_user().id
+        user = Security.current_user().Username
         resolve_paid_invoices(access_token=access_token, user=user)
         return jsonify({"status": 'ok', "message": "All EventActions resolved"}), 200
     
@@ -166,7 +166,7 @@ def resolve_paid_invoices(access_token: str = None, user: str = 'system', app: f
                     # Only try to access request if we're in a request context
                     if has_request_context():
                         access_token = request.headers.get('Authorization')
-                        user = Security.current_user().id
+                        user = Security.current_user().Username
                 except RuntimeError:
                     # Working outside of request context - this is expected for background tasks
                     pass

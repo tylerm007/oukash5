@@ -55,7 +55,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         access_token = request.headers.get("Authorization")
         args = request.args
         global completed_by
-        user = Security.current_user().id
+        user = Security.current_user().Username
         completed_by =user
         application_id = args.get('application_id') or args.get('applicationId') or args.get('applicationID') or None
         scenario = args.get('scenario', 1)      

@@ -66,7 +66,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         status = data.get("status", 'COMPLETED')
         if not task_instance_id:
             return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
-        user = Security.current_user().id
+        user = Security.current_user().Username
         completed_by = data.get("completed_by",user)
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)

@@ -103,7 +103,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         # Extract variables from request.args
         data = request.get_json()
-        user = Security.current_user().id
+        user = Security.current_user().Username
         process_name = data.get('process_name', "OU Application Init")
         application_id = data.get('application_id')
         started_by = data.get('started_by', user)
@@ -138,7 +138,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
         
         data = request.get_json()
-        user = Security.current_user().id
+        user = Security.current_user().Username
         process_name = data.get('process_name', "OU Application Init")
         application_id = data.get('application_id')
         started_by = data.get('started_by', user)
