@@ -87,6 +87,7 @@ include:
   - label_barcode
   - label_tb.*
   - produced_in1_tb.*
+  - USER_TABLE.*
 exclude:
   - BillingEmailCompany.*
   - BillingEmailPlant.*

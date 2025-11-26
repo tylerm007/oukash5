@@ -1145,7 +1145,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         else:
             logger.debug(f"WFUser not found in database for: {rtn_user.Username} / {rtn_user.email}")
         
-        logger.info(f"User created from claims: {rtn_user.name}, email: {rtn_user.email}, total roles: {len(rtn_user.UserRoleList)}")
+        #logger.info(f"User created from claims: {rtn_user.name}, email: {rtn_user.email}, total roles: {len(rtn_user.UserRoleList)}")
         if rtn_user.UserRoleList:
             role_list = [r.role_name for r in rtn_user.UserRoleList]
             logger.info(f"  Roles: {role_list}")

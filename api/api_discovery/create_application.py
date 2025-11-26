@@ -78,9 +78,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"result": f'Application ID: {application_id} not found'}), 404
         process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
-        process_id = process_instance.InstanceId if process_instance else None
+       
         if not process_instance:
             return jsonify({"result": f'Workflow Process ID: {process_id} not found for Application ID: {application_id}'}), 404 
+        process_id = process_instance.InstanceId if process_instance else None
         do_cleanup(application_id, process_id)
         return jsonify({"result": f'Cleanup completed for Application ID: {application_id}, Process ID: {process_id}'}), 200
 
