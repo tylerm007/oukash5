@@ -1,7 +1,6 @@
 from functools import wraps
 from flask_cors import cross_origin
 from datetime import datetime
-from database.models import WFUSERROLE, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, WFUser
 from flask import app, request, jsonify, session
 from api.api_discovery.start_workflow import _complete_task
 import logging
@@ -9,7 +8,7 @@ import safrs
 from flask import request, jsonify
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from safrs import jsonapi_rpc
-from database import models
+from database.models import WFApplication, WFUserAdmin, RoleAssignment
 from config.config import Args
 from config.config import Config
 from security.system.authorization import Security
@@ -84,7 +83,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         _assign_role(task_id, role, assignee, app_id, user, access_token)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
 
-def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, access_token: str):
+def _assign_role(task_id:int, role: str, assignee: str, application_id: int, user: str, access_token: str):
     """Assign role to user for the application.
     Args:
         role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
@@ -94,15 +93,15 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
     
     try:
         
-        add_role_assignment(app_id, role, assignee)
+        add_role_assignment(application_id, role, assignee)
         if role == 'NCRC':
-            admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+            admin_assignee = WFUserAdmin.query.filter_by(UserName=assignee, IsPrimary=True).first()
             if admin_assignee is None:
                 admin_assignee = assignee 
             else:
                 admin_assignee = admin_assignee.AdminUserName
            
-            roles = WFUSERROLE.query.filter_by(UserName=assignee).all()
+            roles = WFUserRole.query.filter_by(UserName=assignee).all()
             for role in roles:
                 add_role_assignment(app_id, role.UserRole, admin_assignee)
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 from database import models
-from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WFUser, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
+from database.models import ProcessDefinition, TaskDefinition, WFApplication, WFUser, WorkflowHistory, TaskInstance 
 from flask import request, jsonify, session
 import logging
 from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
@@ -146,8 +146,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 
 def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'SYSTEM', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
-        '''Complete a task instance in the workflow and trigger the next task(s) as needed.'''
+        """_summary_
+        Complete a task instance in the workflow and trigger the next task(s) as needed.
         # Find the task instance
+        Args:
+            task_instance_id (int): _description_
+            result (str, optional): _description_. Defaults to None.
+            completed_by (str, optional): _description_. Defaults to 'system'.
+            completion_notes (str, optional): _description_. Defaults to 'Complete Task via API'.
+            access_token (str, optional): _description_. Defaults to None.
+            depth (int, optional): _description_. Defaults to 0.
+
+        Returns:
+            _type_: _description_
+        """
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
         if not task_instance:
             app_logger.error(f'TaskInstance not found: {task_instance_id}')
@@ -162,19 +174,18 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         if task_instance.Status not in ['PENDING','FAILED', 'IN_PROGRESS'] and task_def.TaskType != 'START': #and depth == 0
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING or IN_PROGRESS -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING or IN_PROGRESS -> {task_instance.Status}."}), 400
-        task_name = task_def.TaskName
-        application_id = task_instance.Stage.ProcessInstance.ApplicationId
+        application_id = task_instance.Stage.ApplicationId
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
-        if application and application.Status in ["WTH","COMPL"] and task_name != "Notify Customer" and task_name != 'End Certification':
+        if application and application.Status in ["WTH","COMPL"]:
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Application {application.ApplicationID} status is {application.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Application status is {application.Status}."}), 400
-       
+        task_name = task_def.TaskName
         stages_list = get_stage_list(task_instance)
         app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
         task_flows_from = task_def.ToTaskTaskFlowList or []
         task_flows_to = task_def.TaskFlowList or []
         # Check if all prior tasks are completed
-        if task_def.TaskType not in ["START", "LANEEND", "END"]:
+        if task_def.TaskType not in ["START", "STAGEEND", "END"]:
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
                 prior_task_instance = TaskInstance.query.filter(
@@ -241,7 +252,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 session.commit()
             if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
                 # RECURRSIVE CALL to complete the next task if AutoComplete is set
-                _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
+                _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by=completed_by, completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
 
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id} Status: {task_instance.Status} Result: {task_instance.Result}')
@@ -277,7 +288,7 @@ def get_stage_list(task_instance: TaskInstance) -> list:
     if task_instance is None:
         return stages
 
-    stage_instances = task_instance.Stage.ProcessInstance.StageInstanceList
+    stage_instances = task_instance.Stage.Application.StageInstanceList
     for stage_instance in stage_instances:
         stages.append(stage_instance.StageInstanceId)
     return stages
@@ -297,9 +308,9 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
         A dictionary containing the result of the operation.
     """
     task_name = task_instance.TaskDef.TaskName if task_instance and task_instance.TaskDef else 'N/A'
-    application_id = task_instance.Stage.ProcessInstance.ApplicationId
+    #application_id = task_instance.Stage.Application.ApplicationID
     wf_history = WorkflowHistory(
-            InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
+
             TaskInstanceId=task_instance.TaskInstanceId,
             Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
             NewStatus=status,
@@ -310,5 +321,5 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
     session.add(wf_history)
     session.commit()
     session.flush()
-    app_logger.info(f'Inserted workflow message for Application ID: {application_id}')
+    app_logger.info(f'Inserted workflow message for TaskInstanceId: {task_instance.TaskInstanceId}')
     

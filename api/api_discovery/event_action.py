@@ -1,10 +1,9 @@
-#from ast import Is
 from datetime import datetime
 from os import access
 import re
 from database import models
 from database.database_discovery.authentication_models import User
-from database.models import INVOICEFEE, EventAction, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
+from database.models import EventAction
 from flask import request, jsonify, session, has_request_context
 import logging
 import flask
@@ -56,39 +55,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return fn(*args, **kwargs)
             return decorator
         return wrapper
-    '''
-    def require_cognito_jwt(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            auth_header = request.headers.get('Authorization', '')
-            
-            if not auth_header.startswith('Bearer '):
-                return jsonify({'error': 'Missing token'}), 401
-            
-            token = auth_header.split(' ')[1]
-            
-            try:
-                claims = jwt.decode(
-                    token,
-                    jwks,
-                    algorithms=['RS256'],
-                    audience=Config.COGNITO_CLIENT_ID,
-                    issuer=f'https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_POOL_ID}'
-                )
-                # Attach claims to request context
-                request.cognito_claims = claims
-                return f(*args, **kwargs)
-            except JWTError as e:
-                return jsonify({'error': f'Invalid token - {str(e)}'}), 401
-        
-        return decorated_function
-    ''' 
-    @app.route('/api/protected')
-    #@require_cognito_jwt
-    def protected():
-        claims = request.cognito_claims
-        return {'user_name': claims['app_username']}
-
+    
     # ==================================================
     #        WORKFLOW EventAction ENDPOINTS (Flask)
     # ==================================================

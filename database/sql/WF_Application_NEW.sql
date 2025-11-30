@@ -82,6 +82,7 @@ DROP TABLE IF EXISTS WF_Applications;
 -- Now drop WF_Users and WF_Roles (WF_Users references WF_Roles)
 
 DROP TABLE IF EXISTS WF_USER_ROLE;
+DROP TABLE IF EXISTS WF_User_Role;
 DROP TABLE IF EXISTS WF_Users;
 DROP TABLE IF EXISTS WF_Roles;
 

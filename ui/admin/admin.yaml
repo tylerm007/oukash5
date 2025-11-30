@@ -1,14 +1,45 @@
 about:
-  date: October 20, 2025 11:04:09
+  date: November 11, 2025 14:55:07
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 49
-  number_tables: 43
+  number_relationships: 39
+  number_tables: 33
 info_toggle_checked: true
 resources:
+  EventAction:
+    attributes:
+    - label: ' Event Id*'
+      name: EventId
+      search: true
+      sort: true
+    - name: TaskInstanceId
+      required: true
+    - name: EventKey
+      required: true
+    - name: EventStatus
+      required: true
+    - name: EventType
+      required: true
+    - name: EventMessage
+      required: true
+    - name: StartDate
+      required: true
+    - name: DueDate
+    - name: ResolvedDate
+    - name: IsResolved
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - TaskInstanceId
+      name: TaskInstance
+      resource: TaskInstance
+    type: EventAction
+    user_key: EventId
   LaneDefinition:
     attributes:
     - label: ' Lane Name*'
@@ -30,16 +61,6 @@ resources:
     - name: ModifiedBy
     - name: LaneId
     tab_groups:
-    - direction: tomany
-      fks:
-      - LaneId
-      name: StageInstanceList
-      resource: StageInstance
-    - direction: tomany
-      fks:
-      - LaneId
-      name: TaskDefinitionList
-      resource: TaskDefinition
     - direction: toone
       fks:
       - LaneRole
@@ -98,99 +119,10 @@ resources:
     - direction: tomany
       fks:
       - ProcessId
-      name: TaskDefinitionList
-      resource: TaskDefinition
+      name: StageDefinitionList
+      resource: StageDefinition
     type: ProcessDefinition
     user_key: ProcessName
-  ProcessInstance:
-    attributes:
-    - label: ' Instance Id*'
-      name: InstanceId
-      search: true
-      sort: true
-    - name: Priority
-    - name: Status
-      required: true
-    - name: StartedDate
-      required: true
-    - name: StartedBy
-      required: true
-    - name: CompletedDate
-    - name: CompletedBy
-    - name: ContextData
-    - name: ProcessId
-      required: true
-    - name: ApplicationId
-      required: true
-    - name: CurrentTaskId
-    tab_groups:
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: ProcessMessageList
-      resource: ProcessMessage
-    - direction: tomany
-      fks:
-      - ProcessInstanceId
-      name: StageInstanceList
-      resource: StageInstance
-    - direction: tomany
-      fks:
-      - ProcessInstanceId
-      name: TaskCommentList
-      resource: TaskComment
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: WorkflowHistoryList
-      resource: WorkflowHistory
-    - direction: toone
-      fks:
-      - Priority
-      name: ProcessPriority
-      resource: ProcessPriority
-    - direction: toone
-      fks:
-      - Status
-      name: ProcessStatus
-      resource: ProcessStatus
-    type: ProcessInstance
-    user_key: InstanceId
-  ProcessMessage:
-    attributes:
-    - label: ' Message Id*'
-      name: MessageId
-      search: true
-      sort: true
-    - name: InstanceId
-      required: true
-    - name: MessageType
-    - name: FromUser
-      required: true
-    - name: ToUser
-    - name: ToRole
-    - name: Subject
-    - name: MessageBody
-      required: true
-    - name: SentDate
-      required: true
-    - name: ReadDate
-    - name: IsRead
-      required: true
-      type: Boolean
-    tab_groups:
-    - direction: toone
-      fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
-    - direction: toone
-      fks:
-      - MessageType
-      name: ProcessMessageType
-      resource: ProcessMessageType
-    type: ProcessMessage
-    user_key: MessageId
   ProcessMessageType:
     attributes:
     - label: ' Message Type Description*'
@@ -200,52 +132,12 @@ resources:
       sort: true
     - name: MessageTypeCode
       required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - MessageType
-      name: ProcessMessageList
-      resource: ProcessMessage
     type: ProcessMessageType
     user_key: MessageTypeDescription
-  ProcessPriority:
+  RoleAssignment:
     attributes:
-    - label: ' Priority Description*'
-      name: PriorityDescription
-      required: true
-      search: true
-      sort: true
-    - name: PriorityCode
-      required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Priority
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    type: ProcessPriority
-    user_key: PriorityDescription
-  ProcessStatus:
-    attributes:
-    - label: ' Status Description*'
-      name: StatusDescription
-      required: true
-      search: true
-      sort: true
-    - name: StatusCode
-      required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Status
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    type: ProcessStatus
-    user_key: StatusDescription
-  RoleAssigment:
-    attributes:
-    - label: ' Role Assigment I D*'
-      name: RoleAssigmentID
+    - label: ' Role Assignment I D*'
+      name: RoleAssignmentID
       search: true
       sort: true
     - name: ApplicationId
@@ -274,29 +166,58 @@ resources:
       - Role
       name: WF_Role
       resource: WFRole
-    type: RoleAssigment
-    user_key: RoleAssigmentID
+    type: RoleAssignment
+    user_key: RoleAssignmentID
+  StageDefinition:
+    attributes:
+    - label: ' Stage Name*'
+      name: StageName
+      required: true
+      search: true
+      sort: true
+    - name: ProcessId
+      required: true
+    - name: StageDescription
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: StageId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - StageId
+      name: StageInstanceList
+      resource: StageInstance
+    - direction: tomany
+      fks:
+      - StageId
+      name: TaskDefinitionList
+      resource: TaskDefinition
+    - direction: toone
+      fks:
+      - ProcessId
+      name: Process
+      resource: ProcessDefinition
+    type: StageDefinition
+    user_key: StageName
   StageInstance:
     attributes:
     - label: ' Stage Instance Id*'
       name: StageInstanceId
       search: true
       sort: true
-    - name: LaneId
+    - name: ApplicationId
       required: true
-    - name: ProcessInstanceId
+    - name: StageId
       required: true
     - name: Status
       required: true
     - name: StartedDate
     - name: CompletedDate
     - name: DurationDays
-    - name: RetryCount
-    - name: AssignedTo
-    - name: AssignedBy
-    - name: AssignedDate
-    - name: CompletedCount
-    - name: TotalCount
     - name: CreatedDate
       required: true
     - name: CreatedBy
@@ -306,23 +227,23 @@ resources:
     tab_groups:
     - direction: tomany
       fks:
-      - StageInstanceId
+      - StageId
       name: TaskInstanceList
       resource: TaskInstance
     - direction: toone
       fks:
-      - LaneId
-      name: Lane
-      resource: LaneDefinition
+      - ApplicationId
+      name: Application
+      resource: WFApplication
     - direction: toone
       fks:
-      - ProcessInstanceId
-      name: ProcessInstance
-      resource: ProcessInstance
+      - StageId
+      name: Stage
+      resource: StageDefinition
     - direction: toone
       fks:
       - Status
-      name: StageStatus
+      name: StageStatu
       resource: StageStatus
     type: StageInstance
     user_key: StageInstanceId
@@ -366,9 +287,9 @@ resources:
       name: CommentId
       search: true
       sort: true
-    - name: CommentType
-    - name: ProcessInstanceId
+    - name: ApplicationId
       required: true
+    - name: CommentType
     - name: TaskInstanceId
     - name: CommentText
       required: true
@@ -382,14 +303,14 @@ resources:
     tab_groups:
     - direction: toone
       fks:
+      - ApplicationId
+      name: Application
+      resource: WFApplication
+    - direction: toone
+      fks:
       - CommentType
       name: TaskCommentType
       resource: TaskCommentType
-    - direction: toone
-      fks:
-      - ProcessInstanceId
-      name: ProcessInstance
-      resource: ProcessInstance
     - direction: toone
       fks:
       - TaskInstanceId
@@ -421,9 +342,7 @@ resources:
       required: true
       search: true
       sort: true
-    - name: LaneId
-      required: true
-    - name: ProcessId
+    - name: StageId
       required: true
     - name: TaskCategory
     - name: TaskType
@@ -469,14 +388,9 @@ resources:
       resource: TaskInstance
     - direction: toone
       fks:
-      - LaneId
-      name: Lane
-      resource: LaneDefinition
-    - direction: toone
-      fks:
-      - ProcessId
-      name: Process
-      resource: ProcessDefinition
+      - StageId
+      name: Stage
+      resource: StageDefinition
     - direction: toone
       fks:
       - TaskCategory
@@ -530,7 +444,6 @@ resources:
     - name: AssignedTo
     - name: StartedDate
     - name: CompletedDate
-    - name: _DurationMinutes
     - name: Result
     - name: ResultData
     - name: ErrorMessage
@@ -539,8 +452,8 @@ resources:
     - direction: tomany
       fks:
       - TaskInstanceId
-      name: TaskAlertList
-      resource: TaskAlert
+      name: EventActionList
+      resource: EventAction
     - direction: tomany
       fks:
       - TaskInstanceId
@@ -559,12 +472,12 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: TaskStatus
+      name: TaskStatu
       resource: TaskStatus
     - direction: toone
       fks:
       - TaskId
-      name: TaskDef
+      name: Task
       resource: TaskDefinition
     type: TaskInstance
     user_key: TaskInstanceId
@@ -631,7 +544,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_ActivityStatus
+      name: WF_ActivityStatu
       resource: WFActivityStatus
     type: WFActivityLog
     user_key: UserName
@@ -661,49 +574,31 @@ resources:
     - name: Status
       required: true
     - name: ApplicationNumber
-      required: true
-    - name: SubmissionDate
-      required: true
-      type: DATE
-    - name: AssignedTo
-    - name: AssignedBy
-    - name: AssignedDate
     - name: CreatedDate
       required: true
     - name: CreatedBy
       required: true
     - name: ModifiedDate
     - name: ModifiedBy
-    - name: verify_company
-      required: true
-      type: Boolean
-    - name: verify_plant
-      required: true
-      type: Boolean
-    - name: verify_contacts
-      required: true
-      type: Boolean
-    - name: verify_products
-      required: true
-      type: Boolean
-    - name: verify_ingredients
-      required: true
-      type: Boolean
-    - name: verify_quote
-      required: true
-      type: Boolean
-    - name: assign_ncrc_rep
-      required: true
-      type: Boolean
     - name: CompanyID
       required: true
     - name: PlantID
     tab_groups:
     - direction: tomany
       fks:
-      - ApplicationID
-      name: RoleAssigmentList
-      resource: RoleAssigment
+      - ApplicationId
+      name: RoleAssignmentList
+      resource: RoleAssignment
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: StageInstanceList
+      resource: StageInstance
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: TaskCommentList
+      resource: TaskComment
     - direction: tomany
       fks:
       - ApplicationID
@@ -712,38 +607,13 @@ resources:
     - direction: tomany
       fks:
       - ApplicationID
-      name: WFApplicationCommentList
-      resource: WFApplicationComment
-    - direction: tomany
-      fks:
-      - ApplicationID
       name: WFApplicationMessageList
       resource: WFApplicationMessage
     - direction: tomany
       fks:
       - ApplicationID
-      name: WFCompanyList
-      resource: WFCompany
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFContactList
-      resource: WFContact
-    - direction: tomany
-      fks:
-      - ApplicationID
       name: WFFileList
       resource: WFFile
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFIngredientList
-      resource: WFIngredient
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFProductList
-      resource: WFProduct
     - direction: tomany
       fks:
       - ApplicationID
@@ -759,38 +629,8 @@ resources:
       - Status
       name: WF_ApplicationStatus
       resource: WFApplicationStatus
-    - direction: toone
     type: WFApplication
     user_key: ApplicationID
-  WFApplicationComment:
-    attributes:
-    - label: ' Comment I D*'
-      name: CommentID
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: Author
-      required: true
-    - name: CommentText
-      required: true
-    - name: CommentType
-      required: true
-    - name: Category
-    - name: CreatedDate
-      required: true
-    - name: CreatedBy
-      required: true
-    - name: ModifiedDate
-    - name: ModifiedBy
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFApplicationComment
-    user_key: CommentID
   WFApplicationMessage:
     attributes:
     - label: ' Message I D*'
@@ -810,6 +650,7 @@ resources:
       required: true
     - name: SentDate
       required: true
+    - name: TaskInstanceId
     tab_groups:
     - direction: toone
       fks:
@@ -826,6 +667,11 @@ resources:
       - Priority
       name: WF_Priority
       resource: WFPriority
+    - direction: toone
+      fks:
+      - ToUser
+      name: WF_User1
+      resource: WFUser
     type: WFApplicationMessage
     user_key: MessageID
   WFApplicationStatus:
@@ -845,52 +691,6 @@ resources:
       resource: WFApplication
     type: WFApplicationStatus
     user_key: StatusDescription
-  WFCompany:
-    attributes:
-    - label: ' Company I D*'
-      name: CompanyID
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: CreatedDate
-      required: true
-    - name: KashrusCompanyID
-      required: true
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFCompany
-    user_key: CompanyID
-  WFContact:
-    attributes:
-    - label: ' Contact Name*'
-      name: ContactName
-      required: true
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: Title
-    - name: ContactPhone
-    - name: ContactEmail
-    - name: IsPrimary
-      required: true
-      type: Boolean
-    - name: CreatedDate
-      required: true
-    - name: ContactID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFContact
-    user_key: ContactName
   WFFile:
     attributes:
     - label: ' File Name*'
@@ -949,47 +749,6 @@ resources:
       resource: WFFile
     type: WFFileType
     user_key: FileTypeName
-  WFIngredient:
-    attributes:
-    - label: ' Ingredient Name*'
-      name: IngredientName
-      required: true
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: Source
-      required: true
-    - name: RMC
-    - name: Manufacturer
-      required: true
-    - name: Packaging
-      required: true
-    - name: Agency
-      required: true
-    - name: AddedDate
-      required: true
-      type: DATE
-    - name: AddedBy
-      required: true
-    - name: Status
-      required: true
-    - name: CreatedDate
-    - name: ModifiedDate
-    - name: IngredientID
-    - name: UKDId
-    - name: Brand
-      required: true
-    - name: NCRCId
-      required: true
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFIngredient
-    user_key: IngredientName
   WFPriority:
     attributes:
     - label: ' Priority Description*'
@@ -1012,70 +771,6 @@ resources:
       resource: WFApplicationMessage
     type: WFPriority
     user_key: PriorityDescription
-  WFProduct:
-    attributes:
-    - label: ' label Name*'
-      name: labelName
-      required: true
-      search: true
-      sort: true
-    - name: ApplicationID
-      required: true
-    - name: action
-      required: true
-    - name: doNotImport
-      required: true
-      type: Boolean
-    - name: message
-    - name: labelType
-      required: true
-    - name: brandName
-      required: true
-    - name: distributorName
-      required: true
-    - name: group
-      required: true
-    - name: symbol
-      required: true
-    - name: dpm
-      required: true
-    - name: category
-      required: true
-    - name: usePlantStatus
-      required: true
-      type: Boolean
-    - name: status
-      required: true
-    - name: legacyStatus
-    - name: consumer
-      required: true
-      type: Boolean
-    - name: industrial
-      required: true
-      type: Boolean
-    - name: processedBy
-      required: true
-    - name: processedDate
-      required: true
-      type: DATE
-    - name: notes
-      required: true
-    - name: ProductID
-    - name: legacyId
-      required: true
-    - name: labelCompanyId
-      required: true
-    - name: finalized
-      required: true
-      type: Boolean
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFProduct
-    user_key: labelName
   WFQuote:
     attributes:
     - label: ' Quote I D*'
@@ -1173,16 +868,66 @@ resources:
     - direction: tomany
       fks:
       - Role
-      name: RoleAssigmentList
-      resource: RoleAssigment
+      name: RoleAssignmentList
+      resource: RoleAssignment
     - direction: tomany
       fks:
       - UserRole
-      name: WFUSERROLEList
-      resource: WFUSERROLE
+      name: WFUserRoleList
+      resource: WFUserRole
     type: WFRole
     user_key: UserRole
-  WFUSERADMIN:
+  WFUser:
+    attributes:
+    - label: ' Username*'
+      name: Username
+      required: true
+      search: true
+      sort: true
+    - name: Email
+      required: true
+    - name: FullName
+      required: true
+    - name: IsActive
+      required: true
+      type: Boolean
+    - name: CreatedDate
+      required: true
+    - name: LastLoginDate
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Assignee
+      name: RoleAssignmentList
+      resource: RoleAssignment
+    - direction: tomany
+      fks:
+      - FromUser
+      name: WFApplicationMessageList
+      resource: WFApplicationMessage
+    - direction: tomany
+      fks:
+      - ToUser
+      name: WFApplicationMessageList1
+      resource: WFApplicationMessage
+    - direction: tomany
+      fks:
+      - AdminUserName
+      name: WFUserAdminList
+      resource: WFUserAdmin
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUserAdminList1
+      resource: WFUserAdmin
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUserRoleList
+      resource: WFUserRole
+    type: WFUser
+    user_key: Username
+  WFUserAdmin:
     attributes:
     - label: ' User Name*'
       name: UserName
@@ -1209,9 +954,9 @@ resources:
       - UserName
       name: WF_User1
       resource: WFUser
-    type: WFUSERADMIN
+    type: WFUserAdmin
     user_key: UserName
-  WFUSERROLE:
+  WFUserRole:
     attributes:
     - label: ' User Name*'
       name: UserName
@@ -1235,61 +980,14 @@ resources:
       - UserRole
       name: WF_Role
       resource: WFRole
-    type: WFUSERROLE
+    type: WFUserRole
     user_key: UserName
-  WFUser:
-    attributes:
-    - label: ' Username*'
-      name: Username
-      required: true
-      search: true
-      sort: true
-    - name: Email
-      required: true
-    - name: FullName
-      required: true
-    - name: IsActive
-      required: true
-      type: Boolean
-    - name: CreatedDate
-      required: true
-    - name: LastLoginDate
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Assignee
-      name: RoleAssigmentList
-      resource: RoleAssigment
-    - direction: tomany
-      fks:
-      - FromUser
-      name: WFApplicationMessageList
-      resource: WFApplicationMessage
-    - direction: tomany
-      fks:
-      - AdminUserName
-      name: WFUSERADMINList
-      resource: WFUSERADMIN
-    - direction: tomany
-      fks:
-      - UserName
-      name: WFUSERADMINList1
-      resource: WFUSERADMIN
-    - direction: tomany
-      fks:
-      - UserName
-      name: WFUSERROLEList
-      resource: WFUSERROLE
-    type: WFUser
-    user_key: Username
   WorkflowHistory:
     attributes:
     - label: ' History Id*'
       name: HistoryId
       search: true
       sort: true
-    - name: InstanceId
-      required: true
     - name: TaskInstanceId
     - name: Action
       required: true
@@ -1302,11 +1000,6 @@ resources:
     - name: ActionReason
     - name: Details
     tab_groups:
-    - direction: toone
-      fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
     - direction: toone
       fks:
       - TaskInstanceId

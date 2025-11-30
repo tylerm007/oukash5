@@ -50,16 +50,19 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         args = request.args
         user = Security.current_user().Username
         owns_id = args.get('owns_id') or args.get('ownsId') or None
+        company_id = args.get('company_id') or args.get('companyId') or None
+        plant_id = args.get('plant_id') or args.get('plantId') or None
+        owns_instance = None
         if owns_id is None:
             return jsonify({"result": 'ownsId parameter is required'}), 400
         owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
         if not owns_instance:
             return jsonify({"result": f'Owns instance with ID: {owns_id} not found'}), 404
     
-        companyID = owns_instance.COMPANY_ID
-        plant_id = owns_instance.PLANT_ID
+        companyId = company_id or owns_instance.COMPANY_ID if owns_instance else 0
+        plantId = plant_id or owns_instance.PLANT_ID if owns_instance else 0
         access_token = request.headers.get('Authorization', '')
-        application_id = create_new_application(companyID, plant_id, user)
+        application_id = create_new_application(companyId, plantId, user)
         response = start_workflow(application_id, user, access_token)
         app_logger.info(f'Application {application_id} created and workflow started with process instance ID: {response["process_instance_id"]}')
         return jsonify({"status": f"application created successfully {application_id} started"}), 200
@@ -77,13 +80,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationID == application_id).first()
         if not application:
             return jsonify({"result": f'Application ID: {application_id} not found'}), 404
-        process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
-       
-        if not process_instance:
-            return jsonify({"result": f'Workflow Process ID: {process_id} not found for Application ID: {application_id}'}), 404 
-        process_id = process_instance.InstanceId if process_instance else None
-        do_cleanup(application_id, process_id)
-        return jsonify({"result": f'Cleanup completed for Application ID: {application_id}, Process ID: {process_id}'}), 200
+        do_cleanup(application_id)
+        return jsonify({"result": f'Cleanup completed for Application ID: {application_id}'}), 200
 
 
 def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = "admin"):
@@ -148,23 +146,27 @@ def start_workflow(application_id: int, start_by: str, access_token: str):
     response = _start_workflow_async(process_name=process_name, application_id=int(application_id), started_by=start_by, priority="NORMAL", access_token=access_token)
     return response
 
-def find_all_stages_for_process(process_id):
-    stages = StageInstance.query.filter(StageInstance.ProcessInstanceId == process_id).order_by(StageInstance.LaneId).all()
+def find_all_stages_for_process(application_id):
+    stages = StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageId).all()
     return [stage for stage in stages]
 
-def do_cleanup(application_id, process_id):
+def do_cleanup(application_id):
     session.execute(text(f"""
         DELETE FROM EventAction where [TaskInstanceId] IN (
             SELECT TaskInstanceId FROM TaskInstances where StageId IN ( 
-                SELECT StageInstanceId FROM StageInstance where ProcessInstanceId = {process_id}
+                SELECT StageInstanceId FROM StageInstance where ApplicationId = {application_id}
             )
         );
-        DELETE FROM TaskComments where [ProcessInstanceId] = {process_id};
-        DELETE FROM WorkflowHistory where [InstanceId] = {process_id};
-      
+        DELETE FROM TaskComments where [ApplicationId] = {application_id};
+        DELETE FROM WorkflowHistory where [TaskInstanceId] IN (
+            SELECT TaskInstanceId FROM TaskInstances where StageId IN ( 
+                SELECT StageInstanceId FROM StageInstance where ApplicationId = {application_id}
+            )
+        );
+
     """))
     session.commit()
-    stage_list = find_all_stages_for_process(process_id)
+    stage_list = find_all_stages_for_process(application_id)
     for stage in stage_list:
         session.execute(text(f"""
             DELETE FROM TaskInstances where StageId = {stage.StageInstanceId};
@@ -175,17 +177,17 @@ def do_cleanup(application_id, process_id):
         """))
         session.commit()
     session.execute(text(f"""
-        DELETE from RoleAssigment where ApplicationId = {application_id};
-        DELETE FROM ProcessInstances where ApplicationId = {application_id};
-        DELETE FROM WF_ApplicationComments where ApplicationID = {application_id};
+        DELETE from RoleAssignment where ApplicationId = {application_id};
+        -- DELETE FROM ProcessInstances where ApplicationId = {application_id};
+        --DELETE FROM WF_ApplicationComments where ApplicationID = {application_id};
         DELETE FROM WF_ApplicationMessages where ApplicationID = {application_id};
-        DELETE FROM WF_Products where ApplicationId = {application_id};
-        DELETE FROM WF_Ingredients where ApplicationId = {application_id};   
-        DELETE FROM WF_Contacts where ApplicationId = {application_id};
+        --DELETE FROM WF_Products where ApplicationId = {application_id};
+        --DELETE FROM WF_Ingredients where ApplicationId = {application_id};   
+        --DELETE FROM WF_Contacts where ApplicationId = {application_id};
         DELETE FROM WF_QuoteItems where QuoteID in (select QuoteID from WF_Quotes where ApplicationID = {application_id});
         DELETE FROM WF_Quotes where ApplicationId = {application_id};
         DELETE FROM WF_Files where ApplicationId = {application_id};
         DELETE FROM WF_Applications where ApplicationId = {application_id};
-       
+
     """))
     session.commit()
