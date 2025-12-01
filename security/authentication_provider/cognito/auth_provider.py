@@ -553,7 +553,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             access_token = None
             try:
                 id_token = None
-                
+                if request.method == 'OPTIONS':
+                    return jsonify({'message': 'CORS preflight'}), 200
                 # Try to get token from request
                 if request.method == 'POST' and request.is_json:
                     data = request.get_json()

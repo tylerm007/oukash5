@@ -26,6 +26,16 @@ app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
 session = db.session
 
+# OPTIMIZATION: Cache script engine instance at module level to avoid recreation overhead
+_script_engine = None
+
+def get_script_engine():
+    """Get or create cached PythonScriptEngine instance"""
+    global _script_engine
+    if _script_engine is None:
+        _script_engine = python_engine.PythonScriptEngine()
+    return _script_engine
+
 def make_secure_request(method, url, **kwargs):
     """Make HTTP request with SSL verification disabled for self-signed certificates"""
     kwargs['verify'] = False  # Disable SSL verification for self-signed certs
@@ -460,38 +470,74 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
             
     # collect prior context from dependent tasks and create a union of ResultData
     application_id = row.Stage.ProcessInstance.ApplicationId
-    se = python_engine.PythonScriptEngine()
-    data = DotMap({})
-    data.access_token = access_token
-    task = DotMap(row.to_dict())
-    # Get current state to use in script calls
-    data.Result = task.Result
-    data.ResultData = task.ResultData   
-    data.application_id = application_id
-    data.task_instance_id = task_instance_id
-    data.stage_id = stage_id
-    context = {"data": data,"application_id": application_id, "task": task, "task_instance_id": task_instance_id, "task_id": task_id, "stage_id": stage_id,"access_token": access_token}
-    external_context = {"get_application": get_application,
-                        "set_application_attribute":set_application_attribute,
-                        "set_stage_attribute":set_stage_attribute,     
-                        "set_task_attribute":set_task_attribute,
-                        "create_invoice":create_invoice,
-                        "models":models,
-                        "app_logger":app_logger,
-                        "datetime":datetime,
-                        "Decimal":Decimal}
+    
+    # OPTIMIZATION: Build lightweight task dict manually instead of expensive to_dict()
+    # Only include fields commonly used in scripts to reduce serialization overhead
+    task = {
+        'TaskInstanceId': row.TaskInstanceId,
+        'TaskId': row.TaskId,
+        'StageId': row.StageId,
+        'Status': row.Status,
+        'Result': row.Result,
+        'ResultData': row.ResultData,
+        'AssignedTo': row.AssignedTo,
+        'StartedDate': row.StartedDate,
+        'CompletedDate': row.CompletedDate,
+        'TaskName': task_def.TaskName if task_def else None,
+        'TaskType': task_def.TaskType if task_def else None,
+    }
+    
+    # OPTIMIZATION: Use plain dict instead of DotMap to reduce overhead
+    # Scripts can access via data['key'] instead of data.key
+    data = {
+        'access_token': access_token,
+        'Result': row.Result,
+        'ResultData': row.ResultData,
+        'application_id': application_id,
+        'task_instance_id': task_instance_id,
+        'stage_id': stage_id
+    }
+    
+    # OPTIMIZATION: Combine context dictionaries to avoid duplication
+    context = {
+        "data": data,
+        "application_id": application_id,
+        "task": task,
+        "task_instance_id": task_instance_id,
+        "task_id": task_id,
+        "stage_id": stage_id,
+        "access_token": access_token
+    }
+    
+    external_context = {
+        "get_application": get_application,
+        "set_application_attribute": set_application_attribute,
+        "set_stage_attribute": set_stage_attribute,     
+        "set_task_attribute": set_task_attribute,
+        "create_invoice": create_invoice,
+        "models": models,
+        "app_logger": app_logger,
+        "datetime": datetime,
+        "Decimal": Decimal
+    }
+    
+    # OPTIMIZATION: Reuse cached script engine instance instead of creating new one
+    se = get_script_engine()
+    
     try:
         r = se.execute(script=script, task=context, external_context=external_context)
         if r:
-            data = r.get('data', None)
+            result_data = r.get('data', None)
             app_logger.info(f'Script executed successfully for task_id {task_id}')
-            app_logger.info(f'Script execution Result: {data}')
-            return data
+            app_logger.info(f'Script execution Result: {result_data}')
+            return result_data
     except Exception as e:
         app_logger.error(f'Error executing script for task_id {task_id}: {e}')
-        data.Result = False
-        data.ErrorMessage = f'Error executing script for task_id {task_id}: {e}'
-        return data
+        error_result = {
+            'Result': False,
+            'ErrorMessage': f'Error executing script for task_id {task_id}: {e}'
+        }
+        return error_result
     
 def declare_logic():
     pass

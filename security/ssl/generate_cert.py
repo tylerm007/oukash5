@@ -52,6 +52,7 @@ def generate_self_signed_cert():
         # Add Subject Alternative Names for localhost variations
         x509.SubjectAlternativeName([
             x509.DNSName(u"devvm01.nyc.ou.org"),
+            x509.DNSName(u"devlinux01.nyc.ou.org"),
             x509.DNSName(u"localhost"),
             x509.DNSName(u"192.168.13.31"),
             x509.DNSName(u"172.30.3.133"),
@@ -81,7 +82,7 @@ def generate_self_signed_cert():
     print(f"📁 Certificate: {cert_path}")
     print(f"🔑 Private Key: {key_path}")
     print(f"⚠️  Note: This is a self-signed certificate for development only")
-    print(f"🌐 Valid for: localhost,devvm01.nyc.ou.org, 192.168.13.31, 172.30.3.133, 127.0.0.1, 0.0.0.0")
+    print(f"🌐 Valid for: localhost,devvm01.nyc.ou.org, devlinux01.nyc.ou.org, 192.168.13.31, 172.30.3.133, 127.0.0.1, 0.0.0.0")
     
     return cert_path, key_path
 

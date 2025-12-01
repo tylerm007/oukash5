@@ -111,6 +111,7 @@ def _complete_task_optimized(
     # START TIMER
     import time
     start_time = time.time()
+    timings = {}  # Track individual operation timings
     
     # IMPROVEMENT 1: Add recursion depth limit
     if depth > MAX_RECURSION_DEPTH:
@@ -123,8 +124,10 @@ def _complete_task_optimized(
     
     # IMPROVEMENT 2: Use eager loading to prevent N+1 queries
     # Check cache first
+    t1 = time.time()
     if task_instance_id in task_instance_cache:
         task_instance = task_instance_cache[task_instance_id]
+        app_logger.debug(f"[PERF] Task {task_instance_id} loaded from cache")
     else:
         from database.models import StageInstance, ProcessInstance
         task_instance = TaskInstance.query.options(
@@ -136,6 +139,8 @@ def _complete_task_optimized(
         
         if task_instance:
             task_instance_cache[task_instance_id] = task_instance
+    timings['query_task_instance'] = time.time() - t1
+    app_logger.info(f"[PERF] Query task instance: {timings['query_task_instance']:.3f}s")
     
     if not task_instance:
         app_logger.error(f'TaskInstance not found: {task_instance_id}')
@@ -169,6 +174,7 @@ def _complete_task_optimized(
     task_flows_to = task_def.TaskFlowList or []
     
     # IMPROVEMENT 4: Bulk query for prior task instances instead of one-by-one
+    t2 = time.time()
     if task_def.TaskType not in ["START", "LANEEND", "END"] and task_flows_from:
         prior_task_ids = [tf.FromTaskId for tf in task_flows_from]
         prior_task_instances = TaskInstance.query.filter(
@@ -185,6 +191,8 @@ def _complete_task_optimized(
             if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                 app_logger.error(f'Cannot complete task {task_name}. Prior task {prior_task_instance.TaskDef.TaskName} not COMPLETED.')
                 return jsonify({"status": "error", "message": f"Prior task not COMPLETED"}), 400
+    timings['check_prior_tasks'] = time.time() - t2
+    app_logger.info(f"[PERF] Check prior tasks: {timings['check_prior_tasks']:.3f}s")
     
     # Complete the task
     if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
@@ -204,6 +212,7 @@ def _complete_task_optimized(
     
     try:
         # Call script engine if completed
+        t3 = time.time()
         if status == 'COMPLETED':
             data = call_task_script_engine(task_instance, access_token)
             task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
@@ -221,6 +230,8 @@ def _complete_task_optimized(
                 session.commit()
                 app_logger.error(f'Script returned false for task {task_name}')
                 return jsonify({"status": "error", "message": f'Script error: {task_instance.ErrorMessage}'}), 400
+        timings['script_engine'] = time.time() - t3
+        app_logger.info(f"[PERF] Script engine call: {timings['script_engine']:.3f}s")
         
         # Insert workflow history (will be committed with next tasks)
         #history = insert_workflow_history(task_instance, status=status, result=result, 
@@ -229,6 +240,7 @@ def _complete_task_optimized(
         #                                 commit=False)  # Don't commit yet
         
         # IMPROVEMENT 7: Bulk query for next task instances
+        t4 = time.time()
         if task_flows_to:
             next_task_ids = [flow.ToTaskId for flow in task_flows_to]
             next_task_instances = TaskInstance.query.options(
@@ -246,6 +258,8 @@ def _complete_task_optimized(
                 task_instance_cache[nti.TaskInstanceId] = nti
         else:
             next_tasks_by_id = {}
+        timings['query_next_tasks'] = time.time() - t4
+        app_logger.info(f"[PERF] Query next tasks: {timings['query_next_tasks']:.3f}s (found {len(next_tasks_by_id)} tasks)")
         
         # Collect tasks to auto-complete (for recursive calls)
         tasks_to_autocomplete = []
@@ -271,27 +285,64 @@ def _complete_task_optimized(
                 next_task_instance.StartedDate = datetime.utcnow()
                 updates_to_commit.append(next_task_instance)
                 
-                # Queue for auto-completion
-                if next_task_instance.TaskDef.AutoComplete:
-                    tasks_to_autocomplete.append(next_task_instance.TaskInstanceId)
-        
+            # Queue for auto-completion
+            if next_task_instance.TaskDef.AutoComplete:
+                tasks_to_autocomplete.append(next_task_instance.TaskInstanceId)
+    
         # IMPROVEMENT 8: Batch commit all updates
+        t5 = time.time()
         for update in updates_to_commit:
             session.add(update)
         session.commit()
+        timings['commit'] = time.time() - t5
+        app_logger.info(f"[PERF] Database commit ({len(updates_to_commit)} objects): {timings['commit']:.3f}s")
         
         # IMPROVEMENT 9: Process auto-complete tasks after commit
-        for next_task_id in tasks_to_autocomplete:
-            _complete_task_optimized(
-                task_instance_id=next_task_id, 
-                result=None, 
-                completed_by='system', 
-                completion_notes='Auto-completed', 
-                access_token=access_token, 
-                depth=depth+1,
-                task_instance_cache=task_instance_cache,  # Pass cache
-                stages_list_cache=stages_list_cache        # Pass cache
-            )
+        # CHANGE: Only do recursive calls at depth 0 to avoid deep recursion
+        # For depth > 0, collect tasks and let the parent handle them
+        t6 = time.time()
+        if depth == 0:
+            # At root level - process all auto-complete tasks iteratively
+            all_autocomplete_tasks = list(tasks_to_autocomplete)
+            processed_count = 0
+            
+            while all_autocomplete_tasks:
+                next_task_id = all_autocomplete_tasks.pop(0)
+                app_logger.debug(f"[PERF] Processing auto-complete task {next_task_id} ({processed_count + 1}/{len(all_autocomplete_tasks) + processed_count + 1})")
+                
+                # Call recursively but collect any new auto-complete tasks
+                result = _complete_task_optimized(
+                    task_instance_id=next_task_id, 
+                    result=None, 
+                    completed_by='system', 
+                    completion_notes='Auto-completed', 
+                    access_token=access_token, 
+                    depth=depth+1,
+                    task_instance_cache=task_instance_cache,
+                    stages_list_cache=stages_list_cache
+                )
+                processed_count += 1
+                
+                # If result contains more tasks to process, add them to the queue
+                # (This would require returning tasks_to_autocomplete from recursive calls)
+        else:
+            # At deeper levels - just do the recursive calls normally
+            # The root call will handle the queue
+            for next_task_id in tasks_to_autocomplete:
+                _complete_task_optimized(
+                    task_instance_id=next_task_id, 
+                    result=None, 
+                    completed_by='system', 
+                    completion_notes='Auto-completed', 
+                    access_token=access_token, 
+                    depth=depth+1,
+                    task_instance_cache=task_instance_cache,
+                    stages_list_cache=stages_list_cache
+                )
+        
+        timings['recursive_calls'] = time.time() - t6
+        if tasks_to_autocomplete:
+            app_logger.info(f"[PERF] Recursive auto-complete ({len(tasks_to_autocomplete)} tasks): {timings['recursive_calls']:.3f}s")
                 
     except Exception as e:
         app_logger.error(f'Error completing task {task_instance_id}: {e}')
@@ -301,9 +352,30 @@ def _complete_task_optimized(
     # END TIMER
     end_time = time.time()
     processing_time = end_time - start_time
+    own_time = processing_time - timings.get('recursive_calls', 0)
     
-    app_logger.info(f'Task completed: {task_name} - {task_instance_id} Status: {status} in {processing_time:.3f} seconds (depth: {depth})')
-    return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id, "processing_time": f"{processing_time:.3f}s"}}), 200
+    # Log detailed breakdown
+    if depth == 0:
+        app_logger.info(f'[PERF] ====== TASK {task_instance_id} ({task_name}) ROOT CALL COMPLETED ======')
+        app_logger.info(f'[PERF] TOTAL TIME: {processing_time:.3f}s')
+    else:
+        app_logger.info(f'[PERF] Task {task_instance_id} ({task_name}) depth={depth} completed in {processing_time:.3f}s')
+    
+    app_logger.info(f'[PERF] Breakdown (own time: {own_time:.3f}s) - '
+                   f'Query:{timings.get("query_task_instance",0):.3f}s, '
+                   f'Prior:{timings.get("check_prior_tasks",0):.3f}s, '
+                   f'Script:{timings.get("script_engine",0):.3f}s, '
+                   f'NextQuery:{timings.get("query_next_tasks",0):.3f}s, '
+                   f'Commit:{timings.get("commit",0):.3f}s, '
+                   f'Recursive:{timings.get("recursive_calls",0):.3f}s')
+    
+    return jsonify({"status": "ok", "data": {
+        "task_instance_id": task_instance_id, 
+        "processing_time": f"{processing_time:.3f}s",
+        "own_time": f"{own_time:.3f}s",
+        "depth": depth,
+        "timings": timings
+    }}), 200
 
 
 def validate_prior_tasks_optimized(taskDef: TaskDefinition, stages_list: list, task_instance_cache: dict = None) -> bool:

@@ -75,7 +75,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"result": f'Application ID: {application_id} not found'}), 404
         do_reset(application_id)
-        from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+        #from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+        from api.api_discovery.complete_task import _complete_task
         start_instance_id = get_start_task(application_id)
         if not start_instance_id:
             return jsonify({"result": f'Start TaskInstance not found for Application ID: {application_id}'}), 404   
@@ -148,7 +149,8 @@ def find_task_flow(task_instance:TaskInstance):
     return task_flows_to
 
 def complete_task(task_instance, scenario: int = 1):
-    from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+    #from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+    from api.api_discovery.complete_task import _complete_task
     task_instance_id = task_instance.TaskInstanceId
     task_name = task_instance.TaskDef.TaskName
     #access_token = request.headers.get("Authorization") if access_token is None else access_token

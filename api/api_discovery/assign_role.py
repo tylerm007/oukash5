@@ -92,7 +92,8 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
     """
     
     try:
-        from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+        #from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
+        from api.api_discovery.complete_task import _complete_task
         
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
