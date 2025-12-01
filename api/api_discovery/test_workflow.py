@@ -75,7 +75,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if not application:
             return jsonify({"result": f'Application ID: {application_id} not found'}), 404
         do_reset(application_id)
-        from api.api_discovery.complete_task import _complete_task
+        from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
         start_instance_id = get_start_task(application_id)
         if not start_instance_id:
             return jsonify({"result": f'Start TaskInstance not found for Application ID: {application_id}'}), 404   
@@ -148,15 +148,13 @@ def find_task_flow(task_instance:TaskInstance):
     return task_flows_to
 
 def complete_task(task_instance, scenario: int = 1):
-    from api.api_discovery.complete_task import _complete_task
+    from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
     task_instance_id = task_instance.TaskInstanceId
     task_name = task_instance.TaskDef.TaskName
     #access_token = request.headers.get("Authorization") if access_token is None else access_token
     result = result_scenario(task_name, scenario)
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
-    if result:
-        time.sleep(1)
     print(f"Complete Task {task_name} - Response: {response}")
 
 def result_scenario(task_name, scenario: int = 1) -> str:
@@ -188,11 +186,11 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
         app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
         if status == 'IN_PROGRESS' and name == 'Initial':
             pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
-                for task_instance in pending_tasks:
-                    if task_instance.TaskDef.TaskName == 'AssignNCRC' and task_instance.Status == 'PENDING':
-                        _assign_role(task_id=task_instance.TaskInstanceId, role='NCRC',assignee=completed_by, app_id=application_id,  user=completed_by, access_token=access_token)
-                        print(f'  Assign Role: {task_instance.TaskDef.TaskName}')
+            #while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
+            for task_instance in pending_tasks:
+                if task_instance.TaskDef.TaskName == 'AssignNCRC' and task_instance.Status == 'PENDING':
+                    _assign_role(task_id=task_instance.TaskInstanceId, role='NCRC',assignee=completed_by, app_id=application_id,  user=completed_by, access_token=access_token)
+                    print(f'  Assign Role: {task_instance.TaskDef.TaskName}')
             process_all_pending_tasks(stage_id, completed_tasks)
                 #pending_tasks = find_all_pending_tasks(stage_id)
 

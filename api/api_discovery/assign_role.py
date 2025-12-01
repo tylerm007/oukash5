@@ -3,7 +3,6 @@ from flask_cors import cross_origin
 from datetime import datetime
 from database.models import WFUSERROLE, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, WFUser
 from flask import app, request, jsonify, session
-from api.api_discovery.start_workflow import _complete_task
 import logging
 import safrs
 from flask import request, jsonify
@@ -93,6 +92,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
     """
     
     try:
+        from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
         
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':

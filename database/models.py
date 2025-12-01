@@ -470,6 +470,7 @@ class WFApplication(Base):  # type: ignore
     WFIngredientList : Mapped[List["WFIngredient"]] = relationship(back_populates="Application")
     WFProductList : Mapped[List["WFProduct"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
+    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="Application")
 
 
 
@@ -523,7 +524,7 @@ class ProcessInstance(Base):  # type: ignore
 
     InstanceId = Column(Integer, autoincrement=True, primary_key=True)
     ProcessId = Column(ForeignKey('ProcessDefinitions.ProcessId'), nullable=False)
-    ApplicationId = Column(Unicode(50), nullable=False, index=True)
+    ApplicationId = Column(Unicode(50), ForeignKey('WF_Applications.ApplicationID'), nullable=False, index=True)
     Status = Column(ForeignKey('ProcessStatus.StatusCode'), server_default=text("NEW"), nullable=False, index=True)
     CurrentTaskId = Column(ForeignKey('TaskDefinitions.TaskId'))
     StartedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False, index=True)
@@ -538,6 +539,7 @@ class ProcessInstance(Base):  # type: ignore
     ProcessPriority : Mapped["ProcessPriority"] = relationship(back_populates=("ProcessInstanceList"))
     Process : Mapped["ProcessDefinition"] = relationship(back_populates=("ProcessInstanceList"))
     ProcessStatus : Mapped["ProcessStatus"] = relationship(back_populates=("ProcessInstanceList"))
+    Application : Mapped["WFApplication"] = relationship(back_populates=("ProcessInstanceList"))
 
     # child relationships (access children)
     ProcessMessageList : Mapped[List["ProcessMessage"]] = relationship(back_populates="Instance")

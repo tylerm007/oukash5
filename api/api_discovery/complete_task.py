@@ -41,10 +41,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     #        WORKFLOW ENDPOINTS (Flask)
     # ==================================================
    
-    @app.route('/complete_task', methods=['POST','OPTIONS'])
+    @app.route('/complete_task_v0', methods=['POST','OPTIONS'])
     @admin_required()
     @jwt_required()
-    def complete_task():
+    def complete_task_v0():
         """
         This will Complete a task in the workflow and trigger the next task(s) defined in TaskFlow as needed.
 
@@ -57,6 +57,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         } | ConvertTo-Json)
 
         Invoke-RestMethod -Uri "http://localhost:5656/complete_task" -Method POST -Body $body -ContentType "application/json"
+    
         """
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200       
@@ -85,7 +86,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             session.add(task_instance)
             session.commit()
             return jsonify({"status": "success", "message": f"Task status updated to {status} successfully"}), 200
-
+        
         return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, depth=0)
 
     
