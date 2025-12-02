@@ -41,10 +41,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     #        WORKFLOW ENDPOINTS (Flask)
     # ==================================================
    
-    @app.route('/complete_task_v0', methods=['POST','OPTIONS'])
+    @app.route('/complete_task', methods=['POST','OPTIONS'])
     @admin_required()
     @jwt_required()
-    def complete_task_v0():
+    def complete_task():
         """
         This will Complete a task in the workflow and trigger the next task(s) defined in TaskFlow as needed.
 
@@ -202,8 +202,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             session.flush()
             # Call PostScriptJson if defined
             if status == 'COMPLETED':
-                data = call_task_script_engine(task_instance, access_token)
-                task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
+                data = None #call_task_script_engine(task_instance, access_token)
+                #ask_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
                     task_instance.Status = 'IN_PROGRESS' if task_instance.TaskDef.TaskType != 'START' else status
@@ -221,7 +221,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             return jsonify({"status": "error", "message": "Error completing task"}), 500
 
         ## Get the workflow history
-        insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
+        #insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
         
         # Start the next tasks
         for flow_to in task_flows_to:

@@ -142,8 +142,8 @@ def declare_logic():
     #Rule.row_event(on_class=models.StageInstance, calling=update_status)
     #WF Application Dashboard
     '''
-    Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
-    Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
+    #Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
+    #Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     '''
 
     
@@ -172,7 +172,8 @@ def declare_logic():
         # calling start_workflow_function directly inside a flush event did not work
         #start_workflow_function(process_name=process_name, application_id=application_id, started_by=started_by, priority=priority) 
     
-    Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
+    #Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
+    
     
     def update_stages(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
         """
@@ -186,14 +187,14 @@ def declare_logic():
         application_id = stage.ProcessInstance.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
             
-        if row.TaskDef.TaskType == 'LANESTART':
+        if row.TaskDef.TaskType in ('LANESTART''STAGESTART'):
             stage.Status = 'IN_PROGRESS'
             application.StartedDate = datetime.datetime.now()
-            logic_row.update(reason="update stage status to INP", row=application)
-        elif row.TaskDef.TaskType == 'LANEEND' and row.Status == 'COMPLETED':
+            logic_row.update(reason="update stage status to INP", row=stage)
+        elif row.TaskDef.TaskType in ('LANEEND','STAGEEND') and row.Status == 'COMPLETED':
             stage.Status = 'COMPLETED'
             stage.CompletedDate = datetime.datetime.now()
-            logic_row.update(reason="update stage status to COMPLETED", row=application)
+            logic_row.update(reason="update stage status to COMPLETED", row=stage)
         elif row.TaskDef.TaskType == 'START':
             if application is not None:
                 application.Status = 'INP'
@@ -204,10 +205,24 @@ def declare_logic():
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
+        else:
+            status = None
+            TaskName = row.TaskDef.TaskName
+            # Specific TaskDef.TaskName logic can go here if needed
+            if TaskName == 'Issue Certificate' and row.Result == 'YES': status = 'COMPL'
+            elif TaskName == 'to Withdrawn Y/N' and row.Result == 'YES': status = 'WTH'
+            elif TaskName == 'Withdraw Application' and row.Result == 'YES': status = 'WTH'
+            elif TaskName == 'Send Contract' and row.Result == 'YES': status = 'CONTRACT' 
+            elif TaskName == 'Inspection Report Submitted to IAR': status = 'REVIEW'
+            elif TaskName == 'Schedule Inspection': status = 'INSPECTION'
+            if status is not None:
+                application.Status = status
+                application.CompletedDate = datetime.datetime.now()
+                logic_row.update(reason=f"update application status to {application.Status}", row=application)
         
-    #Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
-
-
+    Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
+    #Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
+    #Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 

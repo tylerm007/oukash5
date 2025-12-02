@@ -54,7 +54,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     # ==================================================
    
     @app.route('/complete_task_v1', methods=['POST','OPTIONS'])
-    @app.route('/complete_task', methods=['POST','OPTIONS'])
+    #@app.route('/complete_task', methods=['POST','OPTIONS'])
     @admin_required()
     @jwt_required()
     def complete_task_v1():
@@ -314,7 +314,7 @@ def _complete_task_optimized(
                 result = _complete_task_optimized(
                     task_instance_id=next_task_id, 
                     result=None, 
-                    completed_by='system', 
+                    completed_by=completed_by, 
                     completion_notes='Auto-completed', 
                     access_token=access_token, 
                     depth=depth+1,
@@ -332,7 +332,7 @@ def _complete_task_optimized(
                 _complete_task_optimized(
                     task_instance_id=next_task_id, 
                     result=None, 
-                    completed_by='system', 
+                    completed_by=completed_by, 
                     completion_notes='Auto-completed', 
                     access_token=access_token, 
                     depth=depth+1,
