@@ -174,13 +174,58 @@ def declare_logic():
     
     #Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
     
+    def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:
+        ''' Find the next TaskInstance in the workflow by TaskName
+        '''
+        #task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+        if not task_instance:
+            return None
+        stage_id = task_instance.StageId
+        task_def = models.TaskDefinition.query.filter_by(TaskName=task_name).first()
+        if not task_def:
+            app_logger.warning(f"No TaskDefinition found with TaskName {task_name}")
+            return None
+        next_task_instance = models.TaskInstance.query.filter_by(TaskId=task_def.TaskId, StageId=stage_id).first()
+        if next_task_instance:
+            return next_task_instance
+        return None
+
+    def create_invoice(task_instance: models.TaskInstance) -> bool:
+        ''' Create an EventAction for the given TaskInstanceId and EventKey
+        '''
+        invoice_fee_task = find_next_task_by_name(task_instance, "Assign Invoice Amount")
+        from api.api_discovery.event_action import _create_invoice_fee
+        fee =  float(invoice_fee_task.Result) if invoice_fee_task else 0.0
+        application_id = task_instance.Stage.ProcessInstance.ApplicationId
+        application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
+        company_id = application.CompanyID
+        invoice_fee = _create_invoice_fee(company_id, fee)
+        if not invoice_fee:
+            app_logger.error( f"Failed to create invoice fee for TaskInstanceId {task_instance.TaskInstanceId}")
+            return False
+        task_name = "Mark Invoice Paid"
+        #task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance.TaskInstanceId).first()
+        next_task_instance = find_next_task_by_name(task_instance, task_name)
+        # We find the next task to start an EventAction
+        if next_task_instance:
+            from api.api_discovery.event_action import _create_event
+            event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
+            _create_event(next_task_instance.TaskInstanceId, event_key)
+            print(f'{{"EventKey": "{event_key}"}}')
+            app_logger.info(f"EventAction created for TaskInstanceId {task_instance.TaskInstanceId} with EventKey {event_key}")
+    
+        return True
     
     def update_stages(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
         """
         Update the status of the workflow application
         """
-        if logic_row.ins_upd_dlt != 'upd' and old_row and row.Status != old_row.Status:
+        # Only process updates where status actually changed
+        if logic_row.ins_upd_dlt != 'upd':
             return
+        if old_row and row.Status == old_row.Status:
+            return  # Status didn't change, nothing to do
+            
         stage = row.Stage
         if stage is None:
             return
@@ -208,8 +253,13 @@ def declare_logic():
         else:
             status = None
             TaskName = row.TaskDef.TaskName
+            if row.Status != 'COMPLETED':
+                return
+            if TaskName == 'Generated Invoice and Send':
+                #if create_invoice(row):
+                status = 'PAYPEND'
             # Specific TaskDef.TaskName logic can go here if needed
-            if TaskName == 'Issue Certificate' and row.Result == 'YES': status = 'COMPL'
+            elif TaskName == 'Issue Certificate' and row.Result == 'YES': status = 'COMPL'
             elif TaskName == 'to Withdrawn Y/N' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Withdraw Application' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Send Contract' and row.Result == 'YES': status = 'CONTRACT' 
@@ -220,7 +270,7 @@ def declare_logic():
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
         
-    Rule.row_event(on_class=models.TaskInstance, calling=update_stages)
+    Rule.commit_row_event(on_class=models.TaskInstance, calling=update_stages)
     #Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
     #Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)

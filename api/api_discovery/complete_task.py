@@ -3,6 +3,7 @@ from database import models
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WFUser, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
 from flask import request, jsonify, session
 import logging
+from datetime import timezone, datetime
 from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
 import safrs
 from functools import wraps
@@ -81,7 +82,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if task_instance.Status == 'COMPLETED':
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
             task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
-            task_instance.ModifiedDate = datetime.utcnow()
+            task_instance.ModifiedDate = datetime.now(timezone.utc)
             task_instance.AssignedTo = completed_by
             session.add(task_instance)
             session.commit()
@@ -148,8 +149,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'SYSTEM', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
         '''Complete a task instance in the workflow and trigger the next task(s) as needed.'''
-        # Find the task instance
+        
+        # START PERFORMANCE TIMING
+        import time
+        start_time = time.time()
+        timings = {}
+        
+        # TIMING: Query task instance
+        t1 = time.time()
         task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+        timings['query_task_instance'] = time.time() - t1
+        
         if not task_instance:
             app_logger.error(f'TaskInstance not found: {task_instance_id}')
             return jsonify({"status": "error", "message": "TaskInstance not found"}), 404
@@ -163,18 +173,30 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         if task_instance.Status not in ['PENDING','FAILED', 'IN_PROGRESS'] and task_def.TaskType != 'START': #and depth == 0
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Task {task_instance.TaskDef.TaskType} is not PENDING or IN_PROGRESS -> {task_instance.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Task is not PENDING or IN_PROGRESS -> {task_instance.Status}."}), 400
+        
         task_name = task_def.TaskName
+        
+        # TIMING: Get application
+        t2 = time.time()
         application_id = task_instance.Stage.ProcessInstance.ApplicationId
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
+        timings['query_application'] = time.time() - t2
+        
         if application and application.Status in ["WTH","COMPL"] and task_name != "Notify Customer" and task_name != 'End Certification':
             app_logger.error(f'Cannot complete task {task_instance_id}-{task_instance.TaskDef.TaskName}. Application {application.ApplicationID} status is {application.Status}.')
             return jsonify({"status": "error", "message": f"Cannot complete task -{task_instance.TaskDef.TaskName}. Application status is {application.Status}."}), 400
        
+        # TIMING: Get stage list
+        t3 = time.time()
         stages_list = get_stage_list(task_instance)
-        app_logger.info(f'Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
+        timings['get_stage_list'] = time.time() - t3
+        
+        app_logger.info(f'[PERF] Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
         task_flows_from = task_def.ToTaskTaskFlowList or []
         task_flows_to = task_def.TaskFlowList or []
-        # Check if all prior tasks are completed
+        
+        # TIMING: Check prior tasks
+        t4 = time.time()
         if task_def.TaskType not in ["START", "LANEEND", "END"]:
             for tf in task_flows_from:
                 prior_task_id = tf.FromTaskId
@@ -185,25 +207,34 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task  {task_name} - {task_instance_id}. Prior task {prior_task_instance.TaskDef.TaskName}-{prior_task_id} status is not COMPLETED.')
                     return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
+        timings['check_prior_tasks'] = time.time() - t4
+        
         # Complete the task
         if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
             status = 'PENDING'
         else:
             status = "COMPLETED"
-            task_instance.CompletedDate = datetime.utcnow()
+            task_instance.CompletedDate = datetime.now(timezone.utc)
             task_instance.ResultData = completion_notes
             task_instance.AssignedTo = completed_by
-        task_instance.ModifiedDate = datetime.utcnow()
+        
+        task_instance.ModifiedDate = datetime.now(timezone.utc)
         task_instance.Status = status
         task_instance.Result = result
         session.add(task_instance)
+        
+        # TIMING: Commit and flush
+        t5 = time.time()
         try:
             session.commit()
             session.flush()
-            # Call PostScriptJson if defined
+            timings['commit_flush'] = time.time() - t5
+            
+            # TIMING: Call script engine
+            t6 = time.time()
             if status == 'COMPLETED':
                 data = None #call_task_script_engine(task_instance, access_token)
-                #ask_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
+                #task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.Result) != 'DotMap()' and  data.Result == False:
                     task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
                     task_instance.Status = 'IN_PROGRESS' if task_instance.TaskDef.TaskType != 'START' else status
@@ -214,6 +245,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                     insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
                     return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id} message: {task_instance.ErrorMessage}'}), 400
+            timings['script_engine'] = time.time() - t6
                    
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
@@ -223,7 +255,9 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         ## Get the workflow history
         #insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
         
-        # Start the next tasks
+        # TIMING: Process next tasks
+        t7 = time.time()
+        next_task_count = 0
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
             next_task_instance = TaskInstance.query.filter(TaskInstance.TaskId == next_task_id,
@@ -237,16 +271,47 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             elif next_task_instance and validate_prior_tasks(task_def, stages_list, result):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.AssignedTo = completed_by
-                next_task_instance.StartedDate = datetime.utcnow()
+                next_task_instance.StartedDate = datetime.now(timezone.utc)
                 session.add(next_task_instance)    
                 session.commit()
+                next_task_count += 1
             if next_task_instance and next_task_instance.TaskDef.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
-                # RECURRSIVE CALL to complete the next task if AutoComplete is set
+                # RECURSIVE CALL to complete the next task if AutoComplete is set
                 _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
+        timings['process_next_tasks'] = time.time() - t7
 
+        # TIMING: Calculate total and log
+        total_time = time.time() - start_time
+        timings['recursive_time'] = timings.get('process_next_tasks', 0)
+        own_time = total_time - timings['recursive_time']
+        
+        if depth == 0:
+            app_logger.info(f'[PERF] ====== ROOT TASK {task_instance_id} ({task_name}) COMPLETED ======')
+            app_logger.info(f'[PERF] TOTAL TIME: {total_time:.3f}s')
+        else:
+            app_logger.info(f'[PERF] Task {task_instance_id} ({task_name}) depth={depth} completed in {total_time:.3f}s')
+        
+        app_logger.info(f'[PERF] Breakdown (own: {own_time:.3f}s) - '
+                       f'QueryTask:{timings.get("query_task_instance",0):.3f}s, '
+                       f'QueryApp:{timings.get("query_application",0):.3f}s, '
+                       f'StageList:{timings.get("get_stage_list",0):.3f}s, '
+                       f'CheckPrior:{timings.get("check_prior_tasks",0):.3f}s, '
+                       f'Commit:{timings.get("commit_flush",0):.3f}s, '
+                       f'Script:{timings.get("script_engine",0):.3f}s, '
+                       f'NextTasks({next_task_count}):{timings.get("process_next_tasks",0):.3f}s')
                 
         app_logger.info(f'Task completed:{task_name} - {task_instance_id} Status: {task_instance.Status} Result: {task_instance.Result}')
-        return jsonify({"status": "ok", "data": {"task_instance_id": task_instance_id}}), 200
+        
+        return jsonify({
+            "status": "ok", 
+            "data": {
+                "task_instance_id": task_instance_id,
+                "processing_time": f"{total_time:.3f}s",
+                "own_time": f"{own_time:.3f}s",
+                "depth": depth,
+                "timings": {k: f"{v:.3f}s" for k, v in timings.items()}
+            }
+        }), 200
 
 def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str = None) -> bool:
         '''

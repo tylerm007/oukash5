@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from os import name
 from token import NAME
 from database.models import COMPANYTB, PLANTTB, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, RoleAssigment
@@ -38,7 +38,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     def calc_days_between(start_date, end_date):
         if not end_date:
-            end_date = datetime.fromisoformat(datetime.utcnow().isoformat())
+            end_date = datetime.fromisoformat(datetime.now(timezone.utc).isoformat())
         if start_date and end_date:
             if isinstance(start_date, str):
                 start_date = datetime.fromisoformat(start_date.replace('Z', '+00:00'))

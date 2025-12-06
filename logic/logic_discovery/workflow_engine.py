@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from database.models import TaskDefinition, TaskInstance
 from integration.workflow import python_engine
 from flask import app, request, jsonify, session
@@ -89,9 +89,9 @@ def process_task_instance(task_instance: models.TaskInstance, old_row: models.Ta
 
     try:
         if task_instance.Status == 'PENDING':
-            new_task_instance.StartedDate = datetime.datetime.utcnow()
+            new_task_instance.StartedDate = datetime.datetime.now(timezone.utc)
         elif task_instance.Status == 'COMPLETED':
-            new_task_instance.CompletedDate = datetime.datetime.utcnow()
+            new_task_instance.CompletedDate = datetime.datetime.now(timezone.utc)
         session.add(new_task_instance)
         #session.commit() # Cannot commit here, will be done by LogicRow commit
         update_next_task(new_task_instance, old_row, logic_row)
@@ -317,7 +317,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
     When a task is COMPLETED, update the next tasks in the workflow to be 'PENDING' ready to start.
     '''
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING'] and old_row.Status != row.Status:
-        row.StartedDate = datetime.datetime.utcnow()
+        row.StartedDate = datetime.now(timezone.utc)
     if logic_row.ins_upd_dlt == 'upd' and row.Status in ['PENDING', 'COMPLETED'] and old_row and old_row.Status != row.Status:
     # only proceed if the task instance Status was updated and is now PENDING or COMPLETED
         task_id = row.TaskInstanceId
@@ -351,12 +351,12 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                             if validate_prior_tasks(future_task_instance.TaskDef, row.StageId, logic_row):
                                 if future_task_instance.TaskDef.AutoComplete:
                                     future_task_instance.Status = 'COMPLETED'
-                                    future_task_instance.CompletedDate = datetime.datetime.utcnow()
+                                    future_task_instance.CompletedDate = datetime.now(timezone.utc)
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} auto-completed due to AutoComplete=True and all dependencies met.')
                                     update_next_task(future_task_instance, row, logic_row)  # recursively update next tasks
                                 else:
                                     future_task_instance.Status = 'PENDING'
-                                    future_task_instance.StartedDate = datetime.datetime.utcnow()
+                                    future_task_instance.StartedDate = datetime.now(timezone.utc)
                                     logic_row.log(f'Future task {future_task_instance.TaskInstanceId} set to PENDING as all dependencies are COMPLETED.')
                 elif next_task_instance.TaskDef.TaskType == 'START':
                     next_task_instance.Status = 'COMPLETED'
@@ -379,15 +379,15 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
                         logic_row.log(f'Next CONDITION task {next_task_instance.TaskInstanceId} set to PENDING based on condition.')
                 else:
                     next_task_instance.Status = 'PENDING'
-                    next_task_instance.StartedDate = datetime.datetime.utcnow()
+                    next_task_instance.StartedDate = datetime.now(timezone.utc)
             elif row.Status == 'COMPLETED' and next_task_instance and next_task_instance.Status == 'NEW':
                 next_task_instance.Status = 'PENDING'
-                next_task_instance.StartedDate = datetime.datetime.utcnow()
+                next_task_instance.StartedDate = datetime.now(timezone.utc)
                 logic_row.log(f'Next task {next_task_instance.TaskDef.TaskName} ID: {next_task_instance.TaskInstanceId} is NEW, cannot set to PENDING until dependencies are met.')
             if row.Status == 'PENDING' and row.StartedDate is None:
-                row.StartedDate = datetime.datetime.utcnow()
+                row.StartedDate = datetime.now(timezone.utc)
             elif row.Status == 'COMPLETED' and row.CompletedDate is None:
-                row.CompletedDate = datetime.datetime.utcnow()
+                row.CompletedDate = datetime.now(timezone.utc)
             logic_row.log(f'Next Task {next_task_instance.TaskDef.TaskName} Type:{next_task_instance.TaskDef.TaskType} ID: {next_task_instance.TaskInstanceId} set to {next_task_instance.Status}')
             #logic_row.update(reason=f"Update next task status to {next_task_instance.Status}", row=next_task_instance)
             process_task_instance(next_task_instance, old_row, logic_row)

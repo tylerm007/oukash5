@@ -16,7 +16,7 @@ from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 
 from security.system.authorization import Security
 
@@ -226,8 +226,8 @@ def _create_event(task_instance_id: int, event_key: str) -> EventAction:
         EventKey=event_key,
         EventStatus='PENDING',
         EventMessage='Event created via API',
-        StartDate=datetime.utcnow(),
-        DueDate=datetime.utcnow() + timedelta(days=1),
+        StartDate=datetime.now(timezone.utc),
+        DueDate=datetime.now(timezone.utc) + timedelta(days=1),
         IsResolved=False
     )
     session.add(event_action)
@@ -245,7 +245,7 @@ def _resolve_event(event_key: str, user: str, access_token: str = None):
     
     if event_action:
         event_action.EventStatus = 'RESOLVED'
-        event_action.ResolvedDate = datetime.utcnow()
+        event_action.ResolvedDate = datetime.now(timezone.utc)
         event_action.IsResolved = True
         try:
             session.commit()
@@ -273,7 +273,7 @@ def _create_invoice_fee(company_id: int, fee_amount: float) -> INVOICEFEE:
             INVOICE_TYPE = 'Visit',
             TYPE = 'KIM',
             STATUS = '',
-            INVOICE_DATE=datetime.utcnow()
+            INVOICE_DATE=datetime.now(timezone.utc)
         )
         #session.add(invoice_fee)
         try:

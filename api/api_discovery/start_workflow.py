@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from api.api_discovery.complete_task import _complete_task
 from database import models
 from database.models import ProcessDefinition, TaskDefinition, ProcessInstance, WFApplication, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, TaskFlow , ProcessMessage, WFApplicationMessage
@@ -185,7 +185,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Initialize task status
         background_tasks[task_id] = {
             'status': BackgroundTaskStatus.PENDING,
-            'created_at': datetime.utcnow(),
+            'created_at': datetime.now(timezone.utc),
             'process_name': process_name,
             'application_id': application_id,
             'started_by': started_by,
@@ -285,7 +285,7 @@ def create_stage_with_tasks(lane_definition, process_instance_id, started_by, ap
                 TaskId=task_def['TaskId'],
                 StageId=stage_id,
                 Status=status,
-                CreatedDate=datetime.utcnow(),
+                CreatedDate=datetime.now(timezone.utc),
                 CreatedBy=started_by
             )
             session.add(task_instance)
@@ -462,7 +462,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                             TaskId=task_definition['TaskId'],
                             StageId=stage_id,
                             Status=status,
-                            CreatedDate=datetime.utcnow(),
+                            CreatedDate=datetime.now(timezone.utc),
                             CreatedBy=started_by
                     )
                     session.add(task_instance)
@@ -640,7 +640,7 @@ def _start_workflow_background(task_id: str, process_name: str, application_id: 
     try:
         # Update task status to running
         background_tasks[task_id]['status'] = BackgroundTaskStatus.RUNNING
-        background_tasks[task_id]['started_at'] = datetime.utcnow()
+        background_tasks[task_id]['started_at'] = datetime.now(timezone.utc)
         
         app_logger.info(f'Background workflow {task_id} started for application {application_id}')
         
@@ -657,7 +657,7 @@ def _start_workflow_background(task_id: str, process_name: str, application_id: 
             
             # Update task status to completed
             background_tasks[task_id]['status'] = BackgroundTaskStatus.COMPLETED
-            background_tasks[task_id]['completed_at'] = datetime.utcnow()
+            background_tasks[task_id]['completed_at'] = datetime.now(timezone.utc)
             background_tasks[task_id]['result'] = result
             
             app_logger.info(f'Background workflow {task_id} completed successfully')
@@ -668,7 +668,7 @@ def _start_workflow_background(task_id: str, process_name: str, application_id: 
             
             background_tasks[task_id]['status'] = BackgroundTaskStatus.FAILED
             background_tasks[task_id]['error'] = str(e)
-            background_tasks[task_id]['failed_at'] = datetime.utcnow()
+            background_tasks[task_id]['failed_at'] = datetime.now(timezone.utc)
             
         finally:
             thread_session.close()
@@ -756,7 +756,7 @@ def _start_workflow_with_session(thread_session, process_name: str, application_
                     TaskId=task_def.TaskId,
                     StageId=stage_instance.StageInstanceId,
                     Status='NEW',
-                    CreatedDate=datetime.utcnow(),
+                    CreatedDate=datetime.now(timezone.utc),
                     CreatedBy=started_by,
                 )
                 thread_session.add(task_instance)
@@ -786,7 +786,7 @@ def _start_workflow_with_session(thread_session, process_name: str, application_
             ApplicationId=application.ApplicationID,
             Role="DISPATCH",
             Assignee=started_by,
-            CreatedDate=datetime.utcnow()
+            CreatedDate=datetime.now(timezone.utc)
         )
         thread_session.add(role_assignment)
         thread_session.commit()
@@ -812,7 +812,7 @@ def _complete_task_with_session(thread_session, task_instance_id: int, result: s
         raise Exception(f'TaskInstance not found: {task_instance_id}')
     
     task_instance.Status = 'COMPLETED'
-    task_instance.CompletedDate = datetime.utcnow()
+    task_instance.CompletedDate = datetime.now(timezone.utc)
     task_instance.Result = result
     thread_session.add(task_instance)
     thread_session.commit()

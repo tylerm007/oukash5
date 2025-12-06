@@ -15,7 +15,7 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime
 from database.models import TaskInstance, TaskDefinition
 import logging
-from datetime import datetime
+from datetime import timezone
 from database.models import  TaskDefinition, TaskInstance
 from flask import  jsonify, request, session
 import logging
@@ -81,7 +81,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if task_instance.Status == 'COMPLETED':
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
             task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
-            task_instance.ModifiedDate = datetime.utcnow()
+            task_instance.ModifiedDate = datetime.now(timezone.utc)
             task_instance.AssignedTo = completed_by
             session.add(task_instance)
             session.commit()
@@ -127,7 +127,7 @@ def _complete_task_optimized(
     t1 = time.time()
     if task_instance_id in task_instance_cache:
         task_instance = task_instance_cache[task_instance_id]
-        app_logger.debug(f"[PERF] Task {task_instance_id} loaded from cache")
+        app_logger.info(f"[PERF] Task {task_instance_id} loaded from cache - Status: {task_instance.Status}")
     else:
         from database.models import StageInstance, ProcessInstance
         task_instance = TaskInstance.query.options(
@@ -139,6 +139,7 @@ def _complete_task_optimized(
         
         if task_instance:
             task_instance_cache[task_instance_id] = task_instance
+            app_logger.info(f"[PERF] Task {task_instance_id} queried from DB - Status: {task_instance.Status}")
     timings['query_task_instance'] = time.time() - t1
     app_logger.info(f"[PERF] Query task instance: {timings['query_task_instance']:.3f}s")
     
@@ -153,7 +154,7 @@ def _complete_task_optimized(
 
     # Validation checks
     if task_instance.Status not in ['PENDING','FAILED', 'IN_PROGRESS'] and task_def.TaskType != 'START':
-        app_logger.error(f'Cannot complete task {task_instance_id}-{task_def.TaskName}. Status: {task_instance.Status}')
+        app_logger.error(f'Cannot complete task {task_instance_id}-{task_def.TaskName}. Status is: {task_instance.Status}')
         return jsonify({"status": "error", "message": f"Cannot complete task. Invalid status: {task_instance.Status}"}), 400
     
     task_name = task_def.TaskName
@@ -175,7 +176,7 @@ def _complete_task_optimized(
     
     # IMPROVEMENT 4: Bulk query for prior task instances instead of one-by-one
     t2 = time.time()
-    if task_def.TaskType not in ["START", "LANEEND", "END"] and task_flows_from:
+    if task_def.TaskType not in ["START", "LANEEND", "STAGEEND", "END"] and task_flows_from:
         prior_task_ids = [tf.FromTaskId for tf in task_flows_from]
         prior_task_instances = TaskInstance.query.filter(
             TaskInstance.TaskId.in_(prior_task_ids),
@@ -195,27 +196,38 @@ def _complete_task_optimized(
     app_logger.info(f"[PERF] Check prior tasks: {timings['check_prior_tasks']:.3f}s")
     
     # Complete the task
+    # IMPROVEMENT 5: Collect all updates and commit once
+    updates_to_commit = []
+    
     if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
         status = 'PENDING'
     else:
         status = "COMPLETED"
-        task_instance.CompletedDate = datetime.utcnow()
+        task_instance.CompletedDate = datetime.now(timezone.utc)
         task_instance.ResultData = completion_notes
         task_instance.AssignedTo = completed_by
     
-    task_instance.ModifiedDate = datetime.utcnow()
+    task_instance.ModifiedDate = datetime.now(timezone.utc)
     task_instance.Status = status
     task_instance.Result = result
     
-    # IMPROVEMENT 5: Collect all updates and commit once
-    updates_to_commit = [task_instance]
+    # CRITICAL: Mark this as a system update to prevent LogicBank from interfering
+    # LogicBank's commit_row_event can revert changes, so we add to session
+    # but DON'T flush here - let the batch commit handle it
+    session.add(task_instance)
+    
+    app_logger.info(f"[DEBUG] Task {task_instance_id} ({task_def.TaskName}) status set to: {status}, depth={depth}")
+    app_logger.info(f"[DEBUG] Task object status after assignment: {task_instance.Status}")
+    
+    #session.commit()  # Will commit later in batch
+    updates_to_commit.append(task_instance)
     
     try:
         # Call script engine if completed
         t3 = time.time()
         if status == 'COMPLETED':
-            data = call_task_script_engine(task_instance, access_token)
-            task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
+            data = None #call_task_script_engine(task_instance, access_token)
+            #task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
             if data and str(data.Result) != 'DotMap()' and data.Result == False:
                 task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'Script returned False'
                 task_instance.Status = 'IN_PROGRESS' if task_instance.TaskDef.TaskType != 'START' else status
@@ -279,10 +291,10 @@ def _complete_task_optimized(
                 continue
             
             # Validate prior tasks (now optimized)
-            if validate_prior_tasks_optimized(task_def, stages_list_cache, task_instance_cache):
+            if validate_prior_tasks_optimized(task_def, stages_list_cache, task_instance_cache, updates_to_commit):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.AssignedTo = completed_by
-                next_task_instance.StartedDate = datetime.utcnow()
+                next_task_instance.StartedDate = datetime.now(timezone.utc)
                 updates_to_commit.append(next_task_instance)
                 
             # Queue for auto-completion
@@ -291,9 +303,16 @@ def _complete_task_optimized(
     
         # IMPROVEMENT 8: Batch commit all updates
         t5 = time.time()
+        # Note: task_instance already added/flushed above, but adding again is idempotent
         for update in updates_to_commit:
             session.add(update)
         session.commit()
+        # CRITICAL: Refresh all committed objects to ensure cache has latest values
+        for update in updates_to_commit:
+            session.refresh(update)
+            # Update cache with refreshed object
+            if hasattr(update, 'TaskInstanceId'):
+                task_instance_cache[update.TaskInstanceId] = update
         timings['commit'] = time.time() - t5
         app_logger.info(f"[PERF] Database commit ({len(updates_to_commit)} objects): {timings['commit']:.3f}s")
         
@@ -378,7 +397,7 @@ def _complete_task_optimized(
     }}), 200
 
 
-def validate_prior_tasks_optimized(taskDef: TaskDefinition, stages_list: list, task_instance_cache: dict = None) -> bool:
+def validate_prior_tasks_optimized(taskDef: TaskDefinition, stages_list: list, task_instance_cache: dict = None, updates_to_commit: dict = None) -> bool:
     '''
     Optimized validation using bulk queries and caching
     '''
@@ -395,10 +414,10 @@ def validate_prior_tasks_optimized(taskDef: TaskDefinition, stages_list: list, t
     # Check cache first
     uncached_ids = []
     for task_id in from_task_ids:
-        if task_instance_cache:
+        if updates_to_commit:
             # Look for any instance with this TaskId in cache
             found = False
-            for ti in task_instance_cache.values():
+            for ti in updates_to_commit:
                 if ti.TaskId == task_id and ti.StageId in stages_list:
                     if ti.Status != 'COMPLETED':
                         app_logger.info(f"Task {taskDef.TaskName} blocked by {ti.TaskDef.TaskName}")

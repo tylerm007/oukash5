@@ -1,6 +1,6 @@
 from functools import wraps
 from flask_cors import cross_origin
-from datetime import datetime
+from datetime import datetime, timezone
 from database.models import WFUSERROLE, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, WFUser
 from flask import app, request, jsonify, session
 import logging
@@ -136,7 +136,7 @@ def add_role_assignment(application_id:int, role:str, assignee:str):
         ApplicationId=application_id,
         Role=role,
         Assignee=assignee,
-        CreatedDate=datetime.utcnow()
+        CreatedDate=datetime.now(timezone.utc)
     )
     session.add(role_assignment)
     session.commit()

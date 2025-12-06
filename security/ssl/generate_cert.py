@@ -8,7 +8,7 @@ from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-import datetime
+from datetime import datetime, timezone, timedelta
 import ipaddress
 
 def generate_self_signed_cert():
@@ -44,10 +44,10 @@ def generate_self_signed_cert():
     ).serial_number(
         x509.random_serial_number()
     ).not_valid_before(
-        datetime.datetime.utcnow()
+        datetime.now(timezone.utc)
     ).not_valid_after(
         # Certificate valid for 1 year
-        datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        datetime.now(timezone.utc) + timedelta(days=365)
     ).add_extension(
         # Add Subject Alternative Names for localhost variations
         x509.SubjectAlternativeName([

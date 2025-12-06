@@ -9,7 +9,7 @@ from flask import request, jsonify
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required, get_jwt
 import logging
-import safrs
+from datetime import datetime, timezone
 from functools import wraps
 from config.config import Args
 from database.workflow_json_queries import WorkflowJSONQuery
@@ -275,7 +275,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         try:
             from flask import make_response
             import json as json_module
-            from datetime import datetime
             
             format_type = request.args.get('format', 'complete')
             include_inactive = request.args.get('include_inactive', 'false').lower() == 'true'
@@ -291,7 +290,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             # Create export package
             export_data = {
                 "export_info": {
-                    "export_date": datetime.utcnow().isoformat(),
+                    "export_date": datetime.now(timezone.utc).isoformat(),
                     "format": format_type,
                     "include_inactive": include_inactive,
                     "total_processes": len(workflow_data)

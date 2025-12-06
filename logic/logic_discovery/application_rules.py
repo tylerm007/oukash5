@@ -63,4 +63,4 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
 def declare_logic():
     pass
 
-    Rule.row_event(on_class=models.WFApplication, calling=verify_requests)
+    #Rule.row_event(on_class=models.WFApplication, calling=verify_requests)
