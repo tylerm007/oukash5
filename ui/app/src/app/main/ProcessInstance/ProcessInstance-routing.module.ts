@@ -14,24 +14,10 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':InstanceId/ProcessMessage', loadChildren: () => import('../ProcessMessage/ProcessMessage.module').then(m => m.ProcessMessageModule),
-    data: {
-        oPermission: {
-            permissionId: 'ProcessMessage-detail-permissions'
-        }
-    }
-},{
     path: ':ProcessInstanceId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
     data: {
         oPermission: {
             permissionId: 'StageInstance-detail-permissions'
-        }
-    }
-},{
-    path: ':ProcessInstanceId/TaskComment', loadChildren: () => import('../TaskComment/TaskComment.module').then(m => m.TaskCommentModule),
-    data: {
-        oPermission: {
-            permissionId: 'TaskComment-detail-permissions'
         }
     }
 },{

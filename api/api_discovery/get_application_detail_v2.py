@@ -233,7 +233,7 @@ def get_SQL() ->str:
         where [COMPANY_ID] = app.CompanyID and [PLANT_ID] = app.PlantID
                     FOR JSON AUTO
      ) as 'appplicationinfo.products'
-    FROM dashboard.[dbo].[WF_Applications] app
+    FROM dashboardV1.[dbo].[WF_Applications] app
     where app.ApplicationID = :application_id
     FOR JSON PATH
     '''

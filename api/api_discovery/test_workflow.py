@@ -286,8 +286,8 @@ def get_start_task(application_id):
     #start_task = session.query(models.TaskDefinition).filter(models.TaskDefinition.ProcessId == process_id, models.TaskDefinition.AssigneeRole == 'SYSTEM').first()
     response = session.execute(text(f"""
         select TaskInstanceId
-            FROM [dashboard].[dbo].[TaskInstances] ti,
-            [dashboard].[dbo].[TaskDefinitions] td
+            FROM [dashboardV1].[dbo].[TaskInstances] ti,
+            [dashboardV1].[dbo].[TaskDefinitions] td
             where ti.TaskId = td.TaskId
             and td.TaskType = 'START'
             and  ti.StageId in (

@@ -42,7 +42,7 @@ SELECT TOP (1000) [TaskInstanceId]
       ,[ResultData]
       ,[ErrorMessage]
       ,[RetryCount]
-  FROM [dashboard].[dbo].[TaskInstances] ti,
+  FROM [dashboardV1].[dbo].[TaskInstances] ti,
   TaskDefinitions td
   where ti.TaskId = td.TaskId
 ```

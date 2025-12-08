@@ -175,7 +175,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
             data: Employee/janet.jpg
             url:  http://localhost:5656/ui/images/Employee/janet.jpg
         """
-        response = send_file(f'ui/images/{path}', mimetype='image/jpeg')
+        response = send_file(f'ui/images/{path}', mimetype='image/jpg')
         return response
 
 

@@ -109,7 +109,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
         END as daysOverdue
     
-    FROM [dashboard].[dbo].[TaskInstances] ti
+    FROM [dashboardV1].[dbo].[TaskInstances] ti
         INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
         INNER JOIN StageInstance si ON ti.StageId = si.StageInstanceId
         INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId

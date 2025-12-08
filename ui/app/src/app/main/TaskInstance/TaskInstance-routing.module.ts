@@ -14,13 +14,6 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':TaskInstanceId/TaskComment', loadChildren: () => import('../TaskComment/TaskComment.module').then(m => m.TaskCommentModule),
-    data: {
-        oPermission: {
-            permissionId: 'TaskComment-detail-permissions'
-        }
-    }
-},{
     path: ':TaskInstanceId/WorkflowHistory', loadChildren: () => import('../WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule),
     data: {
         oPermission: {

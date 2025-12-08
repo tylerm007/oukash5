@@ -22,20 +22,6 @@ const routes: Routes = [
         }
     }
   },{
-    path: ':ApplicationID/WFActivityLog', loadChildren: () => import('../WFActivityLog/WFActivityLog.module').then(m => m.WFActivityLogModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFActivityLog-detail-permissions'
-        }
-    }
-},{
-    path: ':ApplicationID/WFApplicationComment', loadChildren: () => import('../WFApplicationComment/WFApplicationComment.module').then(m => m.WFApplicationCommentModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFApplicationComment-detail-permissions'
-        }
-    }
-},{
     path: ':ApplicationID/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
     data: {
         oPermission: {
@@ -43,38 +29,10 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':ApplicationID/WFCompany', loadChildren: () => import('../WFCompany/WFCompany.module').then(m => m.WFCompanyModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFCompany-detail-permissions'
-        }
-    }
-},{
-    path: ':ApplicationID/WFContact', loadChildren: () => import('../WFContact/WFContact.module').then(m => m.WFContactModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFContact-detail-permissions'
-        }
-    }
-},{
     path: ':ApplicationID/WFFile', loadChildren: () => import('../WFFile/WFFile.module').then(m => m.WFFileModule),
     data: {
         oPermission: {
             permissionId: 'WFFile-detail-permissions'
-        }
-    }
-},{
-    path: ':ApplicationID/WFIngredient', loadChildren: () => import('../WFIngredient/WFIngredient.module').then(m => m.WFIngredientModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFIngredient-detail-permissions'
-        }
-    }
-},{
-    path: ':ApplicationID/WFProduct', loadChildren: () => import('../WFProduct/WFProduct.module').then(m => m.WFProductModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFProduct-detail-permissions'
         }
     }
 },{

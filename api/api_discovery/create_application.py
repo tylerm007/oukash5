@@ -133,7 +133,7 @@ def create_files(application_id:int):
     file3 = models.WFFile(
         ApplicationID=application_id,
         FileName="Ingredient.jpg",
-        FileType="JPEG",
+        FileType="JPG",
         UploadedBy="system",
         UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
         Description="Test Document for Ingredient",
@@ -159,7 +159,7 @@ def do_cleanup(application_id, process_id):
                 SELECT StageInstanceId FROM StageInstance where ProcessInstanceId = {process_id}
             )
         );
-        DELETE FROM TaskComments where [ProcessInstanceId] = {process_id};
+        --DELETE FROM TaskComments where [ProcessInstanceId] = {process_id};
         DELETE FROM WorkflowHistory where [InstanceId] = {process_id};
       
     """))
@@ -177,11 +177,11 @@ def do_cleanup(application_id, process_id):
     session.execute(text(f"""
         DELETE from RoleAssigment where ApplicationId = {application_id};
         DELETE FROM ProcessInstances where ApplicationId = {application_id};
-        DELETE FROM WF_ApplicationComments where ApplicationID = {application_id};
-        DELETE FROM WF_ApplicationMessages where ApplicationID = {application_id};
-        DELETE FROM WF_Products where ApplicationId = {application_id};
-        DELETE FROM WF_Ingredients where ApplicationId = {application_id};   
-        DELETE FROM WF_Contacts where ApplicationId = {application_id};
+        --DELETE FROM WF_ApplicationComments where ApplicationID = {application_id};
+        --DELETE FROM WF_ApplicationMessages where ApplicationID = {application_id};
+        --DELETE FROM WF_Products where ApplicationId = {application_id};
+        --DELETE FROM WF_Ingredients where ApplicationId = {application_id};   
+        --DELETE FROM WF_Contacts where ApplicationId = {application_id};
         DELETE FROM WF_QuoteItems where QuoteID in (select QuoteID from WF_Quotes where ApplicationID = {application_id});
         DELETE FROM WF_Quotes where ApplicationId = {application_id};
         DELETE FROM WF_Files where ApplicationId = {application_id};

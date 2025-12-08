@@ -1,7 +1,6 @@
 from pipes import quote
 from flask import request, jsonify
 from datetime import datetime
-from database.models import COMPANYADDRESSTB, PLANTADDRESSTB, ProcessDefinition, TaskDefinition, ProcessInstance, WFApplicationMessage, WFFile, WFIngredient, WFProduct, WFQuote, WorkflowHistory, StageInstance, TaskInstance, LaneDefinition, WFContact
 from flask import request, jsonify, session
 import logging
 import uuid
@@ -286,6 +285,6 @@ def get_SQL() ->str:
             )
             FOR JSON AUTO
      ) as contacts
-    FROM dashboard.[dbo].[WF_Applications] app
+    FROM dashboardV1.[dbo].[WF_Applications] app
     where app.ApplicationID = :application_id
     '''

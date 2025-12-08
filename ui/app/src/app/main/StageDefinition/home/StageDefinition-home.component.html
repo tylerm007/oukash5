@@ -1,0 +1,45 @@
+<o-form-layout-manager attr="StageDefinition" mode="dialog" title="STAGEDEFINITION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="StageDefinitionTable" 
+            service="StageDefinition" 
+            entity="StageDefinition" 
+            title="STAGEDEFINITION"
+            keys="StageId"
+            columns="StageName;StageDescription;EstimatedDurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;StageId" 
+            header-actions="R;D"
+            visible-columns="StageName;StageDescription;EstimatedDurationDays;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;StageId"  
+            sort-columns="StageName" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #StageName attr="StageName" title=" Stage Name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #StageDescription attr="StageDescription" title="StageDescription" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #EstimatedDurationDays attr="EstimatedDurationDays" title="EstimatedDurationDays" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #StageId attr="StageId" title="StageId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="75;125;150"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

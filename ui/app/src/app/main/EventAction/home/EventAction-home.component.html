@@ -1,0 +1,59 @@
+<o-form-layout-manager attr="EventAction" mode="tab" title="EVENTACTION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="EventActionTable" 
+            service="EventAction" 
+            entity="EventAction" 
+            title="EVENTACTION"
+            keys="EventId"
+            columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved" 
+            header-actions="R;D"
+            visible-columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved"  
+            sort-columns="EventId" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #EventId attr="EventId" title=" Event Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="TaskInstanceId" title="TaskInstance">
+    <o-table-cell-renderer-service attr="TaskInstanceId" 
+        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
+        parent-keys="EventId:TaskInstanceId"
+        value-column="TaskInstanceId" keys="TaskInstanceId"
+        visible-columns="TaskInstanceId" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #EventKey attr="EventKey" title="EventKey" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #EventStatus attr="EventStatus" title="EventStatus" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #EventType attr="EventType" title="EventType" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #EventMessage attr="EventMessage" title="EventMessage" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #StartDate attr="StartDate" title="StartDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+            
+            <o-table-column #DueDate attr="DueDate" title="DueDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #ResolvedDate attr="ResolvedDate" title="ResolvedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column attr="IsResolved" title="IsResolved">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="75;125;150"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

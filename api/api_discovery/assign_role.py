@@ -1,7 +1,6 @@
 from functools import wraps
 from flask_cors import cross_origin
 from datetime import datetime, timezone
-from database.models import WFUSERROLE, LaneDefinition, WFApplicationMessage, WFFile, ProcessDefinition, ProcessInstance, TaskComment, TaskInstance , WFApplication, ProcessInstance, TaskInstance, StageInstance, CompanyApplication, WFUser
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -103,7 +102,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
             else:
                 admin_assignee = admin_assignee.AdminUserName
            
-            roles = WFUSERROLE.query.filter_by(UserName=assignee).all()
+            roles = models.WFUSERROLE.query.filter_by(UserName=assignee).all()
             for role in roles:
                 add_role_assignment(app_id, role.UserRole, admin_assignee)
 

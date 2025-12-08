@@ -1,0 +1,30 @@
+<o-form #StageDefinitionForm attr="StageDefinition_form_insert" service="StageDefinition" entity="StageDefinition"
+keys="StageId" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #StageName attr="StageName" label=" Stage Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #StageDescription attr="StageDescription" label="StageDescription" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #EstimatedDurationDays attr="EstimatedDurationDays" label="EstimatedDurationDays" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #StageId attr="StageId" label="StageId" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

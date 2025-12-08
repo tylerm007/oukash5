@@ -1,4 +1,4 @@
-USE [dashboard]
+USE [dashboardV1]
 GO
 
 /****** Object:  StoredProcedure [dbo].[sp_GetTasksPerUser]    Script Date: 10/10/2025 2:45:43 PM ******/
@@ -43,7 +43,7 @@ BEGIN
         ti.[CompletedDate] as completedDate,
         pi.InstanceId as processInstanceId,
         si.StageInstanceId as stageInstanceId
-    FROM [dashboard].[dbo].[TaskInstances] ti
+    FROM [dashboardV1].[dbo].[TaskInstances] ti
         INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
         INNER JOIN StageInstance si ON ti.StageId = si.StageInstanceId
         --INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId

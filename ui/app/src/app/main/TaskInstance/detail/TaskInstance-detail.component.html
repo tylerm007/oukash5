@@ -93,75 +93,7 @@
       icon="download_file" color="primary" type="raised"></o-button>
     </div>
   </o-row>
-      
-      <mat-tab-group fxFill>
-        
-        <mat-tab label="TASKCOMMENT-TaskInstanceId">
-    <div layout-padding>
-      <o-table 
-        attr="TaskCommentTable" 
-        service="TaskComment" 
-        entity="TaskComment" 
-        keys="CommentId"
-        parent-keys="TaskInstanceId:TaskInstanceId"
-        columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
-        horizontal-scroll="yes"
-        detail-form-route="TaskComment" 
-        edit-form-route="TaskComment"
-        visible-columns="CommentId;CommentType;ProcessInstanceId;TaskInstanceId;CommentText;Author;CreatedDate;IsVisible"  
-        sort-columns="CommentId" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #CommentId attr="CommentId" title=" Comment Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #CommentType attr="CommentType" title="CommentType" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
-    <o-table-cell-renderer-service attr="ProcessInstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="TaskInstanceId:ProcessInstanceId"
-        value-column="InstanceId" keys="ProcessInstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column attr="TaskInstanceId" title="TaskInstance">
-    <o-table-cell-renderer-service attr="TaskInstanceId" 
-        service="TaskInstance" entity="TaskInstanceType" columns="TaskInstanceId;TaskInstanceId"
-        parent-keys="TaskInstanceId:TaskInstanceId"
-        value-column="TaskInstanceId" keys="TaskInstanceId"
-        visible-columns="TaskInstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #CommentText attr="CommentText" title="CommentText" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Author attr="Author" title="Author" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column attr="IsVisible" title="IsVisible">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-  
+    <mat-tab-group fxFill>  
         
         <mat-tab label="WORKFLOWHISTORY-TaskInstanceId">
     <div layout-padding>
@@ -225,7 +157,7 @@
         
           <o-table-column #Details attr="Details" title="Details" editable="no" required="no" content-align="left"></o-table-column>
         
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

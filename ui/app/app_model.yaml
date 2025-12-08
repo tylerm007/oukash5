@@ -1,74 +1,44 @@
 about:
-  date: August 28, 2025 08:38:16
+  date: December 08, 2025 08:50:49
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 application:
-  foo:
+  app:
     description: generated Ontimize application
     menu_group:
       data:
         icon: edit_square
         menu_item:
-          COMPANYTB:
+          EventAction:
             icon: edit_square
-            menu_name: COMPANYTB
-            menu_title: COMPANYTB
+            menu_name: EventAction
+            menu_title: EventAction
             page:
               detail:
-                columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
+                columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
-                title: COMPANYTB
+                title: EventAction
                 typescript_name: detail_component.jinja
-                visible_columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
+                visible_columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
               home:
-                columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
+                columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
                 include_children: true
                 page_name: home
                 template_name: home_template.html
-                title: COMPANYTB
+                title: EventAction
                 typescript_name: home_template.jinja
-                visible_columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
+                visible_columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
               new:
-                columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
+                columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
                 include_children: true
                 page_name: new
                 template_name: new_template.html
-                title: COMPANYTB
+                title: EventAction
                 typescript_name: new_component.jinja
-                visible_columns: NAME,COMPANY_ID,LIST,GP_NOTIFY,PRODUCER,MARKETER,SOURCE,IN_HOUSE,PRIVATE_LABEL,COPACKER,JEWISH_OWNED,CORPORATE,COMPANY_TYPE,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,TIMESTAMP,STATUS,RC,PARENT_CO,INVOICE_LAST_DATE,COMPANY_BILL_TO_NAME,ACTIVE,AcquiredFrom,UID,MoveToGP,DefaultPO,POexpiry,PrivateLabelPO,PrivateLabelPOexpiry,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,CATEGORY,OLDCOMPANYTYPE,BoilerplateInvoiceComment,IsPoRequired,ShouldPropagateCompanyPo,ShouldPropagateKscPoToPlants,ShouldPropagateVisitPoToPlants,PoReason,On3rdPartyBilling,IsTest,ChometzEmailSentDate
-            template_name: module.jinja
-          CompanyApplication:
-            icon: edit_square
-            menu_name: CompanyApplication
-            menu_title: CompanyApplication
-            page:
-              detail:
-                columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: CompanyApplication
-                typescript_name: detail_component.jinja
-                visible_columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
-              home:
-                columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: CompanyApplication
-                typescript_name: home_template.jinja
-                visible_columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
-              new:
-                columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: CompanyApplication
-                typescript_name: new_component.jinja
-                visible_columns: CompanyName,ID,PreviousCertification,OUCertified,CurrentlyCertified,CompanyID,PlantName,Street1,Street2,City,State,Zip,Country,title,FirstName,LastName,email,phone,NatureOfProducts,HowHeardAboutUs,Comments,Description,OtherCertification,gclid,utm_source,utm_medium,utm_campaign,dateSubmitted,Utm_Term,Version,Language,Oukosher_source,JotFormSubmissionID
+                visible_columns: EventId,TaskInstanceId,EventKey,EventStatus,EventType,EventMessage,StartDate,DueDate,ResolvedDate,IsResolved
             template_name: module.jinja
           LaneDefinition:
             icon: edit_square
@@ -100,65 +70,35 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: LaneName,LaneRole,ProcessId,LaneDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,LaneId
             template_name: module.jinja
-          OWNSTB:
+          LaneRole:
             icon: edit_square
-            menu_name: OWNSTB
-            menu_title: OWNSTB
+            menu_name: LaneRole
+            menu_title: LaneRole
             page:
               detail:
-                columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
+                columns: RoleDescription,RoleCode
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
-                title: OWNSTB
+                title: LaneRole
                 typescript_name: detail_component.jinja
-                visible_columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
+                visible_columns: RoleDescription,RoleCode
               home:
-                columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
+                columns: RoleDescription,RoleCode
                 include_children: true
                 page_name: home
                 template_name: home_template.html
-                title: OWNSTB
+                title: LaneRole
                 typescript_name: home_template.jinja
-                visible_columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
+                visible_columns: RoleDescription,RoleCode
               new:
-                columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
+                columns: RoleDescription,RoleCode
                 include_children: true
                 page_name: new
                 template_name: new_template.html
-                title: OWNSTB
+                title: LaneRole
                 typescript_name: new_component.jinja
-                visible_columns: ID,COMPANY_ID,PLANT_ID,START_DATE,END_DATE,TYPE,VISIT_FREQUENCY,INVOICE_TYPE,INVOICE_FREQUENCY,INVOICE_DTL,HOLD,ROYALTIES,SPECIAL_TICKET,STATUS,ACTIVE,Setup_By,AcquiredFrom,NoRFRneeded,LOCtext,MoveToGP,DefaultPO,VisitBilling,PlantName,ShareAB,POexpiry,BillingName,PLANT_BILL_TO_NAME,AutoCertification,primaryCompany,Override,VisitPO,VisitPOexpiry,ValidFromTime,ValidToTime,CHANGESET_ID,BoilerplateInvoiceComment,IsCertBillingOverride
-            template_name: module.jinja
-          PLANTTB:
-            icon: edit_square
-            menu_name: PLANTTB
-            menu_title: PLANTTB
-            page:
-              detail:
-                columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: PLANTTB
-                typescript_name: detail_component.jinja
-                visible_columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
-              home:
-                columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: PLANTTB
-                typescript_name: home_template.jinja
-                visible_columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
-              new:
-                columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: PLANTTB
-                typescript_name: new_component.jinja
-                visible_columns: NAME,PLANT_ID,GP_NOTIFY,MULTILINES,PASSOVER,SPECIAL_PROD,JEWISH_OWNED,PLANT_TYPE,PLANT_DIRECTIONS,ACTIVE,USDA_CODE,PlantUID,DoNotAttach,OtherCertification,PrimaryCompany,DesignatedRFR,ValidFromTime,ValidToTime,CHANGESET_ID,MaxOnSiteVisits,MaxVirtualVisits,IsDaily
+                visible_columns: RoleDescription,RoleCode
             template_name: module.jinja
           ProcessDefinition:
             icon: edit_square
@@ -196,89 +136,29 @@ application:
             menu_title: ProcessInstance
             page:
               detail:
-                columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
+                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: ProcessInstance
                 typescript_name: detail_component.jinja
-                visible_columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
+                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
               home:
-                columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
+                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: ProcessInstance
                 typescript_name: home_template.jinja
-                visible_columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
+                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
               new:
-                columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
+                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: ProcessInstance
                 typescript_name: new_component.jinja
-                visible_columns: InstanceId,CurrentTaskId,Priority,ProcessId,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ApplicationId
-            template_name: module.jinja
-          ProcessMessage:
-            icon: edit_square
-            menu_name: ProcessMessage
-            menu_title: ProcessMessage
-            page:
-              detail:
-                columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: ProcessMessage
-                typescript_name: detail_component.jinja
-                visible_columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-              home:
-                columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: ProcessMessage
-                typescript_name: home_template.jinja
-                visible_columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-              new:
-                columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: ProcessMessage
-                typescript_name: new_component.jinja
-                visible_columns: MessageId,InstanceId,MessageType,FromUser,ToUser,ToRole,Subject,MessageBody,SentDate,ReadDate,IsRead
-            template_name: module.jinja
-          ProcessMessageType:
-            icon: edit_square
-            menu_name: ProcessMessageType
-            menu_title: ProcessMessageType
-            page:
-              detail:
-                columns: MessageTypeDescription,MessageTypeCode
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: ProcessMessageType
-                typescript_name: detail_component.jinja
-                visible_columns: MessageTypeDescription,MessageTypeCode
-              home:
-                columns: MessageTypeDescription,MessageTypeCode
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: ProcessMessageType
-                typescript_name: home_template.jinja
-                visible_columns: MessageTypeDescription,MessageTypeCode
-              new:
-                columns: MessageTypeDescription,MessageTypeCode
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: ProcessMessageType
-                typescript_name: new_component.jinja
-                visible_columns: MessageTypeDescription,MessageTypeCode
+                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
             template_name: module.jinja
           ProcessPriority:
             icon: edit_square
@@ -340,35 +220,95 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: StatusDescription,StatusCode
             template_name: module.jinja
+          RoleAssigment:
+            icon: edit_square
+            menu_name: RoleAssigment
+            menu_title: RoleAssigment
+            page:
+              detail:
+                columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: RoleAssigment
+                typescript_name: detail_component.jinja
+                visible_columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+              home:
+                columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: RoleAssigment
+                typescript_name: home_template.jinja
+                visible_columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+              new:
+                columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: RoleAssigment
+                typescript_name: new_component.jinja
+                visible_columns: RoleAssigmentID,ApplicationId,Role,Assignee,CreatedDate,CreatedBy
+            template_name: module.jinja
+          StageDefinition:
+            icon: edit_square
+            menu_name: StageDefinition
+            menu_title: StageDefinition
+            page:
+              detail:
+                columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: StageDefinition
+                typescript_name: detail_component.jinja
+                visible_columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+              home:
+                columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: StageDefinition
+                typescript_name: home_template.jinja
+                visible_columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+              new:
+                columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: StageDefinition
+                typescript_name: new_component.jinja
+                visible_columns: StageName,StageDescription,EstimatedDurationDays,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,StageId
+            template_name: module.jinja
           StageInstance:
             icon: edit_square
             menu_name: StageInstance
             menu_title: StageInstance
             page:
               detail:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: StageInstance
                 typescript_name: detail_component.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
               home:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: StageInstance
                 typescript_name: home_template.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
               new:
-                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: StageInstance
                 typescript_name: new_component.jinja
-                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
+                visible_columns: StageInstanceId,LaneId,ProcessInstanceId,Status,StartedDate,CompletedDate,DurationDays,RetryCount,AssignedTo,AssignedBy,AssignedDate,CompletedCount,TotalCount,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
             template_name: module.jinja
           StageStatus:
             icon: edit_square
@@ -430,95 +370,35 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: TaskCategoryDescription,TaskCategoryCode
             template_name: module.jinja
-          TaskComment:
-            icon: edit_square
-            menu_name: TaskComment
-            menu_title: TaskComment
-            page:
-              detail:
-                columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: TaskComment
-                typescript_name: detail_component.jinja
-                visible_columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-              home:
-                columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: TaskComment
-                typescript_name: home_template.jinja
-                visible_columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-              new:
-                columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: TaskComment
-                typescript_name: new_component.jinja
-                visible_columns: CommentId,CommentType,ProcessInstanceId,TaskInstanceId,CommentText,Author,CreatedDate,IsVisible
-            template_name: module.jinja
-          TaskCommentType:
-            icon: edit_square
-            menu_name: TaskCommentType
-            menu_title: TaskCommentType
-            page:
-              detail:
-                columns: CommentTypeDescription,CommentTypeCode
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: TaskCommentType
-                typescript_name: detail_component.jinja
-                visible_columns: CommentTypeDescription,CommentTypeCode
-              home:
-                columns: CommentTypeDescription,CommentTypeCode
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: TaskCommentType
-                typescript_name: home_template.jinja
-                visible_columns: CommentTypeDescription,CommentTypeCode
-              new:
-                columns: CommentTypeDescription,CommentTypeCode
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: TaskCommentType
-                typescript_name: new_component.jinja
-                visible_columns: CommentTypeDescription,CommentTypeCode
-            template_name: module.jinja
           TaskDefinition:
             icon: edit_square
             menu_name: TaskDefinition
             menu_title: TaskDefinition
             page:
               detail:
-                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: TaskDefinition
                 typescript_name: detail_component.jinja
-                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
               home:
-                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: TaskDefinition
                 typescript_name: home_template.jinja
-                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
               new:
-                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: TaskDefinition
                 typescript_name: new_component.jinja
-                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,PreScriptJson,PostScriptJson,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,TaskId,IsRequired
+                visible_columns: TaskName,LaneId,ProcessId,TaskCategory,TaskType,Sequence,IsParallel,AssigneeRole,EstimatedDurationMinutes,AutoComplete,Description,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,PreScriptJson,PostScriptJson,TaskId,IsRequired
             template_name: module.jinja
           TaskFlow:
             icon: edit_square
@@ -556,29 +436,29 @@ application:
             menu_title: TaskInstance
             page:
               detail:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount,ChildrenInstanceIds
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: TaskInstance
                 typescript_name: detail_component.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
               home:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: TaskInstance
                 typescript_name: home_template.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
               new:
-                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
+                columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: TaskInstance
                 typescript_name: new_component.jinja
-                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,Result,ResultData,ErrorMessage,RetryCount
+                visible_columns: TaskInstanceId,StageId,Status,TaskId,AssignedTo,StartedDate,CompletedDate,_DurationMinutes,Result,ResultData,ErrorMessage,RetryCount
             template_name: module.jinja
           TaskStatus:
             icon: edit_square
@@ -640,66 +520,6 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: TaskTypeDescription,TaskTypeCode
             template_name: module.jinja
-          WFActivityLog:
-            icon: edit_square
-            menu_name: WFActivityLog
-            menu_title: WFActivityLog
-            page:
-              detail:
-                columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFActivityLog
-                typescript_name: detail_component.jinja
-                visible_columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-              home:
-                columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFActivityLog
-                typescript_name: home_template.jinja
-                visible_columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-              new:
-                columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFActivityLog
-                typescript_name: new_component.jinja
-                visible_columns: UserName,ApplicationID,Status,ActionType,ActionDetails,ActivityType,Category,ActivityDate,ActivityID
-            template_name: module.jinja
-          WFActivityStatus:
-            icon: edit_square
-            menu_name: WFActivityStatus
-            menu_title: WFActivityStatus
-            page:
-              detail:
-                columns: StatusCode,StatusDesc
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFActivityStatus
-                typescript_name: detail_component.jinja
-                visible_columns: StatusCode,StatusDesc
-              home:
-                columns: StatusCode,StatusDesc
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFActivityStatus
-                typescript_name: home_template.jinja
-                visible_columns: StatusCode,StatusDesc
-              new:
-                columns: StatusCode,StatusDesc
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFActivityStatus
-                typescript_name: new_component.jinja
-                visible_columns: StatusCode,StatusDesc
-            template_name: module.jinja
           WFApplication:
             icon: edit_square
             menu_name: WFApplication
@@ -730,65 +550,35 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: ApplicationID,Priority,Status,ApplicationNumber,SubmissionDate,AssignedTo,AssignedBy,AssignedDate,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,CompanyID,PlantID
             template_name: module.jinja
-          WFApplicationComment:
-            icon: edit_square
-            menu_name: WFApplicationComment
-            menu_title: WFApplicationComment
-            page:
-              detail:
-                columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFApplicationComment
-                typescript_name: detail_component.jinja
-                visible_columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-              home:
-                columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFApplicationComment
-                typescript_name: home_template.jinja
-                visible_columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-              new:
-                columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFApplicationComment
-                typescript_name: new_component.jinja
-                visible_columns: CommentID,ApplicationID,Author,CommentText,CommentType,Category,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy
-            template_name: module.jinja
           WFApplicationMessage:
             icon: edit_square
             menu_name: WFApplicationMessage
             menu_title: WFApplicationMessage
             page:
               detail:
-                columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: WFApplicationMessage
                 typescript_name: detail_component.jinja
-                visible_columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                visible_columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
               home:
-                columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: WFApplicationMessage
                 typescript_name: home_template.jinja
-                visible_columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                visible_columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
               new:
-                columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: WFApplicationMessage
                 typescript_name: new_component.jinja
-                visible_columns: MessageID,ApplicationID,FromUser,ToUser,MessageText,MessageType,Priority,SentDate
+                visible_columns: MessageID,ApplicationID,Priority,FromUser,ToUser,MessageText,MessageType,SentDate,TaskInstanceId
             template_name: module.jinja
           WFApplicationStatus:
             icon: edit_square
@@ -819,66 +609,6 @@ application:
                 title: WFApplicationStatus
                 typescript_name: new_component.jinja
                 visible_columns: StatusDescription,StatusCode
-            template_name: module.jinja
-          WFCompany:
-            icon: edit_square
-            menu_name: WFCompany
-            menu_title: WFCompany
-            page:
-              detail:
-                columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFCompany
-                typescript_name: detail_component.jinja
-                visible_columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-              home:
-                columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFCompany
-                typescript_name: home_template.jinja
-                visible_columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-              new:
-                columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFCompany
-                typescript_name: new_component.jinja
-                visible_columns: CompanyID,ApplicationID,CreatedDate,KashrusCompanyID
-            template_name: module.jinja
-          WFContact:
-            icon: edit_square
-            menu_name: WFContact
-            menu_title: WFContact
-            page:
-              detail:
-                columns: ContactID,ApplicationID,CreatedDate
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFContact
-                typescript_name: detail_component.jinja
-                visible_columns: ContactID,ApplicationID,CreatedDate
-              home:
-                columns: ContactID,ApplicationID,CreatedDate
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFContact
-                typescript_name: home_template.jinja
-                visible_columns: ContactID,ApplicationID,CreatedDate
-              new:
-                columns: ContactID,ApplicationID,CreatedDate
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFContact
-                typescript_name: new_component.jinja
-                visible_columns: ContactID,ApplicationID,CreatedDate
             template_name: module.jinja
           WFFile:
             icon: edit_square
@@ -940,66 +670,6 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: FileTypeName,FileType
             template_name: module.jinja
-          WFIngredient:
-            icon: edit_square
-            menu_name: WFIngredient
-            menu_title: WFIngredient
-            page:
-              detail:
-                columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFIngredient
-                typescript_name: detail_component.jinja
-                visible_columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-              home:
-                columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFIngredient
-                typescript_name: home_template.jinja
-                visible_columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-              new:
-                columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFIngredient
-                typescript_name: new_component.jinja
-                visible_columns: IngredientName,ApplicationID,Source,RMC,Manufacturer,Packaging,Agency,AddedDate,AddedBy,Status,CreatedDate,ModifiedDate,IngredientID,UKDId,Brand,NCRCId
-            template_name: module.jinja
-          WFPlant:
-            icon: edit_square
-            menu_name: WFPlant
-            menu_title: WFPlant
-            page:
-              detail:
-                columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFPlant
-                typescript_name: detail_component.jinja
-                visible_columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-              home:
-                columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFPlant
-                typescript_name: home_template.jinja
-                visible_columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-              new:
-                columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFPlant
-                typescript_name: new_component.jinja
-                visible_columns: PlantID,ApplicationID,PlantNumber,CreatedDate
-            template_name: module.jinja
           WFPriority:
             icon: edit_square
             menu_name: WFPriority
@@ -1029,36 +699,6 @@ application:
                 title: WFPriority
                 typescript_name: new_component.jinja
                 visible_columns: PriorityDescription,PriorityCode
-            template_name: module.jinja
-          WFProduct:
-            icon: edit_square
-            menu_name: WFProduct
-            menu_title: WFProduct
-            page:
-              detail:
-                columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: WFProduct
-                typescript_name: detail_component.jinja
-                visible_columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
-              home:
-                columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: WFProduct
-                typescript_name: home_template.jinja
-                visible_columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
-              new:
-                columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: WFProduct
-                typescript_name: new_component.jinja
-                visible_columns: labelName,ApplicationID,action,doNotImport,message,labelType,brandName,distributorName,group,symbol,dpm,category,usePlantStatus,status,legacyStatus,consumer,industrial,processedBy,processedDate,notes,ProductID,legacyId,labelCompanyId,finalized
             template_name: module.jinja
           WFQuote:
             icon: edit_square
@@ -1180,35 +820,95 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: UserRole,Role,CreatedDate
             template_name: module.jinja
+          WFUSERADMIN:
+            icon: edit_square
+            menu_name: WFUSERADMIN
+            menu_title: WFUSERADMIN
+            page:
+              detail:
+                columns: UserName,AdminUserName,IsPrimary,CreatedDate
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: WFUSERADMIN
+                typescript_name: detail_component.jinja
+                visible_columns: UserName,AdminUserName,IsPrimary,CreatedDate
+              home:
+                columns: UserName,AdminUserName,IsPrimary,CreatedDate
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: WFUSERADMIN
+                typescript_name: home_template.jinja
+                visible_columns: UserName,AdminUserName,IsPrimary,CreatedDate
+              new:
+                columns: UserName,AdminUserName,IsPrimary,CreatedDate
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: WFUSERADMIN
+                typescript_name: new_component.jinja
+                visible_columns: UserName,AdminUserName,IsPrimary,CreatedDate
+            template_name: module.jinja
+          WFUSERROLE:
+            icon: edit_square
+            menu_name: WFUSERROLE
+            menu_title: WFUSERROLE
+            page:
+              detail:
+                columns: UserName,UserRole,CreatedDate
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: WFUSERROLE
+                typescript_name: detail_component.jinja
+                visible_columns: UserName,UserRole,CreatedDate
+              home:
+                columns: UserName,UserRole,CreatedDate
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: WFUSERROLE
+                typescript_name: home_template.jinja
+                visible_columns: UserName,UserRole,CreatedDate
+              new:
+                columns: UserName,UserRole,CreatedDate
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: WFUSERROLE
+                typescript_name: new_component.jinja
+                visible_columns: UserName,UserRole,CreatedDate
+            template_name: module.jinja
           WFUser:
             icon: edit_square
             menu_name: WFUser
             menu_title: WFUser
             page:
               detail:
-                columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: WFUser
                 typescript_name: detail_component.jinja
-                visible_columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                visible_columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
               home:
-                columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: WFUser
                 typescript_name: home_template.jinja
-                visible_columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                visible_columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
               new:
-                columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: WFUser
                 typescript_name: new_component.jinja
-                visible_columns: Username,Role,FullName,Email,IsActive,CreatedDate,LastLoginDate,UserID
+                visible_columns: Username,Email,FullName,IsActive,CreatedDate,LastLoginDate
             template_name: module.jinja
           WorkflowHistory:
             icon: edit_square
@@ -1243,329 +943,66 @@ application:
         menu_name: data
         menu_title: data
         opened: true
-    name: foo
+    name: app
 authentication: '{system-default}'
 entities:
-  COMPANYTB:
+  EventAction:
     columns:
-    - label: Company Name*
-      name: NAME
-      required: true
+    - default: '0'
+      label: ' Event Id*'
+      name: EventId
       search: true
       sort: true
-      template: text
-      type: VARCHAR
-    - default: '0'
-      name: COMPANY_ID
+      template: integer
+      type: INTEGER
+    - name: TaskInstanceId
       required: true
       template: integer
       type: INTEGER
-    - default: Y
-      name: LIST
+    - name: EventKey
+      required: true
       template: text
       type: VARCHAR
-    - default: '0'
-      name: GP_NOTIFY
-      template: text
-      type: TINYINT
-    - name: PRODUCER
-      template: checkbox
-      type: BOOLEAN
-    - name: MARKETER
-      template: checkbox
-      type: BOOLEAN
-    - name: SOURCE
-      template: checkbox
-      type: BOOLEAN
-    - name: IN_HOUSE
+    - default: ('PENDING')
+      name: EventStatus
+      required: true
       template: text
       type: VARCHAR
-    - name: PRIVATE_LABEL
+    - default: ('External')
+      name: EventType
+      required: true
       template: text
       type: VARCHAR
-    - name: COPACKER
+    - name: EventMessage
+      required: true
       template: text
       type: VARCHAR
-    - name: JEWISH_OWNED
-      template: text
-      type: VARCHAR
-    - name: CORPORATE
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: COMPANY_TYPE
-      template: text
-      type: VARCHAR
-    - default: Company Summary
-      name: INVOICE_TYPE
-      template: text
-      type: VARCHAR
-    - name: INVOICE_FREQUENCY
-      template: text
-      type: VARCHAR
-    - name: INVOICE_DTL
-      template: text
-      type: VARCHAR
-    - name: TIMESTAMP
-      template: textarea
-      type: BINARY
-    - name: STATUS
-      template: text
-      type: VARCHAR
-    - name: RC
-      template: text
-      type: VARCHAR
-    - name: PARENT_CO
-      template: text
-      type: VARCHAR
-    - name: INVOICE_LAST_DATE
+    - default: (getutcdate())
+      name: StartDate
+      required: true
       template: text
       type: DATETIME2
-    - name: COMPANY_BILL_TO_NAME
-      template: text
-      type: VARCHAR
-    - name: ACTIVE
-      template: integer
-      type: INTEGER
-    - name: AcquiredFrom
-      template: text
-      type: VARCHAR
-    - name: UID
-      template: text
-      type: VARCHAR
-    - default: ('N')
-      name: MoveToGP
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: DefaultPO
-      template: text
-      type: VARCHAR
-    - name: POexpiry
+    - name: DueDate
       template: text
       type: DATETIME2
-    - default: ''
-      name: PrivateLabelPO
-      template: text
-      type: VARCHAR
-    - name: PrivateLabelPOexpiry
+    - name: ResolvedDate
       template: text
       type: DATETIME2
-    - default: ''
-      name: VisitPO
-      template: text
-      type: VARCHAR
-    - name: VisitPOexpiry
-      template: text
-      type: DATETIME2
-    - default: (CONVERT([datetime2](7),'1900-01-01 00:00:00'))
-      name: ValidFromTime
-      template: text
-      type: DATETIME2
-    - default: (CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))
-      name: ValidToTime
-      template: text
-      type: DATETIME2
-    - name: CHANGESET_ID
-      template: integer
-      type: INTEGER
-    - name: CATEGORY
-      template: text
-      type: VARCHAR
-    - name: OLDCOMPANYTYPE
-      template: text
-      type: VARCHAR
-    - name: BoilerplateInvoiceComment
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: '0'
-      name: IsPoRequired
-      template: checkbox
-      type: BOOLEAN
-    - default: '0'
-      name: ShouldPropagateCompanyPo
-      template: checkbox
-      type: BOOLEAN
-    - default: '0'
-      name: ShouldPropagateKscPoToPlants
-      template: checkbox
-      type: BOOLEAN
-    - default: '0'
-      name: ShouldPropagateVisitPoToPlants
-      template: checkbox
-      type: BOOLEAN
-    - name: PoReason
-      template: text
-      type: VARCHAR
-    - default: '0'
-      name: On3rdPartyBilling
-      template: checkbox
-      type: BOOLEAN
-    - default: '0'
-      name: IsTest
-      template: checkbox
-      type: BOOLEAN
-    - name: ChometzEmailSentDate
-      template: text
-      type: DATETIME2
-    favorite: NAME
+    - name: IsResolved
+      required: true
+      type: Boolean
+    favorite: EventId
     hidden: {}
-    label: COMPANYTB
+    label: EventAction
     primary_key:
-    - COMPANY_ID
+    - EventId
     tab_groups:
-    - direction: tomany
+    - direction: toone
       fks:
-      - COMPANY_ID
-      name: PLANTTBList
-      resource: PLANTTB
-    - direction: tomany
-      fks:
-      - COMPANY_ID
-      name: OWNSTBList
-      resource: OWNSTB
-    type: COMPANYTB
-  CompanyApplication:
-    columns:
-    - default: ''
-      label: Company Name*
-      name: CompanyName
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - default: '0'
-      name: ID
-      required: true
-      template: integer
-      type: INTEGER
-    - default: N
-      name: PreviousCertification
-      template: text
-      type: NCHAR
-    - default: N
-      name: OUCertified
-      template: text
-      type: NCHAR
-    - default: N
-      name: CurrentlyCertified
-      template: text
-      type: NCHAR
-    - default: '0'
-      name: CompanyID
-      template: integer
-      type: INTEGER
-    - default: ''
-      name: PlantName
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: Street1
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: Street2
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: City
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: State
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: Zip
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: Country
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: title
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: FirstName
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: LastName
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: email
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: phone
-      template: text
-      type: VARCHAR
-    - default: ''
-      name: NatureOfProducts
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: HowHeardAboutUs
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: Comments
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: Description
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: OtherCertification
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: gclid
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: utm_source
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: utm_medium
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ''
-      name: utm_campaign
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: (getdate())
-      name: dateSubmitted
-      template: date
-      type: DATETIME
-    - name: Utm_Term
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: Version
-      template: text
-      type: VARCHAR
-    - name: Language
-      template: text
-      type: VARCHAR
-    - name: Oukosher_source
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: JotFormSubmissionID
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    favorite: CompanyName
-    hidden: {}
-    label: CompanyApplication
-    primary_key:
-    - ID
-    tab_groups: []
-    type: CompanyApplication
+      - TaskInstanceId
+      name: TaskInstance
+      resource: TaskInstance
+    type: EventAction
   LaneDefinition:
     columns:
     - label: ' Lane Name*'
@@ -1605,7 +1042,8 @@ entities:
     - name: ModifiedBy
       template: text
       type: VARCHAR
-    - name: LaneId
+    - default: '0'
+      name: LaneId
       template: integer
       type: INTEGER
     favorite: LaneName
@@ -1635,252 +1073,31 @@ entities:
       name: Process
       resource: ProcessDefinition
     type: LaneDefinition
-  OWNSTB:
+  LaneRole:
     columns:
-    - default: '0'
-      label: ID*
-      name: ID
-      required: true
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: COMPANY_ID
-      required: true
-      template: integer
-      type: INTEGER
-    - name: PLANT_ID
-      required: true
-      template: integer
-      type: INTEGER
-    - name: START_DATE
-      template: date
-      type: DATETIME
-    - name: END_DATE
-      template: date
-      type: DATETIME
-    - name: TYPE
-      template: text
-      type: VARCHAR
-    - name: VISIT_FREQUENCY
-      template: integer
-      type: SMALLINT
-    - name: INVOICE_TYPE
-      template: text
-      type: VARCHAR
-    - name: INVOICE_FREQUENCY
-      template: text
-      type: VARCHAR
-    - name: INVOICE_DTL
-      template: text
-      type: VARCHAR
-    - name: HOLD
-      template: text
-      type: VARCHAR
-    - name: ROYALTIES
-      template: text
-      type: VARCHAR
-    - name: SPECIAL_TICKET
-      template: text
-      type: VARCHAR
-    - name: STATUS
-      template: text
-      type: VARCHAR
-    - name: ACTIVE
-      template: integer
-      type: INTEGER
-    - name: Setup_By
-      template: text
-      type: 'NULL'
-    - name: AcquiredFrom
-      template: text
-      type: VARCHAR
-    - default: ('N')
-      name: NoRFRneeded
-      template: text
-      type: VARCHAR
-    - name: LOCtext
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ('N')
-      name: MoveToGP
-      template: text
-      type: VARCHAR
-    - default: ('')
-      name: DefaultPO
-      template: text
-      type: VARCHAR
-    - default: ('')
-      name: VisitBilling
-      template: text
-      type: VARCHAR
-    - default: ('')
-      name: PlantName
-      template: text
-      type: VARCHAR
-    - default: ('N')
-      name: ShareAB
-      template: text
-      type: VARCHAR
-    - name: POexpiry
-      template: date
-      type: DATE
-    - name: BillingName
-      template: text
-      type: VARCHAR
-    - default: ('')
-      name: PLANT_BILL_TO_NAME
-      template: text
-      type: VARCHAR
-    - default: ((0))
-      name: AutoCertification
-      template: checkbox
-      type: BOOLEAN
-    - name: primaryCompany
-      template: integer
-      type: INTEGER
-    - default: ((0))
-      name: Override
-      template: checkbox
-      type: BOOLEAN
-    - default: ('')
-      name: VisitPO
-      template: text
-      type: VARCHAR
-    - name: VisitPOexpiry
-      template: date
-      type: DATETIME
-    - default: (CONVERT([datetime2](7),'1900-01-01 00:00:00'))
-      name: ValidFromTime
-      template: text
-      type: DATETIME2
-    - default: (CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))
-      name: ValidToTime
-      template: text
-      type: DATETIME2
-    - name: CHANGESET_ID
-      template: integer
-      type: INTEGER
-    - name: BoilerplateInvoiceComment
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: ((0))
-      name: IsCertBillingOverride
-      template: checkbox
-      type: BOOLEAN
-    favorite: ID
-    hidden: {}
-    label: OWNSTB
-    primary_key:
-    - ID
-    tab_groups:
-    - direction: toone
-      fks:
-      - COMPANY_ID
-      name: COMPANY_TB
-      resource: COMPANYTB
-    - direction: toone
-      fks:
-      - PLANT_ID
-      name: PLANT_TB
-      resource: PLANTTB
-    type: OWNSTB
-  PLANTTB:
-    columns:
-    - label: Plant Name*
-      name: NAME
+    - label: ' Role Description*'
+      name: RoleDescription
       required: true
       search: true
       sort: true
       template: text
       type: VARCHAR
-    - name: PLANT_ID
+    - name: RoleCode
       required: true
-      template: integer
-      type: INTEGER
-    - name: GP_NOTIFY
-      template: checkbox
-      type: BOOLEAN
-    - name: MULTILINES
       template: text
       type: VARCHAR
-    - name: PASSOVER
-      template: text
-      type: VARCHAR
-    - default: ('N')
-      name: SPECIAL_PROD
-      template: text
-      type: VARCHAR
-    - name: JEWISH_OWNED
-      template: text
-      type: VARCHAR
-    - name: PLANT_TYPE
-      template: text
-      type: VARCHAR
-    - name: PLANT_DIRECTIONS
-      template: text
-      type: VARCHAR
-    - name: ACTIVE
-      template: integer
-      type: INTEGER
-    - name: USDA_CODE
-      template: text
-      type: VARCHAR
-    - name: PlantUID
-      template: text
-      type: VARCHAR
-    - name: DoNotAttach
-      template: text
-      type: VARCHAR
-    - name: OtherCertification
-      template: text
-      type: VARCHAR
-    - name: PrimaryCompany
-      template: integer
-      type: INTEGER
-    - name: DesignatedRFR
-      template: text
-      type: 'NULL'
-    - default: (CONVERT([datetime2](7),'1900-01-01 00:00:00'))
-      name: ValidFromTime
-      template: text
-      type: DATETIME2
-    - default: (CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))
-      name: ValidToTime
-      template: text
-      type: DATETIME2
-    - name: CHANGESET_ID
-      template: integer
-      type: INTEGER
-    - default: ((0))
-      name: MaxOnSiteVisits
-      template: integer
-      type: SMALLINT
-    - default: ((0))
-      name: MaxVirtualVisits
-      template: integer
-      type: SMALLINT
-    - default: ((0))
-      name: IsDaily
-      template: checkbox
-      type: BOOLEAN
-    favorite: NAME
+    favorite: RoleDescription
     hidden: {}
-    label: PLANTTB
+    label: LaneRole
     primary_key:
-    - PLANT_ID
+    - RoleCode
     tab_groups:
-    - direction: toone
-      fks:
-      - PrimaryCompany
-      name: COMPANY_TB
-      resource: COMPANYTB
     - direction: tomany
       fks:
-      - PLANT_ID
-      name: OWNSTBList
-      resource: OWNSTB
-    type: PLANTTB
+      - LaneRole
+      name: LaneDefinitionList
+      resource: LaneDefinition
+    type: LaneRole
   ProcessDefinition:
     columns:
     - label: ' Process Name*'
@@ -1890,7 +1107,7 @@ entities:
       sort: true
       template: text
       type: VARCHAR
-    - default: '1.0'
+    - default: ('1.0')
       name: ProcessVersion
       required: true
       template: text
@@ -1901,13 +1118,12 @@ entities:
     - name: IsActive
       required: true
       type: Boolean
-    - default: getutcdate()
+    - default: (getutcdate())
       name: CreatedDate
       required: true
       template: text
       type: DATETIME2
-    - default: system
-      name: CreatedBy
+    - name: CreatedBy
       required: true
       template: text
       type: VARCHAR
@@ -1917,7 +1133,8 @@ entities:
     - name: ModifiedBy
       template: text
       type: VARCHAR
-    - name: ProcessId
+    - default: '0'
+      name: ProcessId
       template: integer
       type: INTEGER
     favorite: ProcessName
@@ -1934,39 +1151,28 @@ entities:
     - direction: tomany
       fks:
       - ProcessId
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    - direction: tomany
-      fks:
-      - ProcessId
       name: TaskDefinitionList
       resource: TaskDefinition
     type: ProcessDefinition
   ProcessInstance:
     columns:
-    - label: ' Instance Id*'
+    - default: '0'
+      label: ' Instance Id*'
       name: InstanceId
       search: true
       sort: true
       template: integer
       type: INTEGER
-    - name: CurrentTaskId
-      template: integer
-      type: INTEGER
-    - default: NORMAL
+    - default: ('NORMAL')
       name: Priority
       template: text
       type: VARCHAR
-    - name: ProcessId
-      required: true
-      template: integer
-      type: INTEGER
-    - default: NEW
+    - default: ('NEW')
       name: Status
       required: true
       template: text
       type: VARCHAR
-    - default: getutcdate()
+    - default: (getutcdate())
       name: StartedDate
       required: true
       template: text
@@ -1984,10 +1190,17 @@ entities:
     - name: ContextData
       template: text
       type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
+    - name: ProcessId
+      required: true
+      template: integer
+      type: INTEGER
     - name: ApplicationId
       required: true
-      template: text
-      type: VARCHAR
+      template: integer
+      type: INTEGER
+    - name: CurrentTaskId
+      template: integer
+      type: INTEGER
     favorite: InstanceId
     hidden: {}
     label: ProcessInstance
@@ -1996,29 +1209,9 @@ entities:
     tab_groups:
     - direction: tomany
       fks:
-      - InstanceId
-      name: ProcessMessageList
-      resource: ProcessMessage
-    - direction: tomany
-      fks:
       - ProcessInstanceId
       name: StageInstanceList
       resource: StageInstance
-    - direction: tomany
-      fks:
-      - ProcessInstanceId
-      name: TaskCommentList
-      resource: TaskComment
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: TaskInstanceList
-      resource: TaskInstance
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: ValidationResultList
-      resource: ValidationResult
     - direction: tomany
       fks:
       - InstanceId
@@ -2026,111 +1219,15 @@ entities:
       resource: WorkflowHistory
     - direction: toone
       fks:
-      - CurrentTaskId
-      name: CurrentTask
-      resource: TaskDefinition
-    - direction: toone
-      fks:
       - Priority
       name: ProcessPriority
       resource: ProcessPriority
-    - direction: toone
-      fks:
-      - ProcessId
-      name: Process
-      resource: ProcessDefinition
     - direction: toone
       fks:
       - Status
       name: ProcessStatu
       resource: ProcessStatus
     type: ProcessInstance
-  ProcessMessage:
-    columns:
-    - label: ' Message Id*'
-      name: MessageId
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: InstanceId
-      required: true
-      template: integer
-      type: INTEGER
-    - default: Standard
-      name: MessageType
-      template: text
-      type: VARCHAR
-    - name: FromUser
-      required: true
-      template: text
-      type: VARCHAR
-    - name: ToUser
-      template: text
-      type: VARCHAR
-    - name: ToRole
-      template: text
-      type: VARCHAR
-    - name: Subject
-      template: text
-      type: VARCHAR
-    - name: MessageBody
-      required: true
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: getutcdate()
-      name: SentDate
-      required: true
-      template: text
-      type: DATETIME2
-    - name: ReadDate
-      template: text
-      type: DATETIME2
-    - name: IsRead
-      required: true
-      type: Boolean
-    favorite: MessageId
-    hidden: {}
-    label: ProcessMessage
-    primary_key:
-    - MessageId
-    tab_groups:
-    - direction: toone
-      fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
-    - direction: toone
-      fks:
-      - MessageType
-      name: ProcessMessageType
-      resource: ProcessMessageType
-    type: ProcessMessage
-  ProcessMessageType:
-    columns:
-    - label: ' Message Type Description*'
-      name: MessageTypeDescription
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: MessageTypeCode
-      required: true
-      template: text
-      type: VARCHAR
-    favorite: MessageTypeDescription
-    hidden: {}
-    label: ProcessMessageType
-    primary_key:
-    - MessageTypeCode
-    tab_groups:
-    - direction: tomany
-      fks:
-      - MessageType
-      name: ProcessMessageList
-      resource: ProcessMessage
-    type: ProcessMessageType
   ProcessPriority:
     columns:
     - label: ' Priority Description*'
@@ -2181,9 +1278,93 @@ entities:
       name: ProcessInstanceList
       resource: ProcessInstance
     type: ProcessStatus
+  RoleAssigment:
+    columns:
+    - default: '0'
+      label: ' Role Assigment I D*'
+      name: RoleAssigmentID
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: ApplicationId
+      required: true
+      template: integer
+      type: INTEGER
+    - name: Role
+      required: true
+      template: text
+      type: VARCHAR
+    - name: Assignee
+      required: true
+      template: text
+      type: VARCHAR
+    - default: (getutcdate())
+      name: CreatedDate
+      required: true
+      template: text
+      type: DATETIME2
+    - default: ('System')
+      name: CreatedBy
+      required: true
+      template: text
+      type: VARCHAR
+    favorite: RoleAssigmentID
+    hidden: {}
+    label: RoleAssigment
+    primary_key:
+    - RoleAssigmentID
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: WFApplication
+    type: RoleAssigment
+  StageDefinition:
+    columns:
+    - label: ' Stage Name*'
+      name: StageName
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: StageDescription
+      template: text
+      type: VARCHAR
+    - name: EstimatedDurationDays
+      template: integer
+      type: INTEGER
+    - default: (getutcdate())
+      name: CreatedDate
+      required: true
+      template: text
+      type: DATETIME2
+    - name: CreatedBy
+      required: true
+      template: text
+      type: VARCHAR
+    - name: ModifiedDate
+      template: text
+      type: DATETIME2
+    - name: ModifiedBy
+      template: text
+      type: VARCHAR
+    - default: '0'
+      name: StageId
+      template: integer
+      type: INTEGER
+    favorite: StageName
+    hidden: {}
+    label: StageDefinition
+    primary_key:
+    - StageId
+    type: StageDefinition
   StageInstance:
     columns:
-    - label: ' Stage Instance Id*'
+    - default: '0'
+      label: ' Stage Instance Id*'
       name: StageInstanceId
       search: true
       sort: true
@@ -2197,7 +1378,7 @@ entities:
       required: true
       template: integer
       type: INTEGER
-    - default: NEW
+    - default: ('NEW')
       name: Status
       required: true
       template: text
@@ -2208,6 +1389,9 @@ entities:
     - name: CompletedDate
       template: text
       type: DATETIME2
+    - name: DurationDays
+      template: integer
+      type: INTEGER
     - name: RetryCount
       template: integer
       type: INTEGER
@@ -2226,12 +1410,13 @@ entities:
     - name: TotalCount
       template: integer
       type: INTEGER
-    - default: getutcdate()
+    - default: (getutcdate())
       name: CreatedDate
       required: true
       template: text
       type: DATETIME2
-    - name: CreatedBy
+    - default: ('System')
+      name: CreatedBy
       required: true
       template: text
       type: VARCHAR
@@ -2265,7 +1450,7 @@ entities:
     - direction: toone
       fks:
       - Status
-      name: StageStatus
+      name: StageStatu
       resource: StageStatus
     type: StageInstance
   StageStatus:
@@ -2318,88 +1503,6 @@ entities:
       name: TaskDefinitionList
       resource: TaskDefinition
     type: TaskCategory
-  TaskComment:
-    columns:
-    - label: ' Comment Id*'
-      name: CommentId
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - default: Internal
-      name: CommentType
-      template: text
-      type: VARCHAR
-    - name: ProcessInstanceId
-      required: true
-      template: integer
-      type: INTEGER
-    - name: TaskInstanceId
-      template: integer
-      type: INTEGER
-    - name: CommentText
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Author
-      required: true
-      template: text
-      type: VARCHAR
-    - default: getutcdate()
-      name: CreatedDate
-      required: true
-      template: text
-      type: DATETIME2
-    - name: IsVisible
-      required: true
-      type: Boolean
-    favorite: CommentId
-    hidden: {}
-    label: TaskComment
-    primary_key:
-    - CommentId
-    tab_groups:
-    - direction: toone
-      fks:
-      - CommentType
-      name: TaskCommentType
-      resource: TaskCommentType
-    - direction: toone
-      fks:
-      - ProcessInstanceId
-      name: ProcessInstance
-      resource: ProcessInstance
-    - direction: toone
-      fks:
-      - TaskInstanceId
-      name: TaskInstance
-      resource: TaskInstance
-    type: TaskComment
-  TaskCommentType:
-    columns:
-    - label: ' Comment Type Description*'
-      name: CommentTypeDescription
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: CommentTypeCode
-      required: true
-      template: text
-      type: VARCHAR
-    favorite: CommentTypeDescription
-    hidden: {}
-    label: TaskCommentType
-    primary_key:
-    - CommentTypeCode
-    tab_groups:
-    - direction: tomany
-      fks:
-      - CommentType
-      name: TaskCommentList
-      resource: TaskComment
-    type: TaskCommentType
   TaskDefinition:
     columns:
     - label: ' Task Name*'
@@ -2443,16 +1546,13 @@ entities:
     - name: Description
       template: text
       type: VARCHAR
-    - name: PreScriptJson
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: PostScriptJson
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: CreatedDate
+    - default: (getutcdate())
+      name: CreatedDate
+      required: true
       template: text
       type: DATETIME2
     - name: CreatedBy
+      required: true
       template: text
       type: VARCHAR
     - name: ModifiedDate
@@ -2461,7 +1561,14 @@ entities:
     - name: ModifiedBy
       template: text
       type: VARCHAR
-    - name: TaskId
+    - name: PreScriptJson
+      template: text
+      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
+    - name: PostScriptJson
+      template: text
+      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
+    - default: '0'
+      name: TaskId
       template: integer
       type: INTEGER
     - name: IsRequired
@@ -2473,11 +1580,6 @@ entities:
     primary_key:
     - TaskId
     tab_groups:
-    - direction: tomany
-      fks:
-      - CurrentTaskId
-      name: ProcessInstanceList
-      resource: ProcessInstance
     - direction: tomany
       fks:
       - FromTaskId
@@ -2516,7 +1618,8 @@ entities:
     type: TaskDefinition
   TaskFlow:
     columns:
-    - label: ' Flow Id*'
+    - default: '0'
+      label: ' Flow Id*'
       name: FlowId
       search: true
       sort: true
@@ -2554,7 +1657,8 @@ entities:
     type: TaskFlow
   TaskInstance:
     columns:
-    - label: ' Task Instance Id*'
+    - default: '0'
+      label: ' Task Instance Id*'
       name: TaskInstanceId
       search: true
       sort: true
@@ -2564,7 +1668,7 @@ entities:
       required: true
       template: integer
       type: INTEGER
-    - default: Pending
+    - default: ('Pending')
       name: Status
       required: true
       template: text
@@ -2582,6 +1686,9 @@ entities:
     - name: CompletedDate
       template: text
       type: DATETIME2
+    - name: _DurationMinutes
+      template: integer
+      type: INTEGER
     - name: Result
       template: text
       type: VARCHAR
@@ -2591,7 +1698,7 @@ entities:
     - name: ErrorMessage
       template: text
       type: VARCHAR
-    - default: '0'
+    - default: ((0))
       name: RetryCount
       template: integer
       type: INTEGER
@@ -2604,8 +1711,8 @@ entities:
     - direction: tomany
       fks:
       - TaskInstanceId
-      name: TaskCommentList
-      resource: TaskComment
+      name: EventActionList
+      resource: EventAction
     - direction: tomany
       fks:
       - TaskInstanceId
@@ -2619,12 +1726,12 @@ entities:
     - direction: toone
       fks:
       - Status
-      name: TaskStatus
+      name: TaskStatu
       resource: TaskStatus
     - direction: toone
       fks:
       - TaskId
-      name: TaskDef
+      name: Task
       resource: TaskDefinition
     type: TaskInstance
   TaskStatus:
@@ -2677,109 +1784,25 @@ entities:
       name: TaskDefinitionList
       resource: TaskDefinition
     type: TaskType
-  WFActivityLog:
-    columns:
-    - label: ' User Name*'
-      name: UserName
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - default: APP
-      name: Status
-      required: true
-      template: text
-      type: VARCHAR
-    - name: ActionType
-      required: true
-      template: text
-      type: VARCHAR
-    - name: ActionDetails
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: ActivityType
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Category
-      template: text
-      type: VARCHAR
-    - default: getdate()
-      name: ActivityDate
-      required: true
-      template: text
-      type: DATETIME2
-    - name: ActivityID
-      template: integer
-      type: INTEGER
-    favorite: UserName
-    hidden: {}
-    label: WFActivityLog
-    primary_key:
-    - ActivityID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    - direction: toone
-      fks:
-      - Status
-      name: WF_ActivityStatus
-      resource: WFActivityStatus
-    type: WFActivityLog
-  WFActivityStatus:
-    columns:
-    - label: ' Status Code*'
-      name: StatusCode
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: StatusDesc
-      template: text
-      type: VARCHAR
-    favorite: StatusCode
-    hidden: {}
-    label: WFActivityStatus
-    primary_key:
-    - StatusCode
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Status
-      name: WFActivityLogList
-      resource: WFActivityLog
-    type: WFActivityStatus
   WFApplication:
     columns:
-    - label: ' Application I D*'
+    - default: '0'
+      label: ' Application I D*'
       name: ApplicationID
       search: true
       sort: true
       template: integer
       type: INTEGER
-    - default: NORMAL
+    - default: ('NORMAL')
       name: Priority
       template: text
       type: VARCHAR
-    - default: NEW
+    - default: ('NEW')
       name: Status
       required: true
       template: text
       type: VARCHAR
-    - default: '1'
-      template: integer
-      type: INTEGER
     - name: ApplicationNumber
-      required: true
       template: integer
       type: INTEGER
     - name: SubmissionDate
@@ -2794,12 +1817,12 @@ entities:
     - name: AssignedDate
       template: text
       type: DATETIME2
-    - default: getutcdate()
+    - default: (getutcdate())
       name: CreatedDate
       required: true
       template: text
       type: DATETIME2
-    - default: System
+    - default: ('System')
       name: CreatedBy
       required: true
       template: text
@@ -2825,14 +1848,9 @@ entities:
     tab_groups:
     - direction: tomany
       fks:
-      - ApplicationID
-      name: WFActivityLogList
-      resource: WFActivityLog
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFApplicationCommentList
-      resource: WFApplicationComment
+      - ApplicationId
+      name: RoleAssigmentList
+      resource: RoleAssigment
     - direction: tomany
       fks:
       - ApplicationID
@@ -2841,33 +1859,8 @@ entities:
     - direction: tomany
       fks:
       - ApplicationID
-      name: WFCompanyList
-      resource: WFCompany
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFContactList
-      resource: WFContact
-    - direction: tomany
-      fks:
-      - ApplicationID
       name: WFFileList
       resource: WFFile
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFIngredientList
-      resource: WFIngredient
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFPlantList
-      resource: WFPlant
-    - direction: tomany
-      fks:
-      - ApplicationID
-      name: WFProductList
-      resource: WFProduct
     - direction: tomany
       fks:
       - ApplicationID
@@ -2881,68 +1874,13 @@ entities:
     - direction: toone
       fks:
       - Status
-      name: WF_ApplicationStatus
+      name: WF_ApplicationStatu
       resource: WFApplicationStatus
-    - direction: toone
     type: WFApplication
-  WFApplicationComment:
-    columns:
-    - label: ' Comment I D*'
-      name: CommentID
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - name: Author
-      required: true
-      template: text
-      type: VARCHAR
-    - name: CommentText
-      required: true
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: internal
-      name: CommentType
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Category
-      template: text
-      type: VARCHAR
-    - default: getdate()
-      name: CreatedDate
-      required: true
-      template: text
-      type: DATETIME2
-    - name: CreatedBy
-      required: true
-      template: text
-      type: text
-    - name: ModifiedDate
-      template: text
-      type: text
-    - name: ModifiedBy
-      template: text
-      type: text
-    favorite: CommentID
-    hidden: {}
-    label: WFApplicationComment
-    primary_key:
-    - CommentID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFApplicationComment
   WFApplicationMessage:
     columns:
-    - label: ' Message I D*'
+    - default: '0'
+      label: ' Message I D*'
       name: MessageID
       search: true
       sort: true
@@ -2952,33 +1890,35 @@ entities:
       required: true
       template: integer
       type: INTEGER
+    - default: ('NORMAL')
+      name: Priority
+      required: true
+      template: text
+      type: VARCHAR
     - name: FromUser
       required: true
       template: text
       type: VARCHAR
     - name: ToUser
-      required: true
       template: text
       type: VARCHAR
     - name: MessageText
       required: true
       template: text
       type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - default: outgoing
+    - default: ('internal')
       name: MessageType
       required: true
       template: text
       type: VARCHAR
-    - default: normal
-      name: Priority
-      required: true
-      template: text
-      type: VARCHAR
-    - default: getdate()
+    - default: (getdate())
       name: SentDate
       required: true
       template: text
       type: DATETIME2
+    - name: TaskInstanceId
+      template: integer
+      type: INTEGER
     favorite: MessageID
     hidden: {}
     label: WFApplicationMessage
@@ -2990,6 +1930,11 @@ entities:
       - ApplicationID
       name: Application
       resource: WFApplication
+    - direction: toone
+      fks:
+      - Priority
+      name: WF_Priority
+      resource: WFPriority
     type: WFApplicationMessage
   WFApplicationStatus:
     columns:
@@ -3016,68 +1961,6 @@ entities:
       name: WFApplicationList
       resource: WFApplication
     type: WFApplicationStatus
-  WFCompany:
-    columns:
-    - label: ' Company I D*'
-      name: CompanyID
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - default: getdate()
-      name: CreatedDate
-      required: true
-      template: text
-      type: DATETIME2
-    - name: KashrusCompanyID
-      required: true
-      template: text
-      type: VARCHAR
-    favorite: CompanyID
-    hidden: {}
-    label: WFCompany
-    primary_key:
-    - CompanyID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFCompany
-  WFContact:
-    columns:
-    - label: ' Contact I D*'
-      name: ContactID
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - default: getdate()
-      name: CreatedDate
-      required: true
-      template: text
-      type: DATETIME2
-    favorite: ContactID
-    hidden: {}
-    label: WFContact
-    primary_key:
-    - ContactID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFContact
   WFFile:
     columns:
     - label: ' File Name*'
@@ -3110,12 +1993,12 @@ entities:
     - name: FilePath
       template: text
       type: VARCHAR
-    - default: getdate()
+    - default: (getutcdate())
       name: CCreatedDate
       required: true
       template: text
       type: DATETIME2
-    - default: System
+    - default: ('System')
       name: CreatedBy
       required: true
       template: text
@@ -3126,7 +2009,8 @@ entities:
     - name: ModifiedBy
       template: text
       type: VARCHAR
-    - name: FileID
+    - default: '0'
+      name: FileID
       template: integer
       type: INTEGER
     - name: IsProcessed
@@ -3174,116 +2058,6 @@ entities:
       name: WFFileList
       resource: WFFile
     type: WFFileType
-  WFIngredient:
-    columns:
-    - label: ' Ingredient Name*'
-      name: IngredientName
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - name: Source
-      required: true
-      template: text
-      type: VARCHAR
-    - name: RMC
-      template: text
-      type: VARCHAR
-    - name: Manufacturer
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Packaging
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Agency
-      required: true
-      template: text
-      type: VARCHAR
-    - name: AddedDate
-      required: true
-      type: DATE
-    - name: AddedBy
-      required: true
-      template: text
-      type: VARCHAR
-    - name: Status
-      required: true
-      template: text
-      type: VARCHAR
-    - default: (getdate())
-      name: CreatedDate
-      template: text
-      type: DATETIME2
-    - default: (getdate())
-      name: ModifiedDate
-      template: text
-      type: DATETIME2
-    - default: '0'
-      name: IngredientID
-      template: integer
-      type: INTEGER
-    - name: UKDId
-      template: text
-      type: VARCHAR
-    - name: Brand
-      required: true
-      template: text
-      type: VARCHAR
-    - name: NCRCId
-      required: true
-      template: text
-      type: VARCHAR
-    favorite: IngredientName
-    hidden: {}
-    label: WFIngredient
-    primary_key:
-    - IngredientID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFIngredient
-  WFPlant:
-    columns:
-    - label: ' Plant I D*'
-      name: PlantID
-      search: true
-      sort: true
-      template: integer
-      type: INTEGER
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - name: PlantNumber
-      template: text
-      type: VARCHAR
-    - default: getdate()
-      name: CreatedDate
-      required: true
-      template: text
-      type: DATETIME2
-    favorite: PlantID
-    hidden: {}
-    label: WFPlant
-    primary_key:
-    - PlantID
-    tab_groups:
-    - direction: toone
-      fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFPlant
   WFPriority:
     columns:
     - label: ' Priority Description*'
@@ -3308,116 +2082,16 @@ entities:
       - Priority
       name: WFApplicationList
       resource: WFApplication
-    type: WFPriority
-  WFProduct:
-    columns:
-    - label: ' label Name*'
-      name: labelName
-      required: true
-      search: true
-      sort: true
-      template: text
-      type: VARCHAR
-    - name: ApplicationID
-      required: true
-      template: integer
-      type: INTEGER
-    - default: ('Add')
-      name: action
-      required: true
-      template: text
-      type: VARCHAR
-    - name: doNotImport
-      required: true
-      type: Boolean
-    - name: message
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: labelType
-      required: true
-      template: text
-      type: VARCHAR
-    - name: brandName
-      required: true
-      template: text
-      type: VARCHAR
-    - name: distributorName
-      required: true
-      template: text
-      type: VARCHAR
-    - name: group
-      required: true
-      template: text
-      type: VARCHAR
-    - name: symbol
-      required: true
-      template: text
-      type: VARCHAR
-    - name: dpm
-      required: true
-      template: text
-      type: VARCHAR
-    - name: category
-      required: true
-      template: text
-      type: VARCHAR
-    - name: usePlantStatus
-      required: true
-      type: Boolean
-    - name: status
-      required: true
-      template: text
-      type: VARCHAR
-    - name: legacyStatus
-      template: text
-      type: VARCHAR COLLATE "SQL_LATIN1_GENERAL_CP1_CI_AS"
-    - name: consumer
-      required: true
-      type: Boolean
-    - name: industrial
-      required: true
-      type: Boolean
-    - name: processedBy
-      required: true
-      template: text
-      type: VARCHAR
-    - name: processedDate
-      required: true
-      type: DATE
-    - name: notes
-      required: true
-      template: text
-      type: VARCHAR
-    - default: '0'
-      name: ProductID
-      template: integer
-      type: INTEGER
-    - name: legacyId
-      required: true
-      template: text
-      type: VARCHAR
-    - name: labelCompanyId
-      required: true
-      template: text
-      type: VARCHAR
-    - name: finalized
-      required: true
-      type: Boolean
-    favorite: labelName
-    hidden: {}
-    label: WFProduct
-    primary_key:
-    - ProductID
-    tab_groups:
-    - direction: toone
+    - direction: tomany
       fks:
-      - ApplicationID
-      name: Application
-      resource: WFApplication
-    type: WFProduct
+      - Priority
+      name: WFApplicationMessageList
+      resource: WFApplicationMessage
+    type: WFPriority
   WFQuote:
     columns:
-    - label: ' Quote I D*'
+    - default: '0'
+      label: ' Quote I D*'
       name: QuoteID
       search: true
       sort: true
@@ -3427,7 +2101,7 @@ entities:
       required: true
       template: integer
       type: INTEGER
-    - default: PEND
+    - default: ('PEND')
       name: Status
       required: true
       template: text
@@ -3446,21 +2120,22 @@ entities:
     - name: LastUpdatedDate
       required: true
       type: DATE
-    - default: getdate()
+    - default: (getutcdate())
       name: CreatedDate
       required: true
       template: text
       type: DATETIME2
-    - name: CreatedBy
+    - default: ('System')
+      name: CreatedBy
       required: true
       template: text
-      type: text
+      type: VARCHAR
     - name: ModifiedDate
       template: text
-      type: text
+      type: DATETIME2
     - name: ModifiedBy
       template: text
-      type: text
+      type: VARCHAR
     favorite: QuoteID
     hidden: {}
     label: WFQuote
@@ -3500,12 +2175,13 @@ entities:
       required: true
       template: real
       type: DECIMAL
-    - default: '1'
+    - default: ((1))
       name: SortOrder
       required: true
       template: integer
       type: INTEGER
-    - name: QuoteItemID
+    - default: '0'
+      name: QuoteItemID
       template: integer
       type: INTEGER
     favorite: Description
@@ -3557,7 +2233,7 @@ entities:
       required: true
       template: text
       type: VARCHAR
-    - default: getdate()
+    - default: (getdate())
       name: CreatedDate
       required: true
       template: text
@@ -3570,10 +2246,85 @@ entities:
     tab_groups:
     - direction: tomany
       fks:
-      - Role
-      name: WFUserList
-      resource: WFUser
+      - UserRole
+      name: WFUSERROLEList
+      resource: WFUSERROLE
     type: WFRole
+  WFUSERADMIN:
+    columns:
+    - label: ' User Name*'
+      name: UserName
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: AdminUserName
+      required: true
+      template: text
+      type: VARCHAR
+    - name: IsPrimary
+      required: true
+      type: Boolean
+    - default: (getdate())
+      name: CreatedDate
+      required: true
+      template: text
+      type: DATETIME2
+    favorite: UserName
+    hidden: {}
+    label: WFUSERADMIN
+    primary_key:
+    - UserName
+    - AdminUserName
+    tab_groups:
+    - direction: toone
+      fks:
+      - AdminUserName
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - UserName
+      name: WF_User1
+      resource: WFUser
+    type: WFUSERADMIN
+  WFUSERROLE:
+    columns:
+    - label: ' User Name*'
+      name: UserName
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: UserRole
+      required: true
+      template: text
+      type: VARCHAR
+    - default: (getdate())
+      name: CreatedDate
+      required: true
+      template: text
+      type: DATETIME2
+    favorite: UserName
+    hidden: {}
+    label: WFUSERROLE
+    primary_key:
+    - UserName
+    - UserRole
+    tab_groups:
+    - direction: toone
+      fks:
+      - UserName
+      name: WF_User
+      resource: WFUser
+    - direction: toone
+      fks:
+      - UserRole
+      name: WF_Role
+      resource: WFRole
+    type: WFUSERROLE
   WFUser:
     columns:
     - label: ' Username*'
@@ -3583,8 +2334,7 @@ entities:
       sort: true
       template: text
       type: VARCHAR
-    - default: ADMIN
-      name: Role
+    - name: Email
       required: true
       template: text
       type: VARCHAR
@@ -3592,14 +2342,10 @@ entities:
       required: true
       template: text
       type: VARCHAR
-    - name: Email
-      required: true
-      template: text
-      type: VARCHAR
     - name: IsActive
       required: true
       type: Boolean
-    - default: getdate()
+    - default: (getdate())
       name: CreatedDate
       required: true
       template: text
@@ -3607,24 +2353,32 @@ entities:
     - name: LastLoginDate
       template: text
       type: DATETIME2
-    - name: UserID
-      template: integer
-      type: INTEGER
     favorite: Username
     hidden: {}
     label: WFUser
     primary_key:
-    - UserID
+    - Username
     tab_groups:
-    - direction: toone
+    - direction: tomany
       fks:
-      - Role
-      name: WF_Role
-      resource: WFRole
+      - AdminUserName
+      name: WFUSERADMINList
+      resource: WFUSERADMIN
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUSERADMINList1
+      resource: WFUSERADMIN
+    - direction: tomany
+      fks:
+      - UserName
+      name: WFUSERROLEList
+      resource: WFUSERROLE
     type: WFUser
   WorkflowHistory:
     columns:
-    - label: ' History Id*'
+    - default: '0'
+      label: ' History Id*'
       name: HistoryId
       search: true
       sort: true
@@ -3647,12 +2401,11 @@ entities:
     - name: NewStatus
       template: text
       type: VARCHAR
-    - default: system
-      name: ActionBy
+    - name: ActionBy
       required: true
       template: text
       type: VARCHAR
-    - default: getutcdate()
+    - default: (getutcdate())
       name: ActionDate
       required: true
       template: text
