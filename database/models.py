@@ -114,11 +114,11 @@ class StageDefinition(Base):  # type: ignore
     __tablename__ = 'StageDefinitions'
     _s_collection_name = 'StageDefinition'  # type: ignore
 
-    StageId = Column(Integer, server_default=text("0"), primary_key=True)
+    StageId = Column(Integer, autoincrement=True, primary_key=True)
     StageName = Column(Unicode(100), nullable=False)
     StageDescription = Column(Unicode(500))
     EstimatedDurationDays = Column(Integer)
-    CreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(100), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
@@ -718,7 +718,7 @@ class COMPANYTB(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
-    COMPANY_ID = Column(Integer, server_default=text("0"), primary_key=True)
+    COMPANY_ID = Column(Integer, autoincrement=True, primary_key=True)
     NAME = Column(String(120), nullable=False)
     LIST = Column(String(1), server_default=text('Y'))
     GP_NOTIFY = Column(TINYINT, server_default=text("0"))
@@ -787,7 +787,7 @@ class COMPANYADDRESSTB(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40))
@@ -914,7 +914,7 @@ class PLANTADDRESSTB(Base):  # type: ignore
     _s_collection_name = 'PLANTADDRESSTB'  # type: ignore
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False, index=True)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40), nullable=False)
@@ -951,7 +951,7 @@ class USEDIN1TB(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     BRAND_NAME = Column(String(100))
     PROC_LINE_ID = Column(Integer)
     START_DATE = Column(SMALLDATETIME, server_default=text("getdate()"))
@@ -998,7 +998,7 @@ class MERCHTB(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
-    MERCHANDISE_ID = Column(Integer, server_default=text("0"), primary_key=True)
+    MERCHANDISE_ID = Column(Integer, autoincrement=True, primary_key=True)
     NAME = Column(String(225), nullable=False)
     AS_STIPULATED = Column(String(1), server_default=text("N"))
     STIPULATION = Column(String(1000), server_default=text(""))
@@ -1180,7 +1180,7 @@ class PLANTCOMMENT(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'))
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     COMMENT_ID = Column(Integer, nullable=False)
@@ -1198,7 +1198,7 @@ class FormulaSubmissionComponent(Base):  # type: ignore
     _s_collection_name = 'FormulaSubmissionComponent'  # type: ignore
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     FormulaSubmissionID = Column(Integer, nullable=False)
     UniqueID = Column(String(500))
     RMC = Column(String(500))
@@ -1223,7 +1223,7 @@ class FormulaSubmissionPlant(Base):  # type: ignore
     _s_collection_name = 'FormulaSubmissionPlant'  # type: ignore
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), primary_key=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True)
     FormulaSubmissionID = Column(Integer, nullable=False)
     PlantName = Column(String(100))
     PlantCode = Column(String(100))
@@ -1252,7 +1252,7 @@ class ProducedIn1Tb(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
     
-    ID = Column(Integer, server_default=text("0"), primary_key=True, index=True)
+    ID = Column(Integer, autoincrement=True, primary_key=True, index=True)
     PROC_LINE_ID = Column(Integer, server_default=text("((1))"))
     START_DATE = Column(DATETIME)
     END_DATE = Column(DATETIME)
@@ -1311,7 +1311,7 @@ class v_PLANT_ADDRESS(Base):
     http_methods = ['GET']
     __bind_key__ = 'ou'
 
-    ID = Column(Integer, server_default=text("0"), nullable=False, primary_key=True)
+    ID = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     PLANT_ID = Column(Integer, nullable=False)
     ADDRESS_SEQ_NUM = Column(Integer, nullable=False)
     TYPE = Column(String(40), nullable=False)
@@ -1357,7 +1357,7 @@ class v_Labels(Base):
     __bind_key__ = 'ou'
     http_methods = ['GET']
 
-    ID = Column(Integer, server_default=text("0"), nullable=False, primary_key=True)
+    ID = Column(Integer, autoincrement=True, nullable=False, primary_key=True)
     MERCHANDISE_ID = Column(Integer, nullable=False)
     LABEL_SEQ_NUM = Column(Integer, nullable=False)
     SYMBOL = Column(String(40), nullable=False)
