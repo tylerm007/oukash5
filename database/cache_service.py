@@ -112,17 +112,22 @@ class DatabaseCacheService:
                 # Convert SQLAlchemy model to dictionary
                 task_dict = {
                     'TaskId': task_def.TaskId,
-                    'StageId': task_def.StageId,
+                    'ProcessDefinitionId': task_def.ProcessDefinitionId,
                     'TaskName': task_def.TaskName,
                     'TaskType': task_def.TaskType,
                     'TaskCategory': task_def.TaskCategory,
                     'Sequence': task_def.Sequence,
+                    'StageDefinitionId': task_def.StageDefinitionId,
                     'IsParallel': task_def.IsParallel,
                     'AssigneeRole': task_def.AssigneeRole,
                     'EstimatedDurationMinutes': task_def.EstimatedDurationMinutes,
                     'IsRequired': task_def.IsRequired,
                     'AutoComplete': task_def.AutoComplete,
                     'Description': task_def.Description,
+                    'CreatedDate': task_def.CreatedDate,
+                    'CreatedBy': task_def.CreatedBy,
+                    'ModifiedDate': task_def.ModifiedDate,
+                    'ModifiedBy': task_def.ModifiedBy,
                     'PreScriptJson': task_def.PreScriptJson,
                     'PostScriptJson': task_def.PostScriptJson
                 }
@@ -149,6 +154,11 @@ class DatabaseCacheService:
                     'StageId': stage_def.StageId,
                     'StageName': stage_def.StageName,
                     'StageDescription': stage_def.StageDescription,
+                    'EstimatedDurationDays': stage_def.EstimatedDurationDays,
+                    'CreatedDate': stage_def.CreatedDate,
+                    'CreatedBy': stage_def.CreatedBy,
+                    'ModifiedDate': stage_def.ModifiedDate,
+                    'ModifiedBy': stage_def.ModifiedBy
                 }
                 
                 cached_stage = CachedObject(stage_dict)
@@ -282,10 +292,10 @@ class DatabaseCacheService:
     
     def get_task_definitions_by_stage(self, stage_id: int) -> List[CachedObject]:
         """
-        Get all TaskDefinitions for a specific StageId
+        Get all TaskDefinitions for a specific StageDefinitionId
         
         Args:
-            stage_id: The StageId to filter by
+            stage_id: The StageDefinitionId to filter by
             
         Returns:
             List of CachedObject instances
@@ -293,7 +303,7 @@ class DatabaseCacheService:
         self.ensure_loaded()
         return [
             task_def for task_def in self._task_definitions.values()
-            if task_def.StageId == stage_id
+            if task_def.StageDefinitionId == stage_id
         ]
     
     def get_task_definitions_by_type(self, task_type: str) -> List[CachedObject]:

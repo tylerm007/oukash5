@@ -1,12 +1,12 @@
 about:
-  date: December 08, 2025 08:50:49
+  date: December 09, 2025 11:25:45
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 33
-  number_tables: 31
+  number_relationships: 27
+  number_tables: 27
 info_toggle_checked: true
 resources:
   EventAction:
@@ -40,66 +40,6 @@ resources:
       resource: TaskInstance
     type: EventAction
     user_key: EventId
-  LaneDefinition:
-    attributes:
-    - label: ' Lane Name*'
-      name: LaneName
-      required: true
-      search: true
-      sort: true
-    - name: LaneRole
-      required: true
-    - name: ProcessId
-      required: true
-    - name: LaneDescription
-    - name: EstimatedDurationDays
-    - name: CreatedDate
-      required: true
-    - name: CreatedBy
-      required: true
-    - name: ModifiedDate
-    - name: ModifiedBy
-    - name: LaneId
-    tab_groups:
-    - direction: tomany
-      fks:
-      - LaneId
-      name: StageInstanceList
-      resource: StageInstance
-    - direction: tomany
-      fks:
-      - LaneId
-      name: TaskDefinitionList
-      resource: TaskDefinition
-    - direction: toone
-      fks:
-      - LaneRole
-      name: LaneRole1
-      resource: LaneRole
-    - direction: toone
-      fks:
-      - ProcessId
-      name: Process
-      resource: ProcessDefinition
-    type: LaneDefinition
-    user_key: LaneName
-  LaneRole:
-    attributes:
-    - label: ' Role Description*'
-      name: RoleDescription
-      required: true
-      search: true
-      sort: true
-    - name: RoleCode
-      required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - LaneRole
-      name: LaneDefinitionList
-      resource: LaneDefinition
-    type: LaneRole
-    user_key: RoleDescription
   ProcessDefinition:
     attributes:
     - label: ' Process Name*'
@@ -123,94 +63,11 @@ resources:
     tab_groups:
     - direction: tomany
       fks:
-      - ProcessId
-      name: LaneDefinitionList
-      resource: LaneDefinition
-    - direction: tomany
-      fks:
-      - ProcessId
+      - ProcessDefinitionId
       name: TaskDefinitionList
       resource: TaskDefinition
     type: ProcessDefinition
     user_key: ProcessName
-  ProcessInstance:
-    attributes:
-    - label: ' Instance Id*'
-      name: InstanceId
-      search: true
-      sort: true
-    - name: Priority
-    - name: Status
-      required: true
-    - name: StartedDate
-      required: true
-    - name: StartedBy
-      required: true
-    - name: CompletedDate
-    - name: CompletedBy
-    - name: ContextData
-    - name: ProcessId
-      required: true
-    - name: ApplicationId
-      required: true
-    - name: CurrentTaskId
-    tab_groups:
-    - direction: tomany
-      fks:
-      - ProcessInstanceId
-      name: StageInstanceList
-      resource: StageInstance
-    - direction: tomany
-      fks:
-      - InstanceId
-      name: WorkflowHistoryList
-      resource: WorkflowHistory
-    - direction: toone
-      fks:
-      - Priority
-      name: ProcessPriority
-      resource: ProcessPriority
-    - direction: toone
-      fks:
-      - Status
-      name: ProcessStatu
-      resource: ProcessStatus
-    type: ProcessInstance
-    user_key: InstanceId
-  ProcessPriority:
-    attributes:
-    - label: ' Priority Description*'
-      name: PriorityDescription
-      required: true
-      search: true
-      sort: true
-    - name: PriorityCode
-      required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Priority
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    type: ProcessPriority
-    user_key: PriorityDescription
-  ProcessStatus:
-    attributes:
-    - label: ' Status Description*'
-      name: StatusDescription
-      required: true
-      search: true
-      sort: true
-    - name: StatusCode
-      required: true
-    tab_groups:
-    - direction: tomany
-      fks:
-      - Status
-      name: ProcessInstanceList
-      resource: ProcessInstance
-    type: ProcessStatus
-    user_key: StatusDescription
   RoleAssigment:
     attributes:
     - label: ' Role Assigment I D*'
@@ -251,6 +108,17 @@ resources:
     - name: ModifiedDate
     - name: ModifiedBy
     - name: StageId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - StageDefinitionId
+      name: StageInstanceList
+      resource: StageInstance
+    - direction: tomany
+      fks:
+      - StageDefinitionId
+      name: TaskDefinitionList
+      resource: TaskDefinition
     type: StageDefinition
     user_key: StageName
   StageInstance:
@@ -259,27 +127,14 @@ resources:
       name: StageInstanceId
       search: true
       sort: true
-    - name: LaneId
+    - name: ApplicationId
       required: true
-    - name: ProcessInstanceId
+    - name: StageDefinitionId
       required: true
     - name: Status
       required: true
     - name: StartedDate
     - name: CompletedDate
-    - name: DurationDays
-    - name: RetryCount
-    - name: AssignedTo
-    - name: AssignedBy
-    - name: AssignedDate
-    - name: CompletedCount
-    - name: TotalCount
-    - name: CreatedDate
-      required: true
-    - name: CreatedBy
-      required: true
-    - name: ModifiedDate
-    - name: ModifiedBy
     tab_groups:
     - direction: tomany
       fks:
@@ -288,18 +143,18 @@ resources:
       resource: TaskInstance
     - direction: toone
       fks:
-      - LaneId
-      name: Lane
-      resource: LaneDefinition
+      - ApplicationId
+      name: Application
+      resource: WFApplication
     - direction: toone
       fks:
-      - ProcessInstanceId
-      name: ProcessInstance
-      resource: ProcessInstance
+      - StageDefinitionId
+      name: StageDefinition
+      resource: StageDefinition
     - direction: toone
       fks:
       - Status
-      name: StageStatu
+      name: StageStatus
       resource: StageStatus
     type: StageInstance
     user_key: StageInstanceId
@@ -320,6 +175,20 @@ resources:
       resource: StageInstance
     type: StageStatus
     user_key: StatusDescription
+  Sysdiagram:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: version
+    - name: definition
+    - name: principal_id
+      required: true
+    - name: diagram_id
+    type: Sysdiagram
+    user_key: name
   TaskCategory:
     attributes:
     - label: ' Task Category Description*'
@@ -344,9 +213,9 @@ resources:
       required: true
       search: true
       sort: true
-    - name: LaneId
+    - name: ProcessDefinitionId
       required: true
-    - name: ProcessId
+    - name: StageDefinitionId
       required: true
     - name: TaskCategory
     - name: TaskType
@@ -387,19 +256,19 @@ resources:
       resource: TaskFlow
     - direction: tomany
       fks:
-      - TaskId
+      - TaskDefinitionId
       name: TaskInstanceList
       resource: TaskInstance
     - direction: toone
       fks:
-      - LaneId
-      name: Lane
-      resource: LaneDefinition
+      - ProcessDefinitionId
+      name: ProcessDefinition
+      resource: ProcessDefinition
     - direction: toone
       fks:
-      - ProcessId
-      name: Process
-      resource: ProcessDefinition
+      - StageDefinitionId
+      name: StageDefinition
+      resource: StageDefinition
     - direction: toone
       fks:
       - TaskCategory
@@ -448,7 +317,7 @@ resources:
       required: true
     - name: Status
       required: true
-    - name: TaskId
+    - name: TaskDefinitionId
       required: true
     - name: AssignedTo
     - name: StartedDate
@@ -464,11 +333,6 @@ resources:
       - TaskInstanceId
       name: EventActionList
       resource: EventAction
-    - direction: tomany
-      fks:
-      - TaskInstanceId
-      name: WorkflowHistoryList
-      resource: WorkflowHistory
     - direction: toone
       fks:
       - StageId
@@ -477,15 +341,26 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: TaskStatu
+      name: TaskStatus
       resource: TaskStatus
     - direction: toone
       fks:
-      - TaskId
-      name: Task
+      - TaskDefinitionId
+      name: TaskDefinition
       resource: TaskDefinition
     type: TaskInstance
     user_key: TaskInstanceId
+  TaskRole:
+    attributes:
+    - label: ' Role Description*'
+      name: RoleDescription
+      required: true
+      search: true
+      sort: true
+    - name: RoleCode
+      required: true
+    type: TaskRole
+    user_key: RoleDescription
   TaskStatus:
     attributes:
     - label: ' Status Description*'
@@ -533,9 +408,6 @@ resources:
     - name: SubmissionDate
       required: true
       type: DATE
-    - name: AssignedTo
-    - name: AssignedBy
-    - name: AssignedDate
     - name: CreatedDate
       required: true
     - name: CreatedBy
@@ -551,6 +423,11 @@ resources:
       - ApplicationId
       name: RoleAssigmentList
       resource: RoleAssigment
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: StageInstanceList
+      resource: StageInstance
     - direction: tomany
       fks:
       - ApplicationID
@@ -574,7 +451,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_ApplicationStatu
+      name: WF_ApplicationStatus
       resource: WFApplicationStatus
     type: WFApplication
     user_key: ApplicationID
@@ -748,7 +625,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_QuoteStatu
+      name: WF_QuoteStatus
       resource: WFQuoteStatus
     type: WFQuote
     user_key: QuoteID
@@ -899,38 +776,6 @@ resources:
       resource: WFUSERROLE
     type: WFUser
     user_key: Username
-  WorkflowHistory:
-    attributes:
-    - label: ' History Id*'
-      name: HistoryId
-      search: true
-      sort: true
-    - name: InstanceId
-      required: true
-    - name: TaskInstanceId
-    - name: Action
-      required: true
-    - name: PreviousStatus
-    - name: NewStatus
-    - name: ActionBy
-      required: true
-    - name: ActionDate
-      required: true
-    - name: ActionReason
-    - name: Details
-    tab_groups:
-    - direction: toone
-      fks:
-      - InstanceId
-      name: Instance
-      resource: ProcessInstance
-    - direction: toone
-      fks:
-      - TaskInstanceId
-      name: TaskInstance
-      resource: TaskInstance
-    type: WorkflowHistory
-    user_key: HistoryId
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

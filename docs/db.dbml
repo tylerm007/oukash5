@@ -2,22 +2,32 @@
 // Or, https://databasediagram.com/app
 // Or, view in VSCode with extension: "DBML Live Preview"
 
-Table LaneDefinition {
-    LaneId INTEGER [primary key]
-    ProcessId INTEGER 
-    LaneName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    LaneDescription VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    EstimatedDurationDays INTEGER 
-    LaneRole VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ModifiedDate DATETIME2 
-    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+Table EventAction {
+    EventId INTEGER [primary key]
+    EventKey VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    TaskInstanceId INTEGER 
+    EventStatus VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    EventType VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    EventMessage VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    StartDate DATETIME2 
+    DueDate DATETIME2 
+    IsResolved BOOLEAN 
+    ResolvedDate DATETIME2 
     }
 
-Table LaneRole {
-    RoleCode VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    RoleDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+Table TaskInstance {
+    TaskInstanceId INTEGER [primary key]
+    TaskDefinitionId INTEGER 
+    StageId INTEGER 
+    Status VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    AssignedTo VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    StartedDate DATETIME2 
+    CompletedDate DATETIME2 
+    _DurationMinutes INTEGER 
+    Result VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ResultData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    RetryCount INTEGER 
     }
 
 Table ProcessDefinition {
@@ -30,49 +40,6 @@ Table ProcessDefinition {
     CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table ProcessInstance {
-    InstanceId INTEGER [primary key]
-    ProcessId INTEGER 
-    ApplicationId INTEGER 
-    Status VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CurrentTaskId INTEGER 
-    StartedDate DATETIME2 
-    StartedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CompletedDate DATETIME2 
-    CompletedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Priority VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ContextData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table ProcessPriority {
-    PriorityCode VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    PriorityDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table ProcessStatus {
-    StatusCode VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    StatusDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table ProcessMessage {
-    MessageId INTEGER [primary key]
-    InstanceId INTEGER 
-    FromUser VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ToUser VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ToRole VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    MessageType VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Subject VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    MessageBody VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    SentDate DATETIME2 
-    ReadDate DATETIME2 
-    IsRead BOOLEAN 
-    }
-
-Table ProcessMessageType {
-    MessageTypeCode VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    MessageTypeDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table RoleAssigment {
@@ -92,56 +59,30 @@ Table WFApplication {
     SubmissionDate DATE 
     Status VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     Priority VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedTo VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedDate DATETIME2 
     CreatedDate DATETIME2 
     CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    WFDashboardID INTEGER 
-    verify_company BOOLEAN 
-    verify_plant BOOLEAN 
-    verify_contacts BOOLEAN 
-    verify_products BOOLEAN 
-    verify_ingredients BOOLEAN 
-    verify_quote BOOLEAN 
-    assign_ncrc_rep BOOLEAN 
     }
 
-Table WFUser {
-    Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    Email VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    IsActive BOOLEAN 
+Table StageDefinition {
+    StageId INTEGER [primary key]
+    StageName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    StageDescription VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    EstimatedDurationDays INTEGER 
     CreatedDate DATETIME2 
-    LastLoginDate DATETIME2 
-    }
-
-Table WFRole {
-    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    Role VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
+    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ModifiedDate DATETIME2 
+    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table StageInstance {
     StageInstanceId INTEGER [primary key]
-    ProcessInstanceId INTEGER 
-    LaneId INTEGER 
+    ApplicationId INTEGER 
+    StageDefinitionId INTEGER 
     Status VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     StartedDate DATETIME2 
     CompletedDate DATETIME2 
-    DurationDays INTEGER 
-    RetryCount INTEGER 
-    AssignedTo VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedDate DATETIME2 
-    CompletedCount INTEGER 
-    TotalCount INTEGER 
-    CreatedDate DATETIME2 
-    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ModifiedDate DATETIME2 
-    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table StageStatus {
@@ -162,45 +103,14 @@ Table TaskCategory {
     TaskCategoryDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
-Table TaskComment {
-    CommentId INTEGER [primary key]
-    ProcessInstanceId INTEGER 
-    TaskInstanceId INTEGER 
-    CommentType VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CommentText VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Author VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    IsVisible BOOLEAN 
-    }
-
-Table TaskCommentType {
-    CommentTypeCode VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    CommentTypeDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table TaskInstance {
-    TaskInstanceId INTEGER [primary key]
-    TaskId INTEGER 
-    StageId INTEGER 
-    Status VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AssignedTo VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    StartedDate DATETIME2 
-    CompletedDate DATETIME2 
-    DurationMinutes INTEGER 
-    Result VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ResultData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    RetryCount INTEGER 
-    }
-
 Table TaskDefinition {
     TaskId INTEGER [primary key]
-    ProcessId INTEGER 
+    ProcessDefinitionId INTEGER 
     TaskName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     TaskType VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     TaskCategory VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     Sequence INTEGER 
-    LaneId INTEGER 
+    StageDefinitionId INTEGER 
     IsParallel BOOLEAN 
     AssigneeRole VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     EstimatedDurationMinutes INTEGER 
@@ -233,21 +143,9 @@ Table TaskStatus {
     StatusDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
-Table WFActivityLog {
-    ActivityID INTEGER [primary key]
-    ApplicationID INTEGER 
-    ActionType VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ActionDetails VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    UserName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ActivityType VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Status VARCHAR(5) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Category VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ActivityDate DATETIME2 
-    }
-
-Table WFActivityStatus {
-    StatusCode VARCHAR(5) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    StatusDesc VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+Table TaskRole {
+    RoleCode VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    RoleDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table WFPriority {
@@ -260,29 +158,6 @@ Table WFApplicationStatus {
     StatusDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
-Table WFDashboard {
-    ID INTEGER [primary key]
-    count_new INTEGER 
-    count_in_progress INTEGER 
-    count_withdrawn INTEGER 
-    count_completed INTEGER 
-    count_overdue INTEGER 
-    total_count INTEGER 
-    }
-
-Table WFApplicationComment {
-    CommentID INTEGER [primary key]
-    ApplicationID INTEGER 
-    Author VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CommentText VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CommentType VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Category VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ModifiedDate DATETIME2 
-    ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
 Table WFApplicationMessage {
     MessageID INTEGER [primary key]
     ApplicationID INTEGER 
@@ -292,24 +167,7 @@ Table WFApplicationMessage {
     MessageType VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     Priority VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     SentDate DATETIME2 
-    }
-
-Table WFCompany {
-    CompanyID INTEGER [primary key]
-    ApplicationID INTEGER 
-    KashrusCompanyID INTEGER 
-    CreatedDate DATETIME2 
-    }
-
-Table WFContact {
-    ContactID INTEGER [primary key]
-    ApplicationID INTEGER 
-    ContactName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Title VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ContactPhone VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ContactEmail VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    IsPrimary BOOLEAN 
-    CreatedDate DATETIME2 
+    TaskInstanceId INTEGER 
     }
 
 Table WFFile {
@@ -332,52 +190,6 @@ Table WFFile {
 Table WFFileType {
     FileType VARCHAR(5) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
     FileTypeName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table WFIngredient {
-    IngredientID INTEGER [primary key]
-    ApplicationID INTEGER 
-    Source VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    UKDId VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    RMC VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    IngredientName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Manufacturer VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Brand VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Packaging VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Agency VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    AddedDate DATE 
-    AddedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Status VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    NCRCId VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    ModifiedDate DATETIME2 
-    }
-
-Table WFProduct {
-    ProductID INTEGER [primary key]
-    ApplicationID INTEGER 
-    action VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    legacyId VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    doNotImport BOOLEAN 
-    message VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    labelType VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    labelName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    brandName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    labelCompanyId VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    distributorName VARCHAR(150) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    group VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    symbol VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    dpm VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    category VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    usePlantStatus BOOLEAN 
-    status VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    legacyStatus VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    consumer BOOLEAN 
-    industrial BOOLEAN 
-    finalized BOOLEAN 
-    processedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    processedDate DATE 
-    notes VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
 Table WFQuote {
@@ -407,11 +219,26 @@ Table WFQuoteItem {
     SortOrder INTEGER 
     }
 
+Table WFRole {
+    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    Role VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CreatedDate DATETIME2 
+    }
+
 Table WFUSERADMIN {
     UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
     AdminUserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     IsPrimary BOOLEAN 
     CreatedDate DATETIME2 
+    }
+
+Table WFUser {
+    Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    Email VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsActive BOOLEAN 
+    CreatedDate DATETIME2 
+    LastLoginDate DATETIME2 
     }
 
 Table WFUSERROLE {
@@ -420,62 +247,29 @@ Table WFUSERROLE {
     CreatedDate DATETIME2 
     }
 
-Table WorkflowHistory {
-    HistoryId INTEGER [primary key]
-    InstanceId INTEGER 
-    TaskInstanceId INTEGER 
-    Action VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    PreviousStatus VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    NewStatus VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ActionBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    ActionDate DATETIME2 
-    ActionReason VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    Details VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
 
 
 // Relationships
-    Ref: LaneDefinition.(LaneRole) < LaneRole.(RoleCode)
-    Ref: LaneDefinition.(ProcessId) < ProcessDefinition.(ProcessId)
-    Ref: ProcessInstance.(Priority) < ProcessPriority.(PriorityCode)
-    Ref: ProcessInstance.(Status) < ProcessStatus.(StatusCode)
-    Ref: ProcessMessage.(InstanceId) < ProcessInstance.(InstanceId)
-    Ref: ProcessMessage.(MessageType) < ProcessMessageType.(MessageTypeCode)
-    Ref: RoleAssigment.(ApplicationId) < WFApplication.(ApplicationID)
-    Ref: RoleAssigment.(Assignee) < WFUser.(Username)
-    Ref: RoleAssigment.(Role) < WFRole.(UserRole)
-    Ref: WFApplication.(Priority) < WFPriority.(PriorityCode)
-    Ref: WFApplication.(Status) < WFApplicationStatus.(StatusCode)
-    Ref: WFApplication.(WFDashboardID) < WFDashboard.(ID)
-    Ref: StageInstance.(LaneId) < LaneDefinition.(LaneId)
-    Ref: StageInstance.(ProcessInstanceId) < ProcessInstance.(InstanceId)
-    Ref: StageInstance.(Status) < StageStatus.(StatusCode)
-    Ref: TaskComment.(CommentType) < TaskCommentType.(CommentTypeCode)
-    Ref: TaskComment.(ProcessInstanceId) < ProcessInstance.(InstanceId)
-    Ref: TaskComment.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
+    Ref: EventAction.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
     Ref: TaskInstance.(StageId) < StageInstance.(StageInstanceId)
     Ref: TaskInstance.(Status) < TaskStatus.(StatusCode)
-    Ref: TaskInstance.(TaskId) < TaskDefinition.(TaskId)
-    Ref: TaskDefinition.(LaneId) < LaneDefinition.(LaneId)
-    Ref: TaskDefinition.(ProcessId) < ProcessDefinition.(ProcessId)
+    Ref: TaskInstance.(TaskDefinitionId) < TaskDefinition.(TaskId)
+    Ref: RoleAssigment.(ApplicationId) < WFApplication.(ApplicationID)
+    Ref: WFApplication.(Priority) < WFPriority.(PriorityCode)
+    Ref: WFApplication.(Status) < WFApplicationStatus.(StatusCode)
+    Ref: StageInstance.(ApplicationId) < WFApplication.(ApplicationID)
+    Ref: StageInstance.(StageDefinitionId) < StageDefinition.(StageId)
+    Ref: StageInstance.(Status) < StageStatus.(StatusCode)
+    Ref: TaskDefinition.(ProcessDefinitionId) < ProcessDefinition.(ProcessId)
+    Ref: TaskDefinition.(StageDefinitionId) < StageDefinition.(StageId)
     Ref: TaskDefinition.(TaskCategory) < TaskCategory.(TaskCategoryCode)
     Ref: TaskDefinition.(TaskType) < TaskType.(TaskTypeCode)
     Ref: TaskFlow.(FromTaskId) < TaskDefinition.(TaskId)
     Ref: TaskFlow.(ToTaskId) < TaskDefinition.(TaskId)
-    Ref: WFActivityLog.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFActivityLog.(Status) < WFActivityStatus.(StatusCode)
-    Ref: WFApplicationComment.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFApplicationMessage.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFApplicationMessage.(FromUser) < WFUser.(Username)
     Ref: WFApplicationMessage.(Priority) < WFPriority.(PriorityCode)
-    Ref: WFApplicationMessage.(ToUser) < WFUser.(Username)
-    Ref: WFCompany.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFContact.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFFile.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFFile.(FileType) < WFFileType.(FileType)
-    Ref: WFIngredient.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFProduct.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFQuote.(ApplicationID) < WFApplication.(ApplicationID)
     Ref: WFQuote.(Status) < WFQuoteStatus.(StatusCode)
     Ref: WFQuoteItem.(QuoteID) < WFQuote.(QuoteID)
@@ -483,5 +277,3 @@ Table WorkflowHistory {
     Ref: WFUSERADMIN.(UserName) < WFUser.(Username)
     Ref: WFUSERROLE.(UserName) < WFUser.(Username)
     Ref: WFUSERROLE.(UserRole) < WFRole.(UserRole)
-    Ref: WorkflowHistory.(InstanceId) < ProcessInstance.(InstanceId)
-    Ref: WorkflowHistory.(TaskInstanceId) < TaskInstance.(TaskInstanceId)

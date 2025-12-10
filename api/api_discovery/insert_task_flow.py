@@ -4,7 +4,7 @@ from config.config import Config
 from flask import jsonify, request
 from flask_cors import cross_origin
 from flask_jwt_extended import verify_jwt_in_request
-from database.models import TaskFlow, TaskDefinition, LaneDefinition
+from database.models import TaskFlow, TaskDefinition, StageDefinition
 import logging
 import safrs
 import json
@@ -119,17 +119,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """
         app_logger.info("Displaying all task definitions")
         result = ""
-        lanes = LaneDefinition.query.order_by(LaneDefinition.LaneId).all()
-        for lane in lanes:
+        stages = StageDefinition.query.order_by(StageDefinition.StageId).all()
+        for stage in stages:
             #result.append({
             #    "LaneName": lane.LaneName,
             #    'LaneId': lane.LaneId
             #})
-            result += f"\n-- Lane: {lane.LaneName} (ID: {lane.LaneId})\n"
+            result += f"\n-- Stage: {stage.StageName} (ID: {stage.StageId})\n"
             result += 'INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)\n'
             result += 'VALUES\n'
-            app_logger.info(f"Lane: {lane.LaneName} (ID: {lane.LaneId})")   
-            task_defs = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.TaskId).all()
+            app_logger.info(f"Stage: {stage.StageName} (ID: {stage.StageId})")   
+            task_defs = TaskDefinition.query.filter_by(LaneId=stage.StageId).order_by(TaskDefinition.TaskId).all()
             for task in task_defs:
                 '''
                 INSERT INTO TaskDefinitions (ProcessId, TaskName, TaskType, TaskCategory, Sequence, LaneId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
@@ -179,12 +179,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f"Start Task: {start_task.TaskName} (ID: {start_task.TaskId})")
         app_logger.info(f"End Task: {end_task.TaskName} (ID: {end_task.TaskId})")
         result = ""
-        lanes = LaneDefinition.query.order_by(LaneDefinition.LaneId).all()
-        for lane in lanes:
+        stages = StageDefinition.query.order_by(StageDefinition.StageId).all()
+        for stage in stages:
             result += "\n"
-            app_logger.info(f"Lane: {lane.LaneName} (ID: {lane.LaneId})")   
-            result += f"-- Lane: {lane.LaneName}\n\n"
-            task_defs = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.TaskId).all()
+            app_logger.info(f"Stage: {stage.StageName} (ID: {stage.StageId})")   
+            result += f"-- Stage: {stage.StageName}\n\n"
+            task_defs = TaskDefinition.query.filter_by(LaneId=stage.StageId).order_by(TaskDefinition.TaskId).all()
             for task in task_defs:
                 #app_logger.info(f"Lane:{lane.LaneName}  Task: {task.TaskName} (ID: {task.TaskId}, Type: {task.TaskType})")
                 flows = TaskFlow.query.filter((TaskFlow.FromTaskId == task.TaskId)).all() #| (TaskFlow.ToTaskId == task.TaskId

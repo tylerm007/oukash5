@@ -196,7 +196,7 @@ def declare_logic():
         invoice_fee_task = find_next_task_by_name(task_instance, "Assign Invoice Amount")
         from api.api_discovery.event_action import _create_invoice_fee
         fee =  float(invoice_fee_task.Result) if invoice_fee_task else 0.0
-        application_id = task_instance.Stage.ProcessInstance.ApplicationId
+        application_id = task_instance.Stage.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
         company_id = application.CompanyID
         invoice_fee = _create_invoice_fee(company_id, fee)
@@ -229,29 +229,30 @@ def declare_logic():
         stage = row.Stage
         if stage is None:
             return
-        application_id = stage.ProcessInstance.ApplicationId
+        application_id = stage.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
-        if row.TaskDef.TaskType == 'START':
+        task_def = row.TaskDefinition
+        if task_def.TaskType == 'START':
             if application is not None:
                 application.Status = 'INP'
                 application.StartedDate = datetime.datetime.now()
                 logic_row.update(reason="update application status to INP", row=application)
-        elif row.TaskDef.TaskType in ('LANESTART''STAGESTART'):
+        elif task_def.TaskType in ('STAGESTART'):
             stage.Status = 'IN_PROGRESS'
             application.StartedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to INP", row=stage)
-        elif row.TaskDef.TaskType in ('LANEEND','STAGEEND') and row.Status == 'COMPLETED':
+        elif task_def.TaskType in ('STAGEEND') and row.Status == 'COMPLETED':
             stage.Status = 'COMPLETED'
             stage.CompletedDate = datetime.datetime.now()
             logic_row.update(reason="update stage status to COMPLETED", row=stage)
-        elif row.TaskDef.TaskType == 'END' and row.Status == 'COMPLETED':
+        elif task_def.TaskType == 'END' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
         else:
             status = None
-            TaskName = row.TaskDef.TaskName
+            TaskName = task_def.TaskName
             if row.Status != 'COMPLETED':
                 return
             if TaskName == 'Generated Invoice and Send':

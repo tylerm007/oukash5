@@ -45,19 +45,6 @@ else:
 
 
 
-class LaneRole(Base):  # type: ignore
-    __tablename__ = 'LaneRoles'
-    _s_collection_name = 'LaneRole'  # type: ignore
-
-    RoleCode = Column(Unicode(20), primary_key=True)
-    RoleDescription = Column(Unicode(255), nullable=False)
-    allow_client_generated_ids = True
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-    LaneDefinitionList : Mapped[List["LaneDefinition"]] = relationship(back_populates="LaneRole1")
-
 class ProcessDefinition(Base):  # type: ignore
     __tablename__ = 'ProcessDefinitions'
     _s_collection_name = 'ProcessDefinition'  # type: ignore
@@ -68,45 +55,14 @@ class ProcessDefinition(Base):  # type: ignore
     Description = Column(Unicode(500))
     IsActive = Column(Boolean, server_default=text("1"), nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
-    CreatedBy = Column(Unicode(100), server_default=text('system'), nullable=False)
+    CreatedBy = Column(Unicode(100), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
 
     # child relationships (access children)
-    LaneDefinitionList : Mapped[List["LaneDefinition"]] = relationship(back_populates="Process")
-    TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="Process")
-
-
-
-class ProcessPriority(Base):  # type: ignore
-    __tablename__ = 'ProcessPriorities'
-    _s_collection_name = 'ProcessPriority'  # type: ignore
-
-    PriorityCode = Column(Unicode(10), primary_key=True)
-    PriorityDescription = Column(Unicode(255), nullable=False)
-    allow_client_generated_ids = True
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="ProcessPriority")
-
-
-
-class ProcessStatus(Base):  # type: ignore
-    __tablename__ = 'ProcessStatus'
-    _s_collection_name = 'ProcessStatus'  # type: ignore
-
-    StatusCode = Column(Unicode(10), primary_key=True)
-    StatusDescription = Column(Unicode(255), nullable=False)
-    allow_client_generated_ids = True
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-    ProcessInstanceList : Mapped[List["ProcessInstance"]] = relationship(back_populates="ProcessStatus")
+    TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="ProcessDefinition")
 
 
 
@@ -126,6 +82,8 @@ class StageDefinition(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
+    TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="StageDefinition")
+    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageDefinition")
 
 
 
@@ -142,6 +100,8 @@ class StageStatus(Base):  # type: ignore
     # child relationships (access children)
     StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageStatus")
 
+
+
 class TaskCategory(Base):  # type: ignore
     __tablename__ = 'TaskCategories'
     _s_collection_name = 'TaskCategory'  # type: ignore
@@ -154,6 +114,20 @@ class TaskCategory(Base):  # type: ignore
 
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="TaskCategory1")
+
+
+
+class TaskRole(Base):  # type: ignore
+    __tablename__ = 'TaskRoles'
+    _s_collection_name = 'TaskRole'  # type: ignore
+
+    RoleCode = Column(Unicode(20), primary_key=True)
+    RoleDescription = Column(Unicode(255), nullable=False)
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
 
 
 
@@ -185,6 +159,8 @@ class TaskType(Base):  # type: ignore
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="TaskType1")
 
+
+
 class WFApplicationStatus(Base):  # type: ignore
     __tablename__ = 'WF_ApplicationStatus'
     _s_collection_name = 'WFApplicationStatus'  # type: ignore
@@ -197,7 +173,6 @@ class WFApplicationStatus(Base):  # type: ignore
 
     # child relationships (access children)
     WFApplicationList : Mapped[List["WFApplication"]] = relationship(back_populates="WF_ApplicationStatus")
-
 
 
 
@@ -228,7 +203,8 @@ class WFPriority(Base):  # type: ignore
 
     # child relationships (access children)
     WFApplicationList : Mapped[List["WFApplication"]] = relationship(back_populates="WF_Priority")
-    WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="WF_Priority")    
+    WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="WF_Priority")
+
 
 
 class WFQuoteStatus(Base):  # type: ignore
@@ -242,7 +218,7 @@ class WFQuoteStatus(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="WF_QuoteStatu")
+    WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="WF_QuoteStatus")
 
 
 
@@ -252,7 +228,7 @@ class WFRole(Base):  # type: ignore
 
     UserRole = Column(Unicode(10), primary_key=True)
     Role = Column(Unicode(50), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -270,7 +246,7 @@ class WFUser(Base):  # type: ignore
     Email = Column(Unicode(255), nullable=False, unique=True)
     FullName = Column(Unicode(200), nullable=False)
     IsActive = Column(Boolean, server_default=text("1"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
     LastLoginDate = Column(DATETIME2)
     allow_client_generated_ids = True
 
@@ -281,70 +257,75 @@ class WFUser(Base):  # type: ignore
     WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
 
-class LaneDefinition(Base):  # type: ignore
-    __tablename__ = 'LaneDefinitions'
-    _s_collection_name = 'LaneDefinition'  # type: ignore
 
-    LaneId = Column(Integer, autoincrement=True, primary_key=True)
-    ProcessId = Column(ForeignKey('ProcessDefinitions.ProcessId'), nullable=False)
-    LaneName = Column(Unicode(100), nullable=False)
-    LaneDescription = Column(Unicode(500))
-    EstimatedDurationDays = Column(Integer)
-    LaneRole = Column(ForeignKey('LaneRoles.RoleCode'), server_default=text("('NCRC')"), nullable=False)
+
+class Sysdiagram(Base):  # type: ignore
+    __tablename__ = 'sysdiagrams'
+    _s_collection_name = 'Sysdiagram'  # type: ignore
+    __table_args__ = (
+        Index('UK_principal_name', 'principal_id', 'name', unique=True),
+    )
+
+    name = Column(Unicode(128), nullable=False)
+    principal_id = Column(Integer, nullable=False)
+    diagram_id = Column(Integer, autoincrement=True, primary_key=True)
+    version = Column(Integer)
+    definition = Column(LargeBinary)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
+
+
+class TaskDefinition(Base):  # type: ignore
+    __tablename__ = 'TaskDefinitions'
+    _s_collection_name = 'TaskDefinition'  # type: ignore
+
+    TaskId = Column(Integer, autoincrement=True, primary_key=True)
+    ProcessDefinitionId = Column(ForeignKey('ProcessDefinitions.ProcessId'), nullable=False)
+    TaskName = Column(Unicode(100), nullable=False)
+    TaskType = Column(ForeignKey('TaskTypes.TaskTypeCode'), nullable=False)
+    TaskCategory = Column(ForeignKey('TaskCategories.TaskCategoryCode'))
+    Sequence = Column(Integer, nullable=False)
+    StageDefinitionId = Column(ForeignKey('StageDefinitions.StageId'), nullable=False)
+    IsParallel = Column(Boolean, server_default=text("0"), nullable=False)
+    AssigneeRole = Column(Unicode(20))
+    EstimatedDurationMinutes = Column(Integer)
+    IsRequired = Column(Boolean, server_default=text("1"), nullable=False)
+    AutoComplete = Column(Boolean, server_default=text("0"), nullable=False)
+    Description = Column(Unicode(500))
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(100), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
+    PreScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    PostScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
 
     # parent relationships (access parent)
-    LaneRole1 : Mapped["LaneRole"] = relationship(back_populates=("LaneDefinitionList"))
-    Process : Mapped["ProcessDefinition"] = relationship(back_populates=("LaneDefinitionList"))
+    ProcessDefinition : Mapped["ProcessDefinition"] = relationship(back_populates=("TaskDefinitionList"))
+    StageDefinition : Mapped["StageDefinition"] = relationship(back_populates=("TaskDefinitionList"))
+    TaskCategory1 : Mapped["TaskCategory"] = relationship(back_populates=("TaskDefinitionList"))
+    TaskType1 : Mapped["TaskType"] = relationship(back_populates=("TaskDefinitionList"))
 
     # child relationships (access children)
-    TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="Lane")
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Lane")
+    TaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.FromTaskId]', back_populates="FromTask")
+    ToTaskTaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.ToTaskId]', back_populates="ToTask")
+    TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="TaskDefinition")
 
-
-
-class ProcessInstance(Base):  # type: ignore
-    __tablename__ = 'ProcessInstances'
-    _s_collection_name = 'ProcessInstance'  # type: ignore
-
-    InstanceId = Column(Integer,  autoincrement=True, primary_key=True)
-    ProcessId = Column(Integer, nullable=False)
-    ApplicationId = Column(Integer, nullable=False)
-    Status = Column(ForeignKey('ProcessStatus.StatusCode'), server_default=text("('NEW')"), nullable=False)
-    CurrentTaskId = Column(Integer)
-    StartedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
-    StartedBy = Column(Unicode(100), nullable=False)
-    CompletedDate = Column(DATETIME2)
-    CompletedBy = Column(Unicode(100))
-    Priority = Column(ForeignKey('ProcessPriorities.PriorityCode'), server_default=text("('NORMAL')"))
-    ContextData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
-
-    # parent relationships (access parent)
-    ProcessPriority : Mapped["ProcessPriority"] = relationship(back_populates=("ProcessInstanceList"))
-    ProcessStatus : Mapped["ProcessStatus"] = relationship(back_populates=("ProcessInstanceList"))
-
-    # child relationships (access children)
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="ProcessInstance")
-    WorkflowHistoryList : Mapped[List["WorkflowHistory"]] = relationship(back_populates="Instance")
 
 
 class WFApplication(Base):  # type: ignore
     __tablename__ = 'WF_Applications'
     _s_collection_name = 'WFApplication'  # type: ignore
 
-    ApplicationID = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    ApplicationNumber = Column(Integer, nullable=False, unique=True)
-    CompanyID = Column(Integer, nullable=False, index=True)
+    ApplicationID = Column(Integer, autoincrement=True, primary_key=True)
+    ApplicationNumber = Column(Integer, unique=True)
+    CompanyID = Column(Integer, nullable=False)
     PlantID = Column(Integer)
-    SubmissionDate = Column(Date, nullable=False)
-    Status = Column(ForeignKey('WF_ApplicationStatus.StatusCode'), server_default=text("NEW"), nullable=False, index=True)
+    SubmissionDate = Column(Date, server_default=text("(getdate())"), nullable=False)
+    Status = Column(ForeignKey('WF_ApplicationStatus.StatusCode'), server_default=text("NEW"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"))
-    AssignedTo = Column(Unicode(100))
-    AssignedBy = Column(Unicode(100))
-    AssignedDate = Column(DATETIME2)
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
     ModifiedDate = Column(DATETIME2)
@@ -356,6 +337,7 @@ class WFApplication(Base):  # type: ignore
 
     # child relationships (access children)
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="Application")
+    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Application")
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="Application")
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
@@ -369,7 +351,7 @@ class WFUSERADMIN(Base):  # type: ignore
     UserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
     AdminUserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
     IsPrimary = Column(Boolean, server_default=text("0"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -394,19 +376,19 @@ class WFUSERROLE(Base):  # type: ignore
     WF_Role : Mapped["WFRole"] = relationship(back_populates=("WFUSERROLEList"))
 
     # child relationships (access children)
-	
+
 
 
 class RoleAssigment(Base):  # type: ignore
     __tablename__ = 'RoleAssigment'
     _s_collection_name = 'RoleAssigment'  # type: ignore
 
-    RoleAssigmentID = Column(Integer,  autoincrement=True, primary_key=True)
+    RoleAssigmentID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     Role = Column(Unicode(10), nullable=False)
     Assignee = Column(Unicode(100), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
-    CreatedBy = Column(Unicode(32), server_default=text("('System')"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    CreatedBy = Column(Unicode(32), server_default=text("System"), nullable=False)
 
     # parent relationships (access parent)
     Application : Mapped["WFApplication"] = relationship(back_populates=("RoleAssigmentList"))
@@ -420,26 +402,15 @@ class StageInstance(Base):  # type: ignore
     _s_collection_name = 'StageInstance'  # type: ignore
 
     StageInstanceId = Column(Integer, autoincrement=True, primary_key=True)
-    ProcessInstanceId = Column(ForeignKey('ProcessInstances.InstanceId'), nullable=False)
-    LaneId = Column(ForeignKey('LaneDefinitions.LaneId'), nullable=False)
+    ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
+    StageDefinitionId = Column(ForeignKey('StageDefinitions.StageId'), nullable=False)
     Status = Column(ForeignKey('StageStatus.StatusCode'), server_default=text("NEW"), nullable=False)
     StartedDate = Column(DATETIME2)
     CompletedDate = Column(DATETIME2)
-    #DurationDays = Column(Integer)
-    RetryCount = Column(Integer)
-    AssignedTo = Column(Unicode(100))
-    AssignedBy = Column(Unicode(100))
-    AssignedDate = Column(DATETIME2)
-    CompletedCount = Column(Integer)
-    TotalCount = Column(Integer)
-    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
-    CreatedBy = Column(Unicode(100), server_default=text('system'), nullable=False)
-    ModifiedDate = Column(DATETIME2)
-    ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
-    Lane : Mapped["LaneDefinition"] = relationship(back_populates=("StageInstanceList"))
-    ProcessInstance : Mapped["ProcessInstance"] = relationship(back_populates=("StageInstanceList"))
+    Application : Mapped["WFApplication"] = relationship(back_populates=("StageInstanceList"))
+    StageDefinition : Mapped["StageDefinition"] = relationship(back_populates=("StageInstanceList"))
     StageStatus : Mapped["StageStatus"] = relationship(back_populates=("StageInstanceList"))
 
     # child relationships (access children)
@@ -447,40 +418,21 @@ class StageInstance(Base):  # type: ignore
 
 
 
-class TaskDefinition(Base):  # type: ignore
-    __tablename__ = 'TaskDefinitions'
-    _s_collection_name = 'TaskDefinition'  # type: ignore
+class TaskFlow(Base):  # type: ignore
+    __tablename__ = 'TaskFlow'
+    _s_collection_name = 'TaskFlow'  # type: ignore
 
-    TaskId = Column(Integer,  autoincrement=True, primary_key=True)
-    ProcessId = Column(ForeignKey('ProcessDefinitions.ProcessId'), nullable=False)
-    TaskName = Column(Unicode(100), nullable=False)
-    TaskType = Column(ForeignKey('TaskTypes.TaskTypeCode'), nullable=False)
-    TaskCategory = Column(ForeignKey('TaskCategories.TaskCategoryCode'))
-    Sequence = Column(Integer, nullable=False)
-    LaneId = Column(ForeignKey('LaneDefinitions.LaneId'), nullable=False)
-    IsParallel = Column(Boolean, server_default=text("((0))"), nullable=False)
-    AssigneeRole = Column(Unicode(20))
-    EstimatedDurationMinutes = Column(Integer)
-    IsRequired = Column(Boolean, server_default=text("((1))"), nullable=False)
-    AutoComplete = Column(Boolean, server_default=text("((0))"), nullable=False)
-    Description = Column(Unicode(500))
-    CreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
-    CreatedBy = Column(Unicode(100), nullable=False)
-    ModifiedDate = Column(DATETIME2)
-    ModifiedBy = Column(Unicode(100))
-    PreScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
-    PostScriptJson = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    FlowId = Column(Integer, autoincrement=True, primary_key=True)
+    FromTaskId = Column(ForeignKey('TaskDefinitions.TaskId'))
+    ToTaskId = Column(ForeignKey('TaskDefinitions.TaskId'), nullable=False)
+    Condition = Column(Unicode(500))
+    IsDefault = Column(Boolean, server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
-    Lane : Mapped["LaneDefinition"] = relationship(back_populates=("TaskDefinitionList"))
-    Process : Mapped["ProcessDefinition"] = relationship(back_populates=("TaskDefinitionList"))
-    TaskCategory1 : Mapped["TaskCategory"] = relationship(back_populates=("TaskDefinitionList"))
-    TaskType1 : Mapped["TaskType"] = relationship(back_populates=("TaskDefinitionList"))
+    FromTask : Mapped["TaskDefinition"] = relationship(foreign_keys='[TaskFlow.FromTaskId]', back_populates=("TaskFlowList"))
+    ToTask : Mapped["TaskDefinition"] = relationship(foreign_keys='[TaskFlow.ToTaskId]', back_populates=("ToTaskTaskFlowList"))
 
     # child relationships (access children)
-    TaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.FromTaskId]', back_populates="FromTask")
-    ToTaskTaskFlowList : Mapped[List["TaskFlow"]] = relationship(foreign_keys='[TaskFlow.ToTaskId]', back_populates="ToTask")
-    TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="TaskDef")
 
 
 
@@ -488,13 +440,13 @@ class WFApplicationMessage(Base):  # type: ignore
     __tablename__ = 'WF_ApplicationMessages'
     _s_collection_name = 'WFApplicationMessage'  # type: ignore
 
-    MessageID = Column(Integer,  autoincrement=True, primary_key=True)
+    MessageID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FromUser = Column(Unicode(100), nullable=False)
     ToUser = Column(Unicode(100))
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
-    MessageType = Column(Unicode(50), server_default=text("('internal')"), nullable=False)
-    Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("('NORMAL')"), nullable=False)
+    MessageType = Column(Unicode(50), server_default=text("internal"), nullable=False)
+    Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)
     SentDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
     TaskInstanceId = Column(Integer)
 
@@ -510,18 +462,18 @@ class WFFile(Base):  # type: ignore
     __tablename__ = 'WF_Files'
     _s_collection_name = 'WFFile'  # type: ignore
 
-    FileID = Column(Integer,  autoincrement=True, primary_key=True)
+    FileID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     FileName = Column(Unicode(500), nullable=False)
     FileType = Column(ForeignKey('WF_FileTypes.FileType'), nullable=False)
     FileSize = Column(Unicode(20))
     UploadedDate = Column(Date, nullable=False)
     Tag = Column(Unicode(200))
-    IsProcessed = Column(Boolean, server_default=text("((0))"), nullable=False)
+    IsProcessed = Column(Boolean, server_default=text("0"), nullable=False)
     RecordCount = Column(Integer)
     FilePath = Column(Unicode(1000))
-    CCreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
-    CreatedBy = Column(Unicode(100), server_default=text("('System')"), nullable=False)
+    CCreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
 
@@ -537,42 +489,24 @@ class WFQuote(Base):  # type: ignore
     __tablename__ = 'WF_Quotes'
     _s_collection_name = 'WFQuote'  # type: ignore
 
-    QuoteID = Column(Integer,  autoincrement=True, primary_key=True)
+    QuoteID = Column(Integer, autoincrement=True, primary_key=True)
     ApplicationID = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     QuoteNumber = Column(Unicode(50), nullable=False, unique=True)
     TotalAmount : DECIMAL = Column(DECIMAL(10, 2), nullable=False)
     ValidUntil = Column(Date, nullable=False)
-    Status = Column(ForeignKey('WF_QuoteStatus.StatusCode'), server_default=text("('PEND')"), nullable=False)
+    Status = Column(ForeignKey('WF_QuoteStatus.StatusCode'), server_default=text("PEND"), nullable=False)
     LastUpdatedDate = Column(Date, nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getutcdate())"), nullable=False)
-    CreatedBy = Column(Unicode(100), server_default=text("('System')"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
 
     # parent relationships (access parent)
     Application : Mapped["WFApplication"] = relationship(back_populates=("WFQuoteList"))
-    WF_QuoteStatu : Mapped["WFQuoteStatus"] = relationship(back_populates=("WFQuoteList"))
+    WF_QuoteStatus : Mapped["WFQuoteStatus"] = relationship(back_populates=("WFQuoteList"))
 
     # child relationships (access children)
     WFQuoteItemList : Mapped[List["WFQuoteItem"]] = relationship(back_populates="Quote")
-
-
-
-class TaskFlow(Base):  # type: ignore
-    __tablename__ = 'TaskFlow'
-    _s_collection_name = 'TaskFlow'  # type: ignore
-
-    FlowId = Column(Integer,  autoincrement=True, primary_key=True)
-    FromTaskId = Column(ForeignKey('TaskDefinitions.TaskId'))
-    ToTaskId = Column(ForeignKey('TaskDefinitions.TaskId'), nullable=False)
-    Condition = Column(Unicode(500))
-    IsDefault = Column(Boolean, server_default=text("((0))"), nullable=False)
-
-    # parent relationships (access parent)
-    FromTask : Mapped["TaskDefinition"] = relationship(foreign_keys='[TaskFlow.FromTaskId]', back_populates=("TaskFlowList"))
-    ToTask : Mapped["TaskDefinition"] = relationship(foreign_keys='[TaskFlow.ToTaskId]', back_populates=("ToTaskTaskFlowList"))
-
-    # child relationships (access children)
 
 
 
@@ -581,13 +515,13 @@ class TaskInstance(Base):  # type: ignore
     _s_collection_name = 'TaskInstance'  # type: ignore
 
     TaskInstanceId = Column(Integer, autoincrement=True, primary_key=True)
-    TaskId = Column(ForeignKey('TaskDefinitions.TaskId'), nullable=False)
+    TaskDefinitionId = Column(ForeignKey('TaskDefinitions.TaskId'), nullable=False)
     StageId = Column(ForeignKey('StageInstance.StageInstanceId'), nullable=False)
-    Status = Column(ForeignKey('TaskStatus.StatusCode'), server_default=text('Pending'), nullable=False, index=True)
-    AssignedTo = Column(Unicode(100), index=True)
-    StartedDate = Column(DATETIME2, index=True)
+    Status = Column(ForeignKey('TaskStatus.StatusCode'), server_default=text("Pending"), nullable=False)
+    AssignedTo = Column(Unicode(100))
+    StartedDate = Column(DATETIME2)
     CompletedDate = Column(DATETIME2)
-    #DurationMinutes = Column(Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
+    _DurationMinutes = Column('#DurationMinutes', Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
     Result = Column(Unicode(50))
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))
@@ -595,12 +529,11 @@ class TaskInstance(Base):  # type: ignore
 
     # parent relationships (access parent)
     Stage : Mapped["StageInstance"] = relationship(back_populates=("TaskInstanceList"))
-    TaskStatus : Mapped["TaskStatus"] = relationship(back_populates=("TaskInstanceList"))
-    TaskDef : Mapped["TaskDefinition"] = relationship(back_populates=("TaskInstanceList"))
+    TaskStatus: Mapped["TaskStatus"] = relationship(back_populates=("TaskInstanceList"))
+    TaskDefinition : Mapped["TaskDefinition"] = relationship(back_populates=("TaskInstanceList"))
 
     # child relationships (access children)
     EventActionList : Mapped[List["EventAction"]] = relationship(back_populates="TaskInstance")
-    WorkflowHistoryList : Mapped[List["WorkflowHistory"]] = relationship(back_populates="TaskInstance")
 
 
 
@@ -608,14 +541,17 @@ class WFQuoteItem(Base):  # type: ignore
     __tablename__ = 'WF_QuoteItems'
     _s_collection_name = 'WFQuoteItem'  # type: ignore
 
-    QuoteItemID = Column(Integer,  autoincrement=True, primary_key=True)
+    QuoteItemID = Column(Integer, autoincrement=True, primary_key=True)
     QuoteID = Column(ForeignKey('WF_Quotes.QuoteID'), nullable=False)
     Description = Column(Unicode(500), nullable=False)
     Amount : DECIMAL = Column(DECIMAL(10, 2), nullable=False)
-    SortOrder = Column(Integer, server_default=text("((1))"), nullable=False)
+    SortOrder = Column(Integer, server_default=text("1"), nullable=False)
 
     # parent relationships (access parent)
     Quote : Mapped["WFQuote"] = relationship(back_populates=("WFQuoteItemList"))
+
+    # child relationships (access children)
+
 
 
 class EventAction(Base):  # type: ignore
@@ -625,39 +561,16 @@ class EventAction(Base):  # type: ignore
     EventId = Column(Integer, autoincrement=True, primary_key=True)
     EventKey = Column(Unicode(250), nullable=False)
     TaskInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'), nullable=False)
-    EventStatus = Column(Unicode(20), server_default=text('PENDING'), nullable=False)
-    EventType = Column(Unicode(20), server_default=text('External'), nullable=False)
+    EventStatus = Column(Unicode(20), server_default=text("PENDING"), nullable=False)
+    EventType = Column(Unicode(20), server_default=text("External"), nullable=False)
     EventMessage = Column(Unicode(500), nullable=False)
-    StartDate = Column(DATETIME2, server_default=text('getutcdate()'), nullable=False)
+    StartDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     DueDate = Column(DATETIME2)
-    IsResolved = Column(Boolean, server_default=text('0'), nullable=False)
+    IsResolved = Column(Boolean, server_default=text("0"), nullable=False)
     ResolvedDate = Column(DATETIME2)
 
     # parent relationships (access parent)
     TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("EventActionList"))
-
-    # child relationships (access children)
-
-
-
-class WorkflowHistory(Base):  # type: ignore
-    __tablename__ = 'WorkflowHistory'
-    _s_collection_name = 'WorkflowHistory'  # type: ignore
-
-    HistoryId = Column(Integer, autoincrement=True, primary_key=True)
-    InstanceId = Column(ForeignKey('ProcessInstances.InstanceId'), nullable=False, index=True)
-    TaskInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'))
-    Action = Column(Unicode(100), nullable=False)
-    PreviousStatus = Column(Unicode(50))
-    NewStatus = Column(Unicode(50))
-    ActionBy = Column(Unicode(100), server_default=text('system'), nullable=False)
-    ActionDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False, index=True)
-    ActionReason = Column(Unicode(500))
-    Details = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
-
-    # parent relationships (access parent)
-    Instance : Mapped["ProcessInstance"] = relationship(back_populates=("WorkflowHistoryList"))
-    TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("WorkflowHistoryList"))
 
     # child relationships (access children)
 #======== ou_kash tables===========================================

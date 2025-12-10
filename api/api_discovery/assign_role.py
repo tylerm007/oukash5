@@ -135,7 +135,7 @@ def add_role_assignment(application_id:int, role:str, assignee:str):
         ApplicationId=application_id,
         Role=role,
         Assignee=assignee,
-        CreatedDate=datetime.now(timezone.utc)
+        CreatedDate=datetime.now()
     )
     session.add(role_assignment)
     session.commit()

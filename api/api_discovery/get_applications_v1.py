@@ -2,7 +2,8 @@ from ast import Continue
 from datetime import datetime
 from os import name
 from token import NAME
-from database.models import LaneDefinition, CompanyApplication
+from api.api_discovery.complete_task import get_stage_list
+from database.models import CompanyApplication, StageDefinition
 from flask import app, request, jsonify, session
 import logging
 import safrs
@@ -13,10 +14,13 @@ from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 import json
+from database.cache_service import DatabaseCacheService
+
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
 session = db.session 
 _project_dir = None
+cache = DatabaseCacheService.get_instance()
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     global _project_dir
@@ -70,37 +74,30 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         #sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
         params = {'application_id': application_id, 'searchName': name_filter, 'status': status, 'priority': priority, 'limit': limit, 'offset': offset}
         #print(get_SQL(),params)
-        result = session.execute(text(get_SQL()), params).fetchall()
-        fields = result[0]._fields if len(result) > 0 else []
+        results = session.execute(text(get_SQL()), params).fetchall()
+        fields = results[0]._fields if len(results) > 0 else []
         data = []
-        # = TaskDefinition.query.all() # USE CACHE HERE
+        # SQL Server FOR JSON PATH returns fragmented JSON strings when result is large
+        # Concatenate all fragments from the result rows
         #task_definitions = {td.TaskId: td.to_dict() for td in task_defs}
         # Convert tasks to dictionaries and add to result
-        for task in result:
+        
+        for task in results:
             row = dict(zip(fields, task))
             assignedRoles = row.get('assignedRoles')
             if assignedRoles:
                 assigned_roles= json.loads(assignedRoles)
                 row['assignedRoles'] = [{role.get('role'): role.get("assignee", "Unknown")} for role in assigned_roles]
-            files = row.get('files')
-            row['files'] = []
-            if files:
-                row['files'] = json.loads(files)
-            messages = row.get('messages')
-            row['messages'] = []
-            if messages:
-                row['messages'] = json.loads(messages)
-            row['quotes'] = []
-            quotes = row.get('quotes')
-            if quotes:
-                row['quotes'] = json.loads(quotes)
-            process = row.get('process')
-            if process:
-                row['stages'] = transform_process_row(process)
-                row.pop('process', None)
-            result = transform_app(row)
-            data.append(result)
+           
+            stages = row.get('stages')
+            if stages:
+                stages_json = json.loads(stages)
+                row['stages'] = transform_stage_row(stages_json)
+                #row.pop('process', None)
+            #result = transform_app(row)
+            data.append(row)
         #data = [dict(row) for row in result]
+        
         wf_count =session.execute(text(get_total_count()), params).fetchone()[0]
         total_count = wf_count # len(data) if name or priority or status else 1 if  application_id else wf_count
         end_time = time.time()
@@ -143,86 +140,85 @@ def transform_app(app) -> dict:
             }
     return row
 
-def transform_process_row(process: str) -> list:
+def transform_stage_row(stage_rows: any) -> list:
     """
     Transforms a process row dictionary by parsing JSON fields.
     """
     import json
     result_stages = {}
-    process_rows = []
+    task_definitions = cache.get_all_task_definitions()
+    for row in stage_rows:
+        stage_def = cache.get_stage_definition(stage_id=row.get('StageDefinitionId'))
+        stage_name = getattr(stage_def, 'StageName')
+        
+        stage_tasks = row.get('tasks', [])
+        tasks = []
+        task_cnt = 0
+        completed_cnt = 0
+        for task in stage_tasks:
+            taskdef_id = task.get('TaskDefinitionId')
+            taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
+            if len(taskdef) == 0:
+                continue
+            #print(taskdef["TaskName"])
+            if (taskdef and taskdef['AutoComplete'] == True or
+                taskdef and taskdef['TaskType'] in ['START','END',"STAGESTART",'STAGEEND']):
+                continue
+        
+            task_cnt += 1
+            completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
 
-    if process:
-        process_rows = json.loads(process)
-        for row in process_rows:
-            stages = row.get('stages', [])
-            lane_dict = get_lane_dict(stages)
-            for stage in stages:
-                stage_tasks = stage.get('tasks', [])
-                tasks = []
-                task_cnt = 0
-                completed_cnt = 0
-                for task in stage_tasks:
-                    taskdef = task.get('td', [{}])[0]
-                    if len(taskdef) == 0:
-                        continue
-                    #print(taskdef["TaskName"])
-                    if (taskdef and taskdef['AutoComplete'] == True or
-                        taskdef and taskdef['TaskType'] in ['START','END',"LANESTART",'LANEEND']):
-                        continue
-                
-                    task_cnt += 1
-                    completed_cnt += 1 if task['Status'] == 'COMPLETED' else 0
-
-                    #created_date = task['StartedDate'] if "StartedDate" in task else None
-                    #modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
-                    #days_between = _calc_days_between(created_date, modified_date)
-                    #days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
-                    days_pending = task['daysPending'] if 'daysPending' in task else 0
-                    days_overdue = task['daysOverdue'] if 'daysOverdue' in task else 0
-                    tasks.append({
-                    "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
-                    "status": task['Status'] if 'Status' in task else "UNKNOWN",
-                    "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
-                    "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
-                    "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
-                    "daysPending": days_pending,
-                    "daysOverdue": days_overdue,
-                    "isOverdue": days_overdue > days_pending and task['Status'] != 'COMPLETED',
-                    "createdDate": task['StartedDate'] if "StartedDate" in task else None,
-                    "description": taskdef['Description'] if task and "Description" in taskdef else " ",
-                    "required": taskdef['IsRequired'] if task and "IsRequired" in taskdef else False,
-                    "TaskInstanceId": task['TaskInstanceId'],
-                    #"PreScript": _get_pre_script(task),
-                    "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
-                    "Result": task['Result'] if "Result" in task else None,
-                    "ResultData": task['ResultData'] if "ResultData" in task else None,
-                    "ErrorMessage": task['ErrorMessage'] if "ErrorMessage" in task else None,
-                    "taskRoles": [{
-                        "taskRole": taskdef['AssigneeRole'] if task and taskdef else "Unknown Role"
-                    }],
-                })
-                lane = lane_dict.get(stage['LaneId'])
-                if lane:
-                    lane_dict_data = lane.to_dict()
-                    lane_name = lane_dict_data["LaneName"]
-                    result_stages[lane_name] = {
-                        "status": stage["Status"], 
-                        "description": lane_dict_data["LaneDescription"],
-                        "progress": int(completed_cnt / task_cnt * 100) if task_cnt > 0 and completed_cnt > 0 else 0,
-                        "tasks": tasks
-                    }
+            #created_date = task['StartedDate'] if "StartedDate" in task else None
+            #modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
+            #days_between = _calc_days_between(created_date, modified_date)
+            #days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
+            days_pending = task['daysPending'] if 'daysPending' in task else 0
+            days_overdue = task['daysOverdue'] if 'daysOverdue' in task else 0
+            tasks.append({
+            "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
+            "status": task['status'] if 'status' in task else "UNKNOWN",
+            "taskType": taskdef['TaskType'] if task and taskdef else "Unknown Task Type",
+            "taskCategory": taskdef['TaskCategory'] if task and taskdef else "Unknown Task Category",
+            "executedBy": task['AssignedTo'] if "AssignedTo" in task else None,
+            "daysPending": days_pending,
+            "daysOverdue": days_overdue,
+            "isOverdue": days_overdue > days_pending and task['Status'] != 'COMPLETED',
+            "createdDate": task['StartedDate'] if "StartedDate" in task else None,
+            "description": taskdef['Description'] if task and "Description" in taskdef else " ",
+            "required": taskdef['IsRequired'] if task and "IsRequired" in taskdef else False,
+            "TaskInstanceId": task['TaskInstanceId'],
+            #"PreScript": _get_pre_script(task),
+            "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
+            "Result": task['Result'] if "Result" in task else None,
+            "ResultData": task['ResultData'] if "ResultData" in task else None,
+            "ErrorMessage": task['ErrorMessage'] if "ErrorMessage" in task else None,
+            "taskRoles": [{
+                "taskRole": taskdef['AssigneeRole'] if task and taskdef else "Unknown Role"
+            }],
+        })
+        #lane = lane_dict.get(stage['LaneId'])
+        if stage_name:
+            #lane_dict_data = lane.to_dict()
+            #lane_name = lane_dict_data["LaneName"]
+            result_stages[stage_name] = {
+                "status": row["Status"], 
+                "description": stage_def["StageDescription"],
+                "progress": int(completed_cnt / task_cnt * 100) if task_cnt > 0 and completed_cnt > 0 else 0,
+                "tasks": tasks
+            }
     return result_stages
 
-def get_lane_dict(stages: list) -> dict:
+def getStage_dict(stages: list) -> dict:
     """
-    Constructs a dictionary mapping LaneDefID to lane details from a list of stages.
+    Constructs a dictionary mapping StageId to lane details from a list of stages.
     """
-    lane_ids = [stage['LaneId'] for stage in stages]
-    lanes = session.query(LaneDefinition).filter(
-        LaneDefinition.LaneId.in_(lane_ids)
+    
+    stage_ids = [stage['StageId'] for stage in stages]
+    stages = session.query(StageDefinition).filter(
+        StageDefinition.StageId.in_(stage_ids)
     ).all()
-    lane_dict = {lane.LaneId: lane for lane in lanes} or {}
-    return lane_dict
+    stage_dict = {stage.StageId: stage for stage in stages} or {}
+    return stage_dict
 
 def _calc_days_between(start_date, end_date) -> int:
     """Calculate days between two dates"""
@@ -284,89 +280,61 @@ def _get_pre_script(task) -> str:
 def get_SQL() -> str:
 
     return '''
-   select  pl.Name as "plantName", co.Name as "companyName",
-   app.ApplicationID,
-   app.ApplicationNumber,
-   app.CreatedDate,
-   app.ModifiedDate,
-   app.Status,
-   app.Priority,
-    (
-            select role, assignee 
-            from RoleAssigment  
-            where RoleAssigment.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-    ) as "assignedRoles",
-    (
-            select * 
-            from WF_Quotes  
-            where WF_Quotes.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-    ) as "quotes",
-    (
-            select * 
-            from WF_Files 
-            where   WF_Files.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-    ) as "files",
-    (
-            select * 
-            from WF_ApplicationMessages  
-            where WF_ApplicationMessages.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-    ) as "msgs",
-    process = ( select * 
-                       ,stages =  ( select *
-                                           ,tasks =  ( select 
-                                                        ti.TaskInstanceId,
-                                                        ti.TaskId,
-                                                        ti.Status,
-                                                        ti.AssignedTo,
-                                                        ti.StartedDate,
-                                                        ti.CompletedDate,
-                                                        CASE
-                                                            WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
-                                                            ELSE NULL
-                                                        END as daysPending,
-                                                        CASE
-                                                            WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
-                                                               DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
-                                                            ELSE NULL
-                                                        END as daysOverdue,
-                                                        td.TaskName,
-                                                        td.Description,
-                                                        td.TaskType,
-                                                        td.TaskCategory,   
-                                                        td.AssigneeRole,
-                                                        td.EstimatedDurationMinutes,
-                                                        td.AutoComplete,
-                                                        td.IsRequired
-                                                       from TaskInstances ti
-                                                       INNER JOIN TaskDefinitions td ON ti.TaskId = td.TaskId
-                                                       where ti.StageId = si.StageInstanceId and  (td.AssigneeRole != 'SYSTEM') 
-                                                       order by td.Sequence
-                                                       FOR JSON AUTO
-                                                     )
-                                    from StageInstance si
-                                    where si.ProcessInstanceId = pi.InstanceId
-                                    order by si.StageInstanceId
-                                    FOR JSON AUTO        
-                                 )
-                FROM ProcessInstances pi
-                where   pi.ApplicationId = app.ApplicationID
+        select pl.Name as "plantName", 
+        co.Name as "companyName",
+        app.ApplicationID as applicationId,
+        app.ApplicationNumber,
+        app.CreatedDate,
+        app.ModifiedDate,
+        app.Status,
+        app.Priority,
+        (
+                select role, assignee 
+                from RoleAssigment  
+                where RoleAssigment.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
-              )
-                        
-     FROM WF_Applications  app
-         LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
-         LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
-     WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
-            (:priority IS NULL OR app.Priority = :priority) and
-            (:status IS NULL OR app.Status = :status) and
+        ) as "assignedRoles",
+
+
+        stages =  ( select  *
+                            ,tasks =  ( select 
+                                            ti.TaskInstanceId,
+                                            ti.TaskDefinitionId,
+                                            ti.status,
+                                            ti.AssignedTo,
+                                            ti.StartedDate,
+                                            ti.CompletedDate,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
+                                                                ELSE NULL
+                                            END as daysPending,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
+                                                                DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                                ELSE NULL
+                                            END as daysOverdue
+                                        from TaskInstances ti
+                                            INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                                        where ti.StageId = si.StageInstanceId and  (td.AssigneeRole != 'SYSTEM') 
+                                                        FOR JSON AUTO
+                                    )
+                    from StageInstance si
+                    where si.ApplicationId = app.ApplicationID 
+                    FOR JSON AUTO        
+                )
+            
+                            
+        FROM WF_Applications  app
+            LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+            LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+            
+        WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
-     ORDER BY app.ApplicationID   
-     OFFSET :offset ROWS
-     FETCH NEXT :limit ROWS ONLY;
+        
+
+        ORDER BY app.ApplicationID   
+        OFFSET :offset ROWS
+        FETCH NEXT :limit ROWS ONLY;
 
     '''
 

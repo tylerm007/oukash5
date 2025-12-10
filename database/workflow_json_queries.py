@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Dict, List, Optional, Any
 from sqlalchemy import text
-from database.models import ProcessDefinition, LaneDefinition, TaskDefinition, TaskFlow
+from database.models import ProcessDefinition, StageDefinition, TaskDefinition, TaskFlow
 from database import models
 import safrs
 
@@ -57,7 +57,7 @@ class WorkflowJSONQuery:
                     pd.CreatedDate AS ProcessCreatedDate,
                     pd.CreatedBy AS ProcessCreatedBy,
                     
-                    -- Lane Definition data
+                    -- Stage Definition data
                     ld.LaneId,
                     ld.LaneName,
                     ld.LaneDescription,
@@ -79,8 +79,8 @@ class WorkflowJSONQuery:
                     td.PreScriptJson,
                     td.PostScriptJson
                 FROM ProcessDefinitions pd
-                LEFT JOIN LaneDefinitions ld ON pd.ProcessId = ld.ProcessId
-                LEFT JOIN TaskDefinitions td ON ld.LaneId = td.LaneId
+                LEFT JOIN StageDefinitions ld ON pd.ProcessId = ld.ProcessId
+                LEFT JOIN TaskDefinitions td ON ld.StageId = td.StageId
                 {where_clause}
             ),
             TaskFlowData AS (

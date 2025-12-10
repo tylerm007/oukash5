@@ -5,7 +5,7 @@ from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from api.api_discovery.assign_role import _assign_role   
 import datetime
-from database.models import CompanyApplication, StageInstance, WFApplication, TaskInstance, TaskDefinition, ProcessInstance
+from database.models import CompanyApplication, StageInstance, WFApplication, TaskInstance, TaskDefinition
 import database.models as models
 from flask import request, jsonify
 import logging
@@ -98,8 +98,8 @@ def start_workflow(application_id: int, start_by: str):
     response = _start_workflow_async(process_name, int(application_id), start_by, "NORMAL")
     return response['process_instance_id']
 
-def find_all_stages_for_process(process_id):
-    stages = StageInstance.query.filter(StageInstance.ProcessInstanceId == process_id).order_by(StageInstance.LaneId).all()
+def find_all_stages_for_application(application_id):
+    stages = StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageId).all()
     return [stage for stage in stages]
 
 def find_all_pending_tasks(stage_id: int):
@@ -172,19 +172,17 @@ def result_scenario(task_name, scenario: int = 1) -> str:
     return result
 
 def run_workflow_to_completion(application: WFApplication, user: str, scenario: int = 1, access_token: str = None):
-    application_id = application.ApplicationID
-    process_instance = session.query(models.ProcessInstance).filter(models.ProcessInstance.ApplicationId == application_id).first()
-    if not process_instance:
-        app_logger.error(f'ProcessInstance not found for Application ID: {application_id}')
+    if not application:
+        app_logger.error(f'Application not found for Application ID: {application_id}')
         return
-    process_id = process_instance.InstanceId
-    stages_list = find_all_stages_for_process(process_id)
+    application_id = application.ApplicationID
+    stages_list = find_all_stages_for_application(application_id)
     completed_tasks = []
     for stage in stages_list:
         stage_id = stage.StageInstanceId
         stage_state = session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
         status = stage_state.Status # "'IN_PROGRESS'"
-        name = stage.Lane.LaneName if stage.Lane else 'Unknown'
+        name = stage.StageDefinition.StageName if stage.StageDefinition else 'Unknown'
         app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
         if status == 'IN_PROGRESS' and name == 'Initial':
             pending_tasks = find_all_pending_tasks(stage_id)
@@ -227,10 +225,10 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
         elif status == 'IN_PROGRESS' and name == 'Certification':
             process_all_pending_tasks(stage_id, completed_tasks)
 
-    stage_list = find_all_stages_for_process(process_id)
+    stage_list = find_all_stages_for_application(application_id)
     results = []
     for stage in stage_list:
-        results.append({"Stage": stage.Lane.LaneName, "Status": stage.Status})
+        results.append({"Stage": stage.StageDefinition.StageName, "Status": stage.Status})
     print(f"Workflow for application {application_id} completed {completed_tasks}.")
     return results, completed_tasks
 
@@ -242,7 +240,7 @@ def process_all_pending_tasks(stage_id: int, completed_tasks: list):
             complete_task(task_instance)
             completed_tasks.append(task_instance.TaskInstanceId)
             pending_tasks = find_all_pending_tasks(stage_id)
-            app_id = task_instance.Stage.ProcessInstance.ApplicationId
+            app_id = task_instance.Stage.ApplicationId
             status = WFApplication.query.filter_by(ApplicationID=app_id).first().Status
             if status == 'COMPL':
                 app_logger.info(f'Application {app_id} already completed. Skipping stage {stage_id}.')
