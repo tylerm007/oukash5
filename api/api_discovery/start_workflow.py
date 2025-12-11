@@ -1,22 +1,16 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
 from database import models
 from database.models import ProcessDefinition, TaskDefinition, WFApplication, StageInstance, TaskInstance, StageDefinition
 from flask import request, jsonify, session
 import logging
 import safrs
-from functools import wraps
-from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, jwt_required
 import threading
 import uuid
 import time
-import asyncio
-import concurrent.futures
-from contextlib import contextmanager
-from sqlalchemy import text
 import json
 from security.system.authorization import Security
 from database.cache_service import DatabaseCacheService
@@ -41,27 +35,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     global _project_dir
     _project_dir = project_dir
     pass
-
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
     
     # ==================================================
     #        WORKFLOW ENDPOINTS (Flask)
     # ==================================================
     @app.route('/start_workflow', methods=['POST','OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def start_workflow():
         """
@@ -115,8 +93,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "ok", "data": response}), 200
 
     @app.route('/start_workflow_fast', methods=['POST','OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def start_workflow_fast():
         """
@@ -156,8 +132,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "error", "message": str(e)}), 500
 
     @app.route('/start_workflow_async', methods=['POST','OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     def start_workflow_async():
         """
         Start workflow as a background process and return task ID immediately.
@@ -213,7 +187,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         }), 202
 
     @app.route('/workflow_status/<task_id>', methods=['GET'])
-    @cross_origin()
+    @jwt_required()
     def get_workflow_status(task_id):
         """
         Check the status of a background workflow task.

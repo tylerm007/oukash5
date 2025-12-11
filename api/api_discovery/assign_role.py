@@ -22,23 +22,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     _project_dir = project_dir
     pass
 
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
 
     @app.route('/assignRole', methods=['OPTIONS','POST'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def assignRole():
         """        
@@ -130,6 +115,7 @@ def add_role_assignment(application_id:int, role:str, assignee:str):
     ).first()
     if existing_role:
         app_logger.info(f'Role {role} already assigned to {assignee} for application {application_id}')
+        #raise ValueError(f'Role {role} already assigned to {assignee} for application {application_id}') -- DO NOT THROW
         return
     role_assignment = models.RoleAssigment(
         ApplicationId=application_id,

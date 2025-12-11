@@ -521,7 +521,7 @@ class TaskInstance(Base):  # type: ignore
     AssignedTo = Column(Unicode(100))
     StartedDate = Column(DATETIME2)
     CompletedDate = Column(DATETIME2)
-    _DurationMinutes = Column('#DurationMinutes', Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
+    #_DurationMinutes = Column('#DurationMinutes', Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
     Result = Column(Unicode(50))
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))

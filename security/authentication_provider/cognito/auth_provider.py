@@ -91,6 +91,9 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         # Install JWT monkey patch for Cognito tokens
         Authentication_Provider._install_jwt_monkey_patch()
         
+        # Preload JWKS cache to avoid first-request delay
+        Authentication_Provider.preload_jwks_cache()
+        
         # Add Cognito endpoints
         Authentication_Provider._add_cognito_endpoints(flask_app)
         return
@@ -108,32 +111,88 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         
         def patched_decode_token(encoded_token, csrf_token=None, allow_expired=False):
             """Patched JWT decode function that handles both HS256 and RS256 tokens"""
+            # IMPORTANT: Check algorithm FIRST before attempting decode
+            # This prevents PEM deserialization errors when RS256 token hits HS256 decoder
             try:
-                return original_decode_token(encoded_token, csrf_token, allow_expired)
+                import jwt as pyjwt
+                header = pyjwt.get_unverified_header(encoded_token)
+                token_alg = header.get('alg')
+                
+                logger.debug(f"Token algorithm detected: {token_alg}")
+                
+                # Route based on algorithm
+                if token_alg == 'RS256':
+                    logger.info("RS256 Cognito token detected - using Cognito validation")
+                    
+                    # Validate with Cognito JWKS
+                    claims = Authentication_Provider.validate_cognito_token(encoded_token)
+                    if claims:
+                        logger.info(f"Successfully validated RS256 Cognito token for user: {claims.get('sub', 'unknown')}")
+                        return {
+                            'sub': claims.get('sub'),
+                            'iat': claims.get('iat', 0),
+                            'exp': claims.get('exp', 0),
+                            'jti': claims.get('jti', 'cognito-token'),
+                            'type': 'access',
+                            'fresh': False,
+                            'email': claims.get('email'),
+                            'name': claims.get('name'),
+                            'app_username': claims.get('app_username'),
+                            'loaded_user': getUserRoles(claims.get('app_username'), claims.get('roles', [])),
+                            'roles': claims.get('roles', []),
+                            'auth_provider': 'cognito'
+                        }
+                    else:
+                        logger.error("RS256 Cognito token validation failed")
+                        raise Exception("Invalid Cognito RS256 token")
+                
+                elif token_alg == 'HS256':
+                    # HS256 internal token - use Flask-JWT-Extended standard decode
+                    logger.debug("HS256 internal token detected - using Flask-JWT-Extended")
+                    return original_decode_token(encoded_token, csrf_token, allow_expired)
+                
+                else:
+                    logger.error(f"Unsupported token algorithm: {token_alg}")
+                    raise Exception(f"Unsupported JWT algorithm: {token_alg}")
+                    
             except Exception as e:
                 error_msg = str(e)
-                logger.info(f"Flask-JWT-Extended decode failed: {error_msg[:100]}")
+                logger.error(f"Token decode error: {error_msg[:200]}")
                 
-                # Check for algorithm mismatch errors
-                if "alg value is not allowed" in error_msg or "Invalid algorithm" in error_msg:
-                    logger.info("Algorithm mismatch detected, analyzing token...")
+                # If algorithm detection failed, try the original decoder as fallback
+                if "get_unverified_header" in error_msg or "Token algorithm" not in error_msg:
+                    logger.info("Algorithm detection failed, trying original decoder")
+                    try:
+                        return original_decode_token(encoded_token, csrf_token, allow_expired)
+                    except Exception as original_error:
+                        logger.error(f"Original decoder also failed: {str(original_error)[:100]}")
                 
-                # Check token algorithm and route appropriately
+                raise e
+        
+        def patched_verify_jwt_in_request(optional=False, fresh=False, refresh=False, locations=None, verify_type=True):
+            """Patched JWT verification that handles both HS256 and RS256 tokens"""
+            # CRITICAL: Extract and check token algorithm BEFORE calling original verify
+            # This prevents PEM deserialization errors with RS256 tokens
+            
+            auth_header = request.headers.get('Authorization', '')
+            if auth_header.startswith('Bearer '):
+                token = auth_header.replace('Bearer ', '')
+                
                 try:
                     import jwt as pyjwt
-                    header = pyjwt.get_unverified_header(encoded_token)
+                    header = pyjwt.get_unverified_header(token)
                     token_alg = header.get('alg')
                     
-                    logger.info(f"Token algorithm: {token_alg}")
-                    
                     if token_alg == 'RS256':
-                        logger.info("RS256 token detected, trying Cognito validation")
+                        # This is a Cognito RS256 token - handle it manually
+                        logger.info("RS256 Cognito token detected in verify_jwt_in_request")
                         
-                        # Try Cognito validation
-                        claims = Authentication_Provider.validate_cognito_token(encoded_token)
+                        claims = Authentication_Provider.validate_cognito_token(token)
                         if claims:
-                            logger.info("Successfully validated RS256 Cognito token")
-                            return {
+                            logger.info(f"Cognito token validated for user: {claims.get('sub', 'unknown')}")
+                            
+                            # Create a Flask-JWT-Extended compatible token structure
+                            jwt_data = {
                                 'sub': claims.get('sub'),
                                 'iat': claims.get('iat', 0),
                                 'exp': claims.get('exp', 0),
@@ -142,57 +201,67 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                                 'fresh': False,
                                 'email': claims.get('email'),
                                 'name': claims.get('name'),
+                                'app_username': claims.get('app_username'),
+                                'loaded_user': getUserRoles(claims.get('app_username'), claims.get('roles', [])), # TODO we need to lookup a Uer?
                                 'roles': claims.get('roles', []),
                                 'auth_provider': 'cognito'
                             }
+                            
+                            # Manually set the JWT data in Flask's 'g' object
+                            # These are the globals that Flask-JWT-Extended and decorators expect
+                            g.jwt_user_claims = claims
+                            g.jwt_user_identity = claims.get('sub')
+                            g._jwt_extended_jwt = jwt_data
+                            g._jwt_extended_jwt_user = jwt_data
+                            g._jwt_extended_jwt_header = header
+                            g._jwt_extended_jwt_location = 'headers'
+                            
+                            logger.info("Successfully set Flask-JWT-Extended globals for RS256 token")
+                            return None
                         else:
                             logger.error("RS256 Cognito token validation failed")
+                            if not optional:
+                                raise Exception("Invalid Cognito RS256 token")
+                            return None
                     
                     elif token_alg == 'HS256':
-                        logger.info("HS256 token detected but standard decode failed")
-                        # This might be a configuration issue
-                        logger.error("HS256 token should have worked with Flask-JWT-Extended")
+                        # HS256 internal token - use original Flask-JWT-Extended verification
+                        logger.debug("HS256 token detected - using original verify_jwt_in_request")
+                        return original_verify_jwt_in_request(optional, fresh, refresh, locations, verify_type)
                     
                     else:
-                        logger.error(f"Unsupported token algorithm: {token_alg}")
-                        
-                except Exception as cognito_error:
-                    logger.error(f"Token analysis error: {cognito_error}")
-                
-                # Re-raise the original error with more context
-                logger.error(f"Token validation completely failed: {error_msg}")
-                raise e
-        
-        def patched_verify_jwt_in_request(optional=False, fresh=False, refresh=False, locations=None, verify_type=True):
-            """Patched JWT verification that's more lenient with Cognito tokens"""
-            try:
-                return original_verify_jwt_in_request(optional, fresh, refresh, locations, verify_type)
-            except Exception as e:
-                logger.info(f"JWT verification failed: {str(e)[:100]}")
-                
-                if optional:
-                    logger.info("Optional JWT verification, allowing request to continue")
-                    return None
-                
-                # Try to extract token manually and validate with Cognito
-                auth_header = request.headers.get('Authorization', '')
-                if auth_header.startswith('Bearer '):
-                    token = auth_header.replace('Bearer ', '')
-                    
-                    claims = Authentication_Provider.validate_cognito_token(token)
-                    if claims:
-                        logger.info("Cognito token validated during verify_jwt_in_request")
-                        g.jwt_user_claims = claims
-                        g.jwt_user_identity = claims.get('sub')
+                        logger.warning(f"Unsupported token algorithm in verify_jwt_in_request: {token_alg}")
+                        if not optional:
+                            raise Exception(f"Unsupported JWT algorithm: {token_alg}")
                         return None
-                
-                raise e
+                        
+                except Exception as e:
+                    error_msg = str(e)
+                    logger.error(f"Error in patched verify_jwt_in_request: {error_msg[:200]}")
+                    
+                    if optional:
+                        logger.info("Optional JWT verification, allowing request to continue despite error")
+                        return None
+                    
+                    # Try original as fallback
+                    try:
+                        return original_verify_jwt_in_request(optional, fresh, refresh, locations, verify_type)
+                    except Exception as fallback_error:
+                        logger.error(f"Original verify also failed: {str(fallback_error)[:100]}")
+                        raise e
+            
+            # No Authorization header - let original handle it
+            logger.debug("No Authorization header, using original verify_jwt_in_request")
+            return original_verify_jwt_in_request(optional, fresh, refresh, locations, verify_type)
         
         # Replace the functions
         flask_jwt_extended.utils.decode_token = patched_decode_token
         flask_jwt_extended.view_decorators.verify_jwt_in_request = patched_verify_jwt_in_request
         
-        logger.info("Installed comprehensive JWT monkey patch for Cognito token support")
+        logger.info("✅ Installed comprehensive JWT monkey patch for Cognito token support")
+        logger.info("   - patched decode_token: detects RS256 vs HS256 before decode")
+        logger.info("   - patched verify_jwt_in_request: handles RS256 tokens directly")
+        logger.info("   - RS256 tokens will bypass Flask-JWT-Extended's HS256 decoder")
 
     @staticmethod
     def _add_cognito_endpoints(flask_app: Flask):
@@ -1005,6 +1074,32 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         except Exception as e:
             logger.error(f"Error decoding token claims: {e}")
             return None
+    
+    @staticmethod
+    def preload_jwks_cache():
+        """Preload JWKS cache on server startup to avoid first-request delay"""
+        from config.config import Args
+        
+        try:
+            region = Args.instance.cognito_region
+            user_pool_id = Args.instance.cognito_user_pool_id
+            jwks_url = f"https://cognito-idp.{region}.amazonaws.com/{user_pool_id}/.well-known/jwks.json"
+            
+            logger.info(f"Preloading Cognito JWKS cache from: {jwks_url}")
+            jwks_response = requests.get(jwks_url, timeout=10)
+            
+            if jwks_response.status_code == 200:
+                with _jwks_cache['lock']:
+                    _jwks_cache['data'] = jwks_response.json()
+                    _jwks_cache['timestamp'] = datetime.now()
+                logger.info("✅ Cognito JWKS cache preloaded successfully")
+                return True
+            else:
+                logger.warning(f"Failed to preload JWKS cache: {jwks_response.status_code}")
+                return False
+        except Exception as e:
+            logger.warning(f"Could not preload JWKS cache (non-critical): {e}")
+            return False
         
     @staticmethod
     def validate_cognito_token(token: str) -> Optional[Dict[str, Any]]:
@@ -1033,22 +1128,32 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 else:
                     # Cache is expired or empty, fetch new JWKS
                     logger.info(f"Fetching Cognito JWKS from: {jwks_url} (cache expired or empty)")
-
-                    jwks_response = requests.get(jwks_url, timeout=10)
-                    if jwks_response.status_code != 200:
-                        logger.error(f"Could not retrieve Cognito JWKS: {jwks_response.status_code}")
-                        # If we have stale cache data, use it as fallback
+                    
+                    try:
+                        jwks_response = requests.get(jwks_url, timeout=10)
+                        
+                        if jwks_response.status_code == 200:
+                            jwks_data = jwks_response.json()
+                            # Update cache
+                            _jwks_cache['data'] = jwks_data
+                            _jwks_cache['timestamp'] = current_time
+                            logger.info(f"Cognito JWKS cached successfully (will expire in {_JWKS_CACHE_DURATION}s)")
+                        else:
+                            logger.error(f"Could not retrieve Cognito JWKS: {jwks_response.status_code}")
+                            # If we have stale cache data, use it as fallback
+                            if _jwks_cache['data'] is not None:
+                                logger.warning("Using stale JWKS cache as fallback")
+                                jwks_data = _jwks_cache['data']
+                            else:
+                                jwks_data = None
+                    except Exception as e:
+                        logger.error(f"Exception fetching JWKS: {e}")
+                        # Try to use stale cache as fallback
                         if _jwks_cache['data'] is not None:
-                            logger.warning("Using stale JWKS cache as fallback")
+                            logger.warning("Using stale JWKS cache after fetch exception")
                             jwks_data = _jwks_cache['data']
                         else:
-                            return None
-                    else:
-                        jwks_data = jwks_response.json()
-                        # Update cache
-                        _jwks_cache['data'] = jwks_data
-                        _jwks_cache['timestamp'] = current_time
-                        logger.info(f"Cognito JWKS cached successfully (will expire in {_JWKS_CACHE_DURATION}s)")
+                            jwks_data = None
 
             if jwks_data is None:
                 logger.error("No JWKS data available")
@@ -1076,7 +1181,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             # All clients must be from the correct User Pool (verified via issuer)
             claims = jwt.decode(
                 token,
-                #jwks,
+                ##jwks,
                 public_key,
                 algorithms=["RS256"],
                 options={
@@ -1244,9 +1349,33 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     def get_sso_login_url() -> str:
         """Get the Cognito SSO login URL"""
         from flask import request
+        from config.config import Args
         return f"{request.host_url}/api/auth/login"
     
     @staticmethod
     def is_authenticated(request) -> bool:
         """Check if the current request is authenticated"""
         return 'user_id' in session and 'access_token' in session
+
+def getUserRoles(username:str, roles: list) ->any:
+    rtn_user = {}
+    #Check database for additional roles and email
+    user = WFUser.query.filter(WFUser.Username == username).first()
+    if user is None and "@" in username:
+        user = WFUser.query.filter(WFUser.Email == username).first()
+    
+    if user:
+        logger.debug(f"Found WFUser in database: {user.Username}, adding {len(user.WFUSERROLEList)} roles")
+        user.UserRoleList = []
+        if len(roles) > 0:
+            for role_name in roles:
+                each_user_role = DotMapX()
+                each_user_role.role_name = role_name
+                user.UserRoleList.append(each_user_role)
+        else:
+            for role in user.WFUSERROLEList: 
+                each_user_role = DotMapX()
+                each_user_role.role_name = role.UserRole
+                user.UserRoleList.append(each_user_role)
+    
+    return user

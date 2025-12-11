@@ -116,7 +116,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route("/ontimizeweb/services/rest/export/pdf", methods=['POST','OPTIONS'])
     @app.route("/ontimizeweb/services/rest/export/csv", methods=['POST','OPTIONS'])
     @cross_origin()
-    @admin_required()
+    #@admin_required()
     def export():
         print(f"export {request.path}")
         #if request.method == "OPTIONS":
@@ -126,7 +126,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route("/api/dynamicjasper", methods=['POST','OPTIONS'])
     @app.route("/ontimizeweb/services/rest/dynamicjasper", methods=['POST','OPTIONS'])
     @cross_origin()
-    @admin_required()
+    #@admin_required()
     def dynamicjasper():
         if request.method == "OPTIONS":
             return jsonify(success=True)
@@ -135,7 +135,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route("/api/bundle", methods=['POST','OPTIONS'])
     @app.route("/ontimizeweb/services/rest/bundle", methods=['POST','OPTIONS'])
     @cross_origin()
-    @admin_required()
+    #@admin_required()
     def bundle():
         if request.method == "OPTIONS":
             return jsonify(success=True)
@@ -144,7 +144,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     # Ontimize apiEndpoint path for all services
     @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     @cross_origin(supports_credentials=True)
-    @admin_required()
+    #@admin_required()
     def api_search(path):
         s = path.split("/")
         clz_name = s[0]

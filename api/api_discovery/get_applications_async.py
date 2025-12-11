@@ -4,11 +4,10 @@ from flask import app, request, jsonify, session
 import logging
 import safrs
 from sqlalchemy import false, text, or_, and_
-from functools import wraps
 from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, jwt_required
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -20,19 +19,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     _project_dir = project_dir
     pass
 
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
 
     def calc_days_between(start_date, end_date):
         if not end_date:
@@ -50,8 +36,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     # ============================================
     
     @app.route('/get_applications_async', methods=['GET','OPTIONS'])
-    @cross_origin()
-    @admin_required()
+    @jwt_required()
     def get_applications_async():
         """
         OPTIMIZED ASYNC VERSION - Up to 10x faster than legacy version

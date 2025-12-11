@@ -1,17 +1,12 @@
-from functools import wraps
-from flask_cors import cross_origin
-from config.config import Args
-from config.config import Config
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, jwt_required
 from api.api_discovery.assign_role import _assign_role   
 import datetime
-from database.models import WFApplication, StageInstance, TaskInstance
+from database.models import WFApplication, StageInstance
 import database.models as models
 from flask import request, jsonify
 import logging
 import safrs
 from sqlalchemy.sql import text
-from types import SimpleNamespace
 import time
 from security.system.authorization import Security
 
@@ -25,23 +20,8 @@ app_logger = logging.getLogger("api_logic_server_app")
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     pass
-
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
     
     @app.route('/createApplication', methods=['GET','OPTIONS'])
-    @admin_required()
     @jwt_required()
     def createApplication():
         if request.method == 'OPTIONS':
@@ -65,7 +45,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": f"application created successfully {application_id} started"}), 200
     
     @app.route('/deleteApplication', methods=['GET','OPTIONS'])
-    @admin_required()
     @jwt_required()
     def deleteApplication():
 

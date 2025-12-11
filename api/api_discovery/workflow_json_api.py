@@ -6,35 +6,20 @@ Returns ProcessDefinitions -> LaneDefinitions -> TaskDefinitions -> TaskFlow in 
 """
 
 from flask import request, jsonify
-from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required, get_jwt
 import logging
 from datetime import datetime, timezone
-from functools import wraps
-from config.config import Args
 from database.workflow_json_queries import WorkflowJSONQuery
 
 app_logger = logging.getLogger("api_logic_server_app")
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
     """Add workflow JSON API endpoints."""
-    
-    def admin_required():
-        """Support option to bypass security."""
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                from flask_jwt_extended import verify_jwt_in_request
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
+    global _project_dir
+    _project_dir = project_dir  
+    pass
 
     @app.route('/workflow_json', methods=['GET', 'OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def get_workflow_hierarchy_json():
         """
@@ -128,8 +113,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_json/<int:process_id>', methods=['GET', 'OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def get_specific_workflow_json(process_id: int):
         """
@@ -192,8 +175,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_stats', methods=['GET', 'OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def get_workflow_statistics():
         """
@@ -252,8 +233,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }), 500
 
     @app.route('/workflow_json/export', methods=['GET', 'OPTIONS'])
-    #@cross_origin()
-    @admin_required()
     @jwt_required()
     def export_workflow_json():
         """

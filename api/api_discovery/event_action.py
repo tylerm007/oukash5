@@ -1,7 +1,4 @@
 from datetime import datetime
-from os import access
-import re
-from database import models
 from database.database_discovery.authentication_models import User
 from database.models import EventAction #. INVOICEFEE
 from flask import request, jsonify, session, has_request_context
@@ -9,11 +6,9 @@ import logging
 import flask
 #from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
 import safrs
-from functools import wraps
-from flask_cors import cross_origin
 from config.config import Args
 from config.config import Config
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
+from flask_jwt_extended import get_jwt, jwt_required
 from datetime import timedelta, datetime, timezone
 
 from security.system.authorization import Security
@@ -25,7 +20,7 @@ session = db.session
 _project_dir = None
 from functools import wraps
 from flask import request, jsonify
-import requests
+
 
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
@@ -33,27 +28,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     _project_dir = project_dir
     pass
 
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.instance.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
-   
-
     # ==================================================
     #        WORKFLOW EventAction ENDPOINTS (Flask)
     # ==================================================
    
     @app.route('/create_event', methods=['POST','OPTIONS'])
-    @admin_required()
     @jwt_required()
     def create_event():
 
@@ -68,7 +47,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 
     @app.route('/resolve_event', methods=['POST','OPTIONS'])
-    @admin_required()
     @jwt_required()
     def resolve_event():
         
@@ -84,7 +62,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "Event resolved"}), 200
     
     @app.route('/resolve_paid_invoices', methods=['GET','OPTIONS'])
-    @admin_required()
     @jwt_required()
     def resolve_invoices():
         

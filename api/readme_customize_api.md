@@ -17,7 +17,7 @@ Use standard Flask / SQLAlchemy (background [here](https://docs.sqlalchemy.org/e
 
 ```python
     @app.route('/filters_cats')
-    @admin_required()
+    #@admin_required()
     def filters_cats():
         """
         Illustrates:
