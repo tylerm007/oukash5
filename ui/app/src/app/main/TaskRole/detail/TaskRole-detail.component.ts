@@ -3,11 +3,11 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 
 
 @Component({
-  selector: 'ProcessInstance-detail',
-  templateUrl: './ProcessInstance-detail.component.html',
-  styleUrls: ['./ProcessInstance-detail.component.scss']
+  selector: 'TaskRole-detail',
+  templateUrl: './TaskRole-detail.component.html',
+  styleUrls: ['./TaskRole-detail.component.scss']
 })
-export class ProcessInstanceDetailComponent implements OnInit  {
+export class TaskRoleDetailComponent implements OnInit  {
   protected service: OntimizeService;
 
   @ViewChild('oDetailForm') form: OFormComponent;
@@ -22,7 +22,7 @@ export class ProcessInstanceDetailComponent implements OnInit  {
 
   protected configureService() {
     const conf = this.service.getDefaultServiceConfiguration();
-    conf['path'] = '/ProcessInstance';
+    conf['path'] = '/TaskRole';
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {

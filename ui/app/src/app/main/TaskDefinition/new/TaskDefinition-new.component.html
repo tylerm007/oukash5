@@ -9,26 +9,7 @@ after-insert-mode="new" class="standalone-form-container" >
         <o-text-input #TaskName attr="TaskName" label=" Task Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-list-picker 
-        attr="LaneId"
-        service="LaneDefinition" 
-        entity="LaneDefinitionType"
-        fxFlex="30" 
-        query-on-init="no" 
-        query-on-bind="yes" 
-        required="yes" 
-        enabled="yes" 
-        filter="yes"
-        value-column="LaneId" 
-        value-column-type="INTEGER"  
-        keys="LaneId" 
-        columns="LaneId;LaneId;LaneName" 
-        title="Lane"
-        visible-columns="LaneId;LaneName" 
-        separator=" - " width="680px" class="form-field">
-</o-list-picker>
-      
-        <o-list-picker 
-        attr="ProcessId"
+        attr="ProcessDefinitionId"
         service="ProcessDefinition" 
         entity="ProcessDefinitionType"
         fxFlex="30" 
@@ -40,9 +21,28 @@ after-insert-mode="new" class="standalone-form-container" >
         value-column="ProcessId" 
         value-column-type="INTEGER"  
         keys="ProcessId" 
-        columns="ProcessId;ProcessId;ProcessName" 
-        title="Process"
+        columns="ProcessId;ProcessDefinitionId;ProcessName" 
+        title="ProcessDefinition"
         visible-columns="ProcessId;ProcessName" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="StageDefinitionId"
+        service="StageDefinition" 
+        entity="StageDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="StageId" 
+        value-column-type="INTEGER"  
+        keys="StageId" 
+        columns="StageId;StageDefinitionId;StageName" 
+        title="StageDefinition"
+        visible-columns="StageId;StageName" 
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       

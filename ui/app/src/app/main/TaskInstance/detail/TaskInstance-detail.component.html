@@ -57,7 +57,7 @@
 </o-list-picker>
       
       <o-list-picker 
-        attr="TaskId"
+        attr="TaskDefinitionId"
         service="TaskDefinition" 
         entity="TaskDefinitionType"
         fxFlex="30" 
@@ -69,8 +69,8 @@
         value-column="TaskId" 
         value-column-type="INTEGER"  
         keys="TaskId" 
-        columns="TaskId;TaskId;TaskName" 
-        title="Task"
+        columns="TaskId;TaskDefinitionId;TaskName" 
+        title="TaskDefinition"
         visible-columns="TaskId;TaskName" 
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
@@ -93,22 +93,23 @@
       icon="download_file" color="primary" type="raised"></o-button>
     </div>
   </o-row>
-    <mat-tab-group fxFill>  
+      
+      <mat-tab-group fxFill>
         
-        <mat-tab label="WORKFLOWHISTORY-TaskInstanceId">
+        <mat-tab label="EVENTACTION-TaskInstanceId">
     <div layout-padding>
       <o-table 
-        attr="WorkflowHistoryTable" 
-        service="WorkflowHistory" 
-        entity="WorkflowHistory" 
-        keys="HistoryId"
+        attr="EventActionTable" 
+        service="EventAction" 
+        entity="EventAction" 
+        keys="EventId"
         parent-keys="TaskInstanceId:TaskInstanceId"
-        columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
+        columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved"  
         horizontal-scroll="yes"
-        detail-form-route="WorkflowHistory" 
-        edit-form-route="WorkflowHistory"
-        visible-columns="HistoryId;InstanceId;TaskInstanceId;Action;PreviousStatus;NewStatus;ActionBy;ActionDate;ActionReason;Details"  
-        sort-columns="HistoryId" 
+        detail-form-route="EventAction" 
+        edit-form-route="EventAction"
+        visible-columns="EventId;TaskInstanceId;EventKey;EventStatus;EventType;EventMessage;StartDate;DueDate;ResolvedDate;IsResolved"  
+        sort-columns="EventId" 
         query-rows="25" 
         quick-filter="yes"
         row-height="medium" 
@@ -123,16 +124,7 @@
         edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         
-          <o-table-column #HistoryId attr="HistoryId" title=" History Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="InstanceId" title="Instance">
-    <o-table-cell-renderer-service attr="InstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="TaskInstanceId:InstanceId"
-        value-column="InstanceId" keys="InstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
+          <o-table-column #EventId attr="EventId" title=" Event Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column attr="TaskInstanceId" title="TaskInstance">
     <o-table-cell-renderer-service attr="TaskInstanceId" 
@@ -143,21 +135,26 @@
     </o-table-cell-renderer-service>
 </o-table-column>
         
-          <o-table-column #Action attr="Action" title="Action" editable="no" required="yes" content-align="left"></o-table-column>
+          <o-table-column #EventKey attr="EventKey" title="EventKey" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #PreviousStatus attr="PreviousStatus" title="PreviousStatus" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #EventStatus attr="EventStatus" title="EventStatus" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #NewStatus attr="NewStatus" title="NewStatus" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #EventType attr="EventType" title="EventType" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #ActionBy attr="ActionBy" title="ActionBy" editable="no" required="yes" content-align="left"></o-table-column>
+          <o-table-column #EventMessage attr="EventMessage" title="EventMessage" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column #ActionDate attr="ActionDate" title="ActionDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
+          <o-table-column #StartDate attr="StartDate" title="StartDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-          <o-table-column #ActionReason attr="ActionReason" title="ActionReason" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #DueDate attr="DueDate" title="DueDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
-          <o-table-column #Details attr="Details" title="Details" editable="no" required="no" content-align="left"></o-table-column>
+          <o-table-column #ResolvedDate attr="ResolvedDate" title="ResolvedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+          <o-table-column attr="IsResolved" title="IsResolved">
+    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+</o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

@@ -13,7 +13,21 @@ const routes: Routes = [
         permissionId: 'StageDefinition-detail-permissions'
       }
     }
-  }
+  },{
+    path: ':StageDefinitionId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
+    data: {
+        oPermission: {
+            permissionId: 'StageInstance-detail-permissions'
+        }
+    }
+},{
+    path: ':StageDefinitionId/TaskDefinition', loadChildren: () => import('../TaskDefinition/TaskDefinition.module').then(m => m.TaskDefinitionModule),
+    data: {
+        oPermission: {
+            permissionId: 'TaskDefinition-detail-permissions'
+        }
+    }
+}
 ];
 
 export const STAGEDEFINITION_MODULE_DECLARATIONS = [

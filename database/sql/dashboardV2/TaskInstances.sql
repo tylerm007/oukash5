@@ -46,7 +46,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[StageInstance] ADD  DEFAULT ('NEW') FOR [Status]
+ALTER TABLE [dbo].[StageInstance] ADD  DEFAULT 'NEW' FOR [Status]
 GO
 
 ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([StageDefinitionId])
@@ -82,17 +82,25 @@ CREATE TABLE [dbo].[TaskInstances](
 	[ResultData] [nvarchar](max) NULL,
 	[ErrorMessage] [nvarchar](1000) NULL,
 	[RetryCount] [int] NULL,
+	[ValidFromTime] [datetime2](7) GENERATED ALWAYS AS ROW START NOT NULL,
+	[ValidToTime] [datetime2](7) GENERATED ALWAYS AS ROW END NOT NULL,
+	[CHANGESET_ID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[TaskInstanceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+	PERIOD FOR SYSTEM_TIME ([ValidFromTime], [ValidToTime])
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+WITH
+(
+SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].[TaskInstances_history_temporal])
+)
 GO
 
-ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT ('Pending') FOR [Status]
+ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT 'PENDING' FOR [Status]
 GO
 
-ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT ((0)) FOR [RetryCount]
+ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT 0 FOR [RetryCount]
 GO
 
 ALTER TABLE [dbo].[TaskInstances]  WITH CHECK ADD FOREIGN KEY([StageId])

@@ -44,12 +44,7 @@ export const routes: Routes = [
     
     
         { path: 'ProcessDefinition', loadChildren: () => import('./ProcessDefinition/ProcessDefinition.module').then(m => m.ProcessDefinitionModule) },
-    
-        { path: 'ProcessInstance', loadChildren: () => import('./ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule) },
-    
-        { path: 'ProcessPriority', loadChildren: () => import('./ProcessPriority/ProcessPriority.module').then(m => m.ProcessPriorityModule) },
-    
-        { path: 'ProcessStatus', loadChildren: () => import('./ProcessStatus/ProcessStatus.module').then(m => m.ProcessStatusModule) },
+    	 { path: 'ProcessStatus', loadChildren: () => import('./ProcessStatus/ProcessStatus.module').then(m => m.ProcessStatusModule) },
     
         { path: 'ProducedIn1Tb', loadChildren: () => import('./ProducedIn1Tb/ProducedIn1Tb.module').then(m => m.ProducedIn1TbModule) },
     
@@ -69,6 +64,7 @@ export const routes: Routes = [
     
         { path: 'TaskInstance', loadChildren: () => import('./TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule) },
     
+        { path: 'TaskRole', loadChildren: () => import('./TaskRole/TaskRole.module').then(m => m.TaskRoleModule) },
         { path: 'TaskStatus', loadChildren: () => import('./TaskStatus/TaskStatus.module').then(m => m.TaskStatusModule) },
     
         { path: 'TaskType', loadChildren: () => import('./TaskType/TaskType.module').then(m => m.TaskTypeModule) },
@@ -101,8 +97,7 @@ export const routes: Routes = [
     
         { path: 'WFUser', loadChildren: () => import('./WFUser/WFUser.module').then(m => m.WFUserModule) },
     
-        { path: 'WorkflowHistory', loadChildren: () => import('./WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule) },
-    
+       
     ]
   }
 ];

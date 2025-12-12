@@ -78,13 +78,13 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT ('1.0') FOR [ProcessVersion]
+ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT '1.0' FOR [ProcessVersion]
 GO
 
-ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT ((1)) FOR [IsActive]
+ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT 1 FOR [IsActive]
 GO
 
-ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[ProcessDefinitions] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
 
@@ -104,7 +104,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[StageDefinitions] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[StageDefinitions] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
 
@@ -137,16 +137,16 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT ((0)) FOR [IsParallel]
+ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT 0 FOR [IsParallel]
 GO
 
-ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT ((1)) FOR [IsRequired]
+ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT 1 FOR [IsRequired]
 GO
 
-ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT ((0)) FOR [AutoComplete]
+ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT 0 FOR [AutoComplete]
 GO
 
-ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[TaskDefinitions] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
 ALTER TABLE [dbo].[TaskDefinitions]  WITH CHECK ADD FOREIGN KEY([StageDefinitionId])
@@ -180,7 +180,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[TaskFlow] ADD  DEFAULT ((0)) FOR [IsDefault]
+ALTER TABLE [dbo].[TaskFlow] ADD  DEFAULT 0 FOR [IsDefault]
 GO
 
 ALTER TABLE [dbo].[TaskFlow]  WITH CHECK ADD FOREIGN KEY([FromTaskId])

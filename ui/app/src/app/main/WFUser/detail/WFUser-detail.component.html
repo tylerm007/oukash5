@@ -31,170 +31,6 @@
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ROLEASSIGMENT-Assignee">
-    <div layout-padding>
-      <o-table 
-        attr="RoleAssigmentTable" 
-        service="RoleAssigment" 
-        entity="RoleAssigment" 
-        keys="RoleAssigmentID"
-        parent-keys="Assignee:Username"
-        columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
-        horizontal-scroll="yes"
-        detail-form-route="RoleAssigment" 
-        edit-form-route="RoleAssigment"
-        visible-columns="RoleAssigmentID;ApplicationId;Assignee;Role;CreatedDate;CreatedBy"  
-        sort-columns="RoleAssigmentID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationId" title="Application">
-    <o-table-cell-renderer-service attr="ApplicationId" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="Username:ApplicationId"
-        value-column="ApplicationID" keys="ApplicationId"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Assignee attr="Assignee" title="Assignee" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
-        <mat-tab label="WFAPPLICATIONMESSAGE-FromUser">
-    <div layout-padding>
-      <o-table 
-        attr="WFApplicationMessageTable" 
-        service="WFApplicationMessage" 
-        entity="WFApplicationMessage" 
-        keys="MessageID"
-        parent-keys="FromUser:Username"
-        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
-        horizontal-scroll="yes"
-        detail-form-route="WFApplicationMessage" 
-        edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
-        sort-columns="MessageID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #MessageID attr="MessageID" title=" Message I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="Username:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
-        <mat-tab label="WFAPPLICATIONMESSAGE-ToUser">
-    <div layout-padding>
-      <o-table 
-        attr="WFApplicationMessageTable" 
-        service="WFApplicationMessage" 
-        entity="WFApplicationMessage" 
-        keys="MessageID"
-        parent-keys="ToUser:Username"
-        columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
-        horizontal-scroll="yes"
-        detail-form-route="WFApplicationMessage" 
-        edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;FromUser;Priority;ToUser;MessageText;MessageType;SentDate"  
-        sort-columns="MessageID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #MessageID attr="MessageID" title=" Message I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="Username:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
         <mat-tab label="WFUSERADMIN-AdminUserName">
     <div layout-padding>
       <o-table 
@@ -234,7 +70,7 @@
         
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>
@@ -278,7 +114,7 @@
         
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>
@@ -317,7 +153,7 @@
         
           <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
         
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

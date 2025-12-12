@@ -54,32 +54,38 @@ CREATE TABLE [dbo].[WF_Applications](
 	[Priority] [nvarchar](20) NULL,
 	[CreatedDate] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](100) NOT NULL,
-	[ModifiedDate] [datetime2](7) NULL,
-	[ModifiedBy] [nvarchar](100) NULL,
+	[ValidFromTime] [datetime2](7) GENERATED ALWAYS AS ROW START NOT NULL,
+	[ValidToTime] [datetime2](7) GENERATED ALWAYS AS ROW END NOT NULL,
+	[CHANGESET_ID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[ApplicationID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+	PERIOD FOR SYSTEM_TIME ([ValidFromTime], [ValidToTime])
 UNIQUE NONCLUSTERED 
 (
 	[ApplicationNumber] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+WITH
+(
+SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].[WF_Application_history_temporal])
+)
 GO
 
-ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT (getdate()) FOR [SubmissionDate]
+ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT getdate() FOR [SubmissionDate]
 GO
 
-ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT ('NEW') FOR [Status]
+ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT 'NEW' FOR [Status]
 GO
 
-ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT ('NORMAL') FOR [Priority]
+ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT 'NORMAL' FOR [Priority]
 GO
 
-ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
-ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT ('System') FOR [CreatedBy]
+ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT 'System' FOR [CreatedBy]
 GO
 
 
@@ -130,13 +136,13 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT ((0)) FOR [IsProcessed]
+ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT 0 FOR [IsProcessed]
 GO
 
-ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT (getutcdate()) FOR [CCreatedDate]
+ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT getutcdate() FOR [CCreatedDate]
 GO
 
-ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT ('System') FOR [CreatedBy]
+ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT 'System' FOR [CreatedBy]
 GO
 
 ALTER TABLE [dbo].[WF_Files]  WITH CHECK ADD FOREIGN KEY([ApplicationID])
@@ -184,13 +190,13 @@ UNIQUE NONCLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT ('PEND') FOR [Status]
+ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT 'PEND' FOR [Status]
 GO
 
-ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
-ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT ('System') FOR [CreatedBy]
+ALTER TABLE [dbo].[WF_Quotes] ADD  DEFAULT 'System' FOR [CreatedBy]
 GO
 
 ALTER TABLE [dbo].[WF_Quotes]  WITH CHECK ADD FOREIGN KEY([ApplicationID])
@@ -216,7 +222,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_QuoteItems] ADD  DEFAULT ((1)) FOR [SortOrder]
+ALTER TABLE [dbo].[WF_QuoteItems] ADD  DEFAULT 1 FOR [SortOrder]
 GO
 
 ALTER TABLE [dbo].[WF_QuoteItems]  WITH CHECK ADD FOREIGN KEY([QuoteID])
@@ -243,13 +249,13 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT ('internal') FOR [MessageType]
+ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT 'internal' FOR [MessageType]
 GO
 
-ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT ('NORMAL') FOR [Priority]
+ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT 'NORMAL' FOR [Priority]
 GO
 
-ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT (getdate()) FOR [SentDate]
+ALTER TABLE [dbo].[WF_ApplicationMessages] ADD  DEFAULT getdate() FOR [SentDate]
 GO
 
 ALTER TABLE [dbo].[WF_ApplicationMessages]  WITH CHECK ADD FOREIGN KEY([ApplicationID])
@@ -279,10 +285,10 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[RoleAssigment] ADD  DEFAULT (getutcdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[RoleAssigment] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
-ALTER TABLE [dbo].[RoleAssigment] ADD  DEFAULT ('System') FOR [CreatedBy]
+ALTER TABLE [dbo].[RoleAssigment] ADD  DEFAULT 'System' FOR [CreatedBy]
 GO
 
 ALTER TABLE [dbo].[RoleAssigment]  WITH CHECK ADD FOREIGN KEY([ApplicationId])
@@ -319,16 +325,16 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[EventAction] ADD  DEFAULT ('PENDING') FOR [EventStatus]
+ALTER TABLE [dbo].[EventAction] ADD  DEFAULT 'PENDING' FOR [EventStatus]
 GO
 
-ALTER TABLE [dbo].[EventAction] ADD  DEFAULT ('External') FOR [EventType]
+ALTER TABLE [dbo].[EventAction] ADD  DEFAULT 'External' FOR [EventType]
 GO
 
-ALTER TABLE [dbo].[EventAction] ADD  DEFAULT (getutcdate()) FOR [StartDate]
+ALTER TABLE [dbo].[EventAction] ADD  DEFAULT getutcdate() FOR [StartDate]
 GO
 
-ALTER TABLE [dbo].[EventAction] ADD  DEFAULT ((0)) FOR [IsResolved]
+ALTER TABLE [dbo].[EventAction] ADD  DEFAULT 0 FOR [IsResolved]
 GO
 
 ALTER TABLE [dbo].[EventAction]  WITH CHECK ADD FOREIGN KEY([TaskInstanceId])

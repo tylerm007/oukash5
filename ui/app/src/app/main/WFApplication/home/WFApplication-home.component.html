@@ -6,9 +6,9 @@
             entity="WFApplication" 
             title="WFAPPLICATION"
             keys="ApplicationID"
-            columns="ApplicationID;Priority;Status;ApplicationNumber;SubmissionDate;AssignedTo;AssignedBy;AssignedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;CompanyID;PlantID" 
+            columns="ApplicationID;Priority;Status;ApplicationNumber;SubmissionDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;CompanyID;PlantID" 
             header-actions="R;D"
-            visible-columns="ApplicationID;Priority;Status;ApplicationNumber;SubmissionDate;AssignedTo;AssignedBy;AssignedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;CompanyID;PlantID"  
+            visible-columns="ApplicationID;Priority;Status;ApplicationNumber;SubmissionDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;CompanyID;PlantID"  
             sort-columns="ApplicationID" 
             query-rows="20" 
             quick-filter="yes"
@@ -31,12 +31,6 @@
             <o-table-column #ApplicationNumber attr="ApplicationNumber" title="ApplicationNumber" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
             <o-table-column #SubmissionDate attr="SubmissionDate" title="SubmissionDate" type="DATE" editable="no" required="yes" ></o-table-column>
-            
-            <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #AssignedBy attr="AssignedBy" title="AssignedBy" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #AssignedDate attr="AssignedDate" title="AssignedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
             
             <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
             

@@ -1,5 +1,7 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
+import { EventActionCardComponent } from './EventAction-card/EventAction-card.component';
+
 import { COMPANYADDRESSTBCardComponent } from './COMPANYADDRESSTB-card/COMPANYADDRESSTB-card.component';
 
 import { COMPANYTBCardComponent } from './COMPANYTB-card/COMPANYTB-card.component';
@@ -14,7 +16,7 @@ import { FormulaSubmissionPlantCardComponent } from './FormulaSubmissionPlant-ca
 
 import { LabelTbCardComponent } from './LabelTb-card/LabelTb-card.component';
 
-import { LaneDefinitionCardComponent } from './LaneDefinition-card/LaneDefinition-card.component';
+import { StageDefinitionCardComponent } from './StageDefinition-card/StageDefinition-card.component';
 
 import { MERCHTBCardComponent } from './MERCHTB-card/MERCHTB-card.component';
 
@@ -28,8 +30,6 @@ import { PLANTCOMMENTCardComponent } from './PLANTCOMMENT-card/PLANTCOMMENT-card
 
 import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
 import { ProcessDefinitionCardComponent } from './ProcessDefinition-card/ProcessDefinition-card.component';
-
-import { ProcessInstanceCardComponent } from './ProcessInstance-card/ProcessInstance-card.component';
 
 import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPriority-card.component';
 
@@ -50,6 +50,8 @@ import { TaskDefinitionCardComponent } from './TaskDefinition-card/TaskDefinitio
 import { TaskFlowCardComponent } from './TaskFlow-card/TaskFlow-card.component';
 
 import { TaskInstanceCardComponent } from './TaskInstance-card/TaskInstance-card.component';
+
+import { TaskRoleCardComponent } from './TaskRole-card/TaskRole-card.component';
 
 import { TaskStatusCardComponent } from './TaskStatus-card/TaskStatus-card.component';
 
@@ -84,7 +86,6 @@ import { WFUSERADMINCardComponent } from './WFUSERADMIN-card/WFUSERADMIN-card.co
 import { WFUSERROLECardComponent } from './WFUSERROLE-card/WFUSERROLE-card.component';
 import { WFUserCardComponent } from './WFUser-card/WFUser-card.component';
 
-import { WorkflowHistoryCardComponent } from './WorkflowHistory-card/WorkflowHistory-card.component';
 
 
 export const MENU_CONFIG: MenuRootItem[] = [
@@ -121,7 +122,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
             { id: 'WFApplication', name: 'Application', icon: 'view_list', route: '/main/WFApplication' }
             , { id: 'ProcessDefinition', name: 'Process Definition', icon: 'view_list', route: '/main/ProcessDefinition' }
-            , { id: 'LaneDefinition', name: 'Lane Definition', icon: 'view_list', route: '/main/LaneDefinition' }
+            , { id: 'StageDefinition', name: 'Stage Definition', icon: 'view_list', route: '/main/StageDefinition' }
             , { id: 'TaskDefinition', name: 'Task Definition', icon: 'view_list', route: '/main/TaskDefinition' }
             , { id: 'TaskFlow', name: 'Task Flow', icon: 'view_list', route: '/main/TaskFlow' }
             , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
@@ -131,11 +132,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
     {
         id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
         items: [
-             { id: 'ProcessInstance', name: 'Process Instance', icon: 'view_list', route: '/main/ProcessInstance' }
-            , { id: 'StageInstance', name: 'Stage Instance', icon: 'view_list', route: '/main/StageInstance' }
+             { id: 'StageInstance', name: 'Stage Instance', icon: 'view_list', route: '/main/StageInstance' }
             , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
-            , { id: 'WorkflowHistory', name: 'Workflow History', icon: 'view_list', route: '/main/WorkflowHistory' }            
-         
+          
         ]
     },
     {
@@ -222,8 +221,6 @@ export const MENU_COMPONENTS = [
 
     ,LabelTbCardComponent
 
-    ,LaneDefinitionCardComponent
-
     ,MERCHTBCardComponent
 
     ,OWNSTBCardComponent
@@ -238,7 +235,6 @@ export const MENU_COMPONENTS = [
 
     ,ProcessDefinitionCardComponent
 
-    , ProcessInstanceCardComponent
 
     , ProcessPriorityCardComponent
 
@@ -247,6 +243,8 @@ export const MENU_COMPONENTS = [
     ,ProducedIn1TbCardComponent
 
     ,RoleAssigmentCardComponent
+
+    ,StageDefinitionCardComponent
 
     ,StageInstanceCardComponent
 
@@ -261,7 +259,9 @@ export const MENU_COMPONENTS = [
 
     , TaskInstanceCardComponent
 
-    , TaskStatusCardComponent
+    ,TaskRoleCardComponent
+
+    ,TaskStatusCardComponent
 
     , TaskTypeCardComponent
 
@@ -292,7 +292,5 @@ export const MENU_COMPONENTS = [
     ,WFUSERROLECardComponent
 
     ,WFUserCardComponent
-
-    , WorkflowHistoryCardComponent
 
 ];

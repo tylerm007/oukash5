@@ -14,11 +14,11 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'PLANTCOMMENT': { 'path': '/PLANTCOMMENT' }
 ,'PLANTTB': { 'path': '/PLANTTB' }
 ,'ProcessDefinition': { 'path': '/ProcessDefinition' }
-,'ProcessInstance': { 'path': '/ProcessInstance' }
 ,'ProcessPriority': { 'path': '/ProcessPriority' }
 ,'ProcessStatus': { 'path': '/ProcessStatus' }
 ,'ProducedIn1Tb': { 'path': '/ProducedIn1Tb' }
 ,'RoleAssigment': { 'path': '/RoleAssigment' }
+,'StageDefinition': { 'path': '/StageDefinition' }
 ,'StageInstance': { 'path': '/StageInstance' }
 ,'StageStatus': { 'path': '/StageStatus' }
 ,'TaskCategory': { 'path': '/TaskCategory' }
@@ -27,6 +27,7 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'TaskDefinition': { 'path': '/TaskDefinition' }
 ,'TaskFlow': { 'path': '/TaskFlow' }
 ,'TaskInstance': { 'path': '/TaskInstance' }
+,'TaskRole': { 'path': '/TaskRole' }
 ,'TaskStatus': { 'path': '/TaskStatus' }
 ,'TaskType': { 'path': '/TaskType' }
 ,'USEDIN1TB': { 'path': '/USEDIN1TB' }
@@ -43,5 +44,5 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'WFUSERADMIN': { 'path': '/WFUSERADMIN' }
 ,'WFUSERROLE': { 'path': '/WFUSERROLE' }
 ,'WFUser': { 'path': '/WFUser' }
-,'WorkflowHistory': { 'path': '/WorkflowHistory' }
+,'EventAction': { 'path': '/EventAction' }
  };

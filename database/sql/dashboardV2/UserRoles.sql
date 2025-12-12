@@ -43,10 +43,10 @@ UNIQUE NONCLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_Users] ADD  DEFAULT ((1)) FOR [IsActive]
+ALTER TABLE [dbo].[WF_Users] ADD  DEFAULT 1 FOR [IsActive]
 GO
 
-ALTER TABLE [dbo].[WF_Users] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_Users] ADD  DEFAULT getdate() FOR [CreatedDate]
 GO
 
 
@@ -62,7 +62,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_Roles] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_Roles] ADD  DEFAULT getdate() FOR [CreatedDate]
 GO
 
 
@@ -79,7 +79,7 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_USER_ROLE] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_USER_ROLE] ADD  DEFAULT getdate() FOR [CreatedDate]
 GO
 
 ALTER TABLE [dbo].[WF_USER_ROLE]  WITH CHECK ADD FOREIGN KEY([UserName])
@@ -104,10 +104,10 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[WF_USER_ADMINS] ADD  DEFAULT ((0)) FOR [IsPrimary]
+ALTER TABLE [dbo].[WF_USER_ADMINS] ADD  DEFAULT 0 FOR [IsPrimary]
 GO
 
-ALTER TABLE [dbo].[WF_USER_ADMINS] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+ALTER TABLE [dbo].[WF_USER_ADMINS] ADD  DEFAULT getdate() FOR [CreatedDate]
 GO
 
 ALTER TABLE [dbo].[WF_USER_ADMINS]  WITH CHECK ADD FOREIGN KEY([AdminUserName])

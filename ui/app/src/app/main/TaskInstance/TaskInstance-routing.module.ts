@@ -14,10 +14,10 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':TaskInstanceId/WorkflowHistory', loadChildren: () => import('../WorkflowHistory/WorkflowHistory.module').then(m => m.WorkflowHistoryModule),
+    path: ':TaskInstanceId/EventAction', loadChildren: () => import('../EventAction/EventAction.module').then(m => m.EventActionModule),
     data: {
         oPermission: {
-            permissionId: 'WorkflowHistory-detail-permissions'
+            permissionId: 'EventAction-detail-permissions'
         }
     }
 }

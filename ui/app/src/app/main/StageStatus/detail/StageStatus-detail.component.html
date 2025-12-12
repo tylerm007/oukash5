@@ -31,11 +31,11 @@
         entity="StageInstance" 
         keys="StageInstanceId"
         parent-keys="Status:StatusCode"
-        columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        columns="StageInstanceId;ApplicationId;StageDefinitionId;Status;StartedDate;CompletedDate"  
         horizontal-scroll="yes"
         detail-form-route="StageInstance" 
         edit-form-route="StageInstance"
-        visible-columns="StageInstanceId;LaneId;ProcessInstanceId;Status;StartedDate;CompletedDate;RetryCount;AssignedTo;AssignedBy;AssignedDate;CompletedCount;TotalCount;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
+        visible-columns="StageInstanceId;ApplicationId;StageDefinitionId;Status;StartedDate;CompletedDate"  
         sort-columns="StageInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -53,21 +53,21 @@
         
           <o-table-column #StageInstanceId attr="StageInstanceId" title=" Stage Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-          <o-table-column attr="LaneId" title="Lane">
-    <o-table-cell-renderer-service attr="LaneId" 
-        service="LaneDefinition" entity="LaneDefinitionType" columns="LaneId;LaneName"
-        parent-keys="StatusCode:LaneId"
-        value-column="LaneName" keys="LaneId"
-        visible-columns="LaneName" separator=" - " width="680px">
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="StatusCode:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
         
-          <o-table-column attr="ProcessInstanceId" title="ProcessInstance">
-    <o-table-cell-renderer-service attr="ProcessInstanceId" 
-        service="ProcessInstance" entity="ProcessInstanceType" columns="InstanceId;InstanceId"
-        parent-keys="StatusCode:ProcessInstanceId"
-        value-column="InstanceId" keys="ProcessInstanceId"
-        visible-columns="InstanceId" separator=" - " width="680px">
+          <o-table-column attr="StageDefinitionId" title="StageDefinition">
+    <o-table-cell-renderer-service attr="StageDefinitionId" 
+        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
+        parent-keys="StatusCode:StageDefinitionId"
+        value-column="StageName" keys="StageDefinitionId"
+        visible-columns="StageName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
         
@@ -77,27 +77,7 @@
         
           <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
-          <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #AssignedBy attr="AssignedBy" title="AssignedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #AssignedDate attr="AssignedDate" title="AssignedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #CompletedCount attr="CompletedCount" title="CompletedCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #TotalCount attr="TotalCount" title="TotalCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

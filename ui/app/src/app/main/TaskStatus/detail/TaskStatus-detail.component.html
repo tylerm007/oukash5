@@ -31,11 +31,11 @@
         entity="TaskInstance" 
         keys="TaskInstanceId"
         parent-keys="Status:StatusCode"
-        columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;Result;ResultData;ErrorMessage;RetryCount"  
+        columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
         horizontal-scroll="yes"
         detail-form-route="TaskInstance" 
         edit-form-route="TaskInstance"
-        visible-columns="TaskInstanceId;StageId;Status;TaskId;AssignedTo;StartedDate;CompletedDate;Result;ResultData;ErrorMessage;RetryCount"  
+        visible-columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
         sort-columns="TaskInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -64,11 +64,11 @@
         
           <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
         
-          <o-table-column attr="TaskId" title="Task">
-    <o-table-cell-renderer-service attr="TaskId" 
+          <o-table-column attr="TaskDefinitionId" title="TaskDefinition">
+    <o-table-cell-renderer-service attr="TaskDefinitionId" 
         service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
-        parent-keys="StatusCode:TaskId"
-        value-column="TaskName" keys="TaskId"
+        parent-keys="StatusCode:TaskDefinitionId"
+        value-column="TaskName" keys="TaskDefinitionId"
         visible-columns="TaskName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
@@ -79,6 +79,8 @@
         
           <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
+          <o-table-column #_DurationMinutes attr="_DurationMinutes" title="_DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
           <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no" content-align="left"></o-table-column>
@@ -87,7 +89,7 @@
         
           <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
-        <o-table-paginator page-size-options="75;150;200"></o-table-paginator>
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

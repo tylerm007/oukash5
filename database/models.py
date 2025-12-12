@@ -1466,6 +1466,7 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
         Index('XPK_INVOICE_FEES_DET', 'INVOICE_ID', 'INVOICE_LINE'),
         Index('infd', 'INVOICE_ID', 'PERIOD_START_DATE')
     )
+    __bind_key__ = 'ou'
 
     ID = Column(Integer, primary_key=True)
     INVOICE_ID = Column(Integer, nullable=False)
@@ -1491,3 +1492,32 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
 
     # Parent relationships (access parent)
     #INVOICEFEE = Mapped["INVOICEFEE"] = relationship(back_populates=("INVOICEFEESDETAILList"))
+
+    class USERTABLE(Base):  # type: ignore
+        __tablename__ = 'USER_TABLE'
+        _s_collection_name = 'USERTABLE'  # type: ignore
+        __bind_key__ = 'ou'
+
+        ID = Column(Integer, autoincrement=True, primary_key=True)
+        LOGIN_ID = Column(String(100), nullable=False)
+        USER_FNAME = Column(String(40), nullable=False)
+        USER_TITLE = Column(String(15))
+        USER_LNAME = Column(String(40), nullable=False)
+        GROUP_ID = Column(Integer, nullable=False)
+        PASSWORD = Column(String(8))
+        APPLN_PRIV = Column(String(2), nullable=False)
+        SECURITY_PRIV = Column(String(2), nullable=False)
+        PERSON_ID = Column(Integer)
+        COMMENTS = Column(String(500))
+        ACTIVE = Column(String(1))
+        email = Column(String(50))
+        phone = Column(String(30))
+        OUdirectlogin = Column(String(50))
+        ValidFromTime = Column(DATETIME2, server_default=text("CONVERT([datetime2](7),'1900-01-01 00:00:00')"), nullable=False)
+        ValidToTime = Column(DATETIME2, server_default=text("CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999')"), nullable=False)
+        CHANGESET_ID = Column(Integer, index=True)
+        allow_client_generated_ids = True
+
+        # parent relationships (access parent)
+
+        # child relationships (access children)

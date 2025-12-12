@@ -1,4 +1,4 @@
-<o-form-layout-manager attr="StageDefinition" mode="dialog" title="STAGEDEFINITION">
+<o-form-layout-manager attr="StageDefinition" mode="tab" title="STAGEDEFINITION">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
         <o-table 
             attr="StageDefinitionTable" 
@@ -39,7 +39,7 @@
             <o-table-column #StageId attr="StageId" title="StageId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
             <o-table-context-menu></o-table-context-menu>
-            <o-table-paginator page-size-options="75;125;150"></o-table-paginator>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
         </o-table>
     </div>
 </o-form-layout-manager>

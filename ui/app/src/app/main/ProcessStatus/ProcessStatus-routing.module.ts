@@ -13,14 +13,7 @@ const routes: Routes = [
         permissionId: 'ProcessStatus-detail-permissions'
       }
     }
-  },{
-    path: ':Status/ProcessInstance', loadChildren: () => import('../ProcessInstance/ProcessInstance.module').then(m => m.ProcessInstanceModule),
-    data: {
-        oPermission: {
-            permissionId: 'ProcessInstance-detail-permissions'
-        }
-    }
-}
+  }
 ];
 
 export const PROCESSSTATUS_MODULE_DECLARATIONS = [

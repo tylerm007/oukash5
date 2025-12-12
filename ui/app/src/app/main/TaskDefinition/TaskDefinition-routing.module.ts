@@ -28,7 +28,7 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':TaskId/TaskInstance', loadChildren: () => import('../TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule),
+    path: ':TaskDefinitionId/TaskInstance', loadChildren: () => import('../TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule),
     data: {
         oPermission: {
             permissionId: 'TaskInstance-detail-permissions'

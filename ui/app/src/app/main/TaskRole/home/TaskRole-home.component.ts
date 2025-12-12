@@ -5,11 +5,11 @@ import {OReportModule,OReportStoreService} from 'ontimize-web-ngx-report'
 import { OGridComponent } from 'ontimize-web-ngx';
 
 @Component({
-  selector: 'ProcessInstance-home',
-  templateUrl: './ProcessInstance-home.component.html',
-  styleUrls: ['./ProcessInstance-home.component.scss']
+  selector: 'TaskRole-home',
+  templateUrl: './TaskRole-home.component.html',
+  styleUrls: ['./TaskRole-home.component.scss']
 })
-export class ProcessInstanceHomeComponent implements AfterViewInit {
+export class TaskRoleHomeComponent implements AfterViewInit {
 
   @ViewChild('table', { static: true }) table: OTableComponent;
 

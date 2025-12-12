@@ -71,8 +71,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 stages_json = json.loads(stages)
                 row['stages'] = transform_stage_row(stages_json)
                 #row.pop('process', None)
-            #result = transform_app(row)
-            data.append(row)
+            result = transform_app(row)
+            data.append(result)
         #data = [dict(row) for row in result]
         
         wf_count =session.execute(text(get_total_count()), params).fetchone()[0]
@@ -94,8 +94,8 @@ def transform_app(app) -> dict:
     days_due = 5  #
     row ={
                 #id": app.get("ApplicationID"),
-                "company": app.get("companyName", "Unknown Company"),
-                "plant": app.get("plantName", "Unknown Plant"),
+                "company": app.get("company", "Unknown Company"),
+                "plant": app.get("plant", "Unknown Plant"),
                 "applicationId": app.get("ApplicationID"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
@@ -243,7 +243,6 @@ def _get_pre_script(task) -> str:
             template = Template(script)
             title = task['td'].TaskName if task and task['td'] else "Unknown Task Name"
             description = task['td'].Description if task and task['td'] else " "
-            #application_id = task['Stage']['ProcessInstance']['ApplicationId'] if task and task['Stage'] and task['Stage']['ProcessInstance'] else None
             task_id = task['TaskInstanceId'] if task else None
             script = template.render(
                 Title=title, 
@@ -257,8 +256,8 @@ def _get_pre_script(task) -> str:
 def get_SQL() -> str:
 
     return '''
-        select pl.Name as "plantName", 
-        co.Name as "companyName",
+        select pl.Name as "plant", 
+        co.Name as "company",
         app.ApplicationID as applicationId,
         app.ApplicationNumber,
         app.CreatedDate,

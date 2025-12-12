@@ -14,27 +14,6 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':Assignee/RoleAssigment', loadChildren: () => import('../RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule),
-    data: {
-        oPermission: {
-            permissionId: 'RoleAssigment-detail-permissions'
-        }
-    }
-},{
-    path: ':FromUser/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFApplicationMessage-detail-permissions'
-        }
-    }
-},{
-    path: ':ToUser/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
-    data: {
-        oPermission: {
-            permissionId: 'WFApplicationMessage-detail-permissions'
-        }
-    }
-},{
     path: ':AdminUserName/WFUSERADMIN', loadChildren: () => import('../WFUSERADMIN/WFUSERADMIN.module').then(m => m.WFUSERADMINModule),
     data: {
         oPermission: {

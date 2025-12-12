@@ -130,36 +130,6 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: ProcessName,ProcessVersion,Description,IsActive,CreatedDate,CreatedBy,ModifiedDate,ModifiedBy,ProcessId
             template_name: module.jinja
-          ProcessInstance:
-            icon: edit_square
-            menu_name: ProcessInstance
-            menu_title: ProcessInstance
-            page:
-              detail:
-                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-                include_children: true
-                page_name: detail
-                template_name: detail_template.html
-                title: ProcessInstance
-                typescript_name: detail_component.jinja
-                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-              home:
-                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-                include_children: true
-                page_name: home
-                template_name: home_template.html
-                title: ProcessInstance
-                typescript_name: home_template.jinja
-                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-              new:
-                columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-                include_children: true
-                page_name: new
-                template_name: new_template.html
-                title: ProcessInstance
-                typescript_name: new_component.jinja
-                visible_columns: InstanceId,Priority,Status,StartedDate,StartedBy,CompletedDate,CompletedBy,ContextData,ProcessId,ApplicationId,CurrentTaskId
-            template_name: module.jinja
           ProcessPriority:
             icon: edit_square
             menu_name: ProcessPriority
