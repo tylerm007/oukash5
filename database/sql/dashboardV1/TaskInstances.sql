@@ -1,4 +1,4 @@
-USE [dashboardv1]
+USE [dashboard]
 GO
 
 /****** Object:  Table [dbo].[ProcessInstances]    Script Date: 11/25/2025 3:05:49 PM ******/

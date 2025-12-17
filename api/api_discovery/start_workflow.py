@@ -1,7 +1,7 @@
 from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
 from database import models
-from database.models import ProcessDefinition, TaskDefinition, WFApplication, StageInstance, TaskInstance, StageDefinition
+from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, StageDefinition
 from flask import request, jsonify, session
 import logging
 import safrs
@@ -229,21 +229,10 @@ def create_stage_with_tasks(stage_definition: any, application_id: int, started_
     """
     try:
         app_logger.info(f'🏊 Creating Stage from StageDefinition: {stage_definition["StageName"]}')
-        
-        # Create stage instance
-        stage_instance = StageInstance(
-            ApplicationId=application_id,
-            StageDefinitionId=stage_definition['StageId'],
-            Status='NEW',
-            CreatedBy=started_by
-        )
-        session.add(stage_instance)
-        session.flush()  # Get ID without full commit
-        stage_id = stage_instance.StageInstanceId
-        
+                
         # Get all task definitions for this lane
         task_definitions = cache.get_task_definitions_by_stage(stage_definition['StageId']) #stage_definition['Tasks']
-        
+        stage_id = stage_definition['StageId']
         
         # Batch create task instances and workflow history
         task_instances = []
@@ -257,6 +246,7 @@ def create_stage_with_tasks(stage_definition: any, application_id: int, started_
 
             task_instance = TaskInstance(
                 TaskDefinitionId=task_def['TaskId'],
+                ApplicationId=application_id,
                 StageId=stage_id,
                 Status=status,
                 CreatedDate=datetime.now(),
@@ -392,16 +382,10 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     StageDefinitions = StageDefinition.query.filter_by(ProcessId=process_definition_id).order_by(StageDefinition.StageId).all()
     for stage in StageDefinitions:
             app_logger.info(f'Create Stage from StageDefinition: {stage.StageName}')
-            stage_instance = StageInstance(
-                    ApplicationId=application_id,
-                    StageId=stage.StageId,
-                    Status='NEW',
-                    CreatedBy=started_by
-            )
-            session.add(stage_instance)
-            session.commit()
-            stage_id = stage_instance.StageInstanceId
-            task_definition = TaskDefinition.query.filter_by(LaneId=lane.LaneId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
+            
+            
+            stage_id = stage.StageId
+            task_definition = TaskDefinition.query.filter_by(StageId=stage.StageId).order_by(TaskDefinition.Sequence).all() # LaneId=lane.LaneId
             task_instances = []
             for task_definition in task_definition:
                     app_logger.info(f'Create TaskInstance from TaskDefinition: {task_definition.TaskName}')
@@ -424,8 +408,8 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
         raise Exception(f'Start TaskInstance not found for process: {process_name}')    
     _complete_task(start_instance_id, 'Started', started_by, 'Workflow started', access_token)
 
-    from api.api_discovery.assign_role import add_role_assignment
-    add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+    #from api.api_discovery.assign_role import add_role_assignment
+    #add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
     app_logger.info(f'Start Workflow started by {started_by} for application {application.ApplicationID}')
     return {"application_id": application_id}
 
@@ -631,24 +615,18 @@ def _start_workflow_with_session(thread_session, process_name: str, application_
         
         for stage in stage_definitions:
             app_logger.info(f'Create Stage from StageDefinition: {stage.StageName}')
-            stage_instance = StageInstance(
-                ApplicationId=application_id,
-                StageId=stage.StageId,
-                Status='NEW',
-                CreatedBy=started_by
-            )
-            thread_session.add(stage_instance)
-            thread_session.commit()
+            
             
             # Create task instances for this lane
             task_definitions = thread_session.query(TaskDefinition).filter_by(
-                LaneId=lane.LaneId
+                StageId=stage.StageId
             ).order_by(TaskDefinition.Sequence).all()
             
             for task_def in task_definitions:
                 task_instance = TaskInstance(
                     TaskId=task_def.TaskId,
-                    StageId=stage_instance.StageInstanceId,
+                    ApplicationId=application_id,
+                    StageId=stage.StageId,
                     Status='NEW',
                     CreatedDate=datetime.now(),
                     CreatedBy=started_by,

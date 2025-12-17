@@ -2,7 +2,7 @@
 from flask_jwt_extended import get_jwt, jwt_required
 from api.api_discovery.assign_role import _assign_role   
 import datetime
-from database.models import CompanyApplication, StageInstance, WFApplication, TaskInstance
+from database.models import CompanyApplication, WFApplication, TaskInstance
 import database.models as models
 from flask import request, jsonify
 import logging
@@ -80,7 +80,7 @@ def start_workflow(application_id: int, start_by: str):
     return response['process_instance_id']
 
 def find_all_stages_for_application(application_id):
-    stages = StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageId).all()
+    stages = None #StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageId).all()
     return [stage for stage in stages]
 
 def find_all_pending_tasks(stage_id: int):
@@ -100,7 +100,7 @@ def find_all_pending_tasks(stage_id: int):
     return pending_tasks
 
 def find_lane_end(stage_id: int):
-    stage = session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
+    stage = None # session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
     if not stage:
         app_logger.error(f'StageInstance not found: {stage_id}')
         return 'NONE'
@@ -161,7 +161,7 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
     completed_tasks = []
     for stage in stages_list:
         stage_id = stage.StageInstanceId
-        stage_state = session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
+        stage_state = None # session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
         status = stage_state.Status # "'IN_PROGRESS'"
         name = stage.StageDefinition.StageName if stage.StageDefinition else 'Unknown'
         app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
@@ -221,7 +221,7 @@ def process_all_pending_tasks(stage_id: int, completed_tasks: list):
             complete_task(task_instance)
             completed_tasks.append(task_instance.TaskInstanceId)
             pending_tasks = find_all_pending_tasks(stage_id)
-            app_id = task_instance.Stage.ApplicationId
+            app_id = task_instance.ApplicationId
             status = WFApplication.query.filter_by(ApplicationID=app_id).first().Status
             if status == 'COMPL':
                 app_logger.info(f'Application {app_id} already completed. Skipping stage {stage_id}.')
@@ -265,8 +265,8 @@ def get_start_task(application_id):
     #start_task = session.query(models.TaskDefinition).filter(models.TaskDefinition.ProcessId == process_id, models.TaskDefinition.AssigneeRole == 'SYSTEM').first()
     response = session.execute(text(f"""
         select TaskInstanceId
-            FROM [dashboardV1].[dbo].[TaskInstances] ti,
-            [dashboardV1].[dbo].[TaskDefinitions] td
+            FROM [dashboard].[dbo].[TaskInstances] ti,
+            [dashboard].[dbo].[TaskDefinitions] td
             where ti.TaskId = td.TaskId
             and td.TaskType = 'START'
             and  ti.StageId in (

@@ -83,7 +83,7 @@ class StageDefinition(Base):  # type: ignore
 
     # child relationships (access children)
     TaskDefinitionList : Mapped[List["TaskDefinition"]] = relationship(back_populates="StageDefinition")
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageDefinition")
+    #StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageDefinition")
 
 
 
@@ -98,7 +98,7 @@ class StageStatus(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageStatus")
+    #StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="StageStatus")
 
 
 
@@ -337,7 +337,7 @@ class WFApplication(Base):  # type: ignore
 
     # child relationships (access children)
     RoleAssigmentList : Mapped[List["RoleAssigment"]] = relationship(back_populates="Application")
-    StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Application")
+    #StageInstanceList : Mapped[List["StageInstance"]] = relationship(back_populates="Application")
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="Application")
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
@@ -394,28 +394,6 @@ class RoleAssigment(Base):  # type: ignore
     Application : Mapped["WFApplication"] = relationship(back_populates=("RoleAssigmentList"))
 
     # child relationships (access children)
-
-
-
-class StageInstance(Base):  # type: ignore
-    __tablename__ = 'StageInstance'
-    _s_collection_name = 'StageInstance'  # type: ignore
-
-    StageInstanceId = Column(Integer, autoincrement=True, primary_key=True)
-    ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
-    StageDefinitionId = Column(ForeignKey('StageDefinitions.StageId'), nullable=False)
-    Status = Column(ForeignKey('StageStatus.StatusCode'), server_default=text("NEW"), nullable=False)
-    StartedDate = Column(DATETIME2)
-    CompletedDate = Column(DATETIME2)
-
-    # parent relationships (access parent)
-    Application : Mapped["WFApplication"] = relationship(back_populates=("StageInstanceList"))
-    StageDefinition : Mapped["StageDefinition"] = relationship(back_populates=("StageInstanceList"))
-    StageStatus : Mapped["StageStatus"] = relationship(back_populates=("StageInstanceList"))
-
-    # child relationships (access children)
-    TaskInstanceList : Mapped[List["TaskInstance"]] = relationship(back_populates="Stage")
-
 
 
 class TaskFlow(Base):  # type: ignore
@@ -516,7 +494,8 @@ class TaskInstance(Base):  # type: ignore
 
     TaskInstanceId = Column(Integer, autoincrement=True, primary_key=True)
     TaskDefinitionId = Column(ForeignKey('TaskDefinitions.TaskId'), nullable=False)
-    StageId = Column(ForeignKey('StageInstance.StageInstanceId'), nullable=False)
+    ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
+    StageId = Column(ForeignKey('StageDefinitions.StageId'), nullable=False)
     Status = Column(ForeignKey('TaskStatus.StatusCode'), server_default=text("Pending"), nullable=False)
     AssignedTo = Column(Unicode(100))
     StartedDate = Column(DATETIME2)
@@ -528,7 +507,7 @@ class TaskInstance(Base):  # type: ignore
     RetryCount = Column(Integer, server_default=text("0"))
 
     # parent relationships (access parent)
-    Stage : Mapped["StageInstance"] = relationship(back_populates=("TaskInstanceList"))
+    Stage : Mapped["StageDefinition"] = relationship(foreign_keys=[StageId])
     TaskStatus: Mapped["TaskStatus"] = relationship(back_populates=("TaskInstanceList"))
     TaskDefinition : Mapped["TaskDefinition"] = relationship(back_populates=("TaskInstanceList"))
 
@@ -691,6 +670,7 @@ class COMPANYTB(Base):  # type: ignore
     USEDIN1TBList : Mapped[List["USEDIN1TB"]] = relationship(back_populates="COMPANY_TB")
     LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
     #INVOICEFEEList : Mapped[List["INVOICEFEE"]] = relationship(back_populates="COMPANY_TB")
+    PERSON_JOB_TBList : Mapped[List["PERSONJOBTB"]] = relationship(back_populates="COMPANY_TB") 
     
 class COMPANYADDRESSTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_ADDRESS_TB'
@@ -1521,3 +1501,102 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
         # parent relationships (access parent)
 
         # child relationships (access children)
+    
+    #PERSON_JOB_TB
+class PERSONJOBTB(Base):  # type: ignore
+    __tablename__ = 'PERSON_JOB_TB'
+    _s_collection_name = 'PERSONJOBTB'  # type: ignore
+    __bind_key__ = 'ou'
+
+    PERSON_JOB_ID = Column(Integer, autoincrement=True, primary_key=True)
+    FIRST_NAME = Column(String(50))
+    LAST_NAME = Column(String(50))
+    TITLE = Column(String(50))
+    VOICE = Column(String(50))
+    FAX = Column(String(50))
+    EMAIL = Column(String(100))
+    COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), index=True)
+    ACTIVE = Column(String(1))
+    CREATED_BY = Column(String(100))
+    CREATE_DATE = Column(DATETIME, server_default=text("getdate()"))
+    MODIFIED_BY = Column(String(100))
+    MODIFY_DATE = Column(DATETIME, server_default=text("getdate()"))
+
+    # parent relationships (access parent)
+    COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("PERSON_JOB_TBList"))
+
+    # child relationships (access children)
+    #PERSONTB : Mapped["PERSONTB"] = relationship(back_populates=("PERSON_JOB_TBList"))
+
+class PERSONTB(Base):
+    __tablename__ = 'PERSON_TB'
+    _s_collection_name = 'person_tb'  # type: ignore
+    _bind_key__ = 'ou'
+
+    PERSON_ID = Column(Integer, autoincrement=True, primary_key=True)
+    FIRST = Column(String(100), nullable=True)
+    LAST = Column(String(100), nullable=True)
+    MIDDLE = Column(String(50), nullable=True)
+    PREFIX = Column(String(50), nullable=True)
+    VENDOR_ID = Column(Integer, nullable=True)
+    SUFFIX = Column(String(12), nullable=True)
+    HIRE_DATE = Column(DATETIME, nullable=True)
+    SSN = Column(String(11), nullable=True)
+    TIMESTAMP = Column(String(8), nullable=True)
+    ACTIVE = Column(Integer, nullable=True)
+    SENDTICKETTO = Column(String(255), nullable=True)
+    ACCTS_PAY_NUM = Column(String(30), nullable=True)
+    MaxPay = Column(String(30), nullable=True)
+    MileageRate = Column(String(30), nullable=True)
+    WebAccess = Column(String(5), nullable=True)
+    GroupLeader = Column(String(40), nullable=True)
+    AdministrativeAssistant = Column(Integer, nullable=True)
+    KashLogIn = Column(String(75), nullable=True)
+    IsGroupLeader = Column(String(1), nullable=True)
+    HiddenSSN = Column(String(50), nullable=True)
+    WorkflowEmails = Column(String(1), nullable=True)
+    Password = Column(String(30), nullable=True)
+    PasswordQuestion = Column(String(500), nullable=True)
+    PasswordAnswer = Column(String(500), nullable=True)
+    ValidFromTime = Column(DATETIME2, nullable=False)
+    ValidToTime = Column(DATETIME2, nullable=False)
+    CHANGESET_ID = Column(Integer, nullable=True)
+    IncludeInIngWFAssignmentList = Column(Boolean, nullable=True)
+    TempRfr = Column(Boolean, nullable=False)
+    IsBillForMileageDifferential = Column(Boolean, nullable=False)
+    AllowCopackerManagement = Column(Boolean, nullable=True)
+
+    # Child Re lationships
+    #PERSON_JOB_TBList : Mapped[List["PERSONJOBTB"]] = relationship(back_populates=("PERSONTB"))
+
+
+class vUserRole(Base):
+    __tablename__ = 'UserRoles'
+    _s_collection_name = 'vUserRoles'  # type: ignore
+    __bind_key__ = 'ou'
+    http_methods = ['GET']
+
+    Name = Column(String(100), nullable=False, primary_key=True)
+    PERSON_JOB_ID = Column(Integer, nullable=False)
+    role = Column(String(100), nullable=False)
+
+    #Parent Relationships
+    PERSONJOBTB = relationship("PERSONJOBTB", primaryjoin="foreign(vUserRole.PERSON_JOB_ID)==PERSONJOBTB.PERSON_JOB_ID", viewonly=True)  
+
+class vActiveRFR(Base):
+    __tablename__ = 'ActiveRFR_V1'
+    _s_collection_name = 'vActiveRFR'  # type: ignore
+    __bind_key__ = 'ou'
+    http_methods = ['GET']
+
+    RFR = Column(String(100), nullable=False, primary_key=True)
+    PERSON_JOB_ID = Column(Integer, nullable=False)
+
+class vActiveNCRC(Base):
+    __tablename__ = 'ActiveNCRC_V1'
+    _s_collection_name = 'vActiveNCRC'  # type: ignore
+    __bind_key__ = 'ou'
+    http_methods = ['GET']
+
+    NCRC = Column(String(100), nullable=False, primary_key=True)
+    PERSON_JOB_ID = Column(Integer, nullable=False)

@@ -90,134 +90,140 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
  
 def get_SQL() ->str:
     return '''
-      SELECT  app.ApplicationID as 'appplicationinfo.applicationID',
-              app.CompanyID as 'appplicationinfo.kashrusCompanyId',
-              'UNKNOWN' as 'appplicationinfo.kashrusStatus',
-              app.Status as 'appplicationinfo.status',
-              app.SubmissionDate as 'appplicationinfo.submissionDate',
-      (
-            select *
-            from WF_Quotes  
-            where WF_Quotes.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-      ) as 'appplicationinfo.quotes',
-      (
-            select *
-            from WF_Files
-            where   WF_Files.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-      ) as 'appplicationinfo.files',
-      (
-            select *
-            from WF_ApplicationMessages  
-            where WF_ApplicationMessages.ApplicationID = app.ApplicationID
-            FOR JSON AUTO
-      ) as 'appplicationinfo.messages',
-      (
-            select CATEGORY as category,
-                CASE
-                    WHEN STATUS = 'Certified ' THEN 'Y'
-                    ELSE  'N'
-                END as currentlyCertified,
-                'tbd' as everCertified,
-                NAME as name,
-                'tbd' as website
-            from ou_kash.dbo.COMPANY_TB  
-            where ou_kash.dbo.COMPANY_TB.COMPANY_ID = app.companyId
-            FOR JSON AUTO
-      ) as 'appplicationinfo.company',
-      (
-            select City as city,
-                 COUNTRY as country,
-                 '' as line2,
-                 STATE as state,
-                 STREET1 as street,
-                 TYPE as type,
-                 ZIP as zip
-            from ou_kash.dbo.COMPANY_ADDRESS_TB  
-            where ou_kash.dbo.COMPANY_ADDRESS_TB.COMPANY_ID = app.companyId
-            FOR JSON AUTO
-      ) as 'appplicationinfo.companyAddresses',
-      (
-        SELECT TOP (2000)
-                concat(FirstName, ' ', LastName) as name,
-                EMail as email,
-                Voice as phone,
-                CASE
-                    WHEN PrimaryCT = 'Y' THEN 'Primary Contact'
-                    ELSE  'Not Primary Contact'
-                END as type,
-                companytitle as role
-            FROM [ou_kash].[dbo].[companyContacts]
-            WHERE COMPANY_ID = app.companyId
+        SELECT  app.ApplicationID as 'appplicationinfo.applicationID',
+          app.CompanyID as 'appplicationinfo.kashrusCompanyId',
+          app.PlantID as 'appplicationinfo.PlantId',
+          'UNKNOWN' as 'appplicationinfo.kashrusStatus',
+          app.Status as 'appplicationinfo.status',
+          app.SubmissionDate as 'appplicationinfo.submissionDate',
+        (
+                select * 
+                from WF_Quotes  
+                where WF_Quotes.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
-      ) as 'appplicationinfo.companyContacts',
-      (
-            select NAME as name,
-                    'Unkown' as location
-            from ou_kash.dbo.PLANT_TB  
-            where ou_kash.dbo.PLANT_TB.PLANT_ID = app.PlantID
-            FOR JSON AUTO
-      ) as 'appplicationinfo.plants',
-      (
-             select City as city,
-                 COUNTRY as country,
-                 '' as line2,
-                 STATE as state,
-                 STREET1 as street,
-                 TYPE as type,
-                 ZIP as zip
-            from ou_kash.dbo.PLANT_ADDRESS_TB  
-            where ou_kash.dbo.PLANT_ADDRESS_TB.PLANT_ID = app.PlantID
+        ) as 'appplicationinfo.quotes',
+        (
+                select * 
+                from WF_Files 
+                where   WF_Files.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
-      ) as 'appplicationinfo.plantAddresses',
-      (
-        SELECT TOP (2000)
-                concat(FirstName, ' ', LastName) as name,
-                EMail as email,
-                Voice as phone,
-                CASE
-                    WHEN PrimaryCT = 'Y' THEN 'Primary Contact'
-                    ELSE  'Not Primary Contact'
-                END as type,
-                companytitle as role
-            FROM [ou_kash].[dbo].[PlantContacts]
-                WHERE owns_ID IN
-                (select TOP 3 ID from [ou_kash].[dbo].[OWNS_TB] where COMPANY_ID = app.companyId  and PLANT_Id = app.PlantId
-                )
+        ) as 'appplicationinfo.files',
+        (
+                select * 
+                from WF_ApplicationMessages  
+                where WF_ApplicationMessages.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
-     ) as 'appplicationinfo.plantContacts',
-     (
-         SELECT TOP (2000)
-            [INGREDIENT_NAME] as ingredient
-            ,[MERCHANDISE_ID] as ncrcId
-            ,[BRAND_NAME] as brand
-            ,[SYMBOL] as certification
-            ,[LABEL_COMPANY] as manufacturer
-            ,[BLK] as packaging
-            ,[DateAdded] as addedDate
-            ,[LabelStatus] as status
-            ,[COMPANY_ID] as companyId
-            ,[PLANT_ID] as plantId
-        FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
-                WHERE [COMPANY_ID] = app.CompanyID AND [PLANT_ID] = app.PlantID
-                   FOR JSON AUTO
-     ) as 'appplicationinfo.ingredients',
-     (
-        SELECT TOP (2000)  [PRODUCT_NAME] as labelName,
-            [BRAND_NAME] as brandName,
-            [LABEL_COMPANY] as labelCompany,
-            [INDUSTRIAL] as ConsumerIndustrial,
-            [BLK] as bulkShipped,
-            [Symbol] as certification,
-            [STATUS] as status
-        FROM [ou_kash].[dbo].[PRODUCT_GRID]
-        where [COMPANY_ID] = app.CompanyID and [PLANT_ID] = app.PlantID
+        ) as 'appplicationinfo.messages',
+        (
+                select  CompanyID as companyID,
+                        CATEGORY as category,
+                        CASE
+                            WHEN STATUS = 'Certified ' THEN 'Y'
+                            ELSE  'N'
+                        END as currentlyCertified,
+                        'tbd' as everCertified,
+                        NAME as name,
+                        'tbd' as website
+                from ou_kash.dbo.COMPANY_TB  
+                where ou_kash.dbo.COMPANY_TB.COMPANY_ID = app.companyId
+                FOR JSON AUTO
+        ) as 'appplicationinfo.company',
+        (
+                select City as city,
+                    COUNTRY as country,
+                    '' as line2,
+                    STATE as state,
+                    STREET1 as street,
+                    TYPE as type,
+                    ZIP as zip
+                from ou_kash.dbo.COMPANY_ADDRESS_TB  
+                where ou_kash.dbo.COMPANY_ADDRESS_TB.COMPANY_ID = app.companyId
+                FOR JSON AUTO
+        ) as 'appplicationinfo.companyAddresses',
+        ( 
+            SELECT TOP (2000) 
+                    concat(FirstName, ' ', LastName) as name,
+                    EMail as email,
+                    Voice as phone,
+                    CASE
+                        WHEN PrimaryCT = 'Y' THEN 'Primary Contact'
+                        ELSE  'Not Primary Contact'
+                    END as type,
+                    companytitle as role
+                FROM [ou_kash].[dbo].[companyContacts] 
+                WHERE COMPANY_ID = app.companyId
                     FOR JSON AUTO
-     ) as 'appplicationinfo.products'
-    FROM dashboardV1.[dbo].[WF_Applications] app
-    where app.ApplicationID = :application_id
-    FOR JSON PATH
+        ) as 'appplicationinfo.companyContacts',
+        (
+                select NAME as name,
+                        'Unkown' as location,
+                        PLANT_ID  plantID
+                from ou_kash.dbo.PLANT_TB  
+                where ou_kash.dbo.PLANT_TB.PLANT_ID = app.PlantID
+                FOR JSON AUTO
+        ) as 'appplicationinfo.plants',
+        (
+                select City as city,
+                    COUNTRY as country,
+                    '' as line2,
+                    STATE as state,
+                    STREET1 as street,
+                    TYPE as type,
+                    ZIP as zip
+                from ou_kash.dbo.PLANT_ADDRESS_TB  
+                where ou_kash.dbo.PLANT_ADDRESS_TB.PLANT_ID = app.PlantID
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.plantAddresses',
+        ( 
+            SELECT TOP (2000) 
+                    concat(FirstName, ' ', LastName) as name,
+                    EMail as email,
+                    Voice as phone,
+                    CASE
+                        WHEN PrimaryCT = 'Y' THEN 'Primary Contact'
+                        ELSE  'Not Primary Contact'
+                    END as type,
+                    companytitle as role
+                FROM [ou_kash].[dbo].[PlantContacts]
+                    WHERE owns_ID IN
+                    (select TOP 3 ID from [ou_kash].[dbo].[OWNS_TB] where COMPANY_ID = app.companyId  and PLANT_Id = app.PlantId
+                    )
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.plantContacts',
+        (
+            SELECT TOP (2000) 
+                [INGREDIENT_NAME] as ingredient
+                ,[MERCHANDISE_ID] as ncrcId
+                ,[BRAND_NAME] as brand
+                ,[SYMBOL] as certification
+                ,[LABEL_COMPANY] as manufacturer
+                ,[BLK] as packaging
+                ,[DateAdded] as addedDate
+                ,[LabelStatus] as status
+                ,[COMPANY_ID] as companyId
+                ,[PLANT_ID] as plantId
+            FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
+                    WHERE [COMPANY_ID] = app.CompanyID AND [PLANT_ID] = app.PlantID
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.ingredients', 
+        (
+
+            SELECT TOP (2000)  [PRODUCT_NAME] as labelName,
+                [BRAND_NAME] as brandName,
+                [LABEL_COMPANY] as labelCompany,
+                [INDUSTRIAL] as ConsumerIndustrial,
+                [BLK] as bulkShipped,
+                [Symbol] as certification,
+                [STATUS] as status
+            FROM [ou_kash].[dbo].[PRODUCT_GRID]
+            where [COMPANY_ID] = app.CompanyID and [PLANT_ID] = app.PlantID
+                        FOR JSON AUTO
+        ) as 'appplicationinfo.products'
+        FROM dashboard.[dbo].[WF_Applications] app
+
+        where :application_id = app.ApplicationID
+
+        FOR JSON PATH
     '''
  
 

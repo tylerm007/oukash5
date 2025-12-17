@@ -264,6 +264,6 @@ def get_SQL() ->str:
             )
             FOR JSON AUTO
      ) as contacts
-    FROM dashboardV1.[dbo].[WF_Applications] app
+    FROM dashboard.[dbo].[WF_Applications] app
     where app.ApplicationID = :application_id
     '''

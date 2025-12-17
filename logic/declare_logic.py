@@ -88,95 +88,11 @@ def declare_logic():
     from api.system import api_utils
     # api_utils.rules_report()
 
-    def test_state_change(row: models.TaskInstance, old_row: models.TaskInstance, logic_row:LogicRow):
-        '''
-        Only validate state change (update) if the status is changing using TaskFlow
-        PEND -> NEW
-        NEW -> INP
-        INP -> COMP
-        '''
-        if logic_row.ins_upd_dlt == 'upd' and row.Status != old_row.Status:
-            pass
 
-            next_tasks = row.ToTaskTaskFlowList
-            for task in next_tasks:
-                if task.ToTaskId == row.TaskId and task.Condition in (None, '', '1=1', 'True'):
-                    return
-            pass
-        return True
-    
-    #Rule.constraint(validate=models.TaskInstance,calling=test_state_change,error_msg="TaskInstance Status can only change forward")
-    '''
-    def start_workflow(logic_row: LogicRow):
-        """
-        Start the workflow for a New Application 
-        """
-        if logic_row.ins_upd_dlt != 'ins':
-            return
-        from api.api_discovery.workflow import _start_workflow as start_workflow_function
-        process_name = "Application Workflow"
-        application_id = logic_row.row.ApplicationId
-        started_by = logic_row.row.StartedBy
-        priority = logic_row.row.Priority
-        start_workflow_function(process_name=process_name, application_id=application_id, started_by=started_by, priority=priority)
-        
-        
-    Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
-
-    
- 
-    '''
-    def update_status(row: models.StageInstance, old_row: models.StageInstance , logic_row:LogicRow):
-        """
-        Update the status of the workflow application
-        """
-        if logic_row.ins_upd_dlt != 'upd':
-            return
-        if row.CompletedCount == row.TotalCount:
-            row.status == 'Completed'
-            row.completed_at = datetime.datetime.now()
-        elif row.TotalCount != old_row.TotalCount and row.CompletedCount < row.TotalCount:
-            row.status == 'Running'
-            row.started_at = datetime.datetime.now()
-    
-    #Rule.row_event(on_class=models.StageInstance, calling=update_status)
-    #WF Application Dashboard
-    '''
-    #Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
-    #Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
-    '''
-
-    
-    def start_workflow(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
-        """
-        Start the workflow for a New Application 
-        """
-        if logic_row.ins_upd_dlt != 'ins':
-            return
-        from api.api_discovery.start_workflow import _start_workflow as start_workflow_function
-        process_name = "OU Application Init"
-        application_id = row.ApplicationID        
-        started_by = 'system'
-        priority = "HIGH"
-        headers = {'Content-Type': 'application/json'}
-        from flask import g
-        if "access_token" in g:
-            headers['Authorization'] = f'Bearer {g.access_token}'
-        # Deadlocks
-        #response = requests.post('http://localhost:5656/start_workflow', json={
-        #    'process_name': process_name,
-        #    'application_id': application_id,
-        #    'started_by': started_by,
-        #    'priority': priority
-        #}, headers=headers)
-        # calling start_workflow_function directly inside a flush event did not work
-        #start_workflow_function(process_name=process_name, application_id=application_id, started_by=started_by, priority=priority) 
-    
-    #Rule.after_flush_row_event(on_class=models.WFApplication, calling=start_workflow)
     
     def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:
-        ''' Find the next TaskInstance in the workflow by TaskName
-        '''
+        # Find the next TaskInstance in the workflow by TaskName
+        
         #task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
         if not task_instance:
             return None
@@ -191,12 +107,12 @@ def declare_logic():
         return None
 
     def create_invoice(task_instance: models.TaskInstance) -> bool:
-        ''' Create an EventAction for the given TaskInstanceId and EventKey
-        '''
+        #Create an EventAction for the given TaskInstanceId and EventKey
+
         invoice_fee_task = find_next_task_by_name(task_instance, "Assign Invoice Amount")
         from api.api_discovery.event_action import _create_invoice_fee
         fee =  float(invoice_fee_task.Result) if invoice_fee_task else 0.0
-        application_id = task_instance.Stage.ApplicationId
+        application_id = task_instance.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
         company_id = application.CompanyID
         invoice_fee = _create_invoice_fee(company_id, fee)
@@ -225,11 +141,8 @@ def declare_logic():
             return
         if old_row and row.Status == old_row.Status:
             return  # Status didn't change, nothing to do
-            
-        stage = row.Stage
-        if stage is None:
-            return
-        application_id = stage.ApplicationId
+
+        application_id = row.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
         task_def = row.TaskDefinition
         if task_def.TaskType == 'START':
@@ -237,14 +150,14 @@ def declare_logic():
                 application.Status = 'INP'
                 application.StartedDate = datetime.datetime.now()
                 logic_row.update(reason="update application status to INP", row=application)
-        elif task_def.TaskType in ('STAGESTART'):
-            stage.Status = 'IN_PROGRESS'
-            application.StartedDate = datetime.datetime.now()
-            logic_row.update(reason="update stage status to INP", row=stage)
-        elif task_def.TaskType in ('STAGEEND') and row.Status == 'COMPLETED':
-            stage.Status = 'COMPLETED'
-            stage.CompletedDate = datetime.datetime.now()
-            logic_row.update(reason="update stage status to COMPLETED", row=stage)
+        #elif task_def.TaskType in ('STAGESTART'):
+        #    stage.Status = 'IN_PROGRESS'
+        #    application.StartedDate = datetime.datetime.now()
+        #    logic_row.update(reason="update stage status to INP", row=stage)
+        #elif task_def.TaskType in ('STAGEEND') and row.Status == 'COMPLETED':
+        #    stage.Status = 'COMPLETED'
+        #    stage.CompletedDate = datetime.datetime.now()
+        #    logic_row.update(reason="update stage status to COMPLETED", row=stage)
         elif task_def.TaskType == 'END' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
@@ -271,8 +184,6 @@ def declare_logic():
                 logic_row.update(reason=f"update application status to {application.Status}", row=application)
         
     Rule.commit_row_event(on_class=models.TaskInstance, calling=update_stages)
-    #Rule.count(derive=models.StageInstance.TotalCount, as_count_of=models.TaskInstance)
-    #Rule.count(derive=models.StageInstance.CompletedCount, as_count_of=models.TaskInstance, where="Status" == 'Completed')
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 

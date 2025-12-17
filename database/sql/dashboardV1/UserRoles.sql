@@ -1,4 +1,4 @@
-USE [dashboardv1]
+USE [dashboard]
 GO
 
 /****** Object:  Table [dbo].[WF_Users]    Script Date: 11/25/2025 5:03:54 PM ******/

@@ -1,4 +1,4 @@
-USE [dashboardV1]
+USE [dashboard]
 GO
 
 /****** Object:  Table [dbo].[WF_Applications]    Script Date: 11/25/2025 3:59:22 PM ******/
@@ -54,15 +54,19 @@ CREATE TABLE [dbo].[WF_Applications](
 	[Priority] [nvarchar](20) NULL,
 	[CreatedDate] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](100) NOT NULL,
+	[ModifiedDate] [datetime2](7) NULL,
+	[ModifiedBy] [nvarchar](100) NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[ApplicationID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+
 UNIQUE NONCLUSTERED 
 (
 	[ApplicationNumber] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[WF_Applications] ADD  DEFAULT getdate() FOR [SubmissionDate]
@@ -89,7 +93,7 @@ ALTER TABLE [dbo].[WF_Applications]  WITH CHECK ADD FOREIGN KEY([Status])
 REFERENCES [dbo].[WF_ApplicationStatus] ([StatusCode])
 GO
 
-ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([ApplicationId])
+ALTER TABLE [dbo].[TaskInstances]  WITH CHECK ADD FOREIGN KEY([ApplicationId])
 REFERENCES [dbo].[WF_Applications] ([ApplicationID])
 GO
 

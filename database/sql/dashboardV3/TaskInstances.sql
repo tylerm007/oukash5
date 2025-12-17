@@ -1,4 +1,4 @@
-USE [dashboardV1]
+USE [dashboard]
 GO
 
 /****** Object:  Table [dbo].[ProcessInstances]    Script Date: 11/25/2025 3:05:49 PM ******/
@@ -12,7 +12,7 @@ GO
 IF OBJECT_ID('dbo.WorkflowHistory', 'U') IS NOT NULL DROP TABLE dbo.WorkflowHistory;
 IF OBJECT_ID('dbo.TaskInstances', 'U') IS NOT NULL DROP TABLE dbo.TaskInstances;
 IF OBJECT_ID('dbo.TaskStatus', 'U') IS NOT NULL DROP TABLE dbo.TaskStatus;
-IF OBJECT_ID('dbo.StageInstance', 'U') IS NOT NULL DROP TABLE dbo.StageInstance;
+IF OBJECT_ID('dbo.StageInstance', 'U') IS NOT NULL DROP TABLE dbo.StageInstance; -- REMOVED IN THIS REVISION
 IF OBJECT_ID('dbo.StageStatus', 'U') IS NOT NULL DROP TABLE dbo.StageStatus;
 IF OBJECT_ID('dbo.ProcessInstances', 'U') IS NOT NULL DROP TABLE dbo.ProcessInstances;
 IF OBJECT_ID('dbo.ProcessStatus', 'U') IS NOT NULL DROP TABLE dbo.ProcessStatus;
@@ -31,31 +31,31 @@ PRIMARY KEY CLUSTERED
 GO
 
 -- StageInstance is tied to each Application workflow stage
-CREATE TABLE [dbo].[StageInstance](
-	[StageInstanceId] [int] IDENTITY(1,1) NOT NULL,
-	[ApplicationId] [int] NOT NULL,
-	[StageDefinitionId] [int] NOT NULL,
-	[Status] [nvarchar](20) NOT NULL,
-	[StartedDate] [datetime2](7) NULL,
-	[CompletedDate] [datetime2](7) NULL,
-	
-PRIMARY KEY CLUSTERED 
-(
-	[StageInstanceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
+--CREATE TABLE [dbo].[StageInstance](
+--	[StageInstanceId] [int] IDENTITY(1,1) NOT NULL,
+--	[ApplicationId] [int] NOT NULL,
+--	[StageDefinitionId] [int] NOT NULL,
+--	[Status] [nvarchar](20) NOT NULL,
+--	[StartedDate] [datetime2](7) NULL,
+--	[CompletedDate] [datetime2](7) NULL,
+--	
+--PRIMARY KEY CLUSTERED 
+--(
+--	[StageInstanceId] ASC
+--)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+--) ON [PRIMARY]
+--GO
 
-ALTER TABLE [dbo].[StageInstance] ADD  DEFAULT 'NEW' FOR [Status]
-GO
+--ALTER TABLE [dbo].[StageInstance] ADD  DEFAULT 'NEW' FOR [Status]
+--GO
 
-ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([StageDefinitionId])
-REFERENCES [dbo].[StageDefinitions] ([StageId])
-GO
+--ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([StageDefinitionId])
+--REFERENCES [dbo].[StageDefinitions] ([StageId])
+--GO
 
-ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([Status])
-REFERENCES [dbo].[StageStatus] ([StatusCode])
-GO
+--ALTER TABLE [dbo].[StageInstance]  WITH CHECK ADD FOREIGN KEY([Status])
+--REFERENCES [dbo].[StageStatus] ([StatusCode])
+--GO
 
 
 CREATE TABLE [dbo].[TaskStatus](
@@ -72,29 +72,23 @@ GO
 CREATE TABLE [dbo].[TaskInstances](
 	[TaskInstanceId] [int] IDENTITY(1,1) NOT NULL,
 	[TaskDefinitionId] [int] NOT NULL,
+	[ApplicationId] [int] NOT NULL,
 	[StageId] [int] NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[AssignedTo] [nvarchar](100) NULL,
 	[StartedDate] [datetime2](7) NULL,
 	[CompletedDate] [datetime2](7) NULL,
-	[#DurationMinutes]  AS (datediff(minute,[StartedDate],[CompletedDate])),
+	[DurationMinutes]  AS (datediff(minute,[StartedDate],[CompletedDate])),
 	[Result] [nvarchar](50) NULL,
 	[ResultData] [nvarchar](max) NULL,
 	[ErrorMessage] [nvarchar](1000) NULL,
 	[RetryCount] [int] NULL,
-	[ValidFromTime] [datetime2](7) GENERATED ALWAYS AS ROW START NOT NULL,
-	[ValidToTime] [datetime2](7) GENERATED ALWAYS AS ROW END NOT NULL,
-	[CHANGESET_ID] [int] NULL,
-PRIMARY KEY CLUSTERED 
+	[ModifiedDate][datetime2](7) NULL,
+PRIMARY KEY CLUSTERED
 (
 	[TaskInstanceId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
-	PERIOD FOR SYSTEM_TIME ([ValidFromTime], [ValidToTime])
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-WITH
-(
-SYSTEM_VERSIONING = ON (HISTORY_TABLE = [dbo].[TaskInstances_history_temporal])
-)
 GO
 
 ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT 'PENDING' FOR [Status]
@@ -104,7 +98,7 @@ ALTER TABLE [dbo].[TaskInstances] ADD  DEFAULT 0 FOR [RetryCount]
 GO
 
 ALTER TABLE [dbo].[TaskInstances]  WITH CHECK ADD FOREIGN KEY([StageId])
-REFERENCES [dbo].[StageInstance] ([StageInstanceId])
+REFERENCES [dbo].[StageDefinitions] ([StageId])
 GO
 
 ALTER TABLE [dbo].[TaskInstances]  WITH CHECK ADD FOREIGN KEY([Status])

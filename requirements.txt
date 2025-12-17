@@ -7,3 +7,4 @@ boto3
 PyJWT 
 msal
 schedule>=1.2.0
+pyodbc>=4.0.0

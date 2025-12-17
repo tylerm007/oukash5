@@ -36,13 +36,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         applicationId = args.get('filter[applicationId]', None) or args.get('applicationId', None)
         plantName = args.get('filter[plantName]', None) or args.get('plantName', None)
  
-        params = {"userName": user,'applicationId': applicationId, 'plantName': plantName}
-        #, 'limit': limit, 'offset': offset}
+        # Convert None to proper SQL NULL for pyodbc
+        params = {
+            "username": user,
+            'applicationId': applicationId if applicationId else None,
+            'plantName': plantName if plantName else None
+        }
 
-        app_logger.info(f"Calling dsql with: {params}")
+        app_logger.info(f"Calling dsql with params: {params}")
         try:
             sql = get_SQL()
-            tasks = session.execute(text(sql),params).fetchall()
+            # Execute with plain dict - let SQLAlchemy handle parameter expansion
+            tasks = session.execute(text(sql), params).fetchall()
  
         except Exception as e:
             app_logger.error(f"Error executing dsql: {e}")
@@ -53,12 +58,126 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         for task in tasks:
             task_dict = dict(zip(fields, task))
             result.append(task_dict)
-       
+        #TODO - add StageInstance stuff back in Status, etc.
         return jsonify({"status": "ok", "data": result}), 200
  
- 
-   
     def get_SQL() -> str:
+        return '''
+            SELECT  
+                ap.[ApplicationID] as applicationId,
+                ti.[TaskInstanceId] as taskInstanceId,
+                td.[TaskName] as taskName,
+                td.[Description] as taskDescription,
+                td.[TaskType] as taskType,
+                td.[TaskCategory] as TaskCategory,
+                td.[AssigneeRole] as assigneeRole,
+                ra.Assignee as assignee,
+                ap.CompanyId as companyId,
+                ap.PlantID as plantId,
+                co.NAME as companyName,
+                pl.NAME as plantName,
+                sd.StageName as stageName,
+                ti.[Status] as status,
+                ti.[StartedDate] as startedDate,
+                ti.[CompletedDate] as completedDate,
+                sd.StageId as stageInstanceId,
+                CASE
+                    WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
+                    ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
+                END as daysPending,
+                CASE
+                    WHEN ti.[CompletedDate] is not NULL THEN null 
+                    ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                END as daysOverdue
+
+            FROM TaskInstances ti
+                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
+                INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+                LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
+                LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
+                INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole AND ra.Assignee = :username 
+                and ra.ApplicationId = ap.ApplicationID
+            WHERE 
+                ap.status not in ('COMPL', 'WTH') and
+                -- Required filters
+                ti.status = 'PENDING' AND 
+                (td.AssigneeRole != 'SYSTEM') AND
+                (:applicationId IS NULL OR ap.ApplicationID = :applicationId) AND
+                (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            
+            ORDER BY ap.applicationId, ti.taskInstanceId
+        '''
+    
+    # Removed StageInstance joins from V1
+    def get_SQL_V1() -> str:
+        return '''
+            select pl.Name as "plantName", 
+            co.Name as "companyName",
+            app.ApplicationID,
+            app.ApplicationNumber,
+            app.CreatedDate,
+            app.ModifiedDate,
+            app.Status,
+            app.Priority,
+        (
+                select role, assignee 
+                from RoleAssigment  
+                where RoleAssigment.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as "assignedRoles",
+
+                
+        
+        stages =  ( select  sd.stageName
+                            ,sd.stageId
+                            ,sd.StageDescription
+                            
+                
+                            ,tasks =  ( select 
+                                            ti.TaskInstanceId,
+                                            ti.TaskDefinitionId,
+                                            ti.status,
+                                            ti.AssignedTo,
+                                            ti.StartedDate,
+                                            ti.CompletedDate,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
+                                                                ELSE NULL
+                                            END as daysPending,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
+                                                                    DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                                ELSE NULL
+                                            END as daysOverdue
+                                        from TaskInstances ti
+                                                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            FOR JSON AUTO
+                                    )
+                    from TaskInstances ti 
+                    LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                    LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    group by sd.stageName, sd.stageId, StageDescription
+                    FOR JSON AUTO     
+                    )
+                
+                            
+                FROM WF_Applications  app
+                    LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+                    LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+                
+                WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+                        (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+                
+
+                ORDER BY app.ApplicationID   
+                OFFSET :offset ROWS
+                FETCH NEXT :limit ROWS ONLY;
+        '''
+    # This is for dashboard - removing StageInstance above
+    def get_SQL_V1() -> str:
        return '''
          SELECT  
             ap.[ApplicationID] as applicationId,

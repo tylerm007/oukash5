@@ -21,6 +21,13 @@ const routes: Routes = [
             permissionId: 'RoleAssigment-detail-permissions'
         }
     }
+},{
+    path: ':ApplicationId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
+    data: {
+        oPermission: {
+            permissionId: 'StageInstance-detail-permissions'
+        }
+    }
   },{
     path: ':ApplicationID/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
     data: {

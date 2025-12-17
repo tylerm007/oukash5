@@ -1,7 +1,6 @@
-from flask_jwt_extended import get_jwt, jwt_required
-from api.api_discovery.assign_role import _assign_role   
+from flask_jwt_extended import get_jwt, jwt_required  
 import datetime
-from database.models import WFApplication, StageInstance
+from database.models import WFApplication
 import database.models as models
 from flask import request, jsonify
 import logging
@@ -122,38 +121,33 @@ def start_workflow(application_id: int, start_by: str, access_token: str):
     response = _start_workflow_async(process_name=process_name, application_id=int(application_id), started_by=start_by, priority="NORMAL", access_token=access_token)
     return response
 
-def find_all_stages_for_process(application_id):
-    stages = StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageInstanceId).all()
-    return [stage for stage in stages]
 
 def do_cleanup(application: models.WFApplication):
     application_id = application.ApplicationID
     session.execute(text(f"""
         DELETE FROM EventAction where [TaskInstanceId] IN (
-            SELECT TaskInstanceId FROM TaskInstances where StageId IN ( 
-                SELECT StageInstanceId FROM StageInstance where ApplicationId = {application_id}
-            )
+            SELECT TaskInstanceId FROM TaskInstances where ApplicationId = {application_id}
         );
        
       
     """))
     session.commit()
-    stage_list = find_all_stages_for_process(application_id)
-    for stage in stage_list:
-        session.execute(text(f"""
-            DELETE FROM TaskInstances where StageId = {stage.StageInstanceId};
-        """))
-        session.commit()
-        session.execute(text(f"""
-            DELETE FROM StageInstance where StageInstanceId = {stage.StageInstanceId};
-        """))
-        session.commit()
+
+    session.execute(text(f"""
+        DELETE FROM TaskInstances where ApplicationId = {application_id};
+    """))
+    session.commit()
+       
     session.execute(text(f"""
         DELETE from RoleAssigment where ApplicationId = {application_id};
         DELETE FROM WF_QuoteItems where QuoteID in (select QuoteID from WF_Quotes where ApplicationID = {application_id});
         DELETE FROM WF_Quotes where ApplicationID = {application_id};
         DELETE FROM WF_Files where ApplicationID = {application_id};
-        DELETE FROM WF_Applications where ApplicationID = {application_id};
        
+    """))
+    session.commit()
+
+    session.execute(text(f"""
+         DELETE FROM WF_Applications where ApplicationID = {application_id};
     """))
     session.commit()

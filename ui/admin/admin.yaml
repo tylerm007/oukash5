@@ -112,52 +112,10 @@ resources:
     - direction: tomany
       fks:
       - StageDefinitionId
-      name: StageInstanceList
-      resource: StageInstance
-    - direction: tomany
-      fks:
-      - StageDefinitionId
       name: TaskDefinitionList
       resource: TaskDefinition
     type: StageDefinition
     user_key: StageName
-  StageInstance:
-    attributes:
-    - label: ' Stage Instance Id*'
-      name: StageInstanceId
-      search: true
-      sort: true
-    - name: ApplicationId
-      required: true
-    - name: StageDefinitionId
-      required: true
-    - name: Status
-      required: true
-    - name: StartedDate
-    - name: CompletedDate
-    tab_groups:
-    - direction: tomany
-      fks:
-      - StageId
-      name: TaskInstanceList
-      resource: TaskInstance
-    - direction: toone
-      fks:
-      - ApplicationId
-      name: Application
-      resource: WFApplication
-    - direction: toone
-      fks:
-      - StageDefinitionId
-      name: StageDefinition
-      resource: StageDefinition
-    - direction: toone
-      fks:
-      - Status
-      name: StageStatus
-      resource: StageStatus
-    type: StageInstance
-    user_key: StageInstanceId
   StageStatus:
     attributes:
     - label: ' Status Description*'
@@ -168,27 +126,8 @@ resources:
     - name: StatusCode
       required: true
     tab_groups:
-    - direction: tomany
-      fks:
-      - Status
-      name: StageInstanceList
-      resource: StageInstance
     type: StageStatus
     user_key: StatusDescription
-  Sysdiagram:
-    attributes:
-    - label: ' name*'
-      name: name
-      required: true
-      search: true
-      sort: true
-    - name: version
-    - name: definition
-    - name: principal_id
-      required: true
-    - name: diagram_id
-    type: Sysdiagram
-    user_key: name
   TaskCategory:
     attributes:
     - label: ' Task Category Description*'
@@ -333,12 +272,6 @@ resources:
       - TaskInstanceId
       name: EventActionList
       resource: EventAction
-    - direction: toone
-      fks:
-      - StageId
-      name: Stage
-      resource: StageInstance
-    - direction: toone
       fks:
       - Status
       name: TaskStatus
@@ -423,11 +356,6 @@ resources:
       - ApplicationId
       name: RoleAssigmentList
       resource: RoleAssigment
-    - direction: tomany
-      fks:
-      - ApplicationId
-      name: StageInstanceList
-      resource: StageInstance
     - direction: tomany
       fks:
       - ApplicationID

@@ -138,7 +138,7 @@ class Config:
     # Database
     db_path = str(project_path.joinpath('database/db.sqlite'))
     #SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://sa:Posey3861@localhost:1433/dashboard?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
-    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/dashboardV1?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
     SQLALCHEMY_DATABASE_OU_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
     # override SQLALCHEMY_DATABASE_URI here as required
 
@@ -181,17 +181,6 @@ class Config:
     KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID','alsclient')
     ''' keycloak client id '''
 
-    # OKTA Args
-    # https://apilogicserver.github.io/Docs/Security-Activation/
-    # als add-auth --provider-type=okta --okta-domain=https://ou.okta.com
-    OKTA_DOMAIN = os.getenv('OKTA_DOMAIN', 'https://ou.okta.com')
-    ''' OKTA domain - your organization's OKTA domain '''
-    OKTA_CLIENT_ID = os.getenv('OKTA_CLIENT_ID', 'your-client-id')
-    ''' OKTA OAuth client ID '''
-    OKTA_CLIENT_SECRET = os.getenv('OKTA_CLIENT_SECRET', 'your-client-secret')
-    ''' OKTA OAuth client secret '''
-    OKTA_REDIRECT_URI = os.getenv('OKTA_REDIRECT_URI', 'https://192.68.13.31:5656/auth/callback')
-    ''' OKTA OAuth redirect URI '''
 
     # Amazon Cognito
     # Required Cognito Settings
@@ -211,13 +200,10 @@ class Config:
     if SECURITY_ENABLED:
         from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
-        from security.authentication_provider.okta.auth_provider import Authentication_Provider as OKTA_Authentication_Provider
         from security.authentication_provider.cognito.auth_provider import Authentication_Provider as COGNITO_Authentication_Provider
         # typically, authentication_provider is [ keycloak | okta | cognito | sql ]
         if "keycloak" in str(SECURITY_PROVIDER).lower():
             SECURITY_PROVIDER = KC_Authentication_Provider
-        elif "okta" in str(SECURITY_PROVIDER).lower():
-            SECURITY_PROVIDER = OKTA_Authentication_Provider
         elif "cognito" in str(SECURITY_PROVIDER).lower():
             SECURITY_PROVIDER = COGNITO_Authentication_Provider
         else:
@@ -360,10 +346,6 @@ class Args():
         self.keycloak_realm = Config.KEYCLOAK_REALM
         self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
         self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
-        self.okta_domain = Config.OKTA_DOMAIN
-        self.okta_client_id = Config.OKTA_CLIENT_ID
-        self.okta_client_secret = Config.OKTA_CLIENT_SECRET
-        self.okta_redirect_uri = Config.OKTA_REDIRECT_URI
         self.backtic_as_quote = Config.BACKTIC_AS_QUOTE
         self.service_type = Config.ONTIMIZE_SERVICE_TYPE
         self.wh_scheme = Config.wh_scheme
@@ -758,38 +740,7 @@ class Args():
     def wh_token(self, a: str):
         self.flask_app.config["WH_TOKEN"] = a
         
-    #OKTA Args
 
-    @property
-    def okta_domain(self) -> str:
-        return self.flask_app.config["OKTA_DOMAIN"]
-
-    @okta_domain.setter
-    def okta_domain(self, value: str):
-        self.flask_app.config["OKTA_DOMAIN"] = value
-
-    @property
-    def okta_client_id(self) -> str:
-        return self.flask_app.config["OKTA_CLIENT_ID"]
-
-    @okta_client_id.setter
-    def okta_client_id(self, value: str):
-        self.flask_app.config["OKTA_CLIENT_ID"] = value
-
-    @property
-    def okta_client_secret(self) -> str:
-        return self.flask_app.config["OKTA_CLIENT_SECRET"]
-
-    @okta_client_secret.setter
-    def okta_client_secret(self, value: str):
-        self.flask_app.config["OKTA_CLIENT_SECRET"] = value
-
-    @property
-    def okta_redirect_uri(self) -> str:
-        return self.flask_app.config["OKTA_REDIRECT_URI"]
-    @okta_redirect_uri.setter
-    def okta_redirect_uri(self, value: str):
-        self.flask_app.config["OKTA_REDIRECT_URI"] = value
     # Cognito Args
     @property
     def cognito_region(self) -> str:

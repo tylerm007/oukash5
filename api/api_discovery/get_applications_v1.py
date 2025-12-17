@@ -1,5 +1,4 @@
 from datetime import datetime
-from api.api_discovery.complete_task import get_stage_list
 from database.models import CompanyApplication, StageDefinition
 from flask import app, request, jsonify, session
 import logging
@@ -80,6 +79,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         end_time = time.time()
         processing_time = end_time - start_time
         return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
+
 def transform_app(app) -> dict:
     """
     Transforms an application row dictionary by mapping status codes and processing stages.
@@ -96,7 +96,7 @@ def transform_app(app) -> dict:
                 #id": app.get("ApplicationID"),
                 "company": app.get("company", "Unknown Company"),
                 "plant": app.get("plant", "Unknown Plant"),
-                "applicationId": app.get("ApplicationID"),
+                "applicationId": app.get("applicationId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
                 "daysInProcess": days_between,
@@ -125,11 +125,11 @@ def transform_stage_row(stage_rows: any) -> list:
     result_stages = {}
     task_definitions = cache.get_all_task_definitions()
     for row in stage_rows:
-        stage_def = cache.get_stage_definition(stage_id=row.get('StageDefinitionId'))
+        stage_def = cache.get_stage_definition(stage_id=row.get('stageId'))
         stage_name = getattr(stage_def, 'StageName')
-        
-        stage_tasks = row.get('tasks', [])
         tasks = []
+        stage_tasks = row.get('tasks', [])
+        stage_status = get_stage_status(stage_tasks, task_definitions)
         task_cnt = 0
         completed_cnt = 0
         for task in stage_tasks:
@@ -178,12 +178,40 @@ def transform_stage_row(stage_rows: any) -> list:
             #lane_dict_data = lane.to_dict()
             #lane_name = lane_dict_data["LaneName"]
             result_stages[stage_name] = {
-                "status": row["Status"], 
+                "status": stage_status, 
                 "description": stage_def["StageDescription"],
                 "progress": int(completed_cnt / task_cnt * 100) if task_cnt > 0 and completed_cnt > 0 else 0,
                 "tasks": tasks
             }
     return result_stages
+
+def get_stage_status(tasks: list, task_definitions: dict) -> str:
+    """
+    Determines the overall status of a stage based on its tasks.
+    """
+    if not tasks or len(tasks) == 0:
+        return "NEW"
+    start_completed = False
+    count_tasks = 0
+    count_completed = 0
+    for task in tasks:
+        taskdef_id = task.get('TaskDefinitionId')
+        taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
+        if len(taskdef) == 0:
+            continue
+        count_tasks += 1
+        if task.get('status') in ['PENDING','COMPLETED']: # could we add PENDING as well?? TODO count_pending
+            count_completed += 1
+            #if taskdef and taskdef['TaskType'] in ['START',"STAGESTART"]:
+            #elif taskdef and taskdef['TaskType'] in ['END'"STAGEEND"]:
+            start_completed  = True
+
+    if start_completed:
+        return "IN_PROGRESS"
+    if count_completed == count_tasks and count_tasks > 0:
+        return "COMPLETED"
+    else:
+        return "NEW"
 
 def getStage_dict(stages: list) -> dict:
     """
@@ -256,14 +284,14 @@ def _get_pre_script(task) -> str:
 def get_SQL() -> str:
 
     return '''
-        select pl.Name as "plant", 
-        co.Name as "company",
-        app.ApplicationID as applicationId,
-        app.ApplicationNumber,
-        app.CreatedDate,
-        app.ModifiedDate,
-        app.Status,
-        app.Priority,
+       select pl.Name as "plantName", 
+         co.Name as "companyName",
+         app.ApplicationID as applicationId,
+         app.ApplicationNumber,
+         app.CreatedDate,
+         --app.ModifiedDate,
+         app.Status,
+         app.Priority,
         (
                 select role, assignee 
                 from RoleAssigment  
@@ -271,8 +299,13 @@ def get_SQL() -> str:
                 FOR JSON AUTO
         ) as "assignedRoles",
 
-
-        stages =  ( select  *
+                
+        
+        stages =  ( select  sd.stageName
+                            ,sd.stageId
+                            ,sd.StageDescription
+                            
+                
                             ,tasks =  ( select 
                                             ti.TaskInstanceId,
                                             ti.TaskDefinitionId,
@@ -286,26 +319,35 @@ def get_SQL() -> str:
                                             END as daysPending,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
-                                                                DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                                    DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
                                                                 ELSE NULL
                                             END as daysOverdue
                                         from TaskInstances ti
-                                            INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                                                        where ti.StageId = si.StageInstanceId and  (td.AssigneeRole != 'SYSTEM') 
-                                                        FOR JSON AUTO
+                                                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            FOR JSON AUTO
                                     )
-                    from StageInstance si
-                    where si.ApplicationId = app.ApplicationID 
-                    FOR JSON AUTO        
-                )
-            
+                    from TaskInstances ti 
+                    LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                    LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    group by sd.stageName, sd.stageId, StageDescription
+                    FOR JSON AUTO  
+
+
+
+                    --from StageInstance si            
+                    --where si.ApplicationId = app.ApplicationID 
+                    --                  FOR JSON AUTO        
+                    )
+                
                             
         FROM WF_Applications  app
             LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
-            
+        
         WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
-            (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+                (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
         
 
         ORDER BY app.ApplicationID   

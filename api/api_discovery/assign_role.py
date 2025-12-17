@@ -87,9 +87,10 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
             else:
                 admin_assignee = admin_assignee.AdminUserName
            
-            roles = models.WFUSERROLE.query.filter_by(UserName=assignee).all()
-            for role in roles:
-                add_role_assignment(app_id, role.UserRole, admin_assignee)
+            #roles = models.WFUSERROLE.query.filter_by(UserName=assignee).all()
+            roles = Security.current_user().UserRoleList
+            for this_role in roles:
+                add_role_assignment(app_id, this_role.role_name, admin_assignee)
 
         session.commit()
         _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)

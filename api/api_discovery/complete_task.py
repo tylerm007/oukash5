@@ -10,7 +10,9 @@ from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required
 from security.system.authorization import Security
+from database.cache_service import DatabaseCacheService
 
+cache = DatabaseCacheService.get_instance()
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -161,7 +163,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         
         # TIMING: Get application
         t2 = time.time()
-        application_id = task_instance.Stage.ApplicationId
+        application_id = task_instance.ApplicationId
         application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         timings['query_application'] = time.time() - t2
         
@@ -171,7 +173,8 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
        
         # TIMING: Get stage list
         t3 = time.time()
-        stages_list = get_stage_list(task_instance)
+        #stages_list = get_stage_list(task_instance)
+        stages_list = [StageId for StageId in cache.get_all_stage_definitions()]
         timings['get_stage_list'] = time.time() - t3
         
         app_logger.info(f'[PERF] Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
@@ -185,7 +188,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 prior_task_id = tf.FromTaskId
                 prior_task_instance = TaskInstance.query.filter(
                     TaskInstance.TaskDefinitionId == prior_task_id
-                    ,TaskInstance.StageId.in_(stages_list)
+                    ,TaskInstance.ApplicationId == task_instance.ApplicationId
                 ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task  {task_name} - {task_instance_id}. Prior task {prior_task_instance.TaskDefinition.TaskName}-{prior_task_id} status is not COMPLETED.')
@@ -277,7 +280,6 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         app_logger.info(f'[PERF] Breakdown (own: {own_time:.3f}s) - '
                        f'QueryTask:{timings.get("query_task_instance",0):.3f}s, '
                        f'QueryApp:{timings.get("query_application",0):.3f}s, '
-                       f'StageList:{timings.get("get_stage_list",0):.3f}s, '
                        f'CheckPrior:{timings.get("check_prior_tasks",0):.3f}s, '
                        f'Commit:{timings.get("commit_flush",0):.3f}s, '
                        f'Script:{timings.get("script_engine",0):.3f}s, '
@@ -318,18 +320,6 @@ def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str
                 return False
         return True
 
-def get_stage_list(task_instance: TaskInstance) -> list:
-    '''
-    Get the list of stages for a given task instance.
-    '''
-    stages = []
-    if task_instance is None:
-        return stages
-    
-    stage_instances = task_instance.Stage.Application.StageInstanceList
-    for stage_instance in stage_instances:
-        stages.append(stage_instance.StageInstanceId)
-    return stages
 
 def insert_workflow_history(task_instance: TaskInstance, status: str, result: str, completed_by: str, completion_notes: str, priorStatus: str = None) -> dict:
     '''
@@ -360,6 +350,6 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
     session.commit()
     session.flush()
     '''
-    application_id = task_instance.Stage.ApplicationId
+    application_id = task_instance.ApplicationId
     app_logger.info(f'Inserted workflow message for Application ID: {application_id}')
     
