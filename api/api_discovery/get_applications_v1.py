@@ -57,9 +57,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Concatenate all fragments from the result rows
         #task_definitions = {td.TaskId: td.to_dict() for td in task_defs}
         # Convert tasks to dictionaries and add to result
+        json_data = []
+        for row in results:
+            # Each row is a tuple with one element (the JSON fragment)
+            if row:
+                json_data.append( dict(zip(fields, row)))
         
-        for task in results:
-            row = dict(zip(fields, task))
+        for row in json_data:
             assignedRoles = row.get('assignedRoles')
             if assignedRoles:
                 assigned_roles= json.loads(assignedRoles)
@@ -94,8 +98,8 @@ def transform_app(app) -> dict:
     days_due = 5  #
     row ={
                 #id": app.get("ApplicationID"),
-                "company": app.get("company", "Unknown Company"),
-                "plant": app.get("plant", "Unknown Plant"),
+                "company": app.get("companyName", "Unknown Company"),
+                "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
@@ -210,7 +214,7 @@ def get_stage_status(tasks: list, task_definitions: dict) -> str:
             
 
     if stage_start and not stage_end:
-        status = "IN_PROGRESS"
+        return "IN_PROGRESS"
     if stage_start and stage_end:
         status = "COMPLETED"
     else:
@@ -329,6 +333,7 @@ def get_SQL() -> str:
                                         from TaskInstances ti
                                                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
                                                             where ti.StageId = sd.StageId 
+                                                            and ti.ApplicationId = app.ApplicationID
                                                             -- and  (td.AssigneeRole != 'SYSTEM') 
                                                             FOR JSON AUTO
                                     )

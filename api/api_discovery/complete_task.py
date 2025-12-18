@@ -174,7 +174,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         # TIMING: Get stage list
         t3 = time.time()
         #stages_list = get_stage_list(task_instance)
-        stages_list = [StageId for StageId in cache.get_all_stage_definitions()]
+        #stages_list = [StageId for StageId in cache.get_all_stage_definitions()]
         timings['get_stage_list'] = time.time() - t3
         
         app_logger.info(f'[PERF] Completing TaskInstance: {task_instance_id} - {task_name} Result: {result} Depth: {depth}')
@@ -247,14 +247,14 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         for flow_to in task_flows_to:
             next_task_id = flow_to.ToTaskId
             next_task_instance = TaskInstance.query.filter(TaskInstance.TaskDefinitionId == next_task_id,
-                                                            TaskInstance.StageId.in_(stages_list)).first()
+                                                            TaskInstance.ApplicationId == application_id).first()
             task_def = next_task_instance.TaskDefinition if next_task_instance else None
             condition = flow_to.Condition if task_def else None
             # If this is a condition task, check the result to see if we should proceed
             if condition and result and condition != 'None' and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
-            elif next_task_instance and validate_prior_tasks(task_def, stages_list, result):
+            elif next_task_instance and validate_prior_tasks(task_def, application_id, result):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.AssignedTo = completed_by
                 next_task_instance.StartedDate = datetime.now()
@@ -298,7 +298,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             }
         }), 200
 
-def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str = None) -> bool:
+def validate_prior_tasks(taskDef: TaskDefinition, application_id: int, result: str = None) -> bool:
         '''
         Validate that all prior tasks in the workflow (TaskFlow)are completed before allowing this task to proceed.
         '''
@@ -314,7 +314,7 @@ def validate_prior_tasks(taskDef: TaskDefinition, stages_list: list, result: str
             #    app_logger.info(f"Skipping dependency check for task {taskDef.TaskName} because condition '{condition}' does matches result '{result}'.")
             #    continue  # Skip this dependency as the condition does not match the result
             from_task_instance = TaskInstance.query.filter(TaskInstance.TaskDefinitionId == from_task_def_id, 
-                                                           TaskInstance.StageId.in_(stages_list)).first()
+                                                           TaskInstance.ApplicationId == application_id).first()
             if from_task_instance and from_task_instance.Status != 'COMPLETED':
                 app_logger.info(f"Cannot proceed with task {taskDef.TaskName} because dependency task {from_task_instance.TaskDefinition.TaskName} Status is not set to: COMPLETED.")
                 return False
