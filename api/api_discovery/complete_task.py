@@ -192,7 +192,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 ).first()
                 if prior_task_instance and prior_task_instance.Status != 'COMPLETED':
                     app_logger.error(f'Cannot complete task  {task_name} - {task_instance_id}. Prior task {prior_task_instance.TaskDefinition.TaskName}-{prior_task_id} status is not COMPLETED.')
-                    return jsonify({"status": "error", "message": f"Cannot complete task. Prior task {prior_task_id} is not COMPLETED."}), 400
+                    return jsonify({"status": "error", "message": f"Cannot complete task {task_name} . Prior task {prior_task_id} {prior_task_instance.TaskDefinition.TaskName} is not COMPLETED."}), 400
         timings['check_prior_tasks'] = time.time() - t4
         
         # Complete the task

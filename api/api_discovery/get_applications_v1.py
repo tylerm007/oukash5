@@ -137,6 +137,8 @@ def transform_stage_row(stage_rows: any) -> list:
             taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
             if len(taskdef) == 0:
                 continue
+            if task.get('AssigneeRole') == 'SYSTEM':
+                continue
             #print(taskdef["TaskName"])
             if (taskdef and taskdef['AutoComplete'] == True or
                 taskdef and taskdef['TaskType'] in ['START','END',"STAGESTART",'STAGEEND']):
@@ -189,29 +191,31 @@ def get_stage_status(tasks: list, task_definitions: dict) -> str:
     """
     Determines the overall status of a stage based on its tasks.
     """
+    status = 'NEW'
     if not tasks or len(tasks) == 0:
-        return "NEW"
-    start_completed = False
-    count_tasks = 0
-    count_completed = 0
+        return status
+    stage_start = False
+    stage_end = False
     for task in tasks:
         taskdef_id = task.get('TaskDefinitionId')
         taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
         if len(taskdef) == 0:
             continue
-        count_tasks += 1
-        if task.get('status') in ['PENDING','COMPLETED']: # could we add PENDING as well?? TODO count_pending
-            count_completed += 1
-            #if taskdef and taskdef['TaskType'] in ['START',"STAGESTART"]:
-            #elif taskdef and taskdef['TaskType'] in ['END'"STAGEEND"]:
-            start_completed  = True
+        
+        if task.get('status') in ['COMPLETED']: # could we add PENDING as well?? TODO count_pending            
+            if taskdef and taskdef['TaskType'] in ['START',"STAGESTART"]:
+                stage_start = True
+            elif taskdef and taskdef['TaskType'] in ['END','STAGEEND']:
+                stage_end = True
+            
 
-    if start_completed:
-        return "IN_PROGRESS"
-    if count_completed == count_tasks and count_tasks > 0:
-        return "COMPLETED"
+    if stage_start and not stage_end:
+        status = "IN_PROGRESS"
+    if stage_start and stage_end:
+        status = "COMPLETED"
     else:
-        return "NEW"
+        status = "NEW"
+    return status
 
 def getStage_dict(stages: list) -> dict:
     """
@@ -324,7 +328,8 @@ def get_SQL() -> str:
                                             END as daysOverdue
                                         from TaskInstances ti
                                                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            where ti.StageId = sd.StageId 
+                                                            -- and  (td.AssigneeRole != 'SYSTEM') 
                                                             FOR JSON AUTO
                                     )
                     from TaskInstances ti 
