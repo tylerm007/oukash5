@@ -7,24 +7,42 @@ after-insert-mode="new" class="standalone-form-container" >
   <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
     
         <o-integer-input #TaskInstanceId attr="TaskInstanceId" label=" Task Instance Id" type="integer" editable="no" required="no" ></o-integer-input>
-
       
         <o-list-picker 
-        attr="StageId"
-        service="StageInstance" 
-        entity="StageInstanceType"
+        attr="ApplicationId"
+        service="WFApplication" 
+        entity="WFApplicationType"
         fxFlex="30" 
         query-on-init="no" 
         query-on-bind="yes" 
         required="yes" 
         enabled="yes" 
         filter="yes"
-        value-column="StageInstanceId" 
+        value-column="ApplicationID" 
         value-column-type="INTEGER"  
-        keys="StageInstanceId" 
-        columns="StageInstanceId;StageId;StageInstanceId" 
+        keys="ApplicationID" 
+        columns="ApplicationID;ApplicationId;ApplicationID" 
+        title="Application"
+        visible-columns="ApplicationID;ApplicationID" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="StageId"
+        service="StageDefinition" 
+        entity="StageDefinitionType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="StageId" 
+        value-column-type="INTEGER"  
+        keys="StageId" 
+        columns="StageId;StageId;StageName" 
         title="Stage"
-        visible-columns="StageInstanceId;StageInstanceId" 
+        visible-columns="StageId;StageName" 
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       
@@ -72,6 +90,8 @@ after-insert-mode="new" class="standalone-form-container" >
       
         <o-date-input #CompletedDate attr="CompletedDate" value-type="string" label="CompletedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
+        <o-integer-input #DurationMinutes attr="DurationMinutes" label="DurationMinutes" type="integer" editable="no" required="no" ></o-integer-input>
+      
         <o-text-input #Result attr="Result" label="Result" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
         <o-text-input #ResultData attr="ResultData" label="ResultData" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
@@ -80,7 +100,8 @@ after-insert-mode="new" class="standalone-form-container" >
       
         <o-integer-input #RetryCount attr="RetryCount" label="RetryCount" type="integer" editable="no" required="no" ></o-integer-input>
       
-    
+        <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
 </div>
 </o-row>
 

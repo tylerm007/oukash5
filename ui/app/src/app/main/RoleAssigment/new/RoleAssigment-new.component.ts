@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class RoleAssigmentNewComponent {
   @ViewChild("RoleAssigmentForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'RoleAssigmentID': '0', 'CreatedDate': '(getutcdate())', 'CreatedBy': "('System')"}
+    const default_values = {'CreatedDate': '(getutcdate())', 'CreatedBy': "('System')"}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

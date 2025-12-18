@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class StageDefinitionNewComponent {
   @ViewChild("StageDefinitionForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'CreatedDate': '(getutcdate())', 'StageId': '0'}
+    const default_values = {'CreatedDate': '(getutcdate())'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

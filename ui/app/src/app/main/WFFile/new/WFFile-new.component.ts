@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class WFFileNewComponent {
   @ViewChild("WFFileForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'CCreatedDate': '(getutcdate())', 'CreatedBy': "('System')", 'FileID': '0'}
+    const default_values = {'CCreatedDate': '(getutcdate())', 'CreatedBy': "('System')"}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

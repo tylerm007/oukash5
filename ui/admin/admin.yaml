@@ -1,12 +1,12 @@
 about:
-  date: December 09, 2025 11:25:45
+  date: December 18, 2025 09:14:55
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 27
-  number_tables: 27
+  number_relationships: 25
+  number_tables: 26
 info_toggle_checked: true
 resources:
   EventAction:
@@ -114,6 +114,11 @@ resources:
       - StageDefinitionId
       name: TaskDefinitionList
       resource: TaskDefinition
+    - direction: tomany
+      fks:
+      - StageId
+      name: TaskInstanceList
+      resource: TaskInstance
     type: StageDefinition
     user_key: StageName
   StageStatus:
@@ -125,7 +130,6 @@ resources:
       sort: true
     - name: StatusCode
       required: true
-    tab_groups:
     type: StageStatus
     user_key: StatusDescription
   TaskCategory:
@@ -252,6 +256,8 @@ resources:
       name: TaskInstanceId
       search: true
       sort: true
+    - name: ApplicationId
+      required: true
     - name: StageId
       required: true
     - name: Status
@@ -261,20 +267,32 @@ resources:
     - name: AssignedTo
     - name: StartedDate
     - name: CompletedDate
-    - name: _DurationMinutes
+    - name: DurationMinutes
     - name: Result
     - name: ResultData
     - name: ErrorMessage
     - name: RetryCount
+    - name: ModifiedDate
     tab_groups:
     - direction: tomany
       fks:
       - TaskInstanceId
       name: EventActionList
       resource: EventAction
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: WFApplication
+    - direction: toone
+      fks:
+      - StageId
+      name: Stage
+      resource: StageDefinition
+    - direction: toone
       fks:
       - Status
-      name: TaskStatus
+      name: TaskStatu
       resource: TaskStatus
     - direction: toone
       fks:
@@ -358,6 +376,11 @@ resources:
       resource: RoleAssigment
     - direction: tomany
       fks:
+      - ApplicationId
+      name: TaskInstanceList
+      resource: TaskInstance
+    - direction: tomany
+      fks:
       - ApplicationID
       name: WFApplicationMessageList
       resource: WFApplicationMessage
@@ -379,7 +402,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_ApplicationStatus
+      name: WF_ApplicationStatu
       resource: WFApplicationStatus
     type: WFApplication
     user_key: ApplicationID
@@ -553,7 +576,7 @@ resources:
     - direction: toone
       fks:
       - Status
-      name: WF_QuoteStatus
+      name: WF_QuoteStatu
       resource: WFQuoteStatus
     type: WFQuote
     user_key: QuoteID

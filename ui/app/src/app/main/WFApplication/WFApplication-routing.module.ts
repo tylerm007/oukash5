@@ -22,13 +22,13 @@ const routes: Routes = [
         }
     }
 },{
-    path: ':ApplicationId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
+    path: ':ApplicationId/TaskInstance', loadChildren: () => import('../TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule),
     data: {
         oPermission: {
-            permissionId: 'StageInstance-detail-permissions'
+            permissionId: 'TaskInstance-detail-permissions'
         }
     }
-  },{
+},{
     path: ':ApplicationID/WFApplicationMessage', loadChildren: () => import('../WFApplicationMessage/WFApplicationMessage.module').then(m => m.WFApplicationMessageModule),
     data: {
         oPermission: {
@@ -62,7 +62,7 @@ export const WFAPPLICATION_MODULE_DECLARATIONS = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
-  providers: [
+   providers: [
     // ...existing providers...
     OSnackBarConfig
   ]

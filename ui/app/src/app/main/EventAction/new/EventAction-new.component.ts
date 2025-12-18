@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class EventActionNewComponent {
   @ViewChild("EventActionForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'EventId': '0', 'EventStatus': "('PENDING')", 'EventType': "('External')", 'StartDate': '(getutcdate())'}
+    const default_values = {'EventStatus': "('PENDING')", 'EventType': "('External')", 'StartDate': '(getutcdate())'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

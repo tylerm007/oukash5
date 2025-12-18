@@ -31,15 +31,9 @@ import { PLANTCOMMENTCardComponent } from './PLANTCOMMENT-card/PLANTCOMMENT-card
 import { PLANTTBCardComponent } from './PLANTTB-card/PLANTTB-card.component';
 import { ProcessDefinitionCardComponent } from './ProcessDefinition-card/ProcessDefinition-card.component';
 
-import { ProcessPriorityCardComponent } from './ProcessPriority-card/ProcessPriority-card.component';
-
-import { ProcessStatusCardComponent } from './ProcessStatus-card/ProcessStatus-card.component';
-
 import { ProducedIn1TbCardComponent } from './ProducedIn1Tb-card/ProducedIn1Tb-card.component';
-
 import { RoleAssigmentCardComponent } from './RoleAssigment-card/RoleAssigment-card.component';
 
-import { StageInstanceCardComponent } from './StageInstance-card/StageInstance-card.component';
 
 import { StageStatusCardComponent } from './StageStatus-card/StageStatus-card.component';
 
@@ -132,18 +126,14 @@ export const MENU_CONFIG: MenuRootItem[] = [
     {
         id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
         items: [
-             { id: 'StageInstance', name: 'Stage Instance', icon: 'view_list', route: '/main/StageInstance' }
-            , { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
+             { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
           
         ]
     },
     {
         id: 'lookup', name: ' Lookup Tables', icon: 'remove_red_eye', opened: false,
         items: [
-           { id: 'LaneRole', name: 'Lane Role', icon: 'view_list', route: '/main/LaneRole' }
-            , { id: 'WFApplicationStatus', name: 'Application Status', icon: 'view_list', route: '/main/WFApplicationStatus' }
-           , { id: 'ProcessPriority', name: 'Process Priority', icon: 'view_list', route: '/main/ProcessPriority' }
-            , { id: 'ProcessStatus', name: 'Process Status', icon: 'view_list', route: '/main/ProcessStatus' }
+            { id: 'WFApplicationStatus', name: 'Application Status', icon: 'view_list', route: '/main/WFApplicationStatus' }
             , { id: 'TaskStatus', name: 'Task Status', icon: 'view_list', route: '/main/TaskStatus' }
             , { id: 'TaskType', name: 'Task Type', icon: 'view_list', route: '/main/TaskType' }
             , { id: 'StageStatus', name: 'Stage Status', icon: 'view_list', route: '/main/StageStatus' }
@@ -235,18 +225,12 @@ export const MENU_COMPONENTS = [
 
     ,ProcessDefinitionCardComponent
 
-
-    , ProcessPriorityCardComponent
-
-    , ProcessStatusCardComponent
-
     ,ProducedIn1TbCardComponent
-
     ,RoleAssigmentCardComponent
 
     ,StageDefinitionCardComponent
 
-    ,StageInstanceCardComponent
+
 
     , StageStatusCardComponent
 

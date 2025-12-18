@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class WFQuoteItemNewComponent {
   @ViewChild("WFQuoteItemForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'SortOrder': '((1))', 'QuoteItemID': '0'}
+    const default_values = {'SortOrder': '((1))'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

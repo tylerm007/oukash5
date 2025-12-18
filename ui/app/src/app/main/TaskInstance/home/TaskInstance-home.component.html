@@ -1,66 +1,61 @@
 <o-form-layout-manager attr="TaskInstance" mode="tab" title="TASKINSTANCE">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
-        <o-table 
-            attr="TaskInstanceTable" 
-            service="TaskInstance" 
-            entity="TaskInstance" 
-            title="TASKINSTANCE"
+        <o-table attr="TaskInstanceTable" service="TaskInstance" entity="TaskInstance" title="TASKINSTANCE"
             keys="TaskInstanceId"
-            columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount" 
+            columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"
             header-actions="R;D"
-            visible-columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
-            sort-columns="TaskInstanceId" 
-            query-rows="20" 
-            quick-filter="yes"
-            row-height="medium" 
-            select-all-checkbox="true" 
-            pageable="yes"  
-            auto-adjust="true" 
-            virtual-scroll="yes" 
-            edition-mode="dblclick"
-            horizontal-scroll="yes"
-            show-title="yes"
-            export-button="yes">
-            
-            <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            
-            <o-table-column attr="StageId" title="Stage">
-            <!-- o-table-cell-renderer-service attr="StageId" 
-                service="StageInstance" entity="StageInstanceType" columns="StageId;StageInstanceId"
-                parent-keys="TaskInstanceId:StageId"
-                value-column="StageId" keys="StageId"
-                visible-columns="StageInstanceId" separator=" - " width="680px">
-            </o-table-cell-renderer-service -->
-            </o-table-column>
-                    
-            <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
-            
-            <o-table-column attr="TaskDefinitionId" title="TaskDefinition">
-    <!-- o-table-cell-renderer-service attr="TaskDefinitionId" 
-        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
-        parent-keys="TaskInstanceId:TaskDefinitionId"
-        value-column="TaskName" keys="TaskDefinitionId"
-        visible-columns="TaskName" separator=" - " width="680px">
-    </o-table-cell-renderer-service -->
-</o-table-column>
-            
-            <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-            
-            <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-            
-            <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            visible-columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"
+            sort-columns="TaskInstanceId" query-rows="20" quick-filter="yes" row-height="medium"
+            select-all-checkbox="true" pageable="yes" auto-adjust="true" virtual-scroll="yes" edition-mode="dblclick"
+            horizontal-scroll="yes" show-title="yes" export-button="yes">
+
+            <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no"
+                required="no" content-align="center"></o-table-column>
+
+            <o-table-column attr="ApplicationId" title="Application">
     
+            </o-table-column>
+
+            <o-table-column attr="StageId" title="Stage">
+                
+            </o-table-column>
+
+            <o-table-column #Status attr="Status" title="Status" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="TaskDefinitionId" title="TaskDefinition">
+            
+            </o-table-column>
+
+            <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
+            <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
+            <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer" editable="no"
+                required="no" content-align="center"></o-table-column>
+
+            <o-table-column #Result attr="Result" title="Result" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no"
+                content-align="center"></o-table-column>
+
+            <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
             <o-table-context-menu></o-table-context-menu>
-            <o-table-paginator page-size-options="75;125;150"></o-table-paginator>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
         </o-table>
     </div>
 </o-form-layout-manager>

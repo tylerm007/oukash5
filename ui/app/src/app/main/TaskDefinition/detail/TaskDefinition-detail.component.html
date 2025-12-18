@@ -253,11 +253,11 @@
         entity="TaskInstance" 
         keys="TaskInstanceId"
         parent-keys="TaskDefinitionId:TaskId"
-        columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
+        columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"  
         horizontal-scroll="yes"
         detail-form-route="TaskInstance" 
         edit-form-route="TaskInstance"
-        visible-columns="TaskInstanceId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;_DurationMinutes;Result;ResultData;ErrorMessage;RetryCount"  
+        visible-columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"  
         sort-columns="TaskInstanceId" 
         query-rows="25" 
         quick-filter="yes"
@@ -275,12 +275,21 @@
         
           <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
+          <o-table-column attr="ApplicationId" title="Application">
+    <o-table-cell-renderer-service attr="ApplicationId" 
+        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
+        parent-keys="TaskId:ApplicationId"
+        value-column="ApplicationID" keys="ApplicationId"
+        visible-columns="ApplicationID" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
           <o-table-column attr="StageId" title="Stage">
     <o-table-cell-renderer-service attr="StageId" 
-        service="StageInstance" entity="StageInstanceType" columns="StageInstanceId;StageInstanceId"
+        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
         parent-keys="TaskId:StageId"
-        value-column="StageInstanceId" keys="StageId"
-        visible-columns="StageInstanceId" separator=" - " width="680px">
+        value-column="StageName" keys="StageId"
+        visible-columns="StageName" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
         
@@ -301,7 +310,7 @@
         
           <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
-          <o-table-column #_DurationMinutes attr="_DurationMinutes" title="_DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
         
           <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
         
@@ -310,6 +319,8 @@
           <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
         
           <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

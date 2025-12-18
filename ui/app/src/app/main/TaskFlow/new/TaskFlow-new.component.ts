@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class TaskFlowNewComponent {
   @ViewChild("TaskFlowForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'FlowId': '0'}
+    const default_values = {}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

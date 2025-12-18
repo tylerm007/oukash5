@@ -13,14 +13,7 @@ const routes: Routes = [
         permissionId: 'StageStatus-detail-permissions'
       }
     }
-  },{
-    path: ':Status/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
-    data: {
-        oPermission: {
-            permissionId: 'StageInstance-detail-permissions'
-        }
-    }
-}
+  }
 ];
 
 export const STAGESTATUS_MODULE_DECLARATIONS = [

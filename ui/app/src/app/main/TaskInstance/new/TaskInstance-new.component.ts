@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class TaskInstanceNewComponent {
   @ViewChild("TaskInstanceForm") form: OFormComponent;
   onInsertMode() {
-    const default_values = {'TaskInstanceId': '0', 'Status': "('Pending')", 'RetryCount': '((0))'}
+    const default_values = {'Status': "('PENDING')", 'RetryCount': '((0))'}
     this.form.setFieldValues(default_values);
   }
   constructor(protected injector: Injector) {

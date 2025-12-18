@@ -29,7 +29,6 @@ export const routes: Routes = [
     
         { path: 'LaneDefinition', loadChildren: () => import('./LaneDefinition/LaneDefinition.module').then(m => m.LaneDefinitionModule) },
     
-        { path: 'LaneRole', loadChildren: () => import('./LaneRole/LaneRole.module').then(m => m.LaneRoleModule) },
         { path: 'MERCHTB', loadChildren: () => import('./MERCHTB/MERCHTB.module').then(m => m.MERCHTBModule) },
     
         { path: 'OWNSTB', loadChildren: () => import('./OWNSTB/OWNSTB.module').then(m => m.OWNSTBModule) },
@@ -44,15 +43,12 @@ export const routes: Routes = [
     
     
         { path: 'ProcessDefinition', loadChildren: () => import('./ProcessDefinition/ProcessDefinition.module').then(m => m.ProcessDefinitionModule) },
-    	 { path: 'ProcessStatus', loadChildren: () => import('./ProcessStatus/ProcessStatus.module').then(m => m.ProcessStatusModule) },
-    
+    	
         { path: 'ProducedIn1Tb', loadChildren: () => import('./ProducedIn1Tb/ProducedIn1Tb.module').then(m => m.ProducedIn1TbModule) },
     
         { path: 'RoleAssigment', loadChildren: () => import('./RoleAssigment/RoleAssigment.module').then(m => m.RoleAssigmentModule) },
     
         { path: 'StageDefinition', loadChildren: () => import('./StageDefinition/StageDefinition.module').then(m => m.StageDefinitionModule) },
-    
-        { path: 'StageInstance', loadChildren: () => import('./StageInstance/StageInstance.module').then(m => m.StageInstanceModule) },
     
         { path: 'StageStatus', loadChildren: () => import('./StageStatus/StageStatus.module').then(m => m.StageStatusModule) },
     

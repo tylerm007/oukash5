@@ -14,17 +14,17 @@ const routes: Routes = [
       }
     }
   },{
-    path: ':StageDefinitionId/StageInstance', loadChildren: () => import('../StageInstance/StageInstance.module').then(m => m.StageInstanceModule),
-    data: {
-        oPermission: {
-            permissionId: 'StageInstance-detail-permissions'
-        }
-    }
-},{
     path: ':StageDefinitionId/TaskDefinition', loadChildren: () => import('../TaskDefinition/TaskDefinition.module').then(m => m.TaskDefinitionModule),
     data: {
         oPermission: {
             permissionId: 'TaskDefinition-detail-permissions'
+        }
+    }
+},{
+    path: ':StageId/TaskInstance', loadChildren: () => import('../TaskInstance/TaskInstance.module').then(m => m.TaskInstanceModule),
+    data: {
+        oPermission: {
+            permissionId: 'TaskInstance-detail-permissions'
         }
     }
 }

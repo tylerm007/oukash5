@@ -18,16 +18,18 @@ Table EventAction {
 Table TaskInstance {
     TaskInstanceId INTEGER [primary key]
     TaskDefinitionId INTEGER 
+    ApplicationId INTEGER 
     StageId INTEGER 
     Status VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     AssignedTo VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     StartedDate DATETIME2 
     CompletedDate DATETIME2 
-    _DurationMinutes INTEGER 
+    DurationMinutes INTEGER 
     Result VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ResultData VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     RetryCount INTEGER 
+    ModifiedDate DATETIME2 
     }
 
 Table ProcessDefinition {
@@ -74,15 +76,6 @@ Table StageDefinition {
     CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    }
-
-Table StageInstance {
-    StageInstanceId INTEGER [primary key]
-    ApplicationId INTEGER 
-    StageDefinitionId INTEGER 
-    Status VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    StartedDate DATETIME2 
-    CompletedDate DATETIME2 
     }
 
 Table StageStatus {
@@ -250,30 +243,28 @@ Table WFUSERROLE {
 
 
 // Relationships
-    Ref: EventAction.(TaskInstanceId) < TaskInstance.(TaskInstanceId)
-    Ref: TaskInstance.(StageId) < StageInstance.(StageInstanceId)
-    Ref: TaskInstance.(Status) < TaskStatus.(StatusCode)
-    Ref: TaskInstance.(TaskDefinitionId) < TaskDefinition.(TaskId)
-    Ref: RoleAssigment.(ApplicationId) < WFApplication.(ApplicationID)
-    Ref: WFApplication.(Priority) < WFPriority.(PriorityCode)
-    Ref: WFApplication.(Status) < WFApplicationStatus.(StatusCode)
-    Ref: StageInstance.(ApplicationId) < WFApplication.(ApplicationID)
-    Ref: StageInstance.(StageDefinitionId) < StageDefinition.(StageId)
-    Ref: StageInstance.(Status) < StageStatus.(StatusCode)
-    Ref: TaskDefinition.(ProcessDefinitionId) < ProcessDefinition.(ProcessId)
-    Ref: TaskDefinition.(StageDefinitionId) < StageDefinition.(StageId)
-    Ref: TaskDefinition.(TaskCategory) < TaskCategory.(TaskCategoryCode)
-    Ref: TaskDefinition.(TaskType) < TaskType.(TaskTypeCode)
-    Ref: TaskFlow.(FromTaskId) < TaskDefinition.(TaskId)
-    Ref: TaskFlow.(ToTaskId) < TaskDefinition.(TaskId)
-    Ref: WFApplicationMessage.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFApplicationMessage.(Priority) < WFPriority.(PriorityCode)
-    Ref: WFFile.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFFile.(FileType) < WFFileType.(FileType)
-    Ref: WFQuote.(ApplicationID) < WFApplication.(ApplicationID)
-    Ref: WFQuote.(Status) < WFQuoteStatus.(StatusCode)
-    Ref: WFQuoteItem.(QuoteID) < WFQuote.(QuoteID)
-    Ref: WFUSERADMIN.(AdminUserName) < WFUser.(Username)
-    Ref: WFUSERADMIN.(UserName) < WFUser.(Username)
-    Ref: WFUSERROLE.(UserName) < WFUser.(Username)
-    Ref: WFUSERROLE.(UserRole) < WFRole.(UserRole)
+    Ref: EventAction.(TaskInstanceId) > TaskInstance.(TaskInstanceId)
+    Ref: TaskInstance.(ApplicationId) > WFApplication.(ApplicationID)
+    Ref: TaskInstance.(StageId) > StageDefinition.(StageId)
+    Ref: TaskInstance.(Status) > TaskStatus.(StatusCode)
+    Ref: TaskInstance.(TaskDefinitionId) > TaskDefinition.(TaskId)
+    Ref: RoleAssigment.(ApplicationId) > WFApplication.(ApplicationID)
+    Ref: WFApplication.(Priority) > WFPriority.(PriorityCode)
+    Ref: WFApplication.(Status) > WFApplicationStatus.(StatusCode)
+    Ref: TaskDefinition.(ProcessDefinitionId) > ProcessDefinition.(ProcessId)
+    Ref: TaskDefinition.(StageDefinitionId) > StageDefinition.(StageId)
+    Ref: TaskDefinition.(TaskCategory) > TaskCategory.(TaskCategoryCode)
+    Ref: TaskDefinition.(TaskType) > TaskType.(TaskTypeCode)
+    Ref: TaskFlow.(FromTaskId) > TaskDefinition.(TaskId)
+    Ref: TaskFlow.(ToTaskId) > TaskDefinition.(TaskId)
+    Ref: WFApplicationMessage.(ApplicationID) > WFApplication.(ApplicationID)
+    Ref: WFApplicationMessage.(Priority) > WFPriority.(PriorityCode)
+    Ref: WFFile.(ApplicationID) > WFApplication.(ApplicationID)
+    Ref: WFFile.(FileType) > WFFileType.(FileType)
+    Ref: WFQuote.(ApplicationID) > WFApplication.(ApplicationID)
+    Ref: WFQuote.(Status) > WFQuoteStatus.(StatusCode)
+    Ref: WFQuoteItem.(QuoteID) > WFQuote.(QuoteID)
+    Ref: WFUSERADMIN.(AdminUserName) > WFUser.(Username)
+    Ref: WFUSERADMIN.(UserName) > WFUser.(Username)
+    Ref: WFUSERROLE.(UserName) > WFUser.(Username)
+    Ref: WFUSERROLE.(UserRole) > WFRole.(UserRole)

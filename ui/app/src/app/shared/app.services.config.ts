@@ -5,7 +5,6 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'FormulaSubmissionComponent': { 'path': '/FormulaSubmissionComponent' }
 ,'FormulaSubmissionPlant': { 'path': '/FormulaSubmissionPlant' }
 ,'LabelTb': { 'path': '/LabelTb' }
-,'LaneRole': { 'path': '/LaneRole' }
 ,'LaneDefinition': { 'path': '/LaneDefinition' }
 ,'MERCHTB': { 'path': '/MERCHTB' }
 ,'OWNSTB': { 'path': '/OWNSTB' }
@@ -14,12 +13,10 @@ export const SERVICE_CONFIG ={ 'COMPANYADDRESSTB': { 'path': '/COMPANYADDRESSTB'
 ,'PLANTCOMMENT': { 'path': '/PLANTCOMMENT' }
 ,'PLANTTB': { 'path': '/PLANTTB' }
 ,'ProcessDefinition': { 'path': '/ProcessDefinition' }
-,'ProcessPriority': { 'path': '/ProcessPriority' }
-,'ProcessStatus': { 'path': '/ProcessStatus' }
 ,'ProducedIn1Tb': { 'path': '/ProducedIn1Tb' }
 ,'RoleAssigment': { 'path': '/RoleAssigment' }
 ,'StageDefinition': { 'path': '/StageDefinition' }
-,'StageInstance': { 'path': '/StageInstance' }
+
 ,'StageStatus': { 'path': '/StageStatus' }
 ,'TaskCategory': { 'path': '/TaskCategory' }
 ,'TaskComment': { 'path': '/TaskComment' }
