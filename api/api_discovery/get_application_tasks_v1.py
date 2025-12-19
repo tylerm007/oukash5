@@ -24,7 +24,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
  
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
-        from database.models import WFUser
         data = request.args if request.args else {}
         user = Security.current_user().Username
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")

@@ -81,13 +81,12 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
         
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
-            admin_assignee = models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+            admin_assignee = None # models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
             if admin_assignee is None:
                 admin_assignee = assignee 
             else:
                 admin_assignee = admin_assignee.AdminUserName
            
-            #roles = models.WFUSERROLE.query.filter_by(UserName=assignee).all()
             roles = Security.current_user().UserRoleList
             for this_role in roles:
                 add_role_assignment(app_id, this_role.role_name, admin_assignee)

@@ -26,8 +26,7 @@ import hmac
 import hashlib
 import urllib.parse
 import ssl
-
-from database.models import WFUser, WFUSERROLE
+from database.models import vUserRole
 import threading
 
 # **********************
@@ -427,27 +426,23 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 claims = Authentication_Provider.get_claims_from_token(id_token)
                 if not claims:
                     return jsonify({'error': 'Invalid ID token'}), 400
-                wfuser = WFUser.query.filter(WFUser.Email == claims['email']).first()
-                if wfuser and wfuser.IsActive == False:
-                    return jsonify({'error': 'User account is inactive'}), 403
-                user_id = wfuser.Username if wfuser else "unknown"
-                claims["user_id"] = user_id
+                
+                
                 # Find or create user in database
                 user = Authentication_Provider.get_or_create_user_from_claims(claims)
                 if not user:
                     return jsonify({'error': 'User creation failed'}), 400
-                user_roles = [] # ['DISPATCHER']  # Default role
-                if wfuser:
-                    user_roles = [role.UserRole for role in wfuser.WFUSERROLEList]
+                claims["user_id"] = user.Name
+                roles = user.UserRoleList
                 # Store user info in session
                 
-                session['user_id'] = user_id
+                session['user_id'] = user.Name
                 session['user_email'] = claims['email']
-                session['user_roles'] = user_roles
+                session['user_roles'] = roles
                 session['authenticated'] = True
                 session['access_token'] = tokens.get('access_token')
                 session['id_token'] = id_token
-                user['user_id'] = user_id
+                user['user_id'] = user.Name
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
 
@@ -1220,41 +1215,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.id = claims.get("user_id") or claims.get("sub")
         rtn_user.Username = claims.get("app_username") or claims.get("email") or claims.get("name")
         rtn_user.password_hash = None
+        roles = claims.get('roles', [])
+        user_roles = getUserRoles(claims.get('app_username'), roles)
         
         # Handle Cognito groups/roles
-        rtn_user.UserRoleList = []
-        
-        # Cognito uses 'cognito:groups' claim for roles
-        role_names = []
-        
-        # Add Cognito groups as roles
-        for each_role_name in role_names:
-            each_user_role = DotMapX()
-            each_user_role.role_name = each_role_name
-            rtn_user.UserRoleList.append(each_user_role)
-        
-        # Check database for additional roles and email
-        user = WFUser.query.filter(WFUser.Username == rtn_user.name).first()
-        if user is None and rtn_user.email:
-            user = WFUser.query.filter(WFUser.Email == rtn_user.email).first()
-        
-        if user:
-            # Update user object with database info
-            if not rtn_user.email and user.Email:
-                rtn_user.email = user.Email
-            
-            logger.debug(f"Found WFUser in database: {user.Username}, adding {len(user.WFUSERROLEList)} roles")
-            for role in user.WFUSERROLEList: 
-                each_user_role = DotMapX()
-                each_user_role.role_name = role.UserRole
-                rtn_user.UserRoleList.append(each_user_role)
-        else:
-            logger.debug(f"WFUser not found in database for: {rtn_user.Username} / {rtn_user.email}")
-        
-        #logger.info(f"User created from claims: {rtn_user.name}, email: {rtn_user.email}, total roles: {len(rtn_user.UserRoleList)}")
-        if rtn_user.UserRoleList:
-            role_list = [r.role_name for r in rtn_user.UserRoleList]
-            logger.info(f"  Roles: {role_list}")
+        rtn_user.UserRoleList = user_roles.UserRoleList
 
         return rtn_user
 
@@ -1360,22 +1325,19 @@ class Authentication_Provider(Abstract_Authentication_Provider):
 def getUserRoles(username:str, roles: list) ->any:
     rtn_user = {}
     #Check database for additional roles and email
-    user = WFUser.query.filter(WFUser.Username == username).first()
-    if user is None and "@" in username:
-        user = WFUser.query.filter(WFUser.Email == username).first()
-    
+    from database.models import vUserRole
+    user = vUserRole.query.filter(vUserRole.Name == username).first() or {}
+    setattr(user,'Username', username)
     if user:
-        logger.debug(f"Found WFUser in database: {user.Username}, adding {len(user.WFUSERROLEList)} roles")
-        user.UserRoleList = []
+        logger.debug(f"Found vUserRole in database: {user.Name}, adding {len(roles)} roles")
+        UserRoleList = []
+        setattr(user,'UserRoleList', UserRoleList)
         if len(roles) > 0:
             for role_name in roles:
                 each_user_role = DotMapX()
                 each_user_role.role_name = role_name
                 user.UserRoleList.append(each_user_role)
         else:
-            for role in user.WFUSERROLEList: 
-                each_user_role = DotMapX()
-                each_user_role.role_name = role.UserRole
-                user.UserRoleList.append(each_user_role)
-    
+            logger.debug(f"No roles found in token for user: {username}")
+       
     return user

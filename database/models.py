@@ -253,29 +253,9 @@ class WFUser(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
-    WFUSERADMINList : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates="WF_User")
-    WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
+    # WFUSERADMINList : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates="WF_User")
+    #WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
-
-
-
-class Sysdiagram(Base):  # type: ignore
-    __tablename__ = 'sysdiagrams'
-    _s_collection_name = 'Sysdiagram'  # type: ignore
-    __table_args__ = (
-        Index('UK_principal_name', 'principal_id', 'name', unique=True),
-    )
-
-    name = Column(Unicode(128), nullable=False)
-    principal_id = Column(Integer, nullable=False)
-    diagram_id = Column(Integer, autoincrement=True, primary_key=True)
-    version = Column(Integer)
-    definition = Column(LargeBinary)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
 
 
 class TaskDefinition(Base):  # type: ignore
@@ -341,25 +321,6 @@ class WFApplication(Base):  # type: ignore
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="Application")
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
-
-
-
-class WFUSERADMIN(Base):  # type: ignore
-    __tablename__ = 'WF_USER_ADMINS'
-    _s_collection_name = 'WFUSERADMIN'  # type: ignore
-
-    UserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
-    AdminUserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
-    IsPrimary = Column(Boolean, server_default=text("0"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
-    allow_client_generated_ids = True
-
-    # parent relationships (access parent)
-    WF_User : Mapped["WFUser"] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates=("WFUSERADMINList"))
-    WF_User1 : Mapped["WFUser"] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates=("WFUSERADMINList1"))
-
-    # child relationships (access children)
-
 
 
 class WFUSERROLE(Base):  # type: ignore
