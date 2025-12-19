@@ -1,6 +1,6 @@
 from datetime import datetime
 from database.database_discovery.authentication_models import User
-from database.models import EventAction #. INVOICEFEE
+from database.models import EventAction , INVOICEFEE
 from flask import request, jsonify, session, has_request_context
 import logging
 import flask
@@ -10,7 +10,7 @@ from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required
 from datetime import timedelta, datetime, timezone
-
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from security.system.authorization import Security
 
 
@@ -155,8 +155,12 @@ def resolve_paid_invoices(access_token: str = None, user: str = 'system', app: f
             app_logger.error(f"Error resolving paid invoices: {e}")
             session.rollback()
     
-def _create_event(task_instance_id: int, event_key: str) -> EventAction:
+def _create_event(task_instance_id: int, event_key: str, logic_row: LogicRow = None) -> EventAction:
     """Create an event action for a task instance."""
+    event_action = session.query(EventAction).filter_by(TaskInstanceId=task_instance_id, EventKey=event_key).first()
+    if event_action:
+        app_logger.info(f"Event already exists: TaskInstanceId={task_instance_id}, EventKey={event_key}")
+        return event_action
     event_action = EventAction(
         TaskInstanceId=task_instance_id,
         EventKey=event_key,
@@ -167,11 +171,14 @@ def _create_event(task_instance_id: int, event_key: str) -> EventAction:
         IsResolved=False
     )
     session.add(event_action)
-    session.commit()
+    if logic_row:
+        logic_row.update(f"EventAction created: TaskInstanceId={task_instance_id}, EventKey={event_key}", event_action)
+    else:
+        session.commit()
     app_logger.info(f"Event created: TaskInstanceId={task_instance_id}, EventKey={event_key}")
     return event_action
 
-def _resolve_event(event_key: str, user: str, access_token: str = None):
+def _resolve_event(event_key: str, user: str, logic_row: LogicRow = None, access_token: str = None):
     """Resolve an event action for a task instance."""
     event_action = session.query(EventAction).filter_by(
         EventKey=event_key,
@@ -184,12 +191,16 @@ def _resolve_event(event_key: str, user: str, access_token: str = None):
         event_action.ResolvedDate = datetime.now()
         event_action.IsResolved = True
         try:
-            session.commit()
+            if logic_row:
+                logic_row.update(f"EventAction resolved: EventKey={event_key}", event_action)
+            else:
+                session.commit()
+                session.flush()
             app_logger.info(f"Event resolved: EventKey={event_key}")
             from api.api_discovery.complete_task import _complete_task
             _complete_task(event_action.TaskInstanceId, result=None, completed_by=user, completion_notes='EventAction resolved', access_token=access_token, depth=0)
         except Exception as e:
-            session.rollback()
+            #session.rollback()
             app_logger.error(f"Error committing event resolution: {e}")
     else:
         app_logger.warning(f"No matching EventAction found to resolve for EventKey={event_key}")
@@ -197,10 +208,10 @@ def _resolve_event(event_key: str, user: str, access_token: str = None):
     
 
 
-def _create_invoice_fee(company_id: int, fee_amount: float) -> any:
+def _create_invoice_fee(company_id: int, fee_amount: float, logic_row: LogicRow = None) -> any:
     """Create an invoice fee record."""
     #TODO Hardcode NULL Status and existing Invoice - we cannot insert into table
-    invoice_fee = None #session.query(INVOICEFEE).filter(INVOICEFEE.COMPANY_ID == 12034, INVOICEFEE.STATUS != 'Paid').first()
+    invoice_fee = session.query(INVOICEFEE).filter(INVOICEFEE.COMPANY_ID == company_id, INVOICEFEE.STATUS != 'Paid').first()
     if not invoice_fee:
         invoice_fee = INVOICEFEE(
             INVOICE_ID=None, # NOT AUTONUM
@@ -211,12 +222,15 @@ def _create_invoice_fee(company_id: int, fee_amount: float) -> any:
             STATUS = '',
             INVOICE_DATE=datetime.now()
         )
-        #session.add(invoice_fee)
+        session.add(invoice_fee)
         try:
-           # session.commit()
-           pass
+            if logic_row:
+                logic_row.update(f"InvoiceFee created: CompanyId={company_id}, FeeAmount={fee_amount}", invoice_fee)
+            else:   
+                session.commit()
+                session.flush()
         except Exception as e:
-            session.rollback()  
+            #session.rollback()  
             app_logger.error(f"Error creating invoice fee: {e}")
     app_logger.info(f"Invoice fee created: CompanyId={company_id}, FeeAmount={fee_amount}")
     return invoice_fee

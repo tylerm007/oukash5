@@ -11,6 +11,8 @@ from security.system.authorization import Security
 from sqlalchemy.sql import text
 from types import SimpleNamespace
 import time
+from database.cache_service import DatabaseCacheService
+
 
 """
 Various endpoints to test workflow functionality and cleanup or reset tests
@@ -20,6 +22,8 @@ session = db.session
 access_token = None
 completed_by = None
 app_logger = logging.getLogger("api_logic_server_app")
+
+cache = DatabaseCacheService.get_instance()
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     pass
@@ -80,33 +84,34 @@ def start_workflow(application_id: int, start_by: str):
     return response['process_instance_id']
 
 def find_all_stages_for_application(application_id):
-    stages = None #StageInstance.query.filter(StageInstance.ApplicationId == application_id).order_by(StageInstance.StageId).all()
-    return [stage for stage in stages]
+    all_tasks = TaskInstance.query.filter(TaskInstance.ApplicationId == application_id).order_by(TaskInstance.TaskInstanceId).all()
+    stages = []
+    for task in all_tasks:
+        stage = task.Stage
+        if stage and stage not in stages:
+            stages.append(stage)
+    return stages
 
-def find_all_pending_tasks(stage_id: int):
+def find_all_pending_tasks(application_id: int, stage_id: int):
     """
     Find all pending tasks for a given stage, excluding SYSTEM (internal) tasks.
     
     """
     pending_tasks = []
-    response = session.query(models.TaskInstance).filter(models.TaskInstance.StageId == stage_id, models.TaskInstance.Status == 'PENDING').order_by(models.TaskInstance.TaskInstanceId).all()
+    response = session.query(models.TaskInstance).filter(models.TaskInstance.ApplicationId == application_id, models.TaskInstance.StageId == stage_id, models.TaskInstance.Status == 'PENDING').order_by(models.TaskInstance.TaskInstanceId).all()
     pending_tasks.extend([task for task in response])
     for task_instance in pending_tasks:
-        taskDef = task_instance.TaskDef
+        taskDef = task_instance.TaskDefinition
         task_name = taskDef.TaskName if taskDef else 'Unknown'
         if task_instance and taskDef and taskDef.AssigneeRole.upper() == 'SYSTEM':
             print(f'Skipping System Task {task_name} - {task_instance} Role: {taskDef.AssigneeRole}')
             pending_tasks.remove(task_instance)
     return pending_tasks
 
-def find_lane_end(stage_id: int):
-    stage = None # session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
-    if not stage:
-        app_logger.error(f'StageInstance not found: {stage_id}')
-        return 'NONE'
-    task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.StageId == stage_id).all()
+def find_stage_end(application_id: int, stage_id: int):
+    task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.ApplicationId == application_id, models.TaskInstance.StageId == stage_id).all()
     for task_instance in task_instances:
-        if task_instance.TaskDef.TaskType == 'LANEEND':
+        if task_instance.TaskDefinition.TaskType == 'STAGEEND':
             return task_instance.Status
     return "NEW"
 
@@ -117,7 +122,7 @@ def find_task_flow(task_instance:TaskInstance):
         return []
 
     # Go To TaskFlow from TaskId and check to see if all the prior states are completed
-    task_def = task_instance.TaskDef
+    task_def = task_instance.TaskDefinition
     if not task_def:
         app_logger.error(f'TaskDefinition not found: {task_instance.TaskId}')
         return []
@@ -133,12 +138,15 @@ def complete_task(task_instance, scenario: int = 1):
     #from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
     from api.api_discovery.complete_task import _complete_task
     task_instance_id = task_instance.TaskInstanceId
-    task_name = task_instance.TaskDef.TaskName
+    task_name = task_instance.TaskDefinition.TaskName
+    if task_instance.TaskDefinition.TaskType == 'END':
+        app_logger.info(f'Skipping completion of END Task: {task_name} - {task_instance_id}')
+        return
     #access_token = request.headers.get("Authorization") if access_token is None else access_token
     result = result_scenario(task_name, scenario)
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
-    print(f"Complete Task {task_name} - Response: {response}")
+    print(f"Complete Task {task_name} - Result - {result}  -Response: {response}")
 
 def result_scenario(task_name, scenario: int = 1) -> str:
     if scenario == 2:
@@ -159,72 +167,85 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
     application_id = application.ApplicationID
     stages_list = find_all_stages_for_application(application_id)
     completed_tasks = []
+    results = []
+    task_definitions = cache.get_all_task_definitions()
     for stage in stages_list:
-        stage_id = stage.StageInstanceId
-        stage_state = None # session.query(models.StageInstance).filter(models.StageInstance.StageInstanceId == stage_id).first()
-        status = stage_state.Status # "'IN_PROGRESS'"
-        name = stage.StageDefinition.StageName if stage.StageDefinition else 'Unknown'
+        stage_id = stage.StageId
+        status = get_stage_status(find_all_tasks_for_stage(application_id, stage_id), task_definitions) # "'IN_PROGRESS'"
+        name = getattr(stage,'StageName')
         app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
         if status == 'IN_PROGRESS' and name == 'Initial':
-            pending_tasks = find_all_pending_tasks(stage_id)
+            pending_tasks = find_all_pending_tasks(application_id, stage_id)
             #while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
             for task_instance in pending_tasks:
-                if task_instance.TaskDef.TaskName == 'AssignNCRC' and task_instance.Status == 'PENDING':
+                if task_instance.TaskDefinition.TaskName == 'AssignNCRC' and task_instance.Status == 'PENDING':
                     _assign_role(task_id=task_instance.TaskInstanceId, role='NCRC',assignee=completed_by, app_id=application_id,  user=completed_by, access_token=access_token)
-                    print(f'  Assign Role: {task_instance.TaskDef.TaskName}')
-            process_all_pending_tasks(stage_id, completed_tasks)
+                    print(f'  Assign Role: {task_instance.TaskDefinition.TaskName}')
+            process_all_pending_tasks(application_id, stage_id= stage_id, completed_tasks= completed_tasks)
                 #pending_tasks = find_all_pending_tasks(stage_id)
 
         elif status == 'IN_PROGRESS' and name == 'NDA':
-             process_all_pending_tasks(stage_id, completed_tasks)
+             process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
         elif status == 'IN_PROGRESS' and name == 'Inspection':
-            pending_tasks = find_all_pending_tasks(stage_id)
-            while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
+            pending_tasks = find_all_pending_tasks(application_id, stage_id)
+            while len(pending_tasks) > 0 and find_stage_end(application_id, stage_id=stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
-                    if task_instance.TaskDef.TaskName == 'Mark Invoice Paid':
+                    if task_instance.TaskDefinition.TaskName == 'Mark Invoice Paid':
                         from api.api_discovery.event_action import _resolve_event
-                        event_key = "INVOICE_98286" 
-                        _resolve_event(event_key, user, access_token)
-                        print(f'  Resolving EventAction for Task: {task_instance.TaskDef.TaskName} EventKey: {event_key}')
+                        event_action = session.query(models.EventAction.EventKey).filter(models.EventAction.TaskInstanceId == task_instance.TaskInstanceId).first()
+                        if event_action:
+                            event_key = getattr(event_action, 'EventKey')
+                            _resolve_event(event_key, user=user, logic_row=None, access_token=access_token)
+                            print(f'  Resolving EventAction for Task: {task_instance.TaskDefinition.TaskName} EventKey: {event_key}')
                     else:
                         # For testing, we auto-complete the scheduling task
-                        print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+                        print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
                         complete_task(task_instance)
                         completed_tasks.append(task_instance.TaskInstanceId)
-                pending_tasks = find_all_pending_tasks(stage_id)
+                pending_tasks = find_all_pending_tasks(application_id, stage_id)
 
         elif status == 'IN_PROGRESS' and name == 'Ingredients':
-             process_all_pending_tasks(stage_id, completed_tasks)
+             process_all_pending_tasks(application_id,stage_id=stage_id, completed_tasks=completed_tasks)
                 
         elif status == 'IN_PROGRESS' and name == 'Products':
-             process_all_pending_tasks(stage_id, completed_tasks)
+             process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
         elif status == 'IN_PROGRESS' and name == 'Contract':
-             process_all_pending_tasks(stage_id, completed_tasks)
+             process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
         elif status == 'IN_PROGRESS' and name == 'Certification':
-            process_all_pending_tasks(stage_id, completed_tasks)
+            process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
-    stage_list = find_all_stages_for_application(application_id)
-    results = []
-    for stage in stage_list:
-        results.append({"Stage": stage.StageDefinition.StageName, "Status": stage.Status})
+        print_application_status(application_id, name)
+        results.append({"Stage": name, "Status": status})
+    
+        
     print(f"Workflow for application {application_id} completed {completed_tasks}.")
     return results, completed_tasks
 
-def process_all_pending_tasks(stage_id: int, completed_tasks: list):
-    pending_tasks = find_all_pending_tasks(stage_id)
-    while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
+def print_application_status(application_id: int,stageName: str):
+    application = session.query(models.WFApplication).filter(models.WFApplication.ApplicationID == application_id).first()
+    if application:
+        app_logger.info(f'Application {application_id} StageName: {stageName} Status: {application.Status}')
+        print(f'Application {application_id} StageName: {stageName} Status: {application.Status}')
+
+def find_all_tasks_for_stage(application_id, stage_id) -> list:
+    all_tasks = TaskInstance.query.filter(TaskInstance.ApplicationId == application_id, TaskInstance.StageId == stage_id).order_by(TaskInstance.TaskInstanceId).all()
+    return [task.to_dict() for task in all_tasks]
+
+def process_all_pending_tasks(application_id: int, stage_id:int, completed_tasks: list):
+    pending_tasks = find_all_pending_tasks(application_id, stage_id)
+    while len(pending_tasks) > 0 and find_stage_end(application_id, stage_id) != 'COMPLETED':
         for task_instance in pending_tasks:
-            print(f'  Completing Task: {task_instance.TaskDef.TaskName}')
+            print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
             complete_task(task_instance)
             completed_tasks.append(task_instance.TaskInstanceId)
-            pending_tasks = find_all_pending_tasks(stage_id)
+            pending_tasks = find_all_pending_tasks(application_id, stage_id)
             app_id = task_instance.ApplicationId
             status = WFApplication.query.filter_by(ApplicationID=app_id).first().Status
             if status == 'COMPL':
-                app_logger.info(f'Application {app_id} already completed. Skipping stage {stage_id}.')
+                app_logger.info(f'Application {app_id} completed for Stage {stage_id}.')
                 return
 
 def process_task_flow(task_instance, stage_instance_id, completed_tasks):
@@ -364,3 +385,34 @@ def get_contact(company_id:int, plant_id: int):
         return None
     rows = [dict(zip(row._fields, row)) for row in contacts]
     return rows
+
+
+def get_stage_status(tasks: list, task_definitions: dict) -> str:
+    """
+    Determines the overall status of a stage based on its tasks.
+    """
+    status = 'NEW'
+    if not tasks or len(tasks) == 0:
+        return status
+    stage_start = False
+    stage_end = False
+    for task in tasks:
+        taskdef_id = task['TaskDefinitionId']
+        taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
+        if len(taskdef) == 0:
+            continue
+        
+        if task['Status'] in ['COMPLETED']: # could we add PENDING as well?? TODO count_pending            
+            if taskdef and taskdef['TaskType'] in ['START',"STAGESTART"]:
+                stage_start = True
+            elif taskdef and taskdef['TaskType'] in ['END','STAGEEND']:
+                stage_end = True
+            
+
+    if stage_start and not stage_end:
+        return "IN_PROGRESS"
+    if stage_start and stage_end:
+        status = "COMPLETED"
+    else:
+        status = "NEW"
+    return status

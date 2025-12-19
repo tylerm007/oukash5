@@ -443,6 +443,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 session['access_token'] = tokens.get('access_token')
                 session['id_token'] = id_token
                 user['user_id'] = user.Name
+                setattr(user,'Username', user.Name)
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
 
@@ -456,8 +457,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 additional_claims = {
                     'email': claims.get('email'),
                     'name': claims.get('name'),
-                    'roles': user_roles,
-                    "user_id": user_id,
+                    'roles': roles,
+                    "user_id": user.Name,
                     'cognito_sub': claims.get('sub'),
                     'auth_provider': 'cognito',
                     'cognito_token_id': claims.get('jti', 'unknown')
@@ -508,7 +509,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                         'user_info': {
                             'user_id': claims['name'],
                             'email': claims['email'],
-                            'roles': user_roles,
+                            'roles': roles,
                             'cognito_sub': claims.get('sub')
                         }
                     })
@@ -1216,8 +1217,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.Username = claims.get("app_username") or claims.get("email") or claims.get("name")
         rtn_user.password_hash = None
         roles = claims.get('roles', [])
-        user_roles = getUserRoles(claims.get('app_username'), roles)
-        
+        name = rtn_user.name
+        if name is None or name == {}:
+            name = claims.get('name','').replace(" ",".")
+        user_roles = getUserRoles(name, roles)
+       
         # Handle Cognito groups/roles
         rtn_user.UserRoleList = user_roles.UserRoleList
 
@@ -1338,6 +1342,8 @@ def getUserRoles(username:str, roles: list) ->any:
                 each_user_role.role_name = role_name
                 user.UserRoleList.append(each_user_role)
         else:
-            logger.debug(f"No roles found in token for user: {username}")
+            each_user_role = DotMapX()
+            each_user_role.role_name = user.role
+            user.UserRoleList.append(each_user_role)
        
     return user

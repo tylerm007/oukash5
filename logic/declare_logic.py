@@ -97,16 +97,17 @@ def declare_logic():
         if not task_instance:
             return None
         stage_id = task_instance.StageId
+        application_id = task_instance.ApplicationId
         task_def = models.TaskDefinition.query.filter_by(TaskName=task_name).first()
         if not task_def:
             app_logger.warning(f"No TaskDefinition found with TaskName {task_name}")
             return None
-        next_task_instance = models.TaskInstance.query.filter_by(TaskId=task_def.TaskId, StageId=stage_id).first()
+        next_task_instance = models.TaskInstance.query.filter_by(TaskDefinitionId=task_def.TaskId, ApplicationId=application_id).first()
         if next_task_instance:
             return next_task_instance
         return None
 
-    def create_invoice(task_instance: models.TaskInstance) -> bool:
+    def create_invoice(task_instance: models.TaskInstance, logic_row: LogicRow = None) -> bool:
         #Create an EventAction for the given TaskInstanceId and EventKey
 
         invoice_fee_task = find_next_task_by_name(task_instance, "Assign Invoice Amount")
@@ -115,7 +116,7 @@ def declare_logic():
         application_id = task_instance.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
         company_id = application.CompanyID
-        invoice_fee = _create_invoice_fee(company_id, fee)
+        invoice_fee = _create_invoice_fee(company_id=company_id, fee_amount=fee, logic_row=logic_row)
         if not invoice_fee:
             app_logger.error( f"Failed to create invoice fee for TaskInstanceId {task_instance.TaskInstanceId}")
             return False
@@ -126,7 +127,7 @@ def declare_logic():
         if next_task_instance:
             from api.api_discovery.event_action import _create_event
             event_key = f"INVOICE_{invoice_fee.INVOICE_ID}"
-            _create_event(next_task_instance.TaskInstanceId, event_key)
+            _create_event(next_task_instance.TaskInstanceId, event_key=event_key, logic_row=logic_row)
             print(f'{{"EventKey": "{event_key}"}}')
             app_logger.info(f"EventAction created for TaskInstanceId {task_instance.TaskInstanceId} with EventKey {event_key}")
     
@@ -169,8 +170,8 @@ def declare_logic():
             if row.Status != 'COMPLETED':
                 return
             if TaskName == 'Generated Invoice and Send':
-                #if create_invoice(row):
-                status = 'PAYPEND'
+                if create_invoice(row, logic_row=logic_row):
+                    status = 'PAYPEND'
             # Specific TaskDef.TaskName logic can go here if needed
             elif TaskName == 'Issue Certificate' and row.Result == 'YES': status = 'COMPL'
             elif TaskName == 'to Withdrawn Y/N' and row.Result == 'YES': status = 'WTH'
