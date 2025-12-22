@@ -159,7 +159,7 @@ def declare_logic():
         #    stage.Status = 'COMPLETED'
         #    stage.CompletedDate = datetime.datetime.now()
         #    logic_row.update(reason="update stage status to COMPLETED", row=stage)
-        elif task_def.TaskType == 'END' and row.Status == 'COMPLETED':
+        elif task_def.TaskName == 'End Certification' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
@@ -173,7 +173,7 @@ def declare_logic():
                 if create_invoice(row, logic_row=logic_row):
                     status = 'PAYPEND'
             # Specific TaskDef.TaskName logic can go here if needed
-            elif TaskName == 'Issue Certificate' and row.Result == 'YES': status = 'COMPL'
+            elif TaskName == 'Notify Customer': status = 'COMPL'
             elif TaskName == 'to Withdrawn Y/N' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Withdraw Application' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Send Contract' and row.Result == 'YES': status = 'CONTRACT' 

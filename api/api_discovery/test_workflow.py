@@ -181,8 +181,13 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
                 if task_instance.TaskDefinition.TaskName == 'AssignNCRC' and task_instance.Status == 'PENDING':
                     _assign_role(task_id=task_instance.TaskInstanceId, role='NCRC',assignee=completed_by, app_id=application_id,  user=completed_by, access_token=access_token)
                     print(f'  Assign Role: {task_instance.TaskDefinition.TaskName}')
-            process_all_pending_tasks(application_id, stage_id= stage_id, completed_tasks= completed_tasks)
-                #pending_tasks = find_all_pending_tasks(stage_id)
+        if name == 'Initial':
+            pending_tasks = find_all_pending_tasks(application_id, stage_id)
+            for task_instance in pending_tasks:
+                print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
+                complete_task(task_instance)
+                completed_tasks.append(task_instance.TaskInstanceId)
+                pending_tasks = find_all_pending_tasks(application_id, stage_id)
 
         elif status == 'IN_PROGRESS' and name == 'NDA':
              process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
