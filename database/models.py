@@ -1561,3 +1561,25 @@ class vActiveNCRC(Base):
 
     NCRC = Column(String(100), nullable=False, primary_key=True)
     PERSON_JOB_ID = Column(Integer, nullable=False)
+
+class v_SelectRFR(Base):
+    __tablename__ = 'v_selectRFR'
+    _bind_key__ = 'ou'
+    _s_collection_name = 'v_SelectRFR'  # type: ignore  
+    http_methods = ['GET']
+
+    PERSON_ID = Column(Integer, primary_key=True)
+    userName = Column(String(100))
+    BusinessEmail = Column(String(255))
+    fullName = Column(String(200))
+
+class v_SelectNCRC(Base):
+    __tablename__ = 'v_selectNCRC'
+    _bind_key__ = 'ou'
+    _s_collection_name = 'v_SelectNCRC'  # type: ignore  
+    http_methods = ['GET']
+
+    PERSON_ID = Column(Integer, primary_key=True)
+    userName = Column(String(100))
+    BusinessEmail = Column(String(255))
+    fullName = Column(String(200))
