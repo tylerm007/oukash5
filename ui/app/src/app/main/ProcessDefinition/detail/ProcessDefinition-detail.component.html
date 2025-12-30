@@ -1,138 +1,138 @@
 <div class="container">
-<o-form-container breadcrumb="yes" breadcrumb-label-columns="ProcessName" breadcrumb-separator=", " class="fill-form">
-      <o-form #form attr="ProcessDefinition_form_edit" 
-        service="ProcessDefinition" 
-        entity="ProcessDefinition" 
-        fxLayout="column" 
-        show-header="yes" 
-        header-actions="R;U;D"
-        #oDetailForm keys="ProcessId" 
-        keys-sql-types="INTEGER" 
-        show-header-navigation="yes"
-        (onDataLoaded)="onDataLoaded($event)">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="ProcessName" breadcrumb-separator=", " class="fill-form">
+    <o-form #form attr="ProcessDefinition_form_edit" service="ProcessDefinition" entity="ProcessDefinition"
+      fxLayout="column" show-header="yes" header-actions="R;U;D" #oDetailForm keys="ProcessId" keys-sql-types="INTEGER"
+      show-header-navigation="yes" (onDataLoaded)="onDataLoaded($event)">
 
-  <o-row attr="row1" layout-align="start stretch">
-    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
-      
-      <o-text-input #ProcessName attr="ProcessName" label=" Process Name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-text-input #ProcessVersion attr="ProcessVersion" label="ProcessVersion" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-text-input #Description attr="Description" label="Description" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
-      
-      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-integer-input #ProcessId attr="ProcessId" label="ProcessId" type="integer" editable="no" required="no" ></o-integer-input>
-      
-    </div>
-  </o-row>
-      
+      <o-row attr="row1" layout-align="start stretch">
+        <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+
+          <o-text-input #ProcessName attr="ProcessName" label=" Process Name" enabled="yes" required="yes" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-text-input #ProcessVersion attr="ProcessVersion" label="ProcessVersion" enabled="yes" required="yes"
+            fxFlex="20%" class="form-field"></o-text-input>
+
+          <o-text-input #Description attr="Description" label="Description" enabled="yes" required="no" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-checkbox #IsActive attr="IsActive" label="IsActive" read-only="no" enabled="yes"></o-checkbox>
+
+          <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no"
+            required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+
+          <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no"
+            required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+
+          <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-integer-input #ProcessId attr="ProcessId" label="ProcessId" type="integer" editable="no"
+            required="no"></o-integer-input>
+
+        </div>
+      </o-row>
+
       <mat-tab-group fxFill>
-        
+
         <mat-tab label="TASKDEFINITION-ProcessDefinitionId">
-    <div layout-padding>
-      <o-table 
-        attr="TaskDefinitionTable" 
-        service="TaskDefinition" 
-        entity="TaskDefinition" 
-        keys="TaskId"
-        parent-keys="ProcessDefinitionId:ProcessId"
-        columns="TaskName;ProcessDefinitionId;StageDefinitionId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
-        horizontal-scroll="yes"
-        detail-form-route="TaskDefinition" 
-        edit-form-route="TaskDefinition"
-        visible-columns="TaskName;ProcessDefinitionId;StageDefinitionId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"  
-        sort-columns="TaskName" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #TaskName attr="TaskName" title=" Task Name" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ProcessDefinitionId" title="ProcessDefinition">
-    <o-table-cell-renderer-service attr="ProcessDefinitionId" 
-        service="ProcessDefinition" entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
-        parent-keys="ProcessId:ProcessDefinitionId"
-        value-column="ProcessName" keys="ProcessDefinitionId"
-        visible-columns="ProcessName" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column attr="StageDefinitionId" title="StageDefinition">
-    <o-table-cell-renderer-service attr="StageDefinitionId" 
-        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
-        parent-keys="ProcessId:StageDefinitionId"
-        value-column="StageName" keys="StageDefinitionId"
-        visible-columns="StageName" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #TaskCategory attr="TaskCategory" title="TaskCategory" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #TaskType attr="TaskType" title="TaskType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Sequence attr="Sequence" title="Sequence" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
-        
-          <o-table-column attr="IsParallel" title="IsParallel">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #AssigneeRole attr="AssigneeRole" title="AssigneeRole" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #EstimatedDurationMinutes attr="EstimatedDurationMinutes" title="EstimatedDurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="AutoComplete" title="AutoComplete">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-          <o-table-column #Description attr="Description" title="Description" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="IsRequired" title="IsRequired">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="TaskDefinitionTable" service="TaskDefinition" entity="TaskDefinition" keys="TaskId"
+              parent-keys="ProcessDefinitionId:ProcessId"
+              columns="TaskName;ProcessDefinitionId;StageDefinitionId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"
+              horizontal-scroll="yes" detail-form-route="TaskDefinition" edit-form-route="TaskDefinition"
+              visible-columns="TaskName;ProcessDefinitionId;StageDefinitionId;TaskCategory;TaskType;Sequence;IsParallel;AssigneeRole;EstimatedDurationMinutes;AutoComplete;Description;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy;PreScriptJson;PostScriptJson;TaskId;IsRequired"
+              sort-columns="TaskName" query-rows="25" quick-filter="yes" row-height="medium" select-all-checkbox="true"
+              pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes" delete-button="yes"
+              fixed-header="true" class="vertical-padding-8" edition-mode="dblclick" horizontal-scroll="yes"
+              class="fill-form">
+
+              <o-table-column #TaskName attr="TaskName" title=" Task Name" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column attr="ProcessDefinitionId" title="ProcessDefinition">
+                <o-table-cell-renderer-service attr="ProcessDefinitionId" service="ProcessDefinition"
+                  entity="ProcessDefinitionType" columns="ProcessId;ProcessName"
+                  parent-keys="ProcessId:ProcessDefinitionId" value-column="ProcessName" keys="ProcessDefinitionId"
+                  visible-columns="ProcessName" separator=" - " width="680px">
+                </o-table-cell-renderer-service>
+              </o-table-column>
+
+              <o-table-column attr="StageDefinitionId" title="StageDefinition">
+                <o-table-cell-renderer-service attr="StageDefinitionId" service="StageDefinition"
+                  entity="StageDefinitionType" columns="StageId;StageName" parent-keys="StageId:StageDefinitionId"
+                  value-column="StageName" keys="StageDefinitionId" visible-columns="StageName" separator=" - "
+                  width="680px">
+                </o-table-cell-renderer-service>
+              </o-table-column>
+
+              <o-table-column #TaskCategory attr="TaskCategory" title="TaskCategory" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #TaskType attr="TaskType" title="TaskType" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #Sequence attr="Sequence" title="Sequence" type="integer" editable="no" required="yes"
+                content-align="center"></o-table-column>
+
+              <o-table-column attr="IsParallel" title="IsParallel">
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                  render-type="icon" boolean-type="boolean" true-value="true"
+                  false-value="false"></o-table-cell-renderer-boolean>
+              </o-table-column>
+
+              <o-table-column #AssigneeRole attr="AssigneeRole" title="AssigneeRole" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #EstimatedDurationMinutes attr="EstimatedDurationMinutes" title="EstimatedDurationMinutes"
+                type="integer" editable="no" required="no" content-align="center"></o-table-column>
+
+              <o-table-column attr="AutoComplete" title="AutoComplete">
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                  render-type="icon" boolean-type="boolean" true-value="true"
+                  false-value="false"></o-table-cell-renderer-boolean>
+              </o-table-column>
+
+              <o-table-column #Description attr="Description" title="Description" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
+              <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #PreScriptJson attr="PreScriptJson" title="PreScriptJson" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #PostScriptJson attr="PostScriptJson" title="PostScriptJson" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #TaskId attr="TaskId" title="TaskId" type="integer" editable="no" required="no"
+                content-align="center"></o-table-column>
+
+              <o-table-column attr="IsRequired" title="IsRequired">
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                  render-type="icon" boolean-type="boolean" true-value="true"
+                  false-value="false"></o-table-cell-renderer-boolean>
+              </o-table-column>
+
+              <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
       </mat-tab-group>
-      
+
     </o-form>
   </o-form-container>
 </div>

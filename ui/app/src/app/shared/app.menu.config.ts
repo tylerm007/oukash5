@@ -91,7 +91,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
         items: [
 
             { id: 'WFApplication', name: 'Application', icon: 'view_list', route: '/main/WFApplication' }
-                        
+
             , { id: 'WFQuote', name: 'Quote', icon: 'view_list', route: '/main/WFQuote' }
 
             , { id: 'WFQuoteItem', name: 'Quote Item', icon: 'view_list', route: '/main/WFQuoteItem' }
@@ -100,14 +100,14 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
             , { id: 'WFApplicationMessage', name: 'Application Message', icon: 'view_list', route: '/main/WFApplicationMessage' }
 
-            , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
+           // , { id: 'WFRole', name: 'Role', icon: 'view_list', route: '/main/WFRole' }
 
-            , { id: 'WFUser', name: 'User', icon: 'view_list', route: '/main/WFUser' }
-	        ,{ id: 'WFUSERROLE', name: 'User Role', icon: 'view_list', route: '/main/WFUSERROLE' }
-            ,{ id: 'WFUSERADMIN', name: 'User Admins', icon: 'view_list', route: '/main/WFUSERADMIN' }
-	    
-	    ,{ id: 'RoleAssigment', name: 'Role Assignment', icon: 'view_list', route: '/main/RoleAssigment' }
-    
+           //, { id: 'WFUser', name: 'User', icon: 'view_list', route: '/main/WFUser' }
+           // , { id: 'WFUSERROLE', name: 'User Role', icon: 'view_list', route: '/main/WFUSERROLE' }
+           // , { id: 'WFUSERADMIN', name: 'User Admins', icon: 'view_list', route: '/main/WFUSERADMIN' }
+
+            , { id: 'RoleAssigment', name: 'Role Assignment', icon: 'view_list', route: '/main/RoleAssigment' }
+
         ]
     },
     {
@@ -126,8 +126,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
     {
         id: 'wfinstance', name: ' WorkFlow Instance', icon: 'remove_red_eye', opened: false,
         items: [
-             { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
-          
+            { id: 'TaskInstance', name: 'Task Instance', icon: 'view_list', route: '/main/TaskInstance' }
+
         ]
     },
     {
@@ -148,46 +148,47 @@ export const MENU_CONFIG: MenuRootItem[] = [
             , { id: 'WFPriority', name: 'WF Priority', icon: 'view_list', route: '/main/WFPriority' }
         ]
     },
-    
-    {id: 'legacy', name: ' Legacy Tables', icon: 'remove_red_eye', opened: false,
+
+    {
+        id: 'legacy', name: ' Legacy Tables', icon: 'remove_red_eye', opened: false,
         items: [
-        { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
-        ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
-    
-        ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
-	, { id: 'COMPANYADDRESSTB', name: 'COMPANYADDRESSTB', icon: 'view_list', route: '/main/COMPANYADDRESSTB' }
-   
-        ,{ id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
-    
-        ,{ id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
-    
-        ,{ id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
-    
-        ,{ id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
-    
-        ,{ id: 'LabelTb', name: 'LABELTB', icon: 'view_list', route: '/main/LabelTb' }
-         ,{ id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
-    
-        ,{ id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
-    
-        ,{ id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
-    
-	,{ id: 'MERCHTB', name: 'MERCHTB', icon: 'view_list', route: '/main/MERCHTB' }
-    
-        ,{ id: 'OWNSTB', name: 'OWNSTB', icon: 'view_list', route: '/main/OWNSTB' }
-    
-        ,{ id: 'PLANTADDRESSTB', name: 'PLANTADDRESSTB', icon: 'view_list', route: '/main/PLANTADDRESSTB' }
-    
-        ,{ id: 'PLANTCERTDETAIL', name: 'PLANTCERTDETAIL', icon: 'view_list', route: '/main/PLANTCERTDETAIL' }
-    
-        ,{ id: 'PLANTCOMMENT', name: 'PLANTCOMMENT', icon: 'view_list', route: '/main/PLANTCOMMENT' }
-    
-        ,{ id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
-	
-	,{ id: 'ProducedIn1Tb', name: 'PRODUCEDIN1TB', icon: 'view_list', route: '/main/ProducedIn1Tb' }
-    
-    	 ,{ id: 'USEDIN1TB', name: 'USEDIN1TB', icon: 'view_list', route: '/main/USEDIN1TB' }
-    
+            { id: 'COMPANYTB', name: 'COMPANYTB', icon: 'view_list', route: '/main/COMPANYTB' }
+            , { id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
+
+            , { id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
+            , { id: 'COMPANYADDRESSTB', name: 'COMPANYADDRESSTB', icon: 'view_list', route: '/main/COMPANYADDRESSTB' }
+
+            , { id: 'CompanyApplication', name: 'COMPANYAPPLICATION', icon: 'view_list', route: '/main/CompanyApplication' }
+
+            , { id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
+
+            , { id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
+
+            , { id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
+
+            , { id: 'LabelTb', name: 'LABELTB', icon: 'view_list', route: '/main/LabelTb' }
+            , { id: 'FormulaProduct', name: 'FORMULAPRODUCT', icon: 'view_list', route: '/main/FormulaProduct' }
+
+            , { id: 'FormulaSubmissionComponent', name: 'FORMULASUBMISSIONCOMPONENT', icon: 'view_list', route: '/main/FormulaSubmissionComponent' }
+
+            , { id: 'FormulaSubmissionPlant', name: 'FORMULASUBMISSIONPLANT', icon: 'view_list', route: '/main/FormulaSubmissionPlant' }
+
+            , { id: 'MERCHTB', name: 'MERCHTB', icon: 'view_list', route: '/main/MERCHTB' }
+
+            , { id: 'OWNSTB', name: 'OWNSTB', icon: 'view_list', route: '/main/OWNSTB' }
+
+            , { id: 'PLANTADDRESSTB', name: 'PLANTADDRESSTB', icon: 'view_list', route: '/main/PLANTADDRESSTB' }
+
+            , { id: 'PLANTCERTDETAIL', name: 'PLANTCERTDETAIL', icon: 'view_list', route: '/main/PLANTCERTDETAIL' }
+
+            , { id: 'PLANTCOMMENT', name: 'PLANTCOMMENT', icon: 'view_list', route: '/main/PLANTCOMMENT' }
+
+            , { id: 'PLANTTB', name: 'PLANTTB', icon: 'view_list', route: '/main/PLANTTB' }
+
+            , { id: 'ProducedIn1Tb', name: 'PRODUCEDIN1TB', icon: 'view_list', route: '/main/ProducedIn1Tb' }
+
+            , { id: 'USEDIN1TB', name: 'USEDIN1TB', icon: 'view_list', route: '/main/USEDIN1TB' }
+
         ]
     },
     { id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings' }
@@ -199,41 +200,38 @@ export const MENU_COMPONENTS = [
 
     COMPANYADDRESSTBCardComponent
 
-    ,COMPANYTBCardComponent
+    , COMPANYTBCardComponent
 
-    ,CompanyApplicationCardComponent
+    , CompanyApplicationCardComponent
 
-    ,FormulaProductCardComponent
+    , FormulaProductCardComponent
 
-    ,FormulaSubmissionComponentCardComponent
+    , FormulaSubmissionComponentCardComponent
 
-    ,FormulaSubmissionPlantCardComponent
+    , FormulaSubmissionPlantCardComponent
 
-    ,LabelTbCardComponent
+    , LabelTbCardComponent
 
-    ,MERCHTBCardComponent
+    , MERCHTBCardComponent
 
-    ,OWNSTBCardComponent
+    , OWNSTBCardComponent
 
-    ,PLANTADDRESSTBCardComponent
+    , PLANTADDRESSTBCardComponent
 
-    ,PLANTCERTDETAILCardComponent
+    , PLANTCERTDETAILCardComponent
 
-    ,PLANTCOMMENTCardComponent
+    , PLANTCOMMENTCardComponent
 
-    ,PLANTTBCardComponent
+    , PLANTTBCardComponent
 
-    ,ProcessDefinitionCardComponent
+    , ProcessDefinitionCardComponent
 
-    ,ProducedIn1TbCardComponent
-    ,RoleAssigmentCardComponent
+    , ProducedIn1TbCardComponent
+    , RoleAssigmentCardComponent
 
-    ,StageDefinitionCardComponent
-
-
+    , StageDefinitionCardComponent
 
     , StageStatusCardComponent
-
 
     , TaskCategoryCardComponent
 
@@ -243,13 +241,13 @@ export const MENU_COMPONENTS = [
 
     , TaskInstanceCardComponent
 
-    ,TaskRoleCardComponent
+    , TaskRoleCardComponent
 
-    ,TaskStatusCardComponent
+    , TaskStatusCardComponent
 
     , TaskTypeCardComponent
 
-    ,USEDIN1TBCardComponent
+    , USEDIN1TBCardComponent
 
     , WFApplicationCardComponent
 
@@ -257,7 +255,7 @@ export const MENU_COMPONENTS = [
 
     , WFApplicationStatusCardComponent
 
-    ,WFFileCardComponent
+    , WFFileCardComponent
 
     , WFFileTypeCardComponent
 
@@ -271,10 +269,10 @@ export const MENU_COMPONENTS = [
 
     , WFRoleCardComponent
 
-    ,WFUSERADMINCardComponent
+    , WFUSERADMINCardComponent
 
-    ,WFUSERROLECardComponent
+    , WFUSERROLECardComponent
 
-    ,WFUserCardComponent
+    , WFUserCardComponent
 
 ];

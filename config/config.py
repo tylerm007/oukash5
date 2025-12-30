@@ -198,7 +198,7 @@ class Config:
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
         app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
-        from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
+        #from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         from security.authentication_provider.cognito.auth_provider import Authentication_Provider as COGNITO_Authentication_Provider
         # typically, authentication_provider is [ keycloak | okta | cognito | sql ]
@@ -206,8 +206,8 @@ class Config:
             SECURITY_PROVIDER = KC_Authentication_Provider
         elif "cognito" in str(SECURITY_PROVIDER).lower():
             SECURITY_PROVIDER = COGNITO_Authentication_Provider
-        else:
-            SECURITY_PROVIDER = SQL_Authentication_Provider
+        #else:
+        #    SECURITY_PROVIDER = SQL_Authentication_Provider
     
     app_logger.info(f'config.py - security enabled: {SECURITY_ENABLED} using SECURITY_PROVIDER: {str(SECURITY_PROVIDER)}\n')
 

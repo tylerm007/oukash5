@@ -10,6 +10,8 @@ from http import HTTPStatus
 import logging
 from database.models import WFUser
 
+# THIS CLASS REQUIRES WF_USER AND WF_ROLE AND WF_USER_ROLE TABLES TO BE DEFINED IN THE DATABASE
+# Also bind the authentication database in Config/server_setup.py to sql    
 # **********************
 # sql auth provider
 # **********************

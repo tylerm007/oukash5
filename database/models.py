@@ -220,8 +220,7 @@ class WFQuoteStatus(Base):  # type: ignore
     # child relationships (access children)
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="WF_QuoteStatus")
 
-
-
+"""
 class WFRole(Base):  # type: ignore
     __tablename__ = 'WF_Roles'
     _s_collection_name = 'WFRole'  # type: ignore
@@ -256,7 +255,7 @@ class WFUser(Base):  # type: ignore
     # WFUSERADMINList : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.AdminUserName]', back_populates="WF_User")
     #WFUSERADMINList1 : Mapped[List["WFUSERADMIN"]] = relationship(foreign_keys='[WFUSERADMIN.UserName]', back_populates="WF_User1")
     WFUSERROLEList : Mapped[List["WFUSERROLE"]] = relationship(back_populates="WF_User")
-
+"""
 
 class TaskDefinition(Base):  # type: ignore
     __tablename__ = 'TaskDefinitions'
@@ -322,7 +321,7 @@ class WFApplication(Base):  # type: ignore
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
 
-
+"""
 class WFUSERROLE(Base):  # type: ignore
     __tablename__ = 'WF_USER_ROLE'
     _s_collection_name = 'WFUSERROLE'  # type: ignore
@@ -337,7 +336,7 @@ class WFUSERROLE(Base):  # type: ignore
     WF_Role : Mapped["WFRole"] = relationship(back_populates=("WFUSERROLEList"))
 
     # child relationships (access children)
-
+"""
 
 
 class RoleAssigment(Base):  # type: ignore
@@ -1527,9 +1526,29 @@ class PERSONTB(Base):
     IsBillForMileageDifferential = Column(Boolean, nullable=False)
     AllowCopackerManagement = Column(Boolean, nullable=True)
 
-    # Child Re lationships
+    # Child Relationships
+    #PersonContactList : Mapped[List["PersonContact"]] = relationship(back_populates="PERSONTB")
     #PERSON_JOB_TBList : Mapped[List["PERSONJOBTB"]] = relationship(back_populates=("PERSONTB"))
+    
+class PersonContact(Base):
+    __tablename__ = 'PersonContacts'
+    _s_collection_name = 'PersonContacts'  # type: ignore
+    __bind_key__ = 'ou'
 
+    ID = Column(Integer, autoincrement=True, primary_key=True)
+    Person_ID = Column(ForeignKey('PERSON_TB.PERSON_ID'), index=True)
+    BusinessPhone = Column(String(50))
+    BusinessEmail = Column(String(100))
+    BusinessCell = Column(String(50))
+    BusinessFax = Column(String(50))
+    HomePhone = Column(String(50))
+    HomeEmail = Column(String(100))
+    HomeCell = Column(String(50))
+    HomeFax = Column(String(50))
+    Misc = Column(String(500))
+
+    #Parent Relationships
+    #PERSONTB: Mapped["PERSONTB"] = relationship(back_populates="PersonContactList")
 
 class vUserRole(Base):
     __tablename__ = 'UserRoles'
@@ -1544,40 +1563,22 @@ class vUserRole(Base):
     #Parent Relationships
     PERSONJOBTB = relationship("PERSONJOBTB", primaryjoin="foreign(vUserRole.PERSON_JOB_ID)==PERSONJOBTB.PERSON_JOB_ID", viewonly=True)  
 
-class vActiveRFR(Base):
-    __tablename__ = 'ActiveRFR_V1'
-    _s_collection_name = 'vActiveRFR'  # type: ignore
-    __bind_key__ = 'ou'
-    http_methods = ['GET']
-
-    RFR = Column(String(100), nullable=False, primary_key=True)
-    PERSON_JOB_ID = Column(Integer, nullable=False)
-
-class vActiveNCRC(Base):
-    __tablename__ = 'ActiveNCRC_V1'
-    _s_collection_name = 'vActiveNCRC'  # type: ignore
-    __bind_key__ = 'ou'
-    http_methods = ['GET']
-
-    NCRC = Column(String(100), nullable=False, primary_key=True)
-    PERSON_JOB_ID = Column(Integer, nullable=False)
-
-class v_SelectRFR(Base):
+class vSelectRFR(Base):
     __tablename__ = 'v_selectRFR'
-    _bind_key__ = 'ou'
-    _s_collection_name = 'v_SelectRFR'  # type: ignore  
+    _s_collection_name = 'vSelectRFR'  # type: ignore  
     http_methods = ['GET']
+    __bind_key__ = 'ou'
 
     PERSON_ID = Column(Integer, primary_key=True)
     userName = Column(String(100))
     BusinessEmail = Column(String(255))
     fullName = Column(String(200))
 
-class v_SelectNCRC(Base):
+class vSelectNCRC(Base):
     __tablename__ = 'v_selectNCRC'
-    _bind_key__ = 'ou'
-    _s_collection_name = 'v_SelectNCRC'  # type: ignore  
+    _s_collection_name = 'vSelectNCRC'  # type: ignore  
     http_methods = ['GET']
+    __bind_key__ = 'ou'
 
     PERSON_ID = Column(Integer, primary_key=True)
     userName = Column(String(100))

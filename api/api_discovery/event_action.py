@@ -1,5 +1,4 @@
 from datetime import datetime
-from database.database_discovery.authentication_models import User
 from database.models import EventAction , INVOICEFEE
 from flask import request, jsonify, session, has_request_context
 import logging

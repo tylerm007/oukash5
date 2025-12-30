@@ -81,11 +81,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         flask_app.config['SESSION_COOKIE_HTTPONLY'] = True
         flask_app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
         
-        logger.info("Configured Hybrid Cognito/Internal JWT authentication:")
-        logger.info("- Internal tokens: HS256 algorithm (Flask-JWT-Extended compatible)")
-        logger.info("- Cognito tokens: RS256 algorithm (validated via JWKS)")
-        logger.info("- Callback generates internal HS256 tokens for API compatibility")
-        logger.info("- Both token types supported via monkey patch")
+        logger.info("✅ Configured Cognito RS256 JWT authentication:")
+        logger.info("   - Primary: Cognito RS256 tokens (validated via JWKS)")
+        logger.info("   - Fallback: HS256 internal tokens (if needed)")
+        logger.info("   - Callback returns RS256 tokens directly (no conversion)")
+        logger.info("   - RS256 tokens usable with @jwt_required() via monkey patch")
         
         # Install JWT monkey patch for Cognito tokens
         Authentication_Provider._install_jwt_monkey_patch()
@@ -418,75 +418,48 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 if not tokens:
                     return jsonify({'error': 'Failed to exchange code for tokens'}), 400
                 
-                # Validate and decode the ID token
+                # Get the Cognito access token (RS256) - we'll use this directly
+                cognito_access_token = tokens.get('access_token')
                 id_token = tokens.get('id_token')
+                
+                if not cognito_access_token:
+                    return jsonify({'error': 'No access token received'}), 400
                 if not id_token:
                     return jsonify({'error': 'No ID token received'}), 400
 
-                claims = Authentication_Provider.get_claims_from_token(id_token)
+                # Validate and decode the access token (RS256)
+                claims = Authentication_Provider.validate_cognito_token(cognito_access_token)
                 if not claims:
-                    return jsonify({'error': 'Invalid ID token'}), 400
-                
+                    # Fallback to ID token if access token validation fails
+                    logger.warning("Access token validation failed, trying ID token")
+                    claims = Authentication_Provider.get_claims_from_token(id_token)
+                    if not claims:
+                        return jsonify({'error': 'Invalid tokens'}), 400
                 
                 # Find or create user in database
                 user = Authentication_Provider.get_or_create_user_from_claims(claims)
                 if not user:
                     return jsonify({'error': 'User creation failed'}), 400
+                
                 claims["user_id"] = user.Name
                 roles = user.UserRoleList
-                # Store user info in session
                 
+                # Store user info and Cognito RS256 token in session
                 session['user_id'] = user.Name
-                session['user_email'] = claims['email']
+                session['user_email'] = claims.get('email')
                 session['user_roles'] = roles
                 session['authenticated'] = True
-                session['access_token'] = tokens.get('access_token')
+                session['access_token'] = cognito_access_token  # Store RS256 token directly
                 session['id_token'] = id_token
-                user['user_id'] = user.Name
-                setattr(user,'Username', user.Name)
+                session['token_type'] = 'RS256'
+                session['auth_provider'] = 'cognito'
+                
                 # Clean up OAuth session data
                 session.pop('oauth_state', None)
 
-                logger.info(f"User {claims['name']} successfully authenticated via Cognito SSO")
-                
-                # Create internal JWT token compatible with Flask-JWT-Extended (HS256)
-                from flask_jwt_extended import create_access_token, create_refresh_token
-                
-                # Create token identity and additional claims
-                token_identity = claims.get('sub') or claims.get("email")
-                additional_claims = {
-                    'email': claims.get('email'),
-                    'name': claims.get('name'),
-                    'roles': roles,
-                    "user_id": user.Name,
-                    'cognito_sub': claims.get('sub'),
-                    'auth_provider': 'cognito',
-                    'cognito_token_id': claims.get('jti', 'unknown')
-                }
-                
-                # Generate internal access token (HS256 compatible)
-                internal_access_token = create_access_token(
-                    identity=user,
-                    additional_claims=additional_claims,
-                    expires_delta=timedelta(minutes=1440)  # 24 hours
-                )
-                
-                # Optional: Create refresh token
-                internal_refresh_token = create_refresh_token(
-                    identity=user,
-                    additional_claims=additional_claims
-                )
-                
-                # Store both Cognito and internal tokens in session
-                session['cognito_access_token'] = tokens.get('access_token')
-                session['cognito_id_token'] = id_token
-                session['internal_access_token'] = internal_access_token
-                
-                from flask import g
-                setattr(g, 'access_token', internal_access_token)
-                setattr(g, 'cognito_access_token', tokens.get('access_token'))
-                
-                logger.info(f"Generated internal HS256 token for user {claims['name']}")
+                logger.info(f"✅ User {user.Name} authenticated via Cognito SSO - using RS256 token directly")
+                logger.info(f"   Token algorithm: RS256 (Cognito)")
+                logger.info(f"   User roles: {[r.role_name for r in roles] if hasattr(roles[0] if roles else None, 'role_name') else roles}")
                 
                 # Check if this is a JSON API request (for testing/Postman) or web browser request
                 accept_header = request.headers.get('Accept', '')
@@ -498,18 +471,19 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                    'curl' in user_agent.lower() or \
                    request.args.get('format') == 'json':
                     
-                    logger.info("Returning JSON response for API/testing client")
+                    logger.info("Returning JSON response with RS256 Cognito token for API/testing client")
                     return jsonify({
                         'success': True,
                         'message': 'Authentication successful',
-                        'access_token': internal_access_token,
-                        'refresh_token': internal_refresh_token,
+                        'access_token': cognito_access_token,  # Return RS256 token directly
+                        'id_token': id_token,
                         'token_type': 'Bearer',
-                        'expires_in': 86400,
+                        'token_algorithm': 'RS256',
+                        'expires_in': 3600,  # Cognito default
                         'user_info': {
-                            'user_id': claims['name'],
-                            'email': claims['email'],
-                            'roles': roles,
+                            'user_id': user.Name,
+                            'email': claims.get('email'),
+                            'roles': [r.role_name for r in roles] if hasattr(roles[0] if roles else None, 'role_name') else roles,
                             'cognito_sub': claims.get('sub')
                         }
                     })
@@ -527,7 +501,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 else:
                     # Get the original request host/port from the referer or construct it
                     referer = request.headers.get('Referer', '')
-                    if referer and '5656' in referer:  # Angular dev server typically runs on 4200
+                    if referer and '5656' in referer:
                         from urllib.parse import urlparse
                         parsed_referer = urlparse(referer)
                         redirect_url = f"{parsed_referer.scheme}://{parsed_referer.netloc}/auth/callback"
@@ -540,11 +514,12 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 # Add authentication data as URL parameters for Angular to process
                 from urllib.parse import urlencode
                 auth_params = {
-                    'access_token': internal_access_token,
+                    'access_token': cognito_access_token,  # Pass RS256 token to Angular
                     'token_type': 'Bearer',
-                    'expires_in': 86400,
-                    'user_id': claims['name'],
-                    'email': claims['email'],
+                    'token_algorithm': 'RS256',
+                    'expires_in': 3600,
+                    'user_id': user.Name,
+                    'email': claims.get('email'),
                     'success': 'true'
                 }
                 
@@ -552,7 +527,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 final_redirect_url = f"{redirect_url}?{urlencode(auth_params)}"
                 
                 logger.info(f"Redirecting to Angular app: {redirect_url}")
-                logger.info(f"Auth token will be available in URL parameters")
+                logger.info(f"RS256 Cognito token will be available in URL parameters")
                 
                 return redirect(final_redirect_url)
                 
@@ -584,33 +559,28 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                     'message': 'Please login first at /api/auth/login'
                 }), 401
             
-            # Prefer internal token over Cognito token for API compatibility
-            internal_token = session.get('internal_access_token')
-            cognito_token = session.get('cognito_access_token')
+            # Return the RS256 Cognito token directly
+            access_token = session.get('access_token')
             
-            if not internal_token and not cognito_token:
+            if not access_token:
                 return jsonify({
-                    'error': 'No valid tokens found',
+                    'error': 'No valid token found',
                     'message': 'Please re-authenticate at /auth/login'
                 }), 401
             
             return jsonify({
-                'access_token': internal_token or cognito_token,
+                'access_token': access_token,
                 'token_type': 'Bearer',
-                'token_algorithm': 'HS256' if internal_token else 'RS256',
-                'recommended_token': 'internal' if internal_token else 'cognito',
+                'token_algorithm': session.get('token_type', 'RS256'),
+                'auth_provider': session.get('auth_provider', 'cognito'),
                 'user_id': session.get('user_id'),
                 'user_email': session.get('user_email'),
                 'user_roles': session.get('user_roles', []),
                 'expires_in': 3600,
                 'usage': {
                     'postman_setup': 'Copy the access_token value to Authorization > Bearer Token',
-                    'curl_example': f'curl -H "Authorization: Bearer {session.get("access_token", "TOKEN_HERE")}" http://localhost:5656/api/COMPANYTB'
-                },
-                'session_info': {
-                    'has_internal_token': bool(session.get('internal_access_token')),
-                    'has_cognito_token': bool(session.get('cognito_access_token')),
-                    'has_id_token': bool(session.get('cognito_id_token'))
+                    'curl_example': f'curl -H "Authorization: Bearer {access_token[:50]}..." http://localhost:5656/api/COMPANYTB',
+                    'note': 'This is a Cognito RS256 token - directly usable with @jwt_required() endpoints'
                 }
             })
         @flask_app.route('/auth/exchange-cognito-token', methods=['POST', 'GET'])
@@ -661,21 +631,18 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             if not user:
                 return jsonify({'error': 'User creation failed'}), 400
             
-            # Store user info in session
+            # Store user info in session with RS256 token
             session['user_id'] = user.Username
             session['user_email'] = user.Email if hasattr(user, 'Email') and user.Email else claims.get('email')   
             session['user_roles'] = user.UserRoleList if hasattr(user, 'UserRoleList') else []
             session['authenticated'] = True
+            session['access_token'] = id_token  # Store the RS256 token directly
             session['id_token'] = id_token
+            session['token_type'] = 'RS256'
+            session['auth_provider'] = 'cognito'
             
-            from flask_jwt_extended import create_access_token
-
-            internal_access_token = create_access_token(
-                identity=user,
-                additional_claims=claims,
-                expires_delta=timedelta(minutes=1440)  # 24 hours
-            )
-            session['access_token'] = internal_access_token
+            logger.info(f"✅ User {user.Username} authenticated with RS256 Cognito token")
+            
             user_info = {
                 'user_id': claims.get('name') or user.Username if hasattr(user, 'Username') else None,
                 'email': claims.get('email') or user.Email if hasattr(user, 'Email') else None,
@@ -685,9 +652,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             return jsonify({
                 'valid': True, 
                 'token_type': 'Bearer',
-                "access_token": internal_access_token,
+                'token_algorithm': 'RS256',
+                "access_token": id_token,  # Return the RS256 token
                 'user_info': user_info,
-                'message': 'Token received successfully. Use /auth/validate-cognito to validate and decode the token details.'})
+                'message': 'RS256 Cognito token received and validated successfully. Use this token directly for API calls.'
+            })
 
         @flask_app.route('/auth/validate-cognito', methods=['POST', 'GET'])
         def cognito_validate_token():
@@ -892,10 +861,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 
                 # Create Ontimize-compatible session data
                 session_data = {
-                    'user': user_info.get('email', token_claims.get('email')),
-                    'username': user_info.get('email', token_claims.get('email')),
+                    'user': token_claims.get('app_username'),
+                    'username': token_claims.get('app_username'),
                     'id': token_claims.get('sub', user_info.get('user_id')),
-                    'roles': user_info.get('roles', token_claims.get('roles', [])),
+                    'roles': token_claims.get('roles', []),
                     'authenticated': True,
                     'auth_provider': 'cognito',
                     'access_token': cognito_token,
@@ -940,19 +909,44 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 username = data.get('user') or data.get('username')
                 password = data.get('password')
                 
-                if not username or not password:
-                    return jsonify({'error': 'Username and password required'}), 400
-                
-                logger.info(f"Ontimize login attempt for user: {username}")
+                logger.info(f"Ontimize login attempt for user: {username} - token_claims uses app_username for User")
                 
                 # Check if password is a JWT token (Cognito token)
-                if password.startswith('eyJ'):
+                if password and password.startswith('eyJ'):
                     logger.info("JWT token detected in Ontimize login")
+                    
+                    # Extract username from token if not provided
+                    if not username:
+                        token_claims = Authentication_Provider.get_claims_from_token(password)
+                        if token_claims:
+                            username = (token_claims.get('app_username') or 
+                                      token_claims.get('email') or 
+                                      token_claims.get('name') or
+                                      token_claims.get('sub'))
+                            logger.info(f"Extracted username from token: {username}")
+                        else:
+                            return jsonify({
+                                'code': 1,
+                                'message': 'Invalid token',
+                                'error': 'Could not decode token'
+                            }), 401
+                    
+                    if not username:
+                        return jsonify({
+                            'code': 1,
+                            'message': 'Username required',
+                            'error': 'Username not found in request or token'
+                        }), 400
                     
                     # Use our existing authentication methods
                     user = Authentication_Provider.get_user(username, password)
                     if user and Authentication_Provider.check_password(user, password):
                         logger.info(f"✅ Token authentication successful for user: {username}")
+                        
+                        # Get user roles
+                        user_roles = []
+                        if hasattr(user, 'UserRoleList') and user.UserRoleList:
+                            user_roles = [role.role_name for role in user.UserRoleList if hasattr(role, 'role_name')]
                         
                         # Create Ontimize-compatible response
                         response_data = {
@@ -963,14 +957,18 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                             'data': {
                                 'user': username,
                                 'sessionId': f"cognito_{getattr(user, 'id', username)}",
-                                'roles': [role.role_name for role in getattr(user, 'UserRoleList', [])] if hasattr(user, 'UserRoleList') else []
+                                'roles': user_roles
                             }
                         }
                         
-                        # Store in session for future requests
+                        # Store in session for future requests with RS256 token
                         session['user'] = username
+                        session['user_id'] = username
                         session['authenticated'] = True
                         session['sessionId'] = response_data['sessionId']
+                        session['access_token'] = password  # Store the RS256 token
+                        session['token_type'] = 'RS256'
+                        session['auth_provider'] = 'cognito'
                         
                         return jsonify(response_data)
                     else:
@@ -981,16 +979,25 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                             'error': 'Invalid token or user'
                         }), 401
                 else:
+                    # No token provided
+                    if not username or not password:
+                        return jsonify({
+                            'code': 1,
+                            'message': 'Username and password/token required',
+                            'error': 'Missing credentials'
+                        }), 400
+                    
                     # Handle regular password authentication (fall back to standard behavior)
                     logger.info("Regular password authentication - not implemented in Cognito provider")
                     return jsonify({
                         'code': 1,
                         'message': 'Regular password authentication not supported with Cognito provider',
-                        'error': 'Use Cognito authentication'
+                        'error': 'Use Cognito authentication with JWT token'
                     }), 401
                 
             except Exception as e:
                 logger.error(f"Error in Ontimize token login: {e}")
+                logger.exception(e)  # Log full stack trace
                 return jsonify({
                     'code': 1,
                     'message': 'Login error',
@@ -1001,13 +1008,14 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         logger.info("🔗 Cognito Authentication Endpoints registered:")
         logger.info("   GET  /api/auth/login - Redirect to Cognito login")
         logger.info("   GET  /auth/login-postman - Get Cognito login URL for testing")
-        logger.info("   GET  /auth/callback - Handle Cognito authentication callback")
+        logger.info("   GET  /auth/callback - Handle Cognito callback (returns RS256 token)")
         logger.info("   GET  /auth/logout - Logout and redirect to Cognito logout")
-        logger.info("   GET  /auth/token - Get current session token")
-        logger.info("   POST /auth/validate-cognito - Validate JWT tokens")
-        logger.info("   POST /auth/ontimize-session - Create Ontimize session from Cognito token")
-        logger.info("   POST /api/users/login - Ontimize login with Cognito tokens")
+        logger.info("   GET  /auth/token - Get current session RS256 token")
+        logger.info("   POST /auth/exchange-cognito-token - Exchange Cognito token (returns RS256)")
+        logger.info("   POST /auth/validate-cognito - Validate and decode JWT tokens")
         logger.info("   GET  /auth/debug-cognito - Debug Cognito configuration")
+        logger.info("")
+        logger.info("ℹ️  All endpoints return RS256 Cognito tokens directly (no HS256 conversion)")
 
     @staticmethod
     def _exchange_code_for_tokens(auth_code: str) -> Optional[Dict[str, str]]:
@@ -1329,21 +1337,20 @@ class Authentication_Provider(Abstract_Authentication_Provider):
 def getUserRoles(username:str, roles: list) ->any:
     rtn_user = {}
     #Check database for additional roles and email
-    from database.models import vUserRole
-    user = vUserRole.query.filter(vUserRole.Name == username).first() or {}
-    setattr(user,'Username', username)
-    if user:
-        logger.debug(f"Found vUserRole in database: {user.Name}, adding {len(roles)} roles")
-        UserRoleList = []
-        setattr(user,'UserRoleList', UserRoleList)
-        if len(roles) > 0:
-            for role_name in roles:
-                each_user_role = DotMapX()
-                each_user_role.role_name = role_name
-                user.UserRoleList.append(each_user_role)
-        else:
+    #from database.models import vUserRole
+    user = DotMapX() # vUserRole.query.filter(vUserRole.Name == username).first() or {}
+    user['Username'] = username
+    #logger.debug(f"Found vUserRole in database: {user.Name}, adding {len(roles)} roles")
+    UserRoleList = []
+    user['UserRoleList'] = UserRoleList
+    if len(roles) > 0:
+        for role_name in roles:
             each_user_role = DotMapX()
-            each_user_role.role_name = user.role
-            user.UserRoleList.append(each_user_role)
+            each_user_role.role_name = role_name
+            user['UserRoleList'].append(each_user_role)
+    else:
+        each_user_role = DotMapX()
+        each_user_role.role_name = user['role'] if 'role' in user else 'user'
+        user['UserRoleList'].append(each_user_role)
        
     return user

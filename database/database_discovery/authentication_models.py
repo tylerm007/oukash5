@@ -47,7 +47,7 @@ else:
     print('*** Models.py Using TestBase ***')
 
 
-
+"""
 class Role(Base):  # type: ignore
     __tablename__ = 'Role'
     _s_collection_name = 'authentication-Role'  # type: ignore
@@ -92,12 +92,12 @@ class User(Base):  # type: ignore
     @classmethod
     @jsonapi_rpc(valid_jsonapi=False)
     def login(cls, *args, **kwargs):
-        """
+        '''
             description: Login - Generate a JWT access token
             args:
                 username: user
                 password: password
-        """
+        '''
         username = kwargs.get("username", None)
         password = kwargs.get("password", None)
 
@@ -142,3 +142,4 @@ class UserRole(Base):  # type: ignore
     user : Mapped["User"] = relationship(back_populates=("UserRoleList"))
 
     # child relationships (access children)
+"""

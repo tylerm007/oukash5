@@ -1,410 +1,329 @@
 <div class="container">
-<o-form-container breadcrumb="yes" breadcrumb-label-columns="ApplicationID" breadcrumb-separator=", " class="fill-form">
-      <o-form #form attr="WFApplication_form_edit" 
-        service="WFApplication" 
-        entity="WFApplication" 
-        fxLayout="column" 
-        show-header="yes" 
-        header-actions="R;U;D"
-        #oDetailForm keys="ApplicationID" 
-        keys-sql-types="INTEGER" 
-        show-header-navigation="yes"
-        (onDataLoaded)="onDataLoaded($event)">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="ApplicationID" breadcrumb-separator=", "
+    class="fill-form">
+    <o-form #form attr="WFApplication_form_edit" service="WFApplication" entity="WFApplication" fxLayout="column"
+      show-header="yes" header-actions="R;U;D" #oDetailForm keys="ApplicationID" keys-sql-types="INTEGER"
+      show-header-navigation="yes" (onDataLoaded)="onDataLoaded($event)">
 
-  <o-row attr="row1" layout-align="start stretch">
-    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
-      
-      <o-integer-input #ApplicationID attr="ApplicationID" label=" Application I D" type="integer" editable="no" required="no" ></o-integer-input>
-      
-      <o-list-picker 
-        attr="Priority"
-        service="WFPriority" 
-        entity="WFPriorityType"
-        fxFlex="30" 
-        query-on-init="no" 
-        query-on-bind="yes" 
-        required="no" 
-        enabled="yes" 
-        filter="yes"
-        value-column="PriorityCode" 
-        value-column-type="VARCHAR"  
-        keys="PriorityCode" 
-        columns="PriorityCode;Priority;PriorityDescription" 
-        title="Priority"
-        visible-columns="PriorityCode;PriorityDescription" 
-        separator=" - " width="680px" class="form-field">
-</o-list-picker>
-      
-      <o-list-picker 
-        attr="Status"
-        service="WFApplicationStatus" 
-        entity="WFApplicationStatusType"
-        fxFlex="30" 
-        query-on-init="no" 
-        query-on-bind="yes" 
-        required="yes" 
-        enabled="yes" 
-        filter="yes"
-        value-column="StatusCode" 
-        value-column-type="VARCHAR"  
-        keys="StatusCode" 
-        columns="StatusCode;Status;StatusDescription" 
-        title="Status"
-        visible-columns="StatusCode;StatusDescription" 
-        separator=" - " width="680px" class="form-field">
-</o-list-picker>
-      
-      <o-integer-input #ApplicationNumber attr="ApplicationNumber" label="ApplicationNumber" type="integer" editable="no" required="no" ></o-integer-input>
-      
-      <o-date-input #SubmissionDate attr="SubmissionDate" value-type="string" label="SubmissionDate" enabled="yes" required="yes" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
-      
-      <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
-      <o-integer-input #CompanyID attr="CompanyID" label="CompanyID" type="integer" editable="no" required="yes" ></o-integer-input>
-      
-      <o-integer-input #PlantID attr="PlantID" label="PlantID" type="integer" editable="no" required="no" ></o-integer-input>
-      <o-button (click)="start_workflow()" fxFlex="30%"
-      label="Start Workflow" 
-      icon="download_file" color="primary" type="raised"></o-button>
-    </div>
+      <o-row attr="row1" layout-align="start stretch">
+        <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
 
-  </o-row>
-      
+          <o-integer-input #ApplicationID attr="ApplicationID" label=" Application I D" type="integer" editable="no"
+            required="no"></o-integer-input>
+
+          <o-list-picker attr="Priority" service="WFPriority" entity="WFPriorityType" fxFlex="30" query-on-init="no"
+            query-on-bind="yes" required="no" enabled="yes" filter="yes" value-column="PriorityCode"
+            value-column-type="VARCHAR" keys="PriorityCode" columns="PriorityCode;Priority;PriorityDescription"
+            title="Priority" visible-columns="PriorityCode;PriorityDescription" separator=" - " width="680px"
+            class="form-field">
+          </o-list-picker>
+
+          <o-list-picker attr="Status" service="WFApplicationStatus" entity="WFApplicationStatusType" fxFlex="30"
+            query-on-init="no" query-on-bind="yes" required="yes" enabled="yes" filter="yes" value-column="StatusCode"
+            value-column-type="VARCHAR" keys="StatusCode" columns="StatusCode;Status;StatusDescription" title="Status"
+            visible-columns="StatusCode;StatusDescription" separator=" - " width="680px" class="form-field">
+          </o-list-picker>
+
+          <o-integer-input #ApplicationNumber attr="ApplicationNumber" label="ApplicationNumber" type="integer"
+            editable="no" required="no"></o-integer-input>
+
+          <o-date-input #SubmissionDate attr="SubmissionDate" value-type="string" label="SubmissionDate" enabled="yes"
+            required="yes" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+
+          <o-date-input #CreatedDate attr="CreatedDate" value-type="string" label="CreatedDate" editable="no"
+            required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+
+          <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-date-input #ModifiedDate attr="ModifiedDate" value-type="string" label="ModifiedDate" editable="no"
+            required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+
+          <o-text-input #ModifiedBy attr="ModifiedBy" label="ModifiedBy" enabled="yes" required="no" fxFlex="20%"
+            class="form-field"></o-text-input>
+
+          <o-integer-input #CompanyID attr="CompanyID" label="CompanyID" type="integer" editable="no"
+            required="yes"></o-integer-input>
+
+          <o-integer-input #PlantID attr="PlantID" label="PlantID" type="integer" editable="no"
+            required="no"></o-integer-input>
+          <o-button (click)="start_workflow()" fxFlex="30%" label="Start Workflow" icon="download_file" color="primary"
+            type="raised"></o-button>
+        </div>
+
+      </o-row>
+
       <mat-tab-group fxFill>
-        
+
         <mat-tab label="ROLEASSIGMENT-ApplicationId">
-    <div layout-padding>
-      <o-table 
-        attr="RoleAssigmentTable" 
-        service="RoleAssigment" 
-        entity="RoleAssigment" 
-        keys="RoleAssigmentID"
-        parent-keys="ApplicationId:ApplicationID"
-        columns="RoleAssigmentID;ApplicationId;Role;Assignee;CreatedDate;CreatedBy"  
-        horizontal-scroll="yes"
-        detail-form-route="RoleAssigment" 
-        edit-form-route="RoleAssigment"
-        visible-columns="RoleAssigmentID;ApplicationId;Role;Assignee;CreatedDate;CreatedBy"  
-        sort-columns="RoleAssigmentID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationId" title="Application">
-    <o-table-cell-renderer-service attr="ApplicationId" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationId"
-        value-column="ApplicationID" keys="ApplicationId"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Role attr="Role" title="Role" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #Assignee attr="Assignee" title="Assignee" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="RoleAssigmentTable" service="RoleAssigment" entity="RoleAssigment" keys="RoleAssigmentID"
+              parent-keys="ApplicationId:ApplicationID"
+              columns="RoleAssigmentID;ApplicationId;Role;Assignee;CreatedDate;CreatedBy" horizontal-scroll="yes"
+              detail-form-route="RoleAssigment" edit-form-route="RoleAssigment"
+              visible-columns="RoleAssigmentID;ApplicationId;Role;Assignee;CreatedDate;CreatedBy"
+              sort-columns="RoleAssigmentID" query-rows="25" quick-filter="yes" row-height="medium"
+              select-all-checkbox="true" pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes"
+              delete-button="yes" fixed-header="true" class="vertical-padding-8" edition-mode="dblclick"
+              horizontal-scroll="yes" class="fill-form">
+
+              <o-table-column #RoleAssigmentID attr="RoleAssigmentID" title=" Role Assigment I D" type="integer"
+                editable="no" required="no" content-align="center"></o-table-column>
+
+              <o-table-column attr="ApplicationId" title="Application">
+                <o-table-cell-renderer-service attr="ApplicationId" service="WFApplication" entity="WFApplicationType"
+                  columns="ApplicationID;ApplicationID" parent-keys="ApplicationID:ApplicationId"
+                  value-column="ApplicationID" keys="ApplicationId" visible-columns="ApplicationID" separator=" - "
+                  width="680px">
+                </o-table-cell-renderer-service>
+              </o-table-column>
+
+              <o-table-column #Role attr="Role" title="Role" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #Assignee attr="Assignee" title="Assignee" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
         <mat-tab label="TASKINSTANCE-ApplicationId">
-    <div layout-padding>
-      <o-table 
-        attr="TaskInstanceTable" 
-        service="TaskInstance" 
-        entity="TaskInstance" 
-        keys="TaskInstanceId"
-        parent-keys="ApplicationId:ApplicationID"
-        columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"  
-        horizontal-scroll="yes"
-        detail-form-route="TaskInstance" 
-        edit-form-route="TaskInstance"
-        visible-columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"  
-        sort-columns="TaskInstanceId" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationId" title="Application">
-    <o-table-cell-renderer-service attr="ApplicationId" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationId"
-        value-column="ApplicationID" keys="ApplicationId"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column attr="StageId" title="Stage">
-    <o-table-cell-renderer-service attr="StageId" 
-        service="StageDefinition" entity="StageDefinitionType" columns="StageId;StageName"
-        parent-keys="ApplicationID:StageId"
-        value-column="StageName" keys="StageId"
-        visible-columns="StageName" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="TaskDefinitionId" title="TaskDefinition">
-    <o-table-cell-renderer-service attr="TaskDefinitionId" 
-        service="TaskDefinition" entity="TaskDefinitionType" columns="TaskId;TaskName"
-        parent-keys="ApplicationID:TaskDefinitionId"
-        value-column="TaskName" keys="TaskDefinitionId"
-        visible-columns="TaskName" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #Result attr="Result" title="Result" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="TaskInstanceTable" service="TaskInstance" entity="TaskInstance" keys="TaskInstanceId"
+              parent-keys="ApplicationId:ApplicationID"
+              columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"
+              horizontal-scroll="yes" detail-form-route="TaskInstance" edit-form-route="TaskInstance"
+              visible-columns="TaskInstanceId;ApplicationId;StageId;Status;TaskDefinitionId;AssignedTo;StartedDate;CompletedDate;DurationMinutes;Result;ResultData;ErrorMessage;RetryCount;ModifiedDate"
+              sort-columns="TaskInstanceId" query-rows="25" quick-filter="yes" row-height="medium"
+              select-all-checkbox="true" pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes"
+              delete-button="yes" fixed-header="true" class="vertical-padding-8" edition-mode="dblclick"
+              horizontal-scroll="yes" class="fill-form">
+
+              <o-table-column #TaskInstanceId attr="TaskInstanceId" title=" Task Instance Id" type="integer"
+                editable="no" required="no" content-align="center"></o-table-column>
+
+              <o-table-column attr="ApplicationId" title="ApplicationId"> </o-table-column>
+
+                <o-table-column attr="StageId" title="Stage">
+                  <o-table-cell-renderer-service attr="StageId" service="StageDefinition" entity="StageDefinitionType"
+                    columns="StageId;StageName" parent-keys="ApplicationID:StageId" value-column="StageName"
+                    keys="StageId" visible-columns="StageName" separator=" - " width="680px">
+                  </o-table-cell-renderer-service>
+                </o-table-column>
+
+                <o-table-column #Status attr="Status" title="Status" editable="no" required="yes"
+                  content-align="left"></o-table-column>
+
+                <o-table-column attr="TaskDefinitionId" title="TaskDefinition">
+                  <o-table-cell-renderer-service attr="TaskDefinitionId" service="TaskDefinition"
+                    entity="TaskDefinitionType" columns="TaskId;TaskName" parent-keys="ApplicationID:TaskDefinitionId"
+                    value-column="TaskName" keys="TaskDefinitionId" visible-columns="TaskName" separator=" - "
+                    width="680px">
+                  </o-table-cell-renderer-service>
+                </o-table-column>
+
+                <o-table-column #AssignedTo attr="AssignedTo" title="AssignedTo" editable="no" required="no"
+                  content-align="left"></o-table-column>
+
+                <o-table-column #StartedDate attr="StartedDate" title="StartedDate" type="DATETIME2" editable="no"
+                  required="no"></o-table-column>
+
+                <o-table-column #CompletedDate attr="CompletedDate" title="CompletedDate" type="DATETIME2" editable="no"
+                  required="no"></o-table-column>
+
+                <o-table-column #DurationMinutes attr="DurationMinutes" title="DurationMinutes" type="integer"
+                  editable="no" required="no" content-align="center"></o-table-column>
+
+                <o-table-column #Result attr="Result" title="Result" editable="no" required="no"
+                  content-align="left"></o-table-column>
+
+                <o-table-column #ResultData attr="ResultData" title="ResultData" editable="no" required="no"
+                  content-align="left"></o-table-column>
+
+                <o-table-column #ErrorMessage attr="ErrorMessage" title="ErrorMessage" editable="no" required="no"
+                  content-align="left"></o-table-column>
+
+                <o-table-column #RetryCount attr="RetryCount" title="RetryCount" type="integer" editable="no"
+                  required="no" content-align="center"></o-table-column>
+
+                <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no"
+                  required="no"></o-table-column>
+
+                <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
         <mat-tab label="WFAPPLICATIONMESSAGE-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFApplicationMessageTable" 
-        service="WFApplicationMessage" 
-        entity="WFApplicationMessage" 
-        keys="MessageID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="MessageID;ApplicationID;Priority;FromUser;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
-        horizontal-scroll="yes"
-        detail-form-route="WFApplicationMessage" 
-        edit-form-route="WFApplicationMessage"
-        visible-columns="MessageID;ApplicationID;Priority;FromUser;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"  
-        sort-columns="MessageID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #MessageID attr="MessageID" title=" Message I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="WFApplicationMessageTable" service="WFApplicationMessage" entity="WFApplicationMessage"
+              keys="MessageID" parent-keys="ApplicationID:ApplicationID"
+              columns="MessageID;ApplicationID;Priority;FromUser;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"
+              horizontal-scroll="yes" detail-form-route="WFApplicationMessage" edit-form-route="WFApplicationMessage"
+              visible-columns="MessageID;ApplicationID;Priority;FromUser;ToUser;MessageText;MessageType;SentDate;TaskInstanceId"
+              sort-columns="MessageID" query-rows="25" quick-filter="yes" row-height="medium" select-all-checkbox="true"
+              pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes" delete-button="yes"
+              fixed-header="true" class="vertical-padding-8" edition-mode="dblclick" horizontal-scroll="yes"
+              class="fill-form">
+
+              <o-table-column #MessageID attr="MessageID" title=" Message I D" type="integer" editable="no"
+                required="no" content-align="center"></o-table-column>
+
+              <o-table-column attr="ApplicationID" title="ApplicationID">
+
+              </o-table-column>
+
+              <o-table-column #Priority attr="Priority" title="Priority" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #FromUser attr="FromUser" title="FromUser" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #ToUser attr="ToUser" title="ToUser" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #MessageText attr="MessageText" title="MessageText" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #MessageType attr="MessageType" title="MessageType" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #SentDate attr="SentDate" title="SentDate" type="DATETIME2" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #TaskInstanceId attr="TaskInstanceId" title="TaskInstanceId" type="integer" editable="no"
+                required="no" content-align="center"></o-table-column>
+
+              <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
         <mat-tab label="WFFILE-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFFileTable" 
-        service="WFFile" 
-        entity="WFFile" 
-        keys="FileID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="FileName;ApplicationID;FileType;FileSize;UploadedDate;Tag;RecordCount;FilePath;CCreatedDate;CreatedBy;ModifiedDate;ModifiedBy;FileID;IsProcessed"  
-        horizontal-scroll="yes"
-        detail-form-route="WFFile" 
-        edit-form-route="WFFile"
-        visible-columns="FileName;ApplicationID;FileType;FileSize;UploadedDate;Tag;RecordCount;FilePath;CCreatedDate;CreatedBy;ModifiedDate;ModifiedBy;FileID;IsProcessed"  
-        sort-columns="FileName" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #FileName attr="FileName" title=" File Name" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #FileType attr="FileType" title="FileType" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #FileSize attr="FileSize" title="FileSize" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #UploadedDate attr="UploadedDate" title="UploadedDate" type="DATE" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #Tag attr="Tag" title="Tag" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #RecordCount attr="RecordCount" title="RecordCount" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column #FilePath attr="FilePath" title="FilePath" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #CCreatedDate attr="CCreatedDate" title="CCreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-          <o-table-column #FileID attr="FileID" title="FileID" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="IsProcessed" title="IsProcessed">
-    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
-        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
-</o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="WFFileTable" service="WFFile" entity="WFFile" keys="FileID"
+              parent-keys="ApplicationID:ApplicationID"
+              columns="FileName;ApplicationID;FileType;FileSize;UploadedDate;Tag;RecordCount;FilePath;CCreatedDate;CreatedBy;ModifiedDate;ModifiedBy;FileID;IsProcessed"
+              horizontal-scroll="yes" detail-form-route="WFFile" edit-form-route="WFFile"
+              visible-columns="FileName;ApplicationID;FileType;FileSize;UploadedDate;Tag;RecordCount;FilePath;CCreatedDate;CreatedBy;ModifiedDate;ModifiedBy;FileID;IsProcessed"
+              sort-columns="FileName" query-rows="25" quick-filter="yes" row-height="medium" select-all-checkbox="true"
+              pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes" delete-button="yes"
+              fixed-header="true" class="vertical-padding-8" edition-mode="dblclick" horizontal-scroll="yes"
+              class="fill-form">
+
+              <o-table-column #FileName attr="FileName" title=" File Name" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column attr="ApplicationID" title="ApplicationID">
+
+              </o-table-column>
+
+              <o-table-column #FileType attr="FileType" title="FileType" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #FileSize attr="FileSize" title="FileSize" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #UploadedDate attr="UploadedDate" title="UploadedDate" type="DATE" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #Tag attr="Tag" title="Tag" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #RecordCount attr="RecordCount" title="RecordCount" type="integer" editable="no"
+                required="no" content-align="center"></o-table-column>
+
+              <o-table-column #FilePath attr="FilePath" title="FilePath" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #CCreatedDate attr="CCreatedDate" title="CCreatedDate" type="DATETIME2" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
+              <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-column #FileID attr="FileID" title="FileID" type="integer" editable="no" required="no"
+                content-align="center"></o-table-column>
+
+              <o-table-column attr="IsProcessed" title="IsProcessed">
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                  render-type="icon" boolean-type="boolean" true-value="true"
+                  false-value="false"></o-table-cell-renderer-boolean>
+              </o-table-column>
+
+              <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
         <mat-tab label="WFQUOTE-ApplicationID">
-    <div layout-padding>
-      <o-table 
-        attr="WFQuoteTable" 
-        service="WFQuote" 
-        entity="WFQuote" 
-        keys="QuoteID"
-        parent-keys="ApplicationID:ApplicationID"
-        columns="QuoteID;ApplicationID;Status;QuoteNumber;TotalAmount;ValidUntil;LastUpdatedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
-        horizontal-scroll="yes"
-        detail-form-route="WFQuote" 
-        edit-form-route="WFQuote"
-        visible-columns="QuoteID;ApplicationID;Status;QuoteNumber;TotalAmount;ValidUntil;LastUpdatedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"  
-        sort-columns="QuoteID" 
-        query-rows="25" 
-        quick-filter="yes"
-        row-height="medium" 
-        select-all-checkbox="true" 
-        pageable="yes"  
-        auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
-        class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
-        
-          <o-table-column #QuoteID attr="QuoteID" title=" Quote I D" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-        
-          <o-table-column attr="ApplicationID" title="ApplicationID">
-    <o-table-cell-renderer-service attr="ApplicationID" 
-        service="WFApplication" entity="WFApplicationType" columns="ApplicationID;ApplicationID"
-        parent-keys="ApplicationID:ApplicationID"
-        value-column="ApplicationID" keys="ApplicationID"
-        visible-columns="ApplicationID" separator=" - " width="680px">
-    </o-table-cell-renderer-service>
-</o-table-column>
-        
-          <o-table-column #Status attr="Status" title="Status" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #QuoteNumber attr="QuoteNumber" title="QuoteNumber" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #TotalAmount attr="TotalAmount" title="TotalAmount" type="currency" editable="no" required="yes" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
-        
-          <o-table-column #ValidUntil attr="ValidUntil" title="ValidUntil" type="DATE" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #LastUpdatedDate attr="LastUpdatedDate" title="LastUpdatedDate" type="DATE" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no" required="yes" ></o-table-column>
-        
-          <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes" content-align="left"></o-table-column>
-        
-          <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no" required="no" ></o-table-column>
-        
-          <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no" content-align="left"></o-table-column>
-        
-        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
-      </o-table>
-    </div>
-</mat-tab>
-        
+          <div layout-padding>
+            <o-table attr="WFQuoteTable" service="WFQuote" entity="WFQuote" keys="QuoteID"
+              parent-keys="ApplicationID:ApplicationID"
+              columns="QuoteID;ApplicationID;Status;QuoteNumber;TotalAmount;ValidUntil;LastUpdatedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"
+              horizontal-scroll="yes" detail-form-route="WFQuote" edit-form-route="WFQuote"
+              visible-columns="QuoteID;ApplicationID;Status;QuoteNumber;TotalAmount;ValidUntil;LastUpdatedDate;CreatedDate;CreatedBy;ModifiedDate;ModifiedBy"
+              sort-columns="QuoteID" query-rows="25" quick-filter="yes" row-height="medium" select-all-checkbox="true"
+              pageable="yes" auto-adjust="true" virtual-scroll="yes" insert-button="yes" delete-button="yes"
+              fixed-header="true" class="vertical-padding-8" edition-mode="dblclick" horizontal-scroll="yes"
+              class="fill-form">
+
+              <o-table-column #QuoteID attr="QuoteID" title=" Quote I D" type="integer" editable="no" required="no"
+                content-align="center"></o-table-column>
+
+              <o-table-column attr="ApplicationID" title="ApplicationID">
+
+              </o-table-column>
+
+              <o-table-column #Status attr="Status" title="Status" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #QuoteNumber attr="QuoteNumber" title="QuoteNumber" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #TotalAmount attr="TotalAmount" title="TotalAmount" type="currency" editable="no"
+                required="yes" currency-symbol="$" currency-symbol-position="left" thousand-separator=","
+                decimal-separator="."></o-table-column>
+
+              <o-table-column #ValidUntil attr="ValidUntil" title="ValidUntil" type="DATE" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #LastUpdatedDate attr="LastUpdatedDate" title="LastUpdatedDate" type="DATE" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #CreatedDate attr="CreatedDate" title="CreatedDate" type="DATETIME2" editable="no"
+                required="yes"></o-table-column>
+
+              <o-table-column #CreatedBy attr="CreatedBy" title="CreatedBy" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+              <o-table-column #ModifiedDate attr="ModifiedDate" title="ModifiedDate" type="DATETIME2" editable="no"
+                required="no"></o-table-column>
+
+              <o-table-column #ModifiedBy attr="ModifiedBy" title="ModifiedBy" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+              <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+            </o-table>
+          </div>
+        </mat-tab>
+
       </mat-tab-group>
-      
+
     </o-form>
   </o-form-container>
 </div>

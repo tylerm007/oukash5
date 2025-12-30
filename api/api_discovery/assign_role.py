@@ -81,7 +81,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
         
         add_role_assignment(app_id, role, assignee)
         if role == 'NCRC':
-            admin_assignee = None # models.WFUSERADMIN.query.filter_by(UserName=assignee, IsPrimary=True).first()
+            admin_assignee = None # TODO
             if admin_assignee is None:
                 admin_assignee = assignee 
             else:

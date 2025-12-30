@@ -36,12 +36,89 @@ def jsonapi_filter(cls):
     else:
         print(f"Expressions {expressions}")
         return query.filter(and_(*expressions))   
-    
+
+
+@classmethod
+def _ont_filter(cls):
+    """
+    Apply a filter to this model
+    :param filter_args: A list of filters information to apply, passed as a request URL parameter.
+    Each filter object has the following fields:
+    - name: The name of the field you want to filter on.
+    - op: The operation you want to use (all sqlalchemy operations are available). The valid values are:
+        - like: Invoke SQL like (or "ilike", "match", "notilike")
+        - eq: check if field is equal to something
+        - ge: check if field is greater than or equal to something
+        - gt: check if field is greater than to something
+        - ne: check if field is not equal to something
+        - is_: check if field is a value
+        - is_not: check if field is not a value
+        - le: check if field is less than or equal to something
+        - lt: check if field is less than to something
+    - val: The value that you want to compare.
+    :return: sqla query object
+    """
+    from sqlalchemy import text, or_, and_
+    from flask import request
+    expressions = []
+    sqlWhere = ""
+    query = cls._s_query
+    try:
+        filters = []
+        args = request.args
+        if 'filter[@basic_expression]' in args:
+            filters = json.loads(args.get('filter[@basic_expression]'))
+        else:
+            for arg in args:
+                if arg.startswith("filter"):
+                    filters.append({'lop': f'{arg[7:-1]}', 'op': 'eq', 'rop': f'{args.get(arg)}'})
+            
+        #    filters =  json.loads(filter_args[0])
+    except json.decoder.JSONDecodeError:
+        raise ValidationError("Invalid filter format (see https://github.com/thomaxxl/safrs/wiki)")
+
+    if not isinstance(filters, list):
+        filters = [filters]
+
+    expressions = []
+    query = cls._s_query
+
+    for filt in filters:
+        if not isinstance(filt, dict) or len(filt) == 0:
+            safrs.log.warning(f"Invalid or empty filter '{filt}'")
+            continue
+        attr_name = filt.get("name") or filt.get("lop")
+        attr_val = filt.get("val") or filt.get("rop")
+        if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
+            raise ValidationError(f'Invalid filter "{filt}", unknown attribute "{attr_name}"')
+
+        op_name = filt.get("op", "").strip("_").lower()
+        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
+        if op_name in ["in", "notin"]:
+            op = getattr(attr, op_name + "_")
+            query = query.filter(op(attr_val))
+        elif op_name in ["like", "ilike", "match", "notilike"] and hasattr(attr, "like"):
+            # => attr is Column or InstrumentedAttribute
+            like = getattr(attr, op_name)
+            expressions.append(like(attr_val))
+        elif not hasattr(operator, op_name):
+            raise ValidationError(f'Invalid filter "{filt}", unknown operator "{op_name}"')
+        else:
+            op = getattr(operator, op_name)
+            expressions.append(op(attr, attr_val))
+
+    if len(filters) > 1:
+        return query.filter(and_(*expressions))
+    else:
+        return query.filter(*expressions)
+
+
 
 class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
     __abstract__ = True
     if do_enable_ont_advanced_filters := False:
         jsonapi_filter = jsonapi_filter
+        #jsonapi_filter = _ont_filter
         
     def _s_parse_attr_value(self, attr_name: str, attr_val: any):
         """
