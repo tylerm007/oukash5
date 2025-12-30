@@ -102,8 +102,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
         if not process_def:
             return jsonify({"status": "error", "message": f"Process definition not found: {process_name}"}), 404
-        process_id = process_def.ProcessId
-        task_defs = TaskDefinition.query.filter_by(ProcessId=process_id).all()
+        process__def_id = process_def.ProcessId
+        task_defs = TaskDefinition.query.filter_by(ProcessDefinitionId=process__def_id).all()
         if not task_defs:
             return jsonify({"status": "error", "message": f"No Task definitions found for process: {process_name}"}), 404
         task_flow_errors = []
@@ -114,9 +114,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             task_type = task.TaskType
         
             if not from_task and task_type != 'END':
-                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskDefinitionId}) has no incoming TaskFlow"})
+                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} - {task_type} (ID: {task.TaskId}) has no incoming TaskFlow"})
             if not to_task and task_type != 'START':
-                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} (ID: {task.TaskDefinitionId}) has no outgoing TaskFlow"})
+                task_flow_errors.append({"status": "error", "message": f"Task {task.TaskName} - {task_type} (ID: {task.TaskId}) has no outgoing TaskFlow"})
             #print(f'Task {task.TaskName} (ID: {task.TaskDefinitionId}) is valid with {len(from_task)} incoming and {len(to_task)} outgoing TaskFlows')
         if task_flow_errors:
             for tfe in task_flow_errors:
