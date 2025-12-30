@@ -1,0 +1,23 @@
+digraph TaskFlow {
+    label="Sample Approval Workflow";
+    rankdir=TB;
+    node [style=filled, fillcolor=lightblue];
+
+    N0 [label="Start Application", shape=circle, fillcolor=lightgreen];
+    N1 [label="Submit Form", shape=box, fillcolor=lightblue];
+    N2 [label="Manager Review", shape=box, fillcolor=lightblue];
+    N3 [label="Approval Decision", shape=diamond, fillcolor=lightyellow];
+    N4 [label="Process Payment", shape=box, fillcolor=lightblue];
+    N5 [label="Send Rejection", shape=box, fillcolor=lightblue];
+    N6 [label="Notify Applicant", shape=box, fillcolor=lightblue];
+    N7 [label="End Process", shape=doublecircle, fillcolor=lightcoral];
+
+    N0 -> N1;
+    N1 -> N2;
+    N2 -> N3;
+    N3 -> N4 [label="Approved"];
+    N3 -> N5 [label="Rejected"];
+    N4 -> N6;
+    N5 -> N6;
+    N6 -> N7;
+}

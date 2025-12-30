@@ -248,3 +248,13 @@ EXEC sp_add_flow @from_name = 'Notify Customer', @to_name = 'End Certification',
 EXEC sp_add_flow @from_name = 'End Certification', @to_name = 'END', @condition = 'None'; 
 GO
 
+
+update TaskDeffinitions
+set PreScriptJson = 'api/vSelectNCRC,NCRC'
+where TaskName = 'AssignNCRC';
+GO
+
+update TaskDeffinitions
+set PreScriptJson = 'api/vSelectRFR,RFR'
+where TaskName = 'Select RFR';
+GO

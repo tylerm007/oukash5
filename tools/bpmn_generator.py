@@ -17,33 +17,33 @@ class BPMNGenerator:
     def __init__(self):
         self.tasks = []
         self.flows = []
-        self.lanes = {}
+        self.stages = {}
         self.task_types = {}
         self.assignee_roles = {}
         
     def parse_sql_file(self, sql_content: str):
         """Parse the SQL file and extract tasks and flows"""
         
-        # Extract lane information from comments
-        lane_pattern = r'-- Lane: ([^(]+)\(ID: (\d+)\)'
-        lane_matches = re.findall(lane_pattern, sql_content)
+        # Extract stage information from comments
+        stage_pattern = r'-- Stage: ([^(]+)\(ID: (\d+)\)'
+        stage_matches = re.findall(stage_pattern, sql_content)
         
-        for lane_name, lane_id in lane_matches:
-            self.lanes[int(lane_id)] = lane_name.strip()
+        for stage_name, stage_id in stage_matches:
+            self.stages[int(stage_id)] = stage_name.strip()
         
-        logger.info(f"Found {len(self.lanes)} lanes: {self.lanes}")
+        logger.info(f"Found {len(self.stages)} stages: {self.stages}")
         
         # Extract task definitions
         task_pattern = r"\(\d+,\s*'([^']+)',\s*'([^']+)',\s*'([^']+)',\s*\d+,\s*(\d+),\s*'([^']+)',\s*[^,]*,\s*'([^']*)',\s*[01],\s*'[^']*'\)"
         task_matches = re.findall(task_pattern, sql_content)
         
         for match in task_matches:
-            task_name, task_type, task_category, lane_id, assignee_role, description = match
+            task_name, task_type, task_category, stage_id, assignee_role, description = match
             self.tasks.append({
                 'name': task_name,
                 'type': task_type,
                 'category': task_category,
-                'lane_id': int(lane_id),
+                'stage_id': int(stage_id),
                 'assignee_role': assignee_role,
                 'description': description
             })
@@ -74,8 +74,8 @@ class BPMNGenerator:
             'CONFIRM': 'userTask',
             'CONDITION': 'exclusiveGateway',
             'GATEWAY': 'parallelGateway',
-            'LANESTART': 'startEvent',
-            'LANEEND': 'endEvent'
+            'STAGESTART': 'startEvent',
+            'STAGGEEND': 'endEvent'
         }
         return mapping.get(task_type, 'task')
     
@@ -96,15 +96,15 @@ class BPMNGenerator:
         process.set('id', 'ApplicationCertification')
         process.set('isExecutable', 'true')
         
-        # Create lanes
-        lane_set = ET.SubElement(process, 'bpmn:laneSet')
-        lane_elements = {}
+        # Create stages
+        stage_set = ET.SubElement(process, 'bpmn:stageSet')
+        stage_elements = {}
         
-        for lane_id, lane_name in self.lanes.items():
-            lane = ET.SubElement(lane_set, 'bpmn:lane')
-            lane.set('id', f'Lane_{lane_id}')
-            lane.set('name', lane_name)
-            lane_elements[lane_id] = lane
+        for stage_id, stage_name in self.stages.items():
+            stage = ET.SubElement(stage_set, 'bpmn:stage')
+            stage.set('id', f'Stage_{stage_id}')
+            stage.set('name', stage_name)
+            stage_elements[stage_id] = stage
         
         # Create tasks and events
         task_elements = {}
@@ -112,7 +112,7 @@ class BPMNGenerator:
         for task in self.tasks:
             task_name = task['name']
             task_type = task['type']
-            lane_id = task['lane_id']
+            stage_id = task['stage_id']
             
             # Determine BPMN element type
             bpmn_type = self.get_bpmn_element_type(task_type)
@@ -123,9 +123,9 @@ class BPMNGenerator:
             element.set('id', element_id)
             element.set('name', task_name)
             
-            # Add to lane
-            if lane_id in lane_elements:
-                flow_node_ref = ET.SubElement(lane_elements[lane_id], 'bpmn:flowNodeRef')
+            # Add to stage
+            if stage_id in stage_elements:
+                flow_node_ref = ET.SubElement(stage_elements[stage_id], 'bpmn:flowNodeRef')
                 flow_node_ref.text = element_id
             
             # Add assignee for user tasks
@@ -171,35 +171,35 @@ class BPMNGenerator:
         diagram = ET.SubElement(definitions, 'bpmndi:BPMNDiagram')
         diagram.set('id', 'BPMNDiagram_1')
         
-        plane = ET.SubElement(diagram, 'bpmndi:BPMNPlane')
-        plane.set('id', 'BPMNPlane_1')
-        plane.set('bpmnElement', 'ApplicationCertification')
+        pstage = ET.SubElement(diagram, 'bpmndi:BPMNPstage')
+        pstage.set('id', 'BPMNPstage_1')
+        pstage.set('bpmnElement', 'ApplicationCertification')
         
         # Add basic shapes (simplified positioning)
         x, y = 100, 100
-        lane_height = 200
+        stage_height = 200
         task_width, task_height = 100, 80
         
-        for lane_id, lane_name in self.lanes.items():
-            # Lane shape
-            lane_shape = ET.SubElement(plane, 'bpmndi:BPMNShape')
-            lane_shape.set('id', f'Lane_{lane_id}_di')
-            lane_shape.set('bpmnElement', f'Lane_{lane_id}')
-            lane_shape.set('isHorizontal', 'true')
+        for stage_id, stage_name in self.stages.items():
+            # Stage shape
+            stage_shape = ET.SubElement(pstage, 'bpmndi:BPMNShape')
+            stage_shape.set('id', f'Stage_{stage_id}_di')
+            stage_shape.set('bpmnElement', f'Stage_{stage_id}')
+            stage_shape.set('isHorizontal', 'true')
             
-            bounds = ET.SubElement(lane_shape, 'dc:Bounds')
+            bounds = ET.SubElement(stage_shape, 'dc:Bounds')
             bounds.set('x', '50')
             bounds.set('y', str(y))
             bounds.set('width', '1200')
-            bounds.set('height', str(lane_height))
+            bounds.set('height', str(stage_height))
             
-            # Tasks in this lane
-            lane_tasks = [t for t in self.tasks if t['lane_id'] == lane_id]
+            # Tasks in this stage
+            stage_tasks = [t for t in self.tasks if t['stage_id'] == stage_id]
             task_x = 150
             
-            for i, task in enumerate(lane_tasks):
+            for i, task in enumerate(stage_tasks):
                 task_id = f"Task_{task['name'].replace(' ', '_').replace('/', '_')}"
-                task_shape = ET.SubElement(plane, 'bpmndi:BPMNShape')
+                task_shape = ET.SubElement(pstage, 'bpmndi:BPMNShape')
                 task_shape.set('id', f'{task_id}_di')
                 task_shape.set('bpmnElement', task_id)
                 
@@ -211,7 +211,7 @@ class BPMNGenerator:
                 
                 task_x += 120
             
-            y += lane_height + 20
+            y += stage_height + 20
         
         # Convert to string
         rough_string = ET.tostring(definitions, encoding='unicode')
@@ -225,13 +225,13 @@ class BPMNGenerator:
         lines.append("    %% Application Certification Workflow")
         lines.append("")
         
-        # Add subgraphs for each lane
-        for lane_id, lane_name in self.lanes.items():
-            lines.append(f"    subgraph Lane{lane_id} [\"{lane_name}\"]")
+        # Add subgraphs for each stage
+        for stage_id, stage_name in self.stages.items():
+            lines.append(f"    subgraph Stage{stage_id} [\"{stage_name}\"]")
             
-            # Add tasks in this lane
-            lane_tasks = [t for t in self.tasks if t['lane_id'] == lane_id]
-            for task in lane_tasks:
+            # Add tasks in this stage
+            stage_tasks = [t for t in self.tasks if t['stage_id'] == stage_id]
+            for task in stage_tasks:
                 task_id = task['name'].replace(' ', '_').replace('/', '_')
                 task_type = task['type']
                 
@@ -294,13 +294,13 @@ class BPMNGenerator:
         report.append("=" * 50)
         report.append("")
         
-        # Lane summary
-        report.append("## Workflow Lanes (Swimlanes)")
-        for lane_id, lane_name in sorted(self.lanes.items()):
-            lane_tasks = [t for t in self.tasks if t['lane_id'] == lane_id]
-            report.append(f"**{lane_name} (Lane {lane_id})**")
-            report.append(f"- Tasks: {len(lane_tasks)}")
-            report.append(f"- Roles: {', '.join(set(t['assignee_role'] for t in lane_tasks))}")
+        # Stage summary
+        report.append("## Workflow Stages (Swimstages)")
+        for stage_id, stage_name in sorted(self.stages.items()):
+            stage_tasks = [t for t in self.tasks if t['stage_id'] == stage_id]
+            report.append(f"**{stage_name} (Stage {stage_id})**")
+            report.append(f"- Tasks: {len(stage_tasks)}")
+            report.append(f"- Roles: {', '.join(set(t['assignee_role'] for t in stage_tasks))}")
             report.append("")
         
         # Task type summary
@@ -341,13 +341,13 @@ class BPMNGenerator:
         report.append(f"- Conditional Flows: {len(conditional_flows)}")
         report.append("")
         
-        # Detailed task list by lane
+        # Detailed task list by stage
         report.append("## Detailed Task Breakdown")
-        for lane_id, lane_name in sorted(self.lanes.items()):
-            report.append(f"### {lane_name}")
-            lane_tasks = [t for t in self.tasks if t['lane_id'] == lane_id]
+        for stage_id, stage_name in sorted(self.stages.items()):
+            report.append(f"### {stage_name}")
+            stage_tasks = [t for t in self.tasks if t['stage_id'] == stage_id]
             
-            for task in sorted(lane_tasks, key=lambda x: x['name']):
+            for task in sorted(stage_tasks, key=lambda x: x['name']):
                 report.append(f"**{task['name']}** ({task['type']})")
                 report.append(f"- Role: {task['assignee_role']}")
                 report.append(f"- Category: {task['category']}")
@@ -392,7 +392,7 @@ def generate_bpmn_from_sql(sql_file_path: str = None, sql_content: str = None):
         'stats': {
             'total_tasks': len(generator.tasks),
             'total_flows': len(generator.flows),
-            'total_lanes': len(generator.lanes),
+            'total_stages': len(generator.stages),
             'task_types': list(set(t['type'] for t in generator.tasks)),
             'roles': list(set(t['assignee_role'] for t in generator.tasks))
         }

@@ -170,7 +170,7 @@ def transform_stage_row(stage_rows: any) -> list:
             "description": taskdef['Description'] if task and "Description" in taskdef else " ",
             "required": taskdef['IsRequired'] if task and "IsRequired" in taskdef else False,
             "TaskInstanceId": task['TaskInstanceId'],
-            #"PreScript": _get_pre_script(task),
+            "PreScript":taskdef['PreScriptJson'] if "PreScriptJson" in taskdef else None,
             "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
             "Result": task['Result'] if "Result" in task else None,
             "ResultData": task['ResultData'] if "ResultData" in task else None,

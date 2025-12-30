@@ -1,0 +1,21 @@
+flowchart TD
+    %% Sample Approval Workflow
+
+    N0(("Start Application"))
+    N1["Submit Form"]
+    N2["Manager Review"]
+    N3{{"Approval Decision"}}
+    N4["Process Payment"]
+    N5["Send Rejection"]
+    N6["Notify Applicant"]
+    N7(("End Process"))
+
+    %% Flow connections
+    N0 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 -->|Approved| N4
+    N3 -->|Rejected| N5
+    N4 --> N6
+    N5 --> N6
+    N6 --> N7
