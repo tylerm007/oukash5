@@ -357,8 +357,9 @@ def get_SQL() -> str:
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
         
         WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
-                (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
-        
+            (:priority IS NULL OR app.Priority = :priority) and
+            (:status IS NULL OR app.Status = :status) and
+            (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
 
         ORDER BY app.ApplicationID   
         OFFSET :offset ROWS

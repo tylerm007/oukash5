@@ -70,6 +70,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 td.[TaskType] as taskType,
                 td.[TaskCategory] as TaskCategory,
                 td.[AssigneeRole] as assigneeRole,
+                td.PreScriptJson as PreScript,
                 ra.Assignee as assignee,
                 ap.CompanyId as companyId,
                 ap.PlantID as plantId,
