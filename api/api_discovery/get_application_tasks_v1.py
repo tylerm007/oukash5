@@ -28,18 +28,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         user = Security.current_user().Username
         app_logger.info(f"get_application_tasks called by user {user} with args: {data}")
         filter = data.get('filter', {})
-        limit = int(data.get('page[limit]', 10))
+        limit = int(data.get('page[limit]', 50))
         offset = int(data.get('page[offset]', 0))
         result = []
         args = request.args
         applicationId = args.get('filter[applicationId]', None) or args.get('applicationId', None)
         plantName = args.get('filter[plantName]', None) or args.get('plantName', None)
- 
+        roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
         # Convert None to proper SQL NULL for pyodbc
         params = {
-            "username": user,
             'applicationId': applicationId if applicationId else None,
-            'plantName': plantName if plantName else None
+            'plantName': plantName if plantName else None,
+            'roles': roles if roles else None,
+            'limit': limit,
+            'offset': offset
         }
 
         app_logger.info(f"Calling dsql with params: {params}")
@@ -58,7 +60,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             task_dict = dict(zip(fields, task))
             result.append(task_dict)
         #TODO - add StageInstance stuff back in Status, etc.
-        return jsonify({"status": "ok", "data": result}), 200
+        meta = {'limit': limit, 'offset': offset, 'total': len(result)}
+        return jsonify({"status": "ok", "data": result, "meta": meta}), 200
  
     def get_SQL() -> str:
         return '''
@@ -71,7 +74,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 td.[TaskCategory] as TaskCategory,
                 td.[AssigneeRole] as assigneeRole,
                 td.PreScriptJson as PreScript,
-                ra.Assignee as assignee,
                 ap.CompanyId as companyId,
                 ap.PlantID as plantId,
                 co.NAME as companyName,
@@ -96,17 +98,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
                 LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
                 LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
-                INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole AND ra.Assignee = :username 
-                and ra.ApplicationId = ap.ApplicationID
             WHERE 
-                ap.status not in ('COMPL', 'WTH') and
+                ap.status not in ('COMPL', 'WTH') AND
                 -- Required filters
                 ti.status = 'PENDING' AND 
                 (td.AssigneeRole != 'SYSTEM') AND
+                td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
                 (:applicationId IS NULL OR ap.ApplicationID = :applicationId) AND
                 (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
             
             ORDER BY ap.applicationId, ti.taskInstanceId
+            OFFSET :offset ROWS
+            FETCH NEXT :limit ROWS ONLY;
         '''
     
     # Removed StageInstance joins from V1
