@@ -147,6 +147,7 @@ def complete_task(task_instance, scenario: int = 1):
     response = _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes='Task completed successfully', access_token=access_token, depth=0)
     app_logger.info(f'Complete Task {task_name}: {task_instance_id} response: {response}')
     print(f"Complete Task {task_name} - Result - {result}  -Response: {response}")
+    time.sleep(1)
 
 def result_scenario(task_name, scenario: int = 1) -> str:
     if scenario == 2:
@@ -174,7 +175,7 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
         status = get_stage_status(find_all_tasks_for_stage(application_id, stage_id), task_definitions) # "'IN_PROGRESS'"
         name = getattr(stage,'StageName')
         app_logger.info(f'Start Processing Stage: {name} - {stage_id} Status: {status}')
-        if status == 'IN_PROGRESS' and name == 'Initial':
+        if name == 'Initial':
             pending_tasks = find_all_pending_tasks(application_id, stage_id)
             #while len(pending_tasks) > 0 and find_lane_end(stage_id) != 'COMPLETED':
             for task_instance in pending_tasks:
@@ -186,13 +187,14 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
             for task_instance in pending_tasks:
                 print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
                 complete_task(task_instance)
-                completed_tasks.append(task_instance.TaskInstanceId)
-                pending_tasks = find_all_pending_tasks(application_id, stage_id)
+                completed_tasks.append({"TaskInstanceId": task_instance.TaskInstanceId,"TaskName": task_instance.TaskDefinition.TaskName})
+                pending_tasks.remove(task_instance)
+                pending_tasks.extend(find_all_pending_tasks(application_id, stage_id))
 
-        elif status == 'IN_PROGRESS' and name == 'NDA':
+        elif name == 'NDA':
              process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
-        elif status == 'IN_PROGRESS' and name == 'Inspection':
+        elif name == 'Inspection':
             pending_tasks = find_all_pending_tasks(application_id, stage_id)
             while len(pending_tasks) > 0 and find_stage_end(application_id, stage_id=stage_id) != 'COMPLETED':
                 for task_instance in pending_tasks:
@@ -205,24 +207,25 @@ def run_workflow_to_completion(application: WFApplication, user: str, scenario: 
                             print(f'  Resolving EventAction for Task: {task_instance.TaskDefinition.TaskName} EventKey: {event_key}')
                     else:
                         # For testing, we auto-complete the scheduling task
-                        print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
                         complete_task(task_instance)
-                        completed_tasks.append(task_instance.TaskInstanceId)
+                        completed_tasks.append({"TaskInstanceId": task_instance.TaskInstanceId,"TaskName": task_instance.TaskDefinition.TaskName})
                 pending_tasks = find_all_pending_tasks(application_id, stage_id)
 
-        elif status == 'IN_PROGRESS' and name == 'Ingredients':
+        elif name == 'Ingredients':
              process_all_pending_tasks(application_id,stage_id=stage_id, completed_tasks=completed_tasks)
                 
-        elif status == 'IN_PROGRESS' and name == 'Products':
+        elif name == 'Products':
              process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
-        elif status == 'IN_PROGRESS' and name == 'Contract':
+        elif name == 'Contract':
              process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
-        elif status == 'IN_PROGRESS' and name == 'Certification':
+        elif name == 'Certification':
             process_all_pending_tasks(application_id, stage_id=stage_id, completed_tasks=completed_tasks)
 
         print_application_status(application_id, name)
+        status = get_stage_status(find_all_tasks_for_stage(application_id, stage_id), task_definitions) # "'IN_PROGRESS'"
+        name = getattr(stage,'StageName')
         results.append({"Stage": name, "Status": status})
     
         
@@ -245,8 +248,9 @@ def process_all_pending_tasks(application_id: int, stage_id:int, completed_tasks
         for task_instance in pending_tasks:
             print(f'  Completing Task: {task_instance.TaskDefinition.TaskName}')
             complete_task(task_instance)
-            completed_tasks.append(task_instance.TaskInstanceId)
-            pending_tasks = find_all_pending_tasks(application_id, stage_id)
+            completed_tasks.append({"TaskInstanceId": task_instance.TaskInstanceId,"TaskName": task_instance.TaskDefinition.TaskName})
+            pending_tasks.remove(task_instance) 
+            pending_tasks.extend(find_all_pending_tasks(application_id, stage_id))
             app_id = task_instance.ApplicationId
             status = WFApplication.query.filter_by(ApplicationID=app_id).first().Status
             if status == 'COMPL':

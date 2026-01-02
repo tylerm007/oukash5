@@ -470,7 +470,7 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
     
     
     if not stage_definitions:
-        raise Exception(f'No lane definitions found for process: {process_name}')
+        raise Exception(f'No stage definitions found for process: {process_name}')
     
     app_logger.info(f'🏊 Found {len(stage_definitions)} stages to process')
     
