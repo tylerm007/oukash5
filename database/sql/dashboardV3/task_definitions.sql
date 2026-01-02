@@ -133,7 +133,7 @@ GO
 -- Stage: NDA (ID: 2)
 INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
-(1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'NCRC', 15, 'Start NDA stage', 1, 'system'),
+(1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'SYSTEM', 15, 'Start NDA stage', 1, 'system'),
 (1, 'Needs NDA', 'CONDITION', 'APPROVAL', 2, 2, 'NCRC', 15, 'Determine if NDA is required', 0, 'system'),
 (1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 3, 2, 'LEGAL', 30, 'Send/Recieve non-disclosure agreement to customer', 0, 'system'), -- ALERT
 (1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 4, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),

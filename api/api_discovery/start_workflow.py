@@ -1,3 +1,4 @@
+from ast import Assign
 from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
 from database import models
@@ -249,6 +250,7 @@ def create_stage_with_tasks(stage_definition: any, application_id: int, started_
                 ApplicationId=application_id,
                 StageId=stage_id,
                 Status=status,
+                AssignedTo=task_def['AssigneeRole'],
                 CreatedDate=datetime.now(),
                 CreatedBy=started_by
             )
