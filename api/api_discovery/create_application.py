@@ -37,6 +37,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     
         companyID = owns_instance.COMPANY_ID
         plant_id = owns_instance.PLANT_ID
+        company_plant = session.query(models.WFApplication).filter(models.WFApplication.CompanyID == companyID, models.WFApplication.PlantID == plant_id).first()
+        if company_plant:
+            return jsonify({"result": f'Application already exists for CompanyID: {companyID} and PlantID: {plant_id}'}), 400   
         access_token = request.headers.get('Authorization', '')
         application_id = create_new_application(companyID, plant_id, user)
         response = start_workflow(application_id, user, access_token)
@@ -45,7 +48,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     
     @app.route('/deleteApplication', methods=['GET','OPTIONS'])
     @jwt_required()
-    def deleteApplication():
+    def deleteApplication():    
 
         if request.method == 'OPTIONS':
             return jsonify({"status": "ok"}), 200
@@ -58,6 +61,33 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         do_cleanup(application)
         return jsonify({"result": f'Cleanup completed for Application ID: {application_id} '}), 200
 
+    @app.route('/generateApplications', methods=['GET','OPTIONS'])
+    @jwt_required()
+    def generateApplications():
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+
+        cnt = request.args.get('app_count')
+        data =[]
+        sql = get_application_sql(int(cnt) if cnt else 10)
+        results = session.execute(text(sql)).fetchall()
+        for result in results:
+            owns_id = result.ID
+            owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
+            if not owns_instance:
+                continue
+            companyID = owns_instance.COMPANY_ID
+            plant_id = owns_instance.PLANT_ID
+            company_plant = session.query(models.WFApplication).filter(models.WFApplication.CompanyID == companyID, models.WFApplication.PlantID == plant_id).first()
+            if company_plant:
+                continue   
+            user = Security.current_user().Username
+            application_id = create_new_application(companyID, plant_id, user)
+            data.append(application_id)
+            access_token = request.headers.get('Authorization', '')
+            response = start_workflow(application_id, user, access_token)
+            app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
+        return jsonify({"status": "applications created successfully", "applications": data}), 200
 
 def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = "admin"):
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
@@ -151,3 +181,19 @@ def do_cleanup(application: models.WFApplication):
          DELETE FROM WF_Applications where ApplicationID = {application_id};
     """))
     session.commit()
+
+
+def get_application_sql(num_of_apps: int = 10) -> str:
+    #Grab applications with between 5 and 30 ingredients
+    sql = f"""
+        select top ({num_of_apps}) count(*) as CNT,ID
+        FROM [ou_kash].[dbo].[OWNS_TB] app,
+        [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1] i
+        WHERE i.[COMPANY_ID] = app.COMPANY_ID AND i.[PLANT_ID] = app.PLANT_ID
+        and app.STATUS = 'Certified'
+        and app.TYPE = 'Single'
+        and app.ACTIVE = 1
+        group by app.ID
+        having count(*) > 5 and count(*) < 30
+    """
+    return sql
