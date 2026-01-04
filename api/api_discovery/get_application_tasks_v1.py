@@ -86,6 +86,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ti.[CompletedDate] as completedDate,
                 --pi.InstanceId as processInstanceId,
                 sd.StageId as stageInstanceId,
+                1 as groupAssignment,
                 CASE
                     WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
                     ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
@@ -138,6 +139,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ti.[CompletedDate] as completedDate,
                 --pi.InstanceId as processInstanceId,
                 sd.StageId as stageInstanceId,
+                0 as groupAssignment,
                 CASE
                     WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
                     ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
