@@ -123,6 +123,7 @@ class TaskRole(Base):  # type: ignore
 
     RoleCode = Column(Unicode(20), primary_key=True)
     RoleDescription = Column(Unicode(255), nullable=False)
+    groupAssignment = Column(Boolean, server_default=text("0"), nullable=True)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)

@@ -53,6 +53,7 @@ GO
 CREATE TABLE [dbo].[TaskRoles](
 	[RoleCode] [nvarchar](20) NOT NULL,
 	[RoleDescription] [nvarchar](255) NOT NULL,
+	[groupAssignment] [bit] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[RoleCode] ASC
@@ -194,23 +195,23 @@ GO
 
 
 -- Task Roles 
-INSERT INTO TaskRoles (RoleCode, RoleDescription) VALUES
-('NCRC', 'NCRC Coordinator'),
-('NCRCADMIN', 'NCRC Administrator'),
-('DISPATCH', 'Dispatcher Role'),
-('ADMIN', 'System Administrator'),
-('LEGAL', 'Legal Department'),
-('INSP', 'Inspection Team'),
-('IAR', 'Ingredients Review Team'),
-('PROD', 'Products Department'),
-('RC', 'Rabbinical Coordinator'),
-('CERT', 'Certification Team'),
-('BILLING', 'Billing Department'),
-('IAR_MANAGER', 'IAR Manager'),
-('PROD_MANAGER', 'Products Manager'),
-('RC_MANAGER', 'RC Manager'),
-('RFR', 'Rabbinical Field Representative'),
-('SYSTEM', 'System Automated');
+INSERT INTO TaskRoles (RoleCode, RoleDescription, groupAssignment ) VALUES
+('NCRC', 'NCRC Coordinator', 0),
+('NCRCADMIN', 'NCRC Administrator', 0),
+('DISPATCH', 'Dispatcher Role', 0),
+('ADMIN', 'System Administrator', 1),
+('LEGAL', 'Legal Department', 1),
+('INSP', 'Inspection Team', 1),
+('IAR', 'Ingredients Review Team', 1),
+('PROD', 'Products Department', 1),
+('RC', 'Rabbinical Coordinator', 0),
+('CERT', 'Certification Team', 1),
+('BILLING', 'Billing Department', 1),
+('IAR_MANAGER', 'IAR Manager', 1),
+('PROD_MANAGER', 'Products Manager', 0),
+('RC_MANAGER', 'RC Manager', 0),
+('RFR', 'Rabbinical Field Representative', 0),
+('SYSTEM', 'System Automated', 1);
 GO
 
 

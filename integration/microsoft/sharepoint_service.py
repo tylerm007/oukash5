@@ -22,11 +22,11 @@ class SharePointService:
     """
     
     def __init__(self):
-        self.tenant_id = os.getenv('SHAREPOINT_TENANT_ID', 'common')
-        self.client_id = os.getenv('SHAREPOINT_CLIENT_ID')
+        self.tenant_id = os.getenv('SHAREPOINT_TENANT_ID', 'eec94eb4-840d-4d2c-a7f1-05b024e60580')
+        self.client_id = os.getenv('SHAREPOINT_CLIENT_ID','cd2ecddd-9615-4a6d-a69a-18e47c4125f5')
         self.client_secret = os.getenv('SHAREPOINT_CLIENT_SECRET')
-        self.site_url = os.getenv('SHAREPOINT_SITE_URL', 'https://yourtenant.sharepoint.com/sites/yoursite')
-        self.redirect_uri = os.getenv('SHAREPOINT_REDIRECT_URI', 'http://localhost:5656/sharepoint/callback')
+        self.site_url = os.getenv('SHAREPOINT_SITE_URL', 'https://uojca.sharepoint.com/sites/KashrusDev')
+        self.redirect_uri = os.getenv('SHAREPOINT_REDIRECT_URI', 'https://devvm01.ny.ou.org:5656/sharepoint/callback')
         
         # Extract site details from URL
         self.tenant_domain = self._extract_tenant_domain(self.site_url)
