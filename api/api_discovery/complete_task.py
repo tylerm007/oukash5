@@ -199,6 +199,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         # Complete the task
         if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
             status = 'PENDING'
+            task_instance.AssignedTo = task_def['AssigneeRole']
         else:
             status = "COMPLETED"
             task_instance.CompletedDate = datetime.now()
@@ -257,14 +258,14 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 continue  # Skip this dependency as the condition does not match the result
             elif next_task_instance and validate_prior_tasks(task_def, application_id, result):
                 next_task_instance.Status = 'PENDING'
-                next_task_instance.AssignedTo = completed_by
+                next_task_instance.AssignedTo = task_def.AssigneeRole
                 next_task_instance.StartedDate = datetime.now()
                 session.add(next_task_instance)    
                 session.commit()
                 next_task_count += 1
             if next_task_instance and next_task_instance.TaskDefinition.AutoComplete:  # and (validate_prior_tasks(next_task_instance.TaskDef, stages_list, result) or next_task_instance.TaskDef.TaskType in ['END', 'LANEEND']):
                 # RECURSIVE CALL to complete the next task if AutoComplete is set
-                _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='system', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
+                _complete_task(task_instance_id=next_task_instance.TaskInstanceId, result=None, completed_by='SYSTEM', completion_notes='Auto-completed', access_token=access_token, depth=depth+1)
         timings['process_next_tasks'] = time.time() - t7
 
         # TIMING: Calculate total and log

@@ -84,7 +84,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ti.[Status] as status,
                 ti.[StartedDate] as startedDate,
                 ti.[CompletedDate] as completedDate,
-                --pi.InstanceId as processInstanceId,
                 sd.StageId as stageInstanceId,
                 1 as groupAssignment,
                 CASE
@@ -98,8 +97,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             FROM TaskInstances ti
                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                -- INNER JOIN StageInstance si ON ti.StageId = si.StageInstanceId
-                --INNER JOIN ProcessInstances pi ON si.ProcessInstanceId = pi.InstanceId
                 INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
                 INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
                 LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
@@ -112,7 +109,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ti.status = 'PENDING' AND 
                 (td.AssigneeRole != 'SYSTEM') AND
                 (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
-            (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+                (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            
 
             
             union ALL
@@ -137,7 +135,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 ti.[Status] as status,
                 ti.[StartedDate] as startedDate,
                 ti.[CompletedDate] as completedDate,
-                --pi.InstanceId as processInstanceId,
                 sd.StageId as stageInstanceId,
                 0 as groupAssignment,
                 CASE
@@ -157,14 +154,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
 
             WHERE 
-                td.AssigneeRole in ('PROD','IAR','LEGAL') AND
+                td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
                 td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
                 ap.status not in ('COMPL', 'WTH') and
                 -- Required filters
                 ti.status = 'PENDING' AND 
                 (td.AssigneeRole != 'SYSTEM') AND
                 (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
-                (:plantName IS NULL OR pl.Name = :plantName) AND
                 (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
             
             ORDER BY ap.applicationId, ti.taskInstanceId

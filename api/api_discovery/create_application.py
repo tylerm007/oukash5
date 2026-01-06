@@ -68,8 +68,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "ok"}), 200
 
         cnt = request.args.get('app_count')
+        offset = request.args.get('page[offset]') or 0
         data =[]
-        sql = get_application_sql(int(cnt) if cnt else 10)
+        sql = get_application_sql(int(cnt), int(offset) if cnt else 10)
         results = session.execute(text(sql)).fetchall()
         for result in results:
             owns_id = result.ID
@@ -183,10 +184,10 @@ def do_cleanup(application: models.WFApplication):
     session.commit()
 
 
-def get_application_sql(num_of_apps: int = 10) -> str:
+def get_application_sql(num_of_apps: int = 10, offset: int = 0) -> str:
     #Grab applications with between 5 and 30 ingredients
     sql = f"""
-        select top ({num_of_apps}) count(*) as CNT,ID
+        select count(*) as CNT,ID
         FROM [ou_kash].[dbo].[OWNS_TB] app,
         [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1] i
         WHERE i.[COMPANY_ID] = app.COMPANY_ID AND i.[PLANT_ID] = app.PLANT_ID
@@ -195,5 +196,8 @@ def get_application_sql(num_of_apps: int = 10) -> str:
         and app.ACTIVE = 1
         group by app.ID
         having count(*) > 5 and count(*) < 30
+        ORDER BY app.ID
+        OFFSET {offset} ROWS
+        FETCH NEXT {num_of_apps} ROWS ONLY
     """
     return sql
