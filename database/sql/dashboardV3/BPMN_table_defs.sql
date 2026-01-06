@@ -198,7 +198,7 @@ GO
 INSERT INTO TaskRoles (RoleCode, RoleDescription, groupAssignment ) VALUES
 ('NCRC', 'NCRC Coordinator', 0),
 ('NCRCADMIN', 'NCRC Administrator', 0),
-('DISPATCH', 'Dispatcher Role', 0),
+('DISPATCH', 'Dispatcher Role', 1),
 ('ADMIN', 'System Administrator', 1),
 ('LEGAL', 'Legal Department', 1),
 ('INSP', 'Inspection Team', 1),

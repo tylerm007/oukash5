@@ -489,8 +489,8 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
         _complete_task(start_instance_id, result='Started', completed_by=started_by, completion_notes='Workflow started', access_token=access_token, depth=0)
         
         # Step 8: Add role assignment
-        from api.api_discovery.assign_role import add_role_assignment
-        add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+        #from api.api_discovery.assign_role import add_role_assignment
+        #add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
         
         # Step 9: Calculate performance metrics
         total_processing_time = time.time() - start_time
