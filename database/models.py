@@ -348,6 +348,7 @@ class RoleAssigment(Base):  # type: ignore
     ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
     Role = Column(Unicode(10), nullable=False)
     Assignee = Column(Unicode(100), nullable=False)
+    IsPrimary = Column(Boolean, server_default=text("1"), nullable=False)
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(32), server_default=text("System"), nullable=False)
 

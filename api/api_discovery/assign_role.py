@@ -1,16 +1,13 @@
-from functools import wraps
-from flask_cors import cross_origin
-from datetime import datetime, timezone
+
 from flask import app, request, jsonify, session
 import logging
 import safrs
 from flask import request, jsonify
-from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
-from safrs import jsonapi_rpc
+from flask_jwt_extended import  jwt_required
 from database import models
-from config.config import Args
-from config.config import Config
 from security.system.authorization import Security
+from sqlalchemy import text
+from datetime import datetime
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -78,19 +75,20 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
     try:
         #from api.api_discovery.complete_task_optimized import _complete_task_optimized as _complete_task
         from api.api_discovery.complete_task import _complete_task
+       
+        add_role_assignment(app_id, role, assignee, True)
+        sql = get_admin_assitant(assignee)
+        admin_assignee = session.execute(text(sql)).fetchone()
+        if admin_assignee is None:
+            admin_assignee = assignee 
+        else:
+            admin_assignee = admin_assignee.adminUserName
+            add_role_assignment(app_id, role, admin_assignee, False)
         
-        add_role_assignment(app_id, role, assignee)
-        if role == 'NCRC':
-            admin_assignee = None # TODO
-            if admin_assignee is None:
-                admin_assignee = assignee 
-            else:
-                admin_assignee = admin_assignee.AdminUserName
-           
-           # Remove assignment using  user roles - this is disabled for now
-            roles = [] # Security.current_user().UserRoleList
-            for this_role in roles:
-                add_role_assignment(app_id, this_role.role_name, admin_assignee)
+        # Remove assignment using  user roles - this is disabled for now
+        roles = [] # Security.current_user().UserRoleList
+        for this_role in roles:
+            add_role_assignment(app_id, this_role.role_name, admin_assignee)
 
         session.commit()
         _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
@@ -102,7 +100,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
     app_logger.info(f'TaskInstance set to Completed: {task_id}')
     
 
-def add_role_assignment(application_id:int, role:str, assignee:str):
+def add_role_assignment(application_id:int, role:str, assignee:str, isPrimary: bool = True):
     """Add a role assignment to the database.
     Args:
         application_id (int): The ID of the application.
@@ -122,8 +120,27 @@ def add_role_assignment(application_id:int, role:str, assignee:str):
         ApplicationId=application_id,
         Role=role,
         Assignee=assignee,
+        IsPrimary=isPrimary,
         CreatedDate=datetime.now()
     )
     session.add(role_assignment)
     session.commit()
     app_logger.info(f'Role {role} assigned to {assignee} for application {application_id}')
+
+def get_admin_assitant(user:str):
+    """Retrieve the admin assistant for a given user.
+    Args:
+        user (str): The username to look up.
+    """
+    return f"""
+     SELECT  p.PERSON_ID , p.FIRST + '.' + p.LAST as 'NCRC'
+         ,p.KashLogIn as NCRCuserName
+         ,pa.PERSON_ID, pa.FIRST +'.' + pa.LAST as 'Admin'
+        ,pa.KashLogIn as adminUserName
+        FROM [ou_kash].[dbo].[PERSON_TB] p
+          join [ou_kash].[dbo].person_job_tb pj on pj.PERSON_ID = p.PERSON_ID and pj.[FUNCTION] = 'NCRC'   and pj.ACTIVE=1      
+          left join [ou_kash].[dbo].person_tb pa on pa.PERSON_ID = p.AdministrativeAssistant and pa.ACTIVE = 1
+        where p.active = 1
+            and p.LAST not like 'Z"%' and p.LAST <> 'Test' and p.first not like 'By R%'
+            and p.KashLogIn = '{user}'
+    """

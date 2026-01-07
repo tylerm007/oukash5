@@ -272,6 +272,7 @@ CREATE TABLE [dbo].[RoleAssigment](
 	[ApplicationId] [int] NOT NULL,
 	[Role] [nvarchar](10) NOT NULL,
 	[Assignee] [nvarchar](100) NOT NULL,
+	[IsPrimary]	 [bit] DEFAULT 1 NOT NULL,
 	[CreatedDate] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](32) NOT NULL,
 PRIMARY KEY CLUSTERED 
@@ -290,7 +291,9 @@ GO
 ALTER TABLE [dbo].[RoleAssigment]  WITH CHECK ADD FOREIGN KEY([ApplicationId])
 REFERENCES [dbo].[WF_Applications] ([ApplicationID])
 GO
-
+-- Added IsPrimary column to indicate if this is the primary assignee for the role
+-- ALTER TABLE RoleAssignmet add  IsPrimary bit default 1 not null
+--GO
 --ALTER TABLE [dbo].[RoleAssigment]  WITH CHECK ADD FOREIGN KEY([Assignee])
 --REFERENCES [dbo].[WF_Users] ([Username])
 --GO

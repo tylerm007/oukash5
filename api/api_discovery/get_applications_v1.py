@@ -67,7 +67,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             assignedRoles = row.get('assignedRoles')
             if assignedRoles:
                 assigned_roles= json.loads(assignedRoles)
-                row['assignedRoles'] = [{role.get('role'): role.get("assignee", "Unknown")} for role in assigned_roles]
+                row['assignedRoles'] = [{role.get('role'): role.get("assignee", "Unknown"), "isPrimary": role.get("IsPrimary", True)} for role in assigned_roles]
            
             stages = row.get('stages')
             if stages:
@@ -301,7 +301,7 @@ def get_SQL() -> str:
          app.Status,
          app.Priority,
         (
-                select role, assignee 
+                select role, assignee , IsPrimary
                 from RoleAssigment  
                 where RoleAssigment.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
