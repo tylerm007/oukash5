@@ -26,7 +26,8 @@ from http import HTTPStatus
 from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict['name']... like a row
 
 
-from flask_jwt_extended import current_user
+from flask_jwt_extended import current_user, get_jwt
+import re
 
 from config.config import Args
 authentication_provider = Args.security_provider
@@ -81,6 +82,90 @@ class Security:
     def set_access_token(cls, token):
         from flask import g
         g.access_token = token
+
+    @classmethod
+    def extract_roles_and_delegated(cls, jwt_claims: dict = None) -> dict:
+        """
+        Extract roles and 'app:delegated' from JWT claims.
+
+        Args:
+            jwt_claims: dict of JWT claims. If None, will attempt to call get_jwt().
+
+        Returns:
+            dict: {
+                'roles': [list of role names],
+                'app:delegated': value found in claims (could be bool/str) or None
+            }
+
+        This helper handles several common JWT layouts:
+        - 'roles' claim as string (semicolon/comma/space separated) or list
+        - Keycloak style 'realm_access.roles' and 'resource_access.<client>.roles'
+        - Other claim keys that end with 'roles'
+        - 'app:delegated' or any claim containing 'delegat' in its key
+        """
+        try:
+            if jwt_claims is None:
+                # will raise if not in request context or token not present
+                jwt_claims = get_jwt()
+        except Exception:
+            jwt_claims = jwt_claims or {}
+
+        roles_set = set()
+
+        # Helper to add roles from iterable or delimited string
+        def add_roles_from(value):
+            if not value:
+                return
+            if isinstance(value, str):
+                parts = re.split(r"[;,\s]+", value.strip())
+                for p in parts:
+                    if p:
+                        roles_set.add(p)
+            elif isinstance(value, (list, tuple, set)):
+                for p in value:
+                    if p:
+                        roles_set.add(str(p))
+
+        # Common direct claim
+        add_roles_from(jwt_claims.get('roles'))
+        add_roles_from(jwt_claims.get('role'))
+
+        # Keycloak style: realm_access.roles
+        realm = jwt_claims.get('realm_access')
+        if isinstance(realm, dict):
+            add_roles_from(realm.get('roles'))
+
+        # Keycloak resource_access: client -> { roles: [...] }
+        resource_access = jwt_claims.get('resource_access')
+        if isinstance(resource_access, dict):
+            for client_obj in resource_access.values():
+                if isinstance(client_obj, dict):
+                    add_roles_from(client_obj.get('roles'))
+
+        # Fallback: any claim key that ends with 'roles'
+        for k, v in jwt_claims.items():
+            if k.lower().endswith('roles') and v:
+                add_roles_from(v)
+
+        # Extract delegated flag/value
+        username = None
+        delegated = None
+        if 'delegated' in jwt_claims:
+            delegated = jwt_claims.get('delegated')
+        if 'app_username' in jwt_claims:
+            username = jwt_claims.get('app_username')
+        else:
+            # look for any key containing 'delegat'
+            for k, v in jwt_claims.items():
+                if 'delegat' in k.lower():
+                    delegated = v
+                    break
+
+        return {
+            'roles': sorted(roles_set),
+            'app:delegated': delegated,
+            'username': username
+        }
 		
 class GrantSecurityException(JsonapiError):
     """

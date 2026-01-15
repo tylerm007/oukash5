@@ -15,6 +15,7 @@ import time
 import json
 from security.system.authorization import Security
 from database.cache_service import DatabaseCacheService
+from api.api_discovery.assign_role import add_role_assignment
 
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -411,7 +412,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     _complete_task(start_instance_id, 'Started', started_by, 'Workflow started', access_token)
 
     #from api.api_discovery.assign_role import add_role_assignment
-    #add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+    add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
     app_logger.info(f'Start Workflow started by {started_by} for application {application.ApplicationID}')
     return {"application_id": application_id}
 
@@ -490,7 +491,7 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
         
         # Step 8: Add role assignment
         #from api.api_discovery.assign_role import add_role_assignment
-        #add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+        add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
         
         # Step 9: Calculate performance metrics
         total_processing_time = time.time() - start_time

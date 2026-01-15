@@ -513,6 +513,19 @@ class EventAction(Base):  # type: ignore
     # parent relationships (access parent)
     TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("EventActionList"))
 
+class WFUserProfile(Base):
+    __tablename__ = 'WF_UserProfile'
+    _s_collection_name = 'WFUserProfile'  # type: ignore
+    
+    Username = Column(Unicode(100), primary_key=True, nullable=False)
+    Profile = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    LastModDate = Column(DATETIME2)
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+
+
     # child relationships (access children)
 #======== ou_kash tables===========================================
 

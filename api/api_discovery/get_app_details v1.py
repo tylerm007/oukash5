@@ -66,6 +66,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             messages = row.get('messages') or []
             quotes = row.get('quotes') or []
             files = row.get('files') or []
+            status = get_app_status(row.get('Status'))
+            row['Status'] = status
             row['company'] = json.loads(company) if company else {}
             row['company_address'] = json.loads(company_address) if company_address else {}
             row['ingredients'] = json.loads(ingredients) if ingredients else []

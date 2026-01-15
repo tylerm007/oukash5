@@ -83,7 +83,7 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
             admin_assignee = assignee 
         else:
             admin_assignee = admin_assignee.adminUserName
-            add_role_assignment(app_id, role, admin_assignee, False)
+            #add_role_assignment(app_id, role, admin_assignee, False)
         
         # Remove assignment using  user roles - this is disabled for now
         roles = [] # Security.current_user().UserRoleList

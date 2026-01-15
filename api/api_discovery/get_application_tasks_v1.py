@@ -36,8 +36,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         plantName = args.get('filter[plantName]', None) or args.get('plantName', None)
         roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
         # Convert None to proper SQL NULL for pyodbc
+        info = Security.extract_roles_and_delegated()
+        delegated = info.get('app:delegated', None)
+        if delegated is not None:
+            all_users = ";".join([username, delegated])
         params = {
-            'username': username,
+            'username': all_users if delegated is not None else username,
             'applicationId': applicationId if applicationId else None,
             'plantName': plantName if plantName else None,
             'roles': roles if roles else None
@@ -67,101 +71,100 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     def get_SQL()-> str:
         return '''
              SELECT  
-                ap.[ApplicationID] as applicationId,
-                ti.[TaskInstanceId] as taskInstanceId,
-                td.[TaskName] as taskName,
-                td.[Description] as taskDescription,
-                td.[TaskType] as taskType,
-                td.[TaskCategory] as TaskCategory,
-                td.[AssigneeRole] as assigneeRole,
-                td.PreScriptJson as PreScript,
-                ra.Assignee as assignee,
-                ap.CompanyId as companyId,
-                ap.PlantID as plantId,
-                co.NAME as companyName,
-                pl.NAME as plantName,
-                sd.StageName as stageName,
-                ti.[Status] as status,
-                ti.[StartedDate] as startedDate,
-                ti.[CompletedDate] as completedDate,
-                sd.StageId as stageInstanceId,
-                1 as groupAssignment,
-                CASE
-                    WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
-                    ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
-                END as daysPending,
-                CASE
-                    WHEN ti.[CompletedDate] is not NULL THEN null 
-                    ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
-                END as daysOverdue
+            ap.[ApplicationID] as applicationId,
+            ti.[TaskInstanceId] as taskInstanceId,
+            td.[TaskName] as taskName,
+            td.[Description] as taskDescription,
+            td.[TaskType] as taskType,
+            td.[TaskCategory] as TaskCategory,
+            td.[AssigneeRole] as assigneeRole,
+            td.PreScriptJson as PreScript,
+            ra.Assignee as assignee,
+            ap.CompanyId as companyId,
+            ap.PlantID as plantId,
+            co.NAME as companyName,
+            pl.NAME as plantName,
+            sd.StageName as stageName,
+            ti.[Status] as status,
+            ti.[StartedDate] as startedDate,
+            ti.[CompletedDate] as completedDate,
+            sd.StageId as stageInstanceId,
+            1 as groupAssignment,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
+                ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
+            END as daysPending,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN null 
+                ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+            END as daysOverdue
 
             FROM TaskInstances ti
-                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
-                INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
-                LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
-                LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
-                INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole AND ra.Assignee = :username 
-                and ra.ApplicationId = ap.ApplicationID
+            INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+            INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
+            INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+            LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
+            LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
+            INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole 
+                AND ra.Assignee IN (SELECT value FROM STRING_SPLIT(:username, ';'))
+                AND ra.ApplicationId = ap.ApplicationID
             WHERE 
-                ap.status not in ('COMPL', 'WTH') and
-                -- Required filters
-                ti.status = 'PENDING' AND 
-                (td.AssigneeRole != 'SYSTEM') AND
-                (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
-                (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            ap.status not in ('COMPL', 'WTH') and
+            ti.status = 'PENDING' AND 
+            (td.AssigneeRole != 'SYSTEM') AND
+            (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
+            (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
             
 
             
-            union ALL
+            UNION ALL
 
 
             
             SELECT  
-                ap.[ApplicationID] as applicationId,
-                ti.[TaskInstanceId] as taskInstanceId,
-                td.[TaskName] as taskName,
-                td.[Description] as taskDescription,
-                td.[TaskType] as taskType,
-                td.[TaskCategory] as TaskCategory,
-                td.[AssigneeRole] as assigneeRole,
-                td.PreScriptJson as PreScript,
-                'NULL' as assignee,
-                ap.CompanyId as companyId,
-                ap.PlantID as plantId,
-                co.NAME as companyName,
-                pl.NAME as plantName,
-                sd.StageName as stageName,
-                ti.[Status] as status,
-                ti.[StartedDate] as startedDate,
-                ti.[CompletedDate] as completedDate,
-                sd.StageId as stageInstanceId,
-                0 as groupAssignment,
-                CASE
-                    WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
-                    ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
-                END as daysPending,
-                CASE
-                    WHEN ti.[CompletedDate] is not NULL THEN null 
-                    ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
-                END as daysOverdue
+            ap.[ApplicationID] as applicationId,
+            ti.[TaskInstanceId] as taskInstanceId,
+            td.[TaskName] as taskName,
+            td.[Description] as taskDescription,
+            td.[TaskType] as taskType,
+            td.[TaskCategory] as TaskCategory,
+            td.[AssigneeRole] as assigneeRole,
+            td.PreScriptJson as PreScript,
+            'NULL' as assignee,
+            ap.CompanyId as companyId,
+            ap.PlantID as plantId,
+            co.NAME as companyName,
+            pl.NAME as plantName,
+            sd.StageName as stageName,
+            ti.[Status] as status,
+            ti.[StartedDate] as startedDate,
+            ti.[CompletedDate] as completedDate,
+            sd.StageId as stageInstanceId,
+            0 as groupAssignment,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN DATEDIFF(day,  ti.[StartedDate], ti.[CompletedDate] ) 
+                ELSE  DATEDIFF(day, ti.[StartedDate], getdate())
+            END as daysPending,
+            CASE
+                WHEN ti.[CompletedDate] is not NULL THEN null 
+                ELSE datediff(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+            END as daysOverdue
 
             FROM TaskInstances ti
-                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
-                INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
-                LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
-                LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
+            INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+            INNER JOIN WF_Applications ap ON ti.ApplicationId = ap.ApplicationID
+            INNER JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+            LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
+            LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
 
             WHERE 
-                td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
-                td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
-                ap.status not in ('COMPL', 'WTH') and
-                -- Required filters
-                ti.status = 'PENDING' AND 
-                (td.AssigneeRole != 'SYSTEM') AND
-                (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
-                (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
+            td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
+            ap.status not in ('COMPL', 'WTH') and
+            ti.status = 'PENDING' AND 
+            (td.AssigneeRole != 'SYSTEM') AND
+            (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
+            (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
             
             ORDER BY ap.applicationId, ti.taskInstanceId
         '''

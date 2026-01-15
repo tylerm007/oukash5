@@ -28,6 +28,16 @@ cache = DatabaseCacheService.get_instance()
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     pass
 
+    @app.route('/whoami', methods=['GET'])
+    @jwt_required()
+    def whoami():
+        info = Security.extract_roles_and_delegated()
+        return jsonify({
+            "roles": info['roles'],
+            "app:delegated": info['app:delegated'],
+            "username": info['username']
+        })
+
     @app.route('/run_workflow_to_completion', methods=['GET','POST','OPTIONS'])
     @jwt_required()
     def run_workflow_to_completion_endpoint():

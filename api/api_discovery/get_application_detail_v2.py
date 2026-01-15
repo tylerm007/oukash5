@@ -75,6 +75,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             # FOR JSON PATH returns an array, get the first element
             if isinstance(application_data, list) and len(application_data) > 0:
                 application_info = application_data[0]
+                status = application_data[0]['appplicationinfo']['status']
+                application_data[0]['appplicationinfo']['status'] = get_app_status(status)
             else:
                 application_info = application_data
         except json.JSONDecodeError as je:
@@ -238,3 +240,19 @@ def get_total_count() -> str:
             (:status IS NULL OR app.Status = :status) and
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
     '''
+
+
+def get_app_status(status_code: str):
+    status_map = {
+        "NEW": "New",
+        "INP": "In Progress",
+        "HLD": "On Hold",
+        "WTH": "Withdrawn",
+        "COMPL": "Certified",
+        "REJ": "Rejected",
+        "REVIEW": "Inspection Report Submitted to IAR",
+        "INSPECTION": "Inspection Scheduled",
+        "PAYPEND": "Payment Pending",
+        "CONTRACT": "Contract Sent to Customer"
+    }
+    return status_map.get(status_code, "Unknown Status")

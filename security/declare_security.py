@@ -35,8 +35,10 @@ class Roles():
     admin = "admin"
     RFR = "RFR"
     read_only = "readonly"
-    admin = "CS_ADMIN"
-    public="public"       
+    admin = "MIS"
+    public="public" 
+    ACCOUNTING = "ACCOUNTING"
+    SALES = "SALES"      
     sa="sa"
     
 DefaultRolePermission(to_role=Roles.sa, can_read=True, can_update=True, can_insert=True, can_delete=True)
@@ -50,3 +52,16 @@ DefaultRolePermission(to_role=Roles.IAR, can_read=True, can_insert=True,can_upda
 DefaultRolePermission(to_role=Roles.RFR, can_read=True, can_insert=True,can_update=True, can_delete=False)
 DefaultRolePermission(to_role=Roles.read_only, can_read=True, can_insert=False,can_update=False, can_delete=False)
 DefaultRolePermission(to_role=Roles.public, can_read=True, can_insert=False,can_update=False, can_delete=False)
+DefaultRolePermission(to_role=Roles.ACCOUNTING, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.SALES, can_read=True, can_insert=True,can_update=True, can_delete=False)
+
+'''
+Grant(
+    to_role=Roles.NCRC,
+    on_class=models.WFApplication,
+    permission_name="view_own_company_applications",
+    filter=GlobalFilter(
+        filter_string="WFApplication.CompanyID == current_user.CompanyID"
+    )
+)
+'''
