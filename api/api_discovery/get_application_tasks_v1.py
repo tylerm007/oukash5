@@ -37,9 +37,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
         # Convert None to proper SQL NULL for pyodbc
         info = Security.extract_roles_and_delegated()
-        delegated = info.get('app:delegated', None)
+        delegated = info.get('delegated', None)
         if delegated is not None:
-            all_users = ";".join([username, delegated])
+            all_users = ";".join(delegated)
+            all_users += f";{username}"
         params = {
             'username': all_users if delegated is not None else username,
             'applicationId': applicationId if applicationId else None,
@@ -49,9 +50,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             #'offset': offset
         }
 
-        app_logger.info(f"Calling dsql with params: {params}")
         try:
             sql = get_SQL()
+            app_logger.info(f"Calling dsql {sql} with params: {params}")
             # Execute with plain dict - let SQLAlchemy handle parameter expansion
             tasks = session.execute(text(sql), params).fetchall()
  

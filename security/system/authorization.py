@@ -163,7 +163,7 @@ class Security:
 
         return {
             'roles': sorted(roles_set),
-            'app:delegated': delegated,
+            'delegated': delegated,
             'username': username
         }
 		

@@ -34,7 +34,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         info = Security.extract_roles_and_delegated()
         return jsonify({
             "roles": info['roles'],
-            "app:delegated": info['app:delegated'],
+            "delegated": info['app:delegated'],
             "username": info['username']
         })
 
