@@ -24,7 +24,7 @@ import logging, sys
 from safrs.errors import JsonapiError
 from http import HTTPStatus
 from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict['name']... like a row
-
+import jwt as pyjwt
 
 from flask_jwt_extended import current_user, get_jwt
 import re
@@ -84,7 +84,7 @@ class Security:
         g.access_token = token
 
     @classmethod
-    def extract_roles_and_delegated(cls, jwt_claims: dict = None) -> dict:
+    def extract_roles_and_delegated(cls, jwt_claims: dict = None,jwt_token=None) -> dict:
         """
         Extract roles and 'app:delegated' from JWT claims.
 
@@ -152,12 +152,19 @@ class Security:
         delegated = None
         if 'delegated' in jwt_claims:
             delegated = jwt_claims.get('delegated')
+        else:
+            # Extract 'delegated' from JWT token if it exists
+            try:
+                decoded = pyjwt.decode(jwt_token, options={"verify_signature": False})
+                delegated = decoded.get('delegated')
+            except Exception:
+                pass
         if 'app_username' in jwt_claims:
             username = jwt_claims.get('app_username')
         else:
-            # look for any key containing 'delegat'
+            # look for any key containing 'delegated'
             for k, v in jwt_claims.items():
-                if 'delegat' in k.lower():
+                if 'delegated' in k.lower():
                     delegated = v
                     break
 

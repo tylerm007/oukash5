@@ -36,7 +36,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         plantName = args.get('filter[plantName]', None) or args.get('plantName', None)
         roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
         # Convert None to proper SQL NULL for pyodbc
-        info = Security.extract_roles_and_delegated()
+        jwt = request.headers.get('Authorization', None)
+        info = Security.extract_roles_and_delegated(jwt_token=jwt)
         delegated = info.get('delegated', None)
         if delegated is not None:
             all_users = ";".join(delegated)

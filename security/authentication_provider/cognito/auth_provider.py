@@ -139,7 +139,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                             'app_username': claims.get('app_username'),
                             'loaded_user': getUserRoles(claims.get('app_username'), claims.get('roles', [])),
                             'roles': claims.get('roles', []),
-                            'auth_provider': 'cognito'
+                            'auth_provider': 'cognito',
+                            'delegated': claims.get('delegated')
                         }
                     else:
                         logger.error("RS256 Cognito token validation failed")
@@ -203,7 +204,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                                 'app_username': claims.get('app_username'),
                                 'loaded_user': getUserRoles(claims.get('app_username'), claims.get('roles', [])), # TODO we need to lookup a Uer?
                                 'roles': claims.get('roles', []),
-                                'auth_provider': 'cognito'
+                                'auth_provider': 'cognito',
+                                'delegated': claims.get('delegated')
                             }
                             
                             # Manually set the JWT data in Flask's 'g' object
@@ -480,6 +482,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                         'token_type': 'Bearer',
                         'token_algorithm': 'RS256',
                         'expires_in': 3600,  # Cognito default
+                        'delegated': claims.get('delegated'),
                         'user_info': {
                             'user_id': user.Name,
                             'email': claims.get('email'),
@@ -576,6 +579,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 'user_id': session.get('user_id'),
                 'user_email': session.get('user_email'),
                 'user_roles': session.get('user_roles', []),
+                'delegated': session.get('delegated'),
                 'expires_in': 3600,
                 'usage': {
                     'postman_setup': 'Copy the access_token value to Authorization > Bearer Token',
@@ -640,6 +644,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             session['id_token'] = id_token
             session['token_type'] = 'RS256'
             session['auth_provider'] = 'cognito'
+            session['delegated'] = claims.get('delegated')
             
             logger.info(f"✅ User {user.Username} authenticated with RS256 Cognito token")
             
@@ -863,6 +868,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 session_data = {
                     'user': token_claims.get('app_username'),
                     'username': token_claims.get('app_username'),
+                    'delegated': token_claims.get('delegated'),
                     'id': token_claims.get('sub', user_info.get('user_id')),
                     'roles': token_claims.get('roles', []),
                     'authenticated': True,
@@ -1224,6 +1230,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.id = claims.get("user_id") or claims.get("sub")
         rtn_user.Username = claims.get("app_username") or claims.get("email") or claims.get("name")
         rtn_user.password_hash = None
+        rtn_user.delegated = claims.get("delegated")
         roles = claims.get('roles', [])
         name = rtn_user.name
         if name is None or name == {}:
