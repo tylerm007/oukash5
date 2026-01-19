@@ -2,7 +2,7 @@ from ast import Assign
 from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
 from database import models
-from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, StageDefinition
+from database.models import ProcessDefinition, TaskDefinition, TaskRole, WFApplication, TaskInstance, StageDefinition
 from flask import request, jsonify, session
 import logging
 import safrs

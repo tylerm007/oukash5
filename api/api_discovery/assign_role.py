@@ -8,6 +8,9 @@ from database import models
 from security.system.authorization import Security
 from sqlalchemy import text
 from datetime import datetime
+from database.cache_service import DatabaseCacheService
+
+cache = DatabaseCacheService.get_instance()
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -90,6 +93,8 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
         for this_role in roles:
             add_role_assignment(app_id, this_role.role_name, admin_assignee)
 
+        add_assignedto_by_role(app_id, task_id, role, assignee) #ROle is NCRC or RFR ONLY
+
         session.commit()
         _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
     except Exception as e:
@@ -144,3 +149,25 @@ def get_admin_assitant(user:str):
             and p.LAST not like 'Z"%' and p.LAST <> 'Test' and p.first not like 'By R%'
             and p.KashLogIn = '{user}'
     """
+
+def add_assignedto_by_role(app_id, task_id, role, assignee):
+    """Update the AssignedTo field in TaskInstance based on role.
+    Args:
+        app_id (int): The ID of the application.
+        task_id (int): The ID of the task instance.
+        role (str): The role to assign (e.g., 'NCRC', 'RFR').
+        assignee (str): The user to whom the role is assigned.
+    """
+
+    task_defs = cache.get_all_task_definitions()
+    if not task_defs:
+        app_logger.info(f'No TaskDefinition found for role {role}, skipping AssignedTo update')
+        return
+    task_def_ids =[task_defs[td].TaskId for td in task_defs if task_defs[td].AssigneeRole == role]
+    task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.ApplicationId==app_id, models.TaskInstance.TaskDefinitionId.in_(task_def_ids)).all()
+    if not task_instances:
+        raise ValueError(f'TaskInstance {task_id} for Application {app_id} not found')
+
+    for task_instance in task_instances:
+        task_instance.AssignedTo = assignee
+        app_logger.info(f'AssignedTo updated to {assignee} for TaskInstance {task_instance.TaskInstanceId} based on role {role}')

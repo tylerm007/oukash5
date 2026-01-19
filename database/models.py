@@ -460,6 +460,8 @@ class TaskInstance(Base):  # type: ignore
     StageId = Column(ForeignKey('StageDefinitions.StageId'), nullable=False)
     Status = Column(ForeignKey('TaskStatus.StatusCode'), server_default=text("Pending"), nullable=False)
     AssignedTo = Column(Unicode(100))
+    CompletedBy = Column(Unicode(100))
+    CompletedCapacity = Column(Unicode(100))
     StartedDate = Column(DATETIME2)
     CompletedDate = Column(DATETIME2)
     #_DurationMinutes = Column('#DurationMinutes', Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
@@ -516,7 +518,7 @@ class EventAction(Base):  # type: ignore
 class WFUserProfile(Base):
     __tablename__ = 'WF_UserProfile'
     _s_collection_name = 'WFUserProfile'  # type: ignore
-    
+
     Username = Column(Unicode(100), primary_key=True, nullable=False)
     Profile = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)

@@ -249,7 +249,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                                             ti.TaskInstanceId,
                                             ti.TaskDefinitionId,
                                             ti.status,
-                                            ti.AssignedTo,
+                                            ti.TaskRole,
+                                            ti.CompletedBy,
                                             ti.StartedDate,
                                             ti.CompletedDate,
                                             CASE

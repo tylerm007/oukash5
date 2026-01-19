@@ -1,4 +1,5 @@
 from datetime import datetime
+from pickle import NONE
 from database import models
 from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, TaskFlow 
 from flask import request, jsonify, session
@@ -39,6 +40,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             task_instance_id = 454
             result = "Approved"             --  used by Condition tasks 
             completed_by = "tband"          -- user completing the task
+            capacity = "ADMIN"              -- ADMIN, MEMBER, DESIGNATED
             completion_notes = "Task completed successfully" -- writes to WFHistory
         } | ConvertTo-Json)
 
@@ -55,6 +57,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
         user = Security.current_user().Username
         completed_by = data.get("completed_by",user)
+        capactity = data.get("capacity", None) # "S/B ADMIN, MEMBER, DESIGNATED"
         completion_notes = data.get("completion_notes",'Complete Task via API')
         result = data.get("result", None)
         access_token = request.headers.get("Authorization")
@@ -68,12 +71,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
             task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
             task_instance.ModifiedDate = datetime.now()
-            task_instance.AssignedTo = completed_by
+            task_instance.CompletedBy = completed_by
             session.add(task_instance)
             session.commit()
             return jsonify({"status": "success", "message": f"Task status updated to {status} successfully"}), 200
         
-        return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, depth=0)
+        return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, capacity=capactity, depth=0)
 
     
     @app.route('/validate_tasks', methods=['GET','OPTIONS'])
@@ -133,7 +136,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
   
 
 
-def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'SYSTEM', completion_notes: str = 'Complete Task via API', access_token:str=None, depth:int=0):
+def _complete_task(task_instance_id: int, result: str = None, completed_by: str = 'SYSTEM', completion_notes: str = 'Complete Task via API', access_token:str=None, capacity:str =  None, depth:int=0):
         '''Complete a task instance in the workflow and trigger the next task(s) as needed.'''
         
         # START PERFORMANCE TIMING
@@ -199,12 +202,13 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         # Complete the task
         if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
             status = 'PENDING'
-            task_instance.AssignedTo = task_def['AssigneeRole']
+            task_instance.TaskRole = task_def['AssigneeRole']
         else:
             status = "COMPLETED"
             task_instance.CompletedDate = datetime.now()
             task_instance.ResultData = completion_notes
-            task_instance.AssignedTo = completed_by
+            task_instance.CompletedBy = completed_by
+            task_instance.CompletedCapacity = capacity
         
         task_instance.ModifiedDate = datetime.now()
         task_instance.Status = status
@@ -258,7 +262,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                 continue  # Skip this dependency as the condition does not match the result
             elif next_task_instance and validate_prior_tasks(task_def, application_id, result):
                 next_task_instance.Status = 'PENDING'
-                next_task_instance.AssignedTo = task_def.AssigneeRole
+                next_task_instance.TaskRole = task_def.AssigneeRole
                 next_task_instance.StartedDate = datetime.now()
                 session.add(next_task_instance)    
                 session.commit()
