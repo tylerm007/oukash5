@@ -365,7 +365,7 @@ def get_SQL() -> str:
             (:status IS NULL OR app.Status = :status) and
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
 
-        ORDER BY app.ApplicationID   
+        ORDER BY app.CreatedDate DESC
         OFFSET :offset ROWS
         FETCH NEXT :limit ROWS ONLY;
 

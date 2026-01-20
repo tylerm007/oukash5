@@ -146,11 +146,11 @@ def declare_logic():
         application_id = row.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
         task_def = row.TaskDefinition
-        if task_def.TaskType == 'START':
+        if task_def.TaskName == 'AssignNCRC' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'INP'
                 application.StartedDate = datetime.datetime.now()
-                logic_row.update(reason="update application status to INP", row=application)
+                logic_row.update(reason="Update application status to INP", row=application)
         #elif task_def.TaskType in ('STAGESTART'):
         #    stage.Status = 'IN_PROGRESS'
         #    application.StartedDate = datetime.datetime.now()
@@ -163,7 +163,7 @@ def declare_logic():
             if application is not None:
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
-                logic_row.update(reason=f"update application status to {application.Status}", row=application)
+                logic_row.update(reason=f"Update application status to {application.Status}", row=application)
         else:
             status = None
             TaskName = task_def.TaskName
@@ -182,7 +182,7 @@ def declare_logic():
             if status is not None:
                 application.Status = status
                 application.CompletedDate = datetime.datetime.now()
-                logic_row.update(reason=f"update application status to {application.Status}", row=application)
+                logic_row.update(reason=f"Update application status to {application.Status}", row=application)
         
     Rule.commit_row_event(on_class=models.TaskInstance, calling=update_stages)
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)

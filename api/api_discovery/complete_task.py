@@ -1,5 +1,4 @@
 from datetime import datetime
-from pickle import NONE
 from database import models
 from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, TaskFlow 
 from flask import request, jsonify, session

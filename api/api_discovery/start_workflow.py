@@ -16,7 +16,9 @@ import json
 from security.system.authorization import Security
 from database.cache_service import DatabaseCacheService
 from api.api_discovery.assign_role import add_role_assignment
+from database.cache_service import DatabaseCacheService
 
+cache = DatabaseCacheService.get_instance()
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -413,6 +415,21 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
 
     #from api.api_discovery.assign_role import add_role_assignment
     add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+
+    # Assign the Dispatch Task to the user who started the workflow
+    task_definitions = cache.get_task_definitions()
+    dispatcher_task_def_id = None
+    for td in task_definitions.values():
+        if  td['TaskName'] == 'AssignNCRC':
+            dispatcher_task_def_id = td['TaskId']
+            break
+    if dispatcher_task_def_id is None:
+        raise Exception(f'Dispatcher TaskDefinition not found for process: {process_name}')
+    dispatch_task_instance = session.query(TaskInstance).filter_by(ApplicationId=application.ApplicationID,TaskDefinitionId=dispatcher_task_def_id).first()
+    if dispatch_task_instance:
+        dispatch_task_instance.AssignedTo = started_by
+        session.add(dispatch_task_instance)
+        session.commit()
     app_logger.info(f'Start Workflow started by {started_by} for application {application.ApplicationID}')
     return {"application_id": application_id}
 

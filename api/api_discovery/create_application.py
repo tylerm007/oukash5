@@ -102,7 +102,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = 
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
             CreatedDate=datetime.datetime.now(datetime.timezone.utc),
-            Priority="HIGH",
+            Priority="NORMAL",
             ApplicationNumber=applicationNumber,
     )
     session.add(application)

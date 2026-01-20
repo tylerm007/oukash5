@@ -27,10 +27,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @jwt_required()
     def assignRole():
         """        
-            new custom end point to retrive admin for given ncrc
-            post to assignRoles(appid, 'NCRC',user)
-            post to assignRoles(appid, 'NCRCADMIN',retreivedadminuser)
-            ({ appId, taskId, role, assignee }),
+            Custom Endpoint to assign roles to users for a specific application and task.
+            This endpoint allows assigning roles such as 'NCRC' and 'RFR' to users for a given application and task.
+            post to assignRoles(appid, 'NCRC',user, 'ADMIN)
+            post to assignRoles(appid, 'RFR',ADMIN)
+            ({ appId, taskId, role, assignee, capacity }),
 
         Test it with:
 
@@ -39,6 +40,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 taskId = 540
                 role = "NCRC"
                 assignee = "admin"
+                capacity = "ADMIN"
             } | ConvertTo-Json
 
             Invoke-RestMethod -Uri "http://localhost:5656/assignRole" -Method POST -Body $body -ContentType "application/json" -Headers @{Authorization = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc1OTg2NDAyMSwianRpIjoiNzZhMjA3MWItOTY4Yi00NTAwLWEwYmMtYTcwN2Q0MDAyMmVhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImFkbWluIiwibmJmIjoxNzU5ODY0MDIxLCJleHAiOjE3NTk4NzczNDF9.s18ynSqujiwbylAnzH67nPKUFOW6ph_A1akM3PTM0u0"}
@@ -56,6 +58,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         task_id = data.get('taskId')  # TaskInstanceId
         role = data.get('role')
         assignee = data.get('assignee')
+        capacity = data.get('capacity', None) or data.get('completedCapacity', None)  # Optional
         user = Security.current_user().Username
         access_token = request.headers.get('Authorization')
         if not data or 'appId' not in data or 'taskId' not in data or 'role' not in data or 'assignee' not in data:
@@ -64,10 +67,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f'Assign Role {role} to {assignee} for application {app_id} task {task_id}')
         # Here you would add the loigic to assign the role to the user for the application
 
-        _assign_role(task_id, role, assignee, app_id, user, access_token)
+        _assign_role(task_id, role, assignee, app_id, user, access_token, capacity=capacity)
         return jsonify({"result": f'Role {role} assigned to {assignee} for application {app_id} task {task_id}'}), 200
 
-def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, access_token: str):
+def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, access_token: str, capacity: str = None):
     """Assign role to user for the application.
     Args:
         role (str): The role to assign (e.g., 'NCRC', 'NCRCADMIN').
@@ -93,10 +96,10 @@ def _assign_role(task_id:int, role: str, assignee: str, app_id: int, user: str, 
         for this_role in roles:
             add_role_assignment(app_id, this_role.role_name, admin_assignee)
 
-        add_assignedto_by_role(app_id, task_id, role, assignee) #ROle is NCRC or RFR ONLY
+        add_assignedto_by_role(app_id, task_id, role, assignee, capacity) #ROle is NCRC or RFR ONLY
 
         session.commit()
-        _complete_task(task_id, result='Assign Role', completed_by=user, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
+        _complete_task(task_id, result='Assign Role', completed_by=user, capacity=capacity, completion_notes=f'Role {role} assigned to {assignee}', access_token=access_token)
     except Exception as e:
         session.rollback()
         app_logger.error(f'Error assigning role {role} to {assignee} for application {app_id}: {e}')
@@ -150,7 +153,7 @@ def get_admin_assitant(user:str):
             and p.KashLogIn = '{user}'
     """
 
-def add_assignedto_by_role(app_id, task_id, role, assignee):
+def add_assignedto_by_role(app_id:int, task_id:int, role:str, assignee: str, capacity: str = None):
     """Update the AssignedTo field in TaskInstance based on role.
     Args:
         app_id (int): The ID of the application.
@@ -170,4 +173,6 @@ def add_assignedto_by_role(app_id, task_id, role, assignee):
 
     for task_instance in task_instances:
         task_instance.AssignedTo = assignee
-        app_logger.info(f'AssignedTo updated to {assignee} for TaskInstance {task_instance.TaskInstanceId} based on role {role}')
+        if capacity:
+            task_instance.Capacity = capacity   
+        app_logger.info(f'AssignedTo updated to {assignee} for TaskInstance {task_instance.TaskInstanceId} based on role {role} with capacity {capacity}')
