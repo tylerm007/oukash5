@@ -1,0 +1,100 @@
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│         TEAMS API - POST MESSAGES TO YOUR CHANNEL          │
+│                    Quick Start Guide                        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+🚀 THREE STEPS TO START
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 1: Get Webhook URL from Teams                         │
+└─────────────────────────────────────────────────────────────┘
+
+  1. Open Teams → "NewAPI Team" channel
+  2. Click ... → Connectors/Workflows
+  3. Add "Incoming Webhook"
+  4. Configure & copy URL
+
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 2: Set Environment Variable                           │
+└─────────────────────────────────────────────────────────────┘
+
+  PowerShell:
+    $env:TEAMS_WEBHOOK_URL = "paste-url-here"
+
+
+┌─────────────────────────────────────────────────────────────┐
+│ STEP 3: Test It                                            │
+└─────────────────────────────────────────────────────────────┘
+
+  Run setup helper:
+    .\setup_teams_api.ps1
+
+  Or test manually:
+    .\test_teams_api.ps1
+
+
+═══════════════════════════════════════════════════════════════
+
+📝 QUICK API EXAMPLES
+
+Simple Message:
+─────────────────────────────────────────────────────────────
+$body = @{ message = "Hello!" } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5656/teams/send_message" `
+  -Method POST -Body $body -ContentType "application/json"
+
+
+Card Message with Color:
+─────────────────────────────────────────────────────────────
+$body = @{
+    title = "Alert"
+    message = "**Status**: OK ✅"
+    message_type = "card"
+    color = "00FF00"
+} | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:5656/teams/send_message" `
+  -Method POST -Body $body -ContentType "application/json"
+
+
+Python Example:
+─────────────────────────────────────────────────────────────
+import requests
+requests.post('http://localhost:5656/teams/send_message', 
+    json={'message': 'Hello from Python!', 'message_type': 'card'})
+
+
+═══════════════════════════════════════════════════════════════
+
+🎨 COLOR CODES
+
+Green (success):  00FF00
+Red (error):      FF0000
+Yellow (warning): FFCC00
+Blue (info):      0076D7
+
+═══════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION
+
+• Full Guide:       docs/TEAMS_API_SETUP.md
+• Quick Ref:        docs/TEAMS_API_QUICKREF.md
+• Summary:          TEAMS_API_README.md
+
+═══════════════════════════════════════════════════════════════
+
+🔧 FILES CREATED
+
+✅ API endpoint:    api/customize_api.py (/teams/send_message)
+✅ Setup helper:    setup_teams_api.ps1
+✅ Test script:     test_teams_api.ps1
+✅ Python tests:    test_teams_api.py
+✅ Documentation:   docs/TEAMS_API_SETUP.md
+✅ Quick ref:       docs/TEAMS_API_QUICKREF.md
+
+═══════════════════════════════════════════════════════════════
+
+💡 TIP: Run .\setup_teams_api.ps1 for guided setup!
+

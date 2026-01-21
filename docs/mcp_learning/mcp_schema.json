@@ -1,17 +1,572 @@
 {
     "tool_type": "json-api",
     "schema_version": "1.0",
-    "base_url": "http://localhost:5656/api",
-    "description": "API Logic Project: oukash6",
+    "base_url": "https://devvm01.nyc.ou.org:5656/api",
+    "description": "API Logic Project: oukash5 NEWAPI",
     "resources": [
+        
+        {
+            "name": "EventAction",
+            "path": "/EventAction",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "EventId",
+                "EventKey",
+                "TaskInstanceId",
+                "EventStatus",
+                "EventType",
+                "EventMessage",
+                "StartDate",
+                "DueDate",
+                "IsResolved",
+                "ResolvedDate"
+            ],
+            "filterable": [
+                "EventId",
+                "EventKey",
+                "TaskInstanceId",
+                "EventStatus",
+                "EventType",
+                "EventMessage",
+                "StartDate",
+                "DueDate",
+                "IsResolved",
+                "ResolvedDate"
+            ]
+        },
+        {
+            "name": "TaskInstance",
+            "path": "/TaskInstance",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "TaskInstanceId",
+                "TaskDefinitionId",
+                "ApplicationId",
+                "StageId",
+                "Status",
+                "AssignedTo",
+		        "CompletedBy",
+		        "CompletedCapacity",
+                "StartedDate",
+                "CompletedDate",
+                "DurationMinutes",
+                "Result",
+                "ResultData",
+                "ErrorMessage",
+                "RetryCount",
+                "ModifiedDate"
+            ],
+            "filterable": [
+                "TaskInstanceId",
+                "TaskDefinitionId",
+                "ApplicationId",
+                "StageId",
+                "Status",
+                "AssignedTo",
+                "CompletedBy",
+		        "CompletedCapacity",
+                "StartedDate",
+                "CompletedDate",
+                "DurationMinutes",
+                "Result",
+                "ResultData",
+                "ErrorMessage",
+                "RetryCount",
+                "ModifiedDate"
+            ]
+        },
+        {
+            "name": "ProcessDefinition",
+            "path": "/ProcessDefinition",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "ProcessId",
+                "ProcessName",
+                "ProcessVersion",
+                "Description",
+                "IsActive",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ],
+            "filterable": [
+                "ProcessId",
+                "ProcessName",
+                "ProcessVersion",
+                "Description",
+                "IsActive",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ]
+        },
+        {
+            "name": "RoleAssigment",
+            "path": "/RoleAssigment",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "RoleAssigmentID",
+                "ApplicationId",
+                "Role",
+                "Assignee",
+                "CreatedDate",
+                "CreatedBy"
+            ],
+            "filterable": [
+                "RoleAssigmentID",
+                "ApplicationId",
+                "Role",
+                "Assignee",
+                "CreatedDate",
+                "CreatedBy"
+            ]
+        },
+        {
+            "name": "WFApplication",
+            "path": "/WFApplication",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "ApplicationID",
+                "ApplicationNumber",
+                "CompanyID",
+                "PlantID",
+                "SubmissionDate",
+                "Status",
+                "Priority",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ],
+            "filterable": [
+                "ApplicationID",
+                "ApplicationNumber",
+                "CompanyID",
+                "PlantID",
+                "SubmissionDate",
+                "Status",
+                "Priority",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ]
+        },
+        {
+            "name": "StageDefinition",
+            "path": "/StageDefinition",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "StageId",
+                "StageName",
+                "StageDescription",
+                "EstimatedDurationDays",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ],
+            "filterable": [
+                "StageId",
+                "StageName",
+                "StageDescription",
+                "EstimatedDurationDays",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ]
+        },
+        {
+            "name": "StageStatus",
+            "path": "/StageStatus",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "StatusCode",
+                "StatusDescription"
+            ],
+            "filterable": [
+                "StatusCode",
+                "StatusDescription"
+            ]
+        },
+        {
+            "name": "TaskCategory",
+            "path": "/TaskCategory",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "TaskCategoryCode",
+                "TaskCategoryDescription"
+            ],
+            "filterable": [
+                "TaskCategoryCode",
+                "TaskCategoryDescription"
+            ]
+        },
+        {
+            "name": "TaskDefinition",
+            "path": "/TaskDefinition",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "TaskId",
+                "ProcessDefinitionId",
+                "TaskName",
+                "TaskType",
+                "TaskCategory",
+                "Sequence",
+                "StageDefinitionId",
+                "IsParallel",
+                "AssigneeRole",
+                "EstimatedDurationMinutes",
+                "IsRequired",
+                "AutoComplete",
+                "Description",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy",
+                "PreScriptJson",
+                "PostScriptJson"
+            ],
+            "filterable": [
+                "TaskId",
+                "ProcessDefinitionId",
+                "TaskName",
+                "TaskType",
+                "TaskCategory",
+                "Sequence",
+                "StageDefinitionId",
+                "IsParallel",
+                "AssigneeRole",
+                "EstimatedDurationMinutes",
+                "IsRequired",
+                "AutoComplete",
+                "Description",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy",
+                "PreScriptJson",
+                "PostScriptJson"
+            ]
+        },
+        {
+            "name": "TaskType",
+            "path": "/TaskType",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "TaskTypeCode",
+                "TaskTypeDescription"
+            ],
+            "filterable": [
+                "TaskTypeCode",
+                "TaskTypeDescription"
+            ]
+        },
+        {
+            "name": "TaskFlow",
+            "path": "/TaskFlow",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "FlowId",
+                "FromTaskId",
+                "ToTaskId",
+                "Condition",
+                "IsDefault"
+            ],
+            "filterable": [
+                "FlowId",
+                "FromTaskId",
+                "ToTaskId",
+                "Condition",
+                "IsDefault"
+            ]
+        },
+        {
+            "name": "TaskStatus",
+            "path": "/TaskStatus",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "StatusCode",
+                "StatusDescription"
+            ],
+            "filterable": [
+                "StatusCode",
+                "StatusDescription"
+            ]
+        },
+        {
+            "name": "TaskRole",
+            "path": "/TaskRole",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "RoleCode",
+                "RoleDescription"
+            ],
+            "filterable": [
+                "RoleCode",
+                "RoleDescription"
+            ]
+        },
+        {
+            "name": "WFPriority",
+            "path": "/WFPriority",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "PriorityCode",
+                "PriorityDescription"
+            ],
+            "filterable": [
+                "PriorityCode",
+                "PriorityDescription"
+            ]
+        },
+        {
+            "name": "WFApplicationStatus",
+            "path": "/WFApplicationStatus",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "StatusCode",
+                "StatusDescription"
+            ],
+            "filterable": [
+                "StatusCode",
+                "StatusDescription"
+            ]
+        },
+        {
+            "name": "WFApplicationMessage",
+            "path": "/WFApplicationMessage",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "MessageID",
+                "ApplicationID",
+                "FromUser",
+                "ToUser",
+                "MessageText",
+                "MessageType",
+                "Priority",
+                "SentDate",
+                "TaskInstanceId"
+            ],
+            "filterable": [
+                "MessageID",
+                "ApplicationID",
+                "FromUser",
+                "ToUser",
+                "MessageText",
+                "MessageType",
+                "Priority",
+                "SentDate",
+                "TaskInstanceId"
+            ]
+        },
+        {
+            "name": "WFFile",
+            "path": "/WFFile",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "FileID",
+                "ApplicationID",
+                "FileName",
+                "FileType",
+                "FileSize",
+                "UploadedDate",
+                "Tag",
+                "IsProcessed",
+                "RecordCount",
+                "FilePath",
+                "CCreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ],
+            "filterable": [
+                "FileID",
+                "ApplicationID",
+                "FileName",
+                "FileType",
+                "FileSize",
+                "UploadedDate",
+                "Tag",
+                "IsProcessed",
+                "RecordCount",
+                "FilePath",
+                "CCreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ]
+        },
+        {
+            "name": "WFFileType",
+            "path": "/WFFileType",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "FileType",
+                "FileTypeName"
+            ],
+            "filterable": [
+                "FileType",
+                "FileTypeName"
+            ]
+        },
+        {
+            "name": "WFQuote",
+            "path": "/WFQuote",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "QuoteID",
+                "ApplicationID",
+                "QuoteNumber",
+                "TotalAmount",
+                "ValidUntil",
+                "Status",
+                "LastUpdatedDate",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ],
+            "filterable": [
+                "QuoteID",
+                "ApplicationID",
+                "QuoteNumber",
+                "TotalAmount",
+                "ValidUntil",
+                "Status",
+                "LastUpdatedDate",
+                "CreatedDate",
+                "CreatedBy",
+                "ModifiedDate",
+                "ModifiedBy"
+            ]
+        },
+        {
+            "name": "WFQuoteStatus",
+            "path": "/WFQuoteStatus",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "StatusCode",
+                "StatusDesc"
+            ],
+            "filterable": [
+                "StatusCode",
+                "StatusDesc"
+            ]
+        },
+        {
+            "name": "WFQuoteItem",
+            "path": "/WFQuoteItem",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST"
+            ],
+            "fields": [
+                "QuoteItemID",
+                "QuoteID",
+                "Description",
+                "Amount",
+                "SortOrder"
+            ],
+            "filterable": [
+                "QuoteItemID",
+                "QuoteID",
+                "Description",
+                "Amount",
+                "SortOrder"
+            ]
+        },
         {
             "name": "ASSIGNEDMASHGIACHTB",
             "path": "/ASSIGNEDMASHGIACHTB",
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -88,8 +643,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "company_id",
@@ -132,8 +686,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "COMPANY_ID",
@@ -238,8 +791,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -276,8 +828,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -324,8 +875,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -354,8 +904,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -372,8 +921,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -410,8 +958,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "COMPANY_ID",
@@ -498,8 +1045,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -574,8 +1120,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "CodeId",
@@ -616,8 +1161,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -664,8 +1208,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -696,8 +1239,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -718,8 +1260,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -742,8 +1283,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -868,8 +1408,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -912,8 +1451,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -940,8 +1478,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -986,8 +1523,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1024,8 +1560,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1054,8 +1589,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1082,8 +1616,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1116,8 +1649,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1158,8 +1690,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "PLANT_ID",
@@ -1216,8 +1747,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ccID",
@@ -1284,8 +1814,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1316,8 +1845,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1418,8 +1946,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "MERCHANDISE_ID",
@@ -1514,8 +2041,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1534,8 +2060,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1574,8 +2099,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1602,8 +2126,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "INVOICE_ID",
@@ -1698,8 +2221,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1752,8 +2274,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "labelId",
@@ -1778,8 +2299,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1804,8 +2324,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "LabelID",
@@ -1822,8 +2341,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1852,8 +2370,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1876,8 +2393,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -1920,8 +2436,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "PERSON_JOB_ID",
@@ -1966,8 +2481,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2028,8 +2542,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2074,8 +2587,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "PERSON_ID",
@@ -2152,8 +2664,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2182,8 +2693,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2232,8 +2742,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2266,8 +2775,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2290,8 +2798,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2330,8 +2837,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2552,8 +3058,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2600,8 +3105,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2622,8 +3126,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2670,8 +3173,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2714,8 +3216,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2738,8 +3239,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2834,8 +3334,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2878,8 +3377,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -2982,8 +3480,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -3020,8 +3517,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -3060,8 +3556,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",
@@ -3088,8 +3583,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -3124,8 +3618,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -3192,8 +3685,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "VISIT_ID",
@@ -3382,8 +3874,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "ID",
@@ -3414,8 +3905,7 @@
             "methods": [
                 "GET",
                 "PATCH",
-                "POST",
-                "DELETE"
+                "POST"
             ],
             "fields": [
                 "Id",

@@ -64,19 +64,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                     "produced_in": [ produced_in.to_dict() for produced_in in produced_in_list ]
                     }  
         return jsonify({ "success": True, "result":  result})
-    
-    @app.route('/hello_world')
-    def hello_world():  # test it with: http://localhost::5656/hello_world?user=ApiLogicServer
-        """
-        This is inserted to illustrate that APIs not limited to database objects, but are extensible.
-
-        See: https://apilogicserver.github.io/Docs/API-Customize/
-
-        See: https://github.com/thomaxxl/safrs/wiki/Customization
-        """
-        user = request.args.get('user')
-        return jsonify({"result": f'hello, {user}'})
-
 
     @app.route('/stop')
     def stop():  # test it with: http://localhost:5656/stop?msg=API stop - Stop API Logic Server

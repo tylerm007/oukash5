@@ -1590,6 +1590,8 @@ class vSelectRFR(Base):
     userName = Column(String(100))
     BusinessEmail = Column(String(255))
     fullName = Column(String(200))
+    pct_of_total_apps = Column(DECIMAL(5,2))
+    pct_of_total_apps_at_work = Column(DECIMAL(5,2))
 
 class vSelectNCRC(Base):
     __tablename__ = 'v_selectNCRC'
@@ -1601,3 +1603,5 @@ class vSelectNCRC(Base):
     userName = Column(String(100))
     BusinessEmail = Column(String(255))
     fullName = Column(String(200))
+    pct_of_total_apps = Column(DECIMAL(5,2))
+    pct_of_total_apps_at_work = Column(DECIMAL(5,2))

@@ -9,12 +9,12 @@ class JotFormAPI:
         self.headers = {
             'APIKEY': api_key,
             'Content-Type': 'application/json',
-            'jf-team-id': '240425799590063'
+            'jf-team-id': '243646438272058'# '240425799590063'
         }
     
     def get_user_files(self, limit=20, offset=0):
         """Get all files uploaded by the user"""
-        url = f"{self.base_url}/user/files"
+        url = f"{self.base_url}/API/user/files"
         params = {
             'limit': limit,
             'offset': offset
@@ -23,6 +23,7 @@ class JotFormAPI:
         response = requests.get(url, headers=self.headers, params=params)
         
         if response.status_code == 200:
+            print("User Files" , response.json())
             return response.json()
         else:
             print(f"Error: {response.status_code} - {response.text}")
@@ -35,6 +36,7 @@ class JotFormAPI:
         response = requests.get(url, headers=self.headers)
         
         if response.status_code == 200:
+            print("Form Files" , response.json())
             return response.json()
         else:
             print(f"Error: {response.status_code} - {response.text}")
@@ -47,6 +49,7 @@ class JotFormAPI:
         response = requests.get(url, headers=self.headers)
         
         if response.status_code == 200:
+            print("Submission Files" , response.json())
             return response.json()
         else:
             print(f"Error: {response.status_code} - {response.text}")
@@ -130,7 +133,7 @@ if __name__ == "__main__":
     
     # Example 3: Get files from specific submission
     # You would need to know the submission ID
-    submission_id = "4804"  # Replace with actual ID from Application
+    submission_id = "6381931699029307083"  # Replace with actual ID from Application
     submission_files = jf.get_submission_files(submission_id) or []
 
     for file in submission_files:

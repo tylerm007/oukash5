@@ -1,0 +1,125 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║   WHY YOU DON'T SEE MESSAGES IN TEAMS                       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ YOUR TESTS SUCCEED
+   └─> Webhook receives data
+
+❌ NO MESSAGES IN TEAMS  
+   └─> Power Automate Flow not configured to post to Teams
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  WHAT'S HAPPENING NOW                                        │
+└──────────────────────────────────────────────────────────────┘
+
+  Your API → Power Automate Webhook → ✅ (receives data)
+                                     │
+                                     └─> ❌ (not posting to Teams)
+
+
+┌──────────────────────────────────────────────────────────────┐
+│  WHAT YOU NEED TO CONFIGURE                                  │
+└──────────────────────────────────────────────────────────────┘
+
+  Your API → Power Automate Webhook → ✅ (receives data)
+                                     │
+                                     └─> ✅ Post to Teams Channel
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  FIX: Configure Your Power Automate Flow                     ║
+╚══════════════════════════════════════════════════════════════╝
+
+STEP 1: Go to Power Automate
+────────────────────────────────────────────────────────────────
+URL: https://make.powerautomate.com
+Click: "My flows"
+
+
+STEP 2: Find/Edit Your Flow  
+────────────────────────────────────────────────────────────────
+Look for: Workflow with HTTP trigger
+          (using your webhook URL)
+Click: Edit
+
+
+STEP 3: Add Teams Action
+────────────────────────────────────────────────────────────────
+Click: "+ New step"
+Search: "Post message in a chat or channel"
+Select: Microsoft Teams connector
+
+
+STEP 4: Configure Teams Action
+────────────────────────────────────────────────────────────────
+Post as:    Flow bot
+Post in:    Channel
+Team:       [Select your team - "NewAPI Team"]
+Channel:    [Select your channel]
+Message:    
+            **@{triggerBody()?['title']}**
+            
+            @{triggerBody()?['text']}
+
+
+STEP 5: Save and Test
+────────────────────────────────────────────────────────────────
+Click: Save
+Run:   .\test_teams_simple.ps1
+Check: Your Teams channel!
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  QUICK CHECK                                                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+Go to Power Automate and check:
+
+□ Is your flow enabled (turned ON)?
+□ Does it have a Teams "Post message" action?
+□ Does the Teams action have the correct channel selected?
+□ Check "28-day run history" - do you see successful runs?
+□ Click a run - does the Teams action show success or error?
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  TEST DIRECTLY IN POWER AUTOMATE                             ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. Edit your flow
+2. Click "Test" (top right)
+3. Choose "Manually"
+4. Provide test data:
+   {
+     "title": "Test Message",
+     "text": "Hello from Power Automate!"
+   }
+5. Click "Run flow"
+6. Check your Teams channel
+
+If this works → Your flow is correct
+If this fails → Check Teams permissions/channel selection
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  FULL GUIDE                                                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+See: CONFIGURE_POWER_AUTOMATE_FLOW.md
+
+
+╔══════════════════════════════════════════════════════════════╗
+║  BOTTOM LINE                                                 ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ Your API is working
+✅ Your webhook is receiving data
+❌ Your Power Automate Flow needs a Teams action
+
+→ Add "Post message in Teams" action to your flow
+→ Configure it to post to your channel
+→ Test again!
+

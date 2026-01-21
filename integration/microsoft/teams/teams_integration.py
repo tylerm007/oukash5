@@ -6,7 +6,7 @@ from datetime import datetime
 class TeamsWebhookMessenger:
     """
     Simple Microsoft Teams messenger using incoming webhooks.
-    Easy to set up but limited functionality.
+    Supports both Teams Incoming Webhooks and Power Automate webhooks.
     """
     
     def __init__(self, webhook_url: str):
@@ -17,52 +17,79 @@ class TeamsWebhookMessenger:
         1. Go to Teams channel
         2. Click ... > Connectors > Incoming Webhook
         3. Configure and copy the webhook URL
+        
+        OR use Power Automate webhook URL (from environment.api.powerplatform.com)
         """
         self.webhook_url = webhook_url
+        # Detect if this is a Power Automate webhook
+        self.is_power_automate = 'powerplatform.com' in webhook_url or 'powerautomate' in webhook_url
     
     def send_simple_message(self, text: str) -> bool:
         """Send a simple text message to Teams."""
-        payload = {
-            "text": text
-        }
+        if self.is_power_automate:
+            # Power Automate expects simple JSON
+            payload = {
+                "text": text,
+                "title": "Message"
+            }
+        else:
+            # Teams Incoming Webhook format
+            payload = {
+                "text": text
+            }
         
         try:
             response = requests.post(
                 self.webhook_url,
                 json=payload,
-                headers={'Content-Type': 'application/json'}
+                headers={'Content-Type': 'application/json'},
+                timeout=30
             )
             response.raise_for_status()
             return True
         except requests.exceptions.RequestException as e:
             print(f"Error sending message: {e}")
+            if hasattr(e.response, 'text'):
+                print(f"Response: {e.response.text}")
             return False
     
     def send_card_message(self, title: str, text: str, theme_color: str = "0076D7") -> bool:
         """Send a formatted card message to Teams."""
-        payload = {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "themeColor": theme_color,
-            "summary": title,
-            "sections": [{
-                "activityTitle": title,
-                "activitySubtitle": f"Sent at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        if self.is_power_automate:
+            # Simplified payload for Power Automate
+            payload = {
+                "title": title,
                 "text": text,
-                "markdown": True
-            }]
-        }
+                "color": theme_color
+            }
+        else:
+            # Teams Incoming Webhook MessageCard format
+            payload = {
+                "@type": "MessageCard",
+                "@context": "http://schema.org/extensions",
+                "themeColor": theme_color,
+                "summary": title,
+                "sections": [{
+                    "activityTitle": title,
+                    "activitySubtitle": f"Sent at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+                    "text": text,
+                    "markdown": True
+                }]
+            }
         
         try:
             response = requests.post(
                 self.webhook_url,
                 json=payload,
-                headers={'Content-Type': 'application/json'}
+                headers={'Content-Type': 'application/json'},
+                timeout=30
             )
             response.raise_for_status()
             return True
         except requests.exceptions.RequestException as e:
             print(f"Error sending card message: {e}")
+            if hasattr(e.response, 'text'):
+                print(f"Response: {e.response.text}")
             return False
     
     def send_actionable_card(self, title: str, text: str, actions: list) -> bool:
