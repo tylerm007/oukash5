@@ -94,6 +94,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ti.[Status] as status,
             ti.[StartedDate] as startedDate,
             ti.[CompletedDate] as completedDate,
+            ti.[CompletedCapacity] as completedCapacity,
             sd.StageId as stageInstanceId,
             1 as groupAssignment,
             CASE
@@ -146,6 +147,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ti.[Status] as status,
             ti.[StartedDate] as startedDate,
             ti.[CompletedDate] as completedDate,
+            ti.[CompletedCapacity] as completedCapacity,
             sd.StageId as stageInstanceId,
             0 as groupAssignment,
             CASE
