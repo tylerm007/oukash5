@@ -101,6 +101,8 @@ def transform_app(app) -> dict:
                 "company": app.get("companyName", "Unknown Company"),
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
+                'companyId': app.get("companyId"),
+                'plantId': app.get("plantId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
                 "daysInProcess": days_between,
@@ -302,6 +304,8 @@ def get_SQL() -> str:
          --app.ModifiedDate,
          app.Status,
          app.Priority,
+         app.CompanyID as 'companyId',
+         app.PlantID as 'plantId',
         (
                 select role, assignee , IsPrimary
                 from RoleAssigment  

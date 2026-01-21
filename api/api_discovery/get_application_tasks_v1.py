@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from security.system.authorization import Security
 from flask import app, request, jsonify, session
 import logging
@@ -39,6 +39,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         jwt = request.headers.get('Authorization', None)
         info = Security.extract_roles_and_delegated(jwt_token=jwt)
         delegated = info.get('delegated', None)
+        days = args.get('filter[days]', None) or args.get('days', None)
         if delegated is not None:
             all_users = ";".join(delegated)
             all_users += f";{username}"
@@ -46,7 +47,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             'username': all_users if delegated is not None else username,
             'applicationId': applicationId if applicationId else None,
             'plantName': plantName if plantName else None,
-            'roles': roles if roles else None
+            'roles': roles if roles else None,
+            'status': 'PENDING;IN_PROGRESS' if days is None else 'COMPLETED',
+            'app_status': 'COMPL;WITH' if days is None else '',
+            'completion_date': None if days is None else (datetime.now() - timedelta(days=int(days))).strftime('%Y-%m-%d'),
             #'limit': limit,
             #'offset': offset
         }
@@ -111,11 +115,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 AND ra.Assignee IN (SELECT value FROM STRING_SPLIT(:username, ';'))
                 AND ra.ApplicationId = ap.ApplicationID
             WHERE 
-            ap.status not in ('COMPL', 'WTH') and
-            ti.status = 'PENDING' AND 
+            ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
+            ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
             (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_date)
             
 
             
@@ -162,11 +167,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             WHERE 
             td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
             td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
-            ap.status not in ('COMPL', 'WTH') and
-            ti.status = 'PENDING' AND 
+            ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
+            ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
             (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
+            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_date)
             
             ORDER BY ap.applicationId, ti.taskInstanceId
         '''

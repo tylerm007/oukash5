@@ -110,7 +110,7 @@ VALUES
 (1, 'to Withdrawn Y/N', 'CONDITION', 'APPROVAL', 9, 1, 'NCRC', 2880, 'Withdrawn Application Y/N', 0, 'system'),
 (1, 'Assign Product', 'CONFIRM', 'CONFIRMATION', 10, 1, 'NCRC', 2880, 'Assign to Product', 0, 'system'),
 (1, 'Assign Ingredients', 'CONFIRM', 'CONFIRMATION', 11, 1, 'NCRC', 2880, 'Assign to Ingredients', 0, 'system'),
-(1, 'Contact Customer', 'CONFIRM', 'CONFIRMATION', 12, 1, 'NCRC', 2880, 'Contact Customer', 0, 'system'),
+(1, 'Contact Customer', 'PROGRESS', 'PROGRESS_TASK', 12, 1, 'NCRC', 2880, 'Contact Customer', 0, 'system'),
 (1, 'Initial Collector', 'GATEWAY', 'ESCALATION', 13, 1, 'SYSTEM', NULL, 'Initial Collector', 1, 'system'),
 (1, 'Init App End', 'STAGEEND', 'COMPLETION', 14, 1, 'SYSTEM', 15, 'NDA completed', 1, 'system'),
 (1, 'Stage Collector', 'GATEWAY', 'ESCALATION', 15, 1, 'SYSTEM', NULL, 'Stage Collector', 1, 'system'),
@@ -186,7 +186,7 @@ GO
 INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Ingredients Stage', 'STAGESTART', 'COMPLETION', 1, 4, 'SYSTEM', 15, 'Start Ingredients stage', 1, 'system'),
-(1, 'Upload Ingredients to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 4, 'IAR', 15, 'Upload ingredient data to KASH database', 0, 'system'),
+(1, 'Upload Ingredients to KASH DB', 'PROGRESS', 'PROGRESS_TASK', 2, 4, 'IAR', 15, 'Upload ingredient data to KASH database', 0, 'system'),
 (1, 'Verify Ingredients in DB', 'CONFIRM', 'CONFIRMATION', 3, 4, 'IAR', 15, 'Verify if all ingredient reviews are complete', 0, 'system'),
 (1, 'End Ingredients', 'STAGEEND', 'COMPLETION', 4, 4, 'SYSTEM', 15, 'Ingredients stage completed', 1, 'system');
 GO
@@ -202,7 +202,7 @@ GO
 INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Products Stage', 'STAGESTART', 'COMPLETION', 1, 5, 'SYSTEM', 15, 'Start Products stage', 1, 'system'),
-(1, 'Upload Product to KASH DB', 'CONFIRM', 'CONFIRMATION', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
+(1, 'Upload Product to KASH DB', 'PROGRSS', 'PROGRESS_TASK', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
 (1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 3, 5, 'PROD', 15, 'Verify if all product reviews are complete', 0, 'system'),
 (1, 'End Products', 'STAGEEND', 'COMPLETION', 4, 5, 'SYSTEM', 15, 'Products stage completed', 1, 'system');
 

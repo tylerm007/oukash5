@@ -125,6 +125,7 @@ GO
 INSERT INTO TaskStatus (StatusCode, StatusDescription) VALUES
 ('PENDING', 'Task Pending Execution'),
 ('RUNNING', 'Task Currently Running'),
+('IN_PROGRESS', 'Task In Progress'),
 ('COMPLETED', 'Task Completed Successfully'),
 ('FAILED', 'Task Failed'),
 ('SKIPPED', 'Task Skipped'),

@@ -70,10 +70,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
             task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
             task_instance.ModifiedDate = datetime.now()
-            task_instance.CompletedBy = completed_by
+            #task_instance.CompletedBy = completed_by
             session.add(task_instance)
             session.commit()
-            return jsonify({"status": "success", "message": f"Task status updated to {status} successfully"}), 200
+            return jsonify({"status": "success", "message": f"Task {task_instance_id} status updated to {status} successfully"}), 200
         
         return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, capacity=capactity, depth=0)
 
