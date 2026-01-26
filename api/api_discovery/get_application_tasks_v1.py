@@ -95,6 +95,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ti.[StartedDate] as startedDate,
             ti.[CompletedDate] as completedDate,
             ti.[CompletedCapacity] as completedCapacity,
+            ti.[CompletedBy] as completedBy,
             sd.StageId as stageInstanceId,
             1 as groupAssignment,
             CASE
@@ -113,7 +114,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
             INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole 
-                AND ra.Assignee IN (SELECT value FROM STRING_SPLIT(:username, ';'))
+                AND ra.Assignee 
                 AND ra.ApplicationId = ap.ApplicationID
             WHERE 
             ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
@@ -148,6 +149,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             ti.[StartedDate] as startedDate,
             ti.[CompletedDate] as completedDate,
             ti.[CompletedCapacity] as completedCapacity,
+            ti.[CompletedBy] as completedBy,
             sd.StageId as stageInstanceId,
             0 as groupAssignment,
             CASE

@@ -2,11 +2,13 @@ from datetime import datetime
 from database.models import CompanyApplication, StageDefinition
 from flask import app, request, jsonify, session
 import logging
+import jwt
 import safrs
 from sqlalchemy import false, text, or_, and_
 from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
+from security.system.authorization import Security
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -39,6 +41,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         import time
         start_time = time.time()
         
+        username = Security.current_user().Username
         data = request.args if request.args else {}
         limit = int(data.get('page[limit]', 20))
         offset = int(data.get('page[offset]', 0))
@@ -46,11 +49,41 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         name_filter = data.get('name', None) or data.get('filter[name]', None)
         application_id = data.get('application_id', None) or data.get('filter[applicationId]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
+        only_my_apps = data.get('onlyMyRoles', 'false') or data.get('filter[onlyMyRoles]', 'false')  
+        role_to_use = data.get('role', None) or data.get('filter[role]', None)
+        sql = get_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
+        info = Security.extract_roles_and_delegated(jwt_token=jwt)
+        delegated = info.get('delegated', None) if info else None
+        roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
+        if only_my_apps.lower() == 'true' and role_to_use:
+            if role_to_use not in roles:
+                raise Exception(f"User {username} does not have role: {role_to_use} to filter applications")
+            roles = role_to_use
+        if delegated is not None:
+            all_users = ";".join(delegated)
+            all_users += f";{username}"
+        params = {
+            'application_id': application_id,
+            'searchName': name_filter, 
+            'status': status, 
+            'priority': priority, 
+            'limit': limit, 
+            'offset': offset,
+            #"when_assigned": whenAssigned
+        } if only_my_apps.lower() == 'false' else {
+            'application_id': application_id,
+            'searchName': name_filter,
+            'status': status, 
+            'priority': priority,  
+            'userName': username,
+            'assistantMgrList': delegated if delegated is not None else None,
+            'userRoles': roles,
+            'limit': limit, 
+            'offset': offset,
+        }
 
-        #sql = "EXEC sp_GetApplications :application_id, :searchName,:limit, :offset"
-        params = {'application_id': application_id, 'searchName': name_filter, 'status': status, 'priority': priority, 'limit': limit, 'offset': offset}
-        #print(get_SQL(),params)
-        results = session.execute(text(get_SQL()), params).fetchall()
+        print(sql,params)
+        results = session.execute(text(sql), params).fetchall()
         fields = results[0]._fields if len(results) > 0 else []
         data = []
         # SQL Server FOR JSON PATH returns fragmented JSON strings when result is large
@@ -373,6 +406,95 @@ def get_SQL() -> str:
         OFFSET :offset ROWS
         FETCH NEXT :limit ROWS ONLY;
 
+    '''
+def getSQLForRoles():
+    return '''
+     select  pl.Name as "plantName", 
+         co.Name as "companyName",
+         app.ApplicationID as applicationId,
+         app.ApplicationNumber,
+         app.CreatedDate,
+         app.ModifiedDate,
+         app.Status,
+         app.Priority,
+        (
+                select role, assignee 
+                from RoleAssigment  
+                where RoleAssigment.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as "assignedRoles",
+
+                
+        
+        stages =  ( select  sd.stageName
+                            ,sd.stageId
+                            ,sd.StageDescription
+                            
+                
+                            ,tasks =  ( select 
+                                            ti.TaskInstanceId,
+                                            ti.TaskDefinitionId,
+                                            ti.status,
+                                            ti.AssignedTo,
+                                            ti.StartedDate,
+                                            ti.CompletedDate,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
+                                                                ELSE NULL
+                                            END as daysPending,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
+                                                                    DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                                ELSE NULL
+                                            END as daysOverdue
+                                        from TaskInstances ti
+                                                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            FOR JSON AUTO
+                                    )
+                    from TaskInstances ti 
+                    LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                    LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    group by sd.stageName, sd.stageId, StageDescription
+                    FOR JSON AUTO   
+                    )     
+                            
+        FROM WF_Applications  app
+            LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+            LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+
+        WHERE 
+        (:priority IS NULL OR app.Priority = :priority) and
+        (:status IS NULL OR app.Status = :status) and
+        (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+        (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%')) and
+        (:userName is not null  and  app.ApplicationID in (
+            --user assigment
+            select distinct(app.ApplicationID)  from WF_Applications  app
+                                        INNER JOIN roleAssigment ra ON ra.ApplicationId = app.ApplicationID  
+                                        AND ra.Assignee = :userName
+                                        and  ra.Role in (select [RoleCode] from TaskRoles where [groupAssignment] != 1)
+            -- admin
+            union
+            select distinct(app.ApplicationID)  from WF_Applications  app
+                                        INNER JOIN roleAssigment ra ON ra.ApplicationId = app.ApplicationID and 
+                                        ra.Assignee  IN (SELECT value FROM STRING_SPLIT(:assistantMgrList, ';'))
+            --group assigment 
+            union
+
+            select distinct(ti.ApplicationID)  from  TaskInstances ti 
+                        LEFT JOIN TaskDefinitions td ON td.AssigneeRole in (select [RoleCode] from TaskRoles where [groupAssignment] = 1 ) 
+                            where 
+                                    td.assigneeRole IN (SELECT value FROM STRING_SPLIT(:userRoles, ';'))
+                                    and (ti.Status = 'PENDING' or ti.status = 'IN_PROGRESS')
+            
+            ))
+
+            
+        ORDER BY app.ApplicationID   
+        OFFSET :offset ROWS
+        FETCH NEXT :limit ROWS ONLY;
     '''
 
 def get_total_count() -> str:
