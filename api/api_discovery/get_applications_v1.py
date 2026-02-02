@@ -113,8 +113,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             result = transform_app(row)
             data.append(result)
         #data = [dict(row) for row in result]
-        
-        wf_count =session.execute(text(get_total_count()), params).fetchone()[0]
+        sql_count = get_total_count() 
+        if only_my_apps.lower() == 'true' and role_to_use:
+            #sql_count = get_total_count_for_one_role() # TODO NOT WORKING
+            params = {
+                'application_id': application_id,
+                'searchName': name_filter,
+                'status': status, 
+                'priority': priority,  
+                'userName': username,
+                #'assistantMgrList': admin_users if admin_users is not None else None, # TODO
+                'userRoles': roles,
+            }
+        print(sql_count)
+        wf_count =session.execute(text(sql_count), params).fetchone()[0]
         total_count = wf_count # len(data) if name or priority or status else 1 if  application_id else wf_count
         end_time = time.time()
         processing_time = end_time - start_time
@@ -601,4 +613,26 @@ def get_total_count() -> str:
             (:priority IS NULL OR app.Priority = :priority) and
             (:status IS NULL OR app.Status = :status) and
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+    '''
+def get_total_count_for_one_role() -> str:
+    return '''
+     SELECT COUNT(*) as total_count
+    FROM WF_Applications  app
+         LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
+         LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
+         INNER JOIN roleAssigment ra ON ra.ApplicationId = app.ApplicationID and 
+                                        ra.Assignee  IN (SELECT value FROM STRING_SPLIT(:assistantMgrList, ';'))
+        LEFT JOIN TaskDefinitions td ON td.AssigneeRole in (select [RoleCode] from TaskRoles where [groupAssignment] = 1 ) 
+     WHERE  (:priority IS NULL OR app.Priority = :priority) and
+            (:status IS NULL OR app.Status = :status) and
+            (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+            (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+            AND (:userName is not null OR ra.Assignee = :userName)
+            AND  (:userRoles  is not null OR ra.Role = :userRoles)
+            AND td.assigneeRole IN (SELECT value FROM STRING_SPLIT(:userRoles, ';'))
+                            and (ti.Status = 'PENDING' or ti.status = 'IN_PROGRESS')
+            
+          
+
+
     '''
