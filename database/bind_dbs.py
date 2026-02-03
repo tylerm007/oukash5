@@ -16,7 +16,7 @@ def bind_dbs(flask_app):
     flask_app.config.update(SQLALCHEMY_BINDS = {
       'ou': flask_app.config['SQLALCHEMY_DATABASE_OU_URI'],
       #'authentication': flask_app.config['SQLALCHEMY_DATABASE_URI_AUTHENTICATION'],
-      'landing_page' : flask_app.config['SQLALCHEMY_DATABASE_URI_LANDING']
+      'rag': flask_app.config['SQLALCHEMY_DATABASE_RAG_URI'],
     })  # make multiple databases available to SQLAlchemy
 
     return

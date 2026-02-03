@@ -1,4 +1,4 @@
-# API Logic Server - Auto-Generated Microservice
+# GenAI-Logic API Logic Server - Auto-Generated Microservice
 
 **🎯 What's Automatically Created:**
 - ✅ **Admin Web App** - Multi-page React app at `http://localhost:5656`
@@ -22,7 +22,7 @@ See readme files under api, logic and security.
 
 **Bootstrap Copilot by pasting the following into the chat:**
 ```
-Please find and read `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`.
 ```
 
 <br>

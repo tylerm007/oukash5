@@ -30,6 +30,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         filter = data.get('filter', {})
         limit = int(data.get('page[limit]', 50))
         offset = int(data.get('page[offset]', 0))
+        application_type = data.get('applicationType', "WORKFLOW") or filter.get('applicationType',  "WORKFLOW") or  "WORKFLOW"
         result = []
         args = request.args
         applicationId = args.get('filter[applicationId]', None) or args.get('applicationId', None)
@@ -51,6 +52,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             'status': 'PENDING;IN_PROGRESS' if days is None else 'COMPLETED',
             'app_status': 'COMPL;WITH' if days is None else '',
             'completion_date': None if days is None else (datetime.now() - timedelta(days=int(days))).strftime('%Y-%m-%d'),
+            'application_type': application_type,
             #'limit': limit,
             #'offset': offset
         }
@@ -118,6 +120,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 AND ra.ApplicationId = ap.ApplicationID
             WHERE 
             ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
+            ap.ApplicationType = :application_type and
             ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
@@ -170,13 +173,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             WHERE 
             td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
+            ap.ApplicationType = :application_type AND
             td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
             ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
             ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
             (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
-            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_date)
+            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_dateyes - once the server
             
             ORDER BY ap.applicationId, ti.taskInstanceId
         '''

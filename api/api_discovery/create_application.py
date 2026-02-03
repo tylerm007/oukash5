@@ -19,6 +19,39 @@ app_logger = logging.getLogger("api_logic_server_app")
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     pass
+
+    @app.route('/createSubmissionApplication', methods=['GET','OPTIONS'])
+    @jwt_required()
+    def createSubmissionApplication():
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+
+        args = request.args
+        user = Security.current_user().Username
+        jotform_id = args.get('jotform_id') or args.get('jotFormId') or args.get('filter[jotform_id]') or None
+        jotform = session.query(models.JotFormCompany).filter(models.JotFormCompany.JotFormId == jotform_id).first() if jotform_id else None
+        if jotform is None:
+            return jsonify({"result": f'JotFormCompany with ID: {jotform_id} not found'}), 404 
+        company_id = jotform.JotFormId
+        company_name = jotform.companyName
+        plants = jotform.JotFormPlantList
+        results = {}
+        plant_ids = ""
+        join = ""
+        for plant in plants:
+            plant_id = plant.PlantId
+            if company_id is None or plant_id is None:
+                return jsonify({"result": 'createSubmissionCompany requires companyId and plantId parameters'}), 400
+            if plant.plantName.strip() == '': #No reason to create an empty plant
+                continue
+            plant_ids += join + str(plant_id) 
+            join = ","
+        
+        application_id = create_new_submission_application(int(company_id), plant_ids, user)
+        response = start_workflow(application_id, user, None)
+        results[application_id] = {"Company": company_name, "company_id": company_id, "plant_ids": plant_ids, "workflow_response": response}
+        app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
+        return jsonify({"status": f"submission application created successfully {results}"}), 200
     
     @app.route('/createApplication', methods=['GET','OPTIONS'])
     @jwt_required()
@@ -103,6 +136,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = 
             CreatedBy=user,
             CreatedDate=datetime.datetime.now(datetime.timezone.utc),
             Priority="NORMAL",
+            ApplicationType="WORKFLOW",
             ApplicationNumber=applicationNumber,
     )
     session.add(application)
@@ -111,6 +145,27 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = 
     create_files(application_id)
     return application_id
 
+def create_new_submission_application( company_id: int = 0, plant_id: any = None, user: str = "admin"):
+    applicationNumber = WFApplication.query.count() + 1000
+    application = WFApplication(
+            Name="New Application",
+            Description="Description of the new application",
+            Status="NEW",
+            CompanyID=0,
+            PlantID=0,
+            SubmissionCompany=company_id,
+            SubmissionPlants=plant_id,
+            SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
+            CreatedBy=user,
+            CreatedDate=datetime.datetime.now(datetime.timezone.utc),
+            Priority="NORMAL",
+            ApplicationType="SUBMISSION",
+            ApplicationNumber=applicationNumber,
+    )
+    session.add(application)
+    session.commit()
+
+    return application.ApplicationID
 
 def create_files(application_id:int):
     # sample recorfds only

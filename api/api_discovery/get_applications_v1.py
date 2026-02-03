@@ -49,6 +49,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         name_filter = data.get('name', None) or data.get('filter[name]', None)
         application_id = data.get('application_id', None) or data.get('filter[applicationId]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
+        application_type = data.get('application_type','WORKFLOW') or data.get('filter[application_type]','WORKFLOW') #or SUBMISSION
         only_my_apps = data.get('onlyMyRoles', 'false') or data.get('filter[onlyMyRoles]', 'false')  
         role_to_use = data.get('role', None) or data.get('filter[role]', None)
         sql = get_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
@@ -72,6 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             'priority': priority, 
             'limit': limit, 
             'offset': offset,
+            'application_type': application_type,
             #"when_assigned": whenAssigned
         } if only_my_apps.lower() == 'false' else {
             'application_id': application_id,
@@ -83,6 +85,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             'userRoles': roles,
             'limit': limit, 
             'offset': offset,
+            'application_type': application_type,
         }
 
         print(sql,params)
@@ -124,6 +127,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 'userName': username,
                 #'assistantMgrList': admin_users if admin_users is not None else None, # TODO
                 'userRoles': roles,
+                'application_type': application_type,
             }
         print(sql_count)
         wf_count =session.execute(text(sql_count), params).fetchone()[0]
@@ -416,6 +420,7 @@ def get_SQL() -> str:
             (:priority IS NULL OR app.Priority = :priority) and
             (:status IS NULL OR app.Status = :status) and
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
+            AND (ApplicationType = :application_type)
 
         ORDER BY app.CreatedDate DESC
         OFFSET :offset ROWS
@@ -480,6 +485,7 @@ def getSQLForRoles():
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
 
         WHERE 
+        (ApplicationType = :application_type) AND
         (:priority IS NULL OR app.Priority = :priority) and
         (:status IS NULL OR app.Status = :status) and
         (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
@@ -571,6 +577,7 @@ def getSQLForOneRole():
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
 
         WHERE 
+        (ApplicationType = :application_type) AND
         (:priority IS NULL OR app.Priority = :priority) and
         (:status IS NULL OR app.Status = :status) and
         (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
@@ -610,6 +617,7 @@ def get_total_count() -> str:
          LEFT JOIN ou_kash.dbo.plant_tb pl ON app.plantID = pl.plant_ID
          LEFT JOIN ou_kash.dbo.COMPANY_TB co ON app.companyId = co.COMPANY_ID
      WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+            (:application_type IS NULL OR app.ApplicationType = :application_type) AND
             (:priority IS NULL OR app.Priority = :priority) and
             (:status IS NULL OR app.Status = :status) and
             (:searchName IS NULL OR pl.Name like concat('%',:searchName,'%') or co.Name like concat('%',:searchName,'%'))
@@ -631,6 +639,7 @@ def get_total_count_for_one_role() -> str:
             AND  (:userRoles  is not null OR ra.Role = :userRoles)
             AND td.assigneeRole IN (SELECT value FROM STRING_SPLIT(:userRoles, ';'))
                             and (ti.Status = 'PENDING' or ti.status = 'IN_PROGRESS')
+            AND (ApplicationType = :application_type)
             
           
 

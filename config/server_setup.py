@@ -480,4 +480,11 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             app_logger.debug(f'\nDEBUG KAFKA_SERVER: [{KAFKA_SERVER}] (is_empty: {is_empty}) (is_none: {is_none}) \n')
             app_logger.debug(f'... Args.instance.kafka_producer: {Args.instance.kafka_producer}\n')
 
+        # Pre-load embedding model in background to avoid delay on first vector search
+        try:
+            #from integration.vector_store import preload_embeddings_async
+            #preload_embeddings_async()
+            pass
+        except Exception as e:
+            app_logger.warning(f'Could not pre-load embeddings: {e}')
 

@@ -87,17 +87,17 @@ def getSQL():
             select jfp.*,
             (
                 select jfi.* 
-                from [dashboardV1].[dbo].[JotFormIngredients] jfi
+                from [dashboard].[dbo].[JotFormIngredients] jfi
                  Where jfi.JotPlantId = jfp.PlantId
                 FOR JSON AUTO
             ) as ingredients,
             (
                 select jfi.* 
-                from [dashboardV1].[dbo].[JotFormProducts] jfi
+                from [dashboard].[dbo].[JotFormProducts] jfi
                  Where jfi.JotPlantId = jfp.PlantId
                 FOR JSON AUTO
             ) as products
-            from [dashboardV1].[dbo].[JotFormPlant] jfp
+            from [dashboard].[dbo].[JotFormPlant] jfp
             where jfc.JotFormId = jfp.JotFormId
            
             FOR JSON AUTO
@@ -105,12 +105,12 @@ def getSQL():
       ) as plants,
       (
         select jff.* 
-        FROM [dashboardV1].[dbo].[JotFormFileLinks] jff
+        FROM [dashboard].[dbo].[JotFormFileLinks] jff
         where jfc.JotFormId = jff.JotFormId
 
         FOR JSON AUTO
       ) as filelinks
-      FROM [dashboardV1].[dbo].[JotFormCompany] jfc
+      FROM [dashboard].[dbo].[JotFormCompany] jfc
      
        FOR JSON AUTO
     """

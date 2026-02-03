@@ -140,7 +140,8 @@ class Config:
     #SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://sa:Posey3861@localhost:1433/dashboard?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
     SQLALCHEMY_DATABASE_OU_URI : typing.Optional[str] = f"mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no"
-    # override SQLALCHEMY_DATABASE_URI here as required
+    SQLALCHEMY_DATABASE_RAG_URI : typing.Optional[str] = f"postgresql://postgres:GENAILOGIC2026@devlinux01.nyc.ou.org:5432/rag_ou_kash"    
+	# override SQLALCHEMY_DATABASE_URI here as required
 
     # Python 3.13+ compatibility: Convert PostgreSQL URLs to use psycopg3
     import sys

@@ -226,14 +226,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 # ASYNC WORKFLOW PROCESSING
 # ============================================
 
-def create_stage_with_tasks(stage_definition: any, application_id: int, started_by: str):
+def create_stage_with_tasks(stage_definition: any, application: WFApplication, started_by: str):
     """
     Create a stage and all its tasks in a single transaction.
     This runs synchronously but allows us to batch operations.
     """
     try:
         app_logger.info(f'🏊 Creating Stage from StageDefinition: {stage_definition["StageName"]}')
-                
+        application_id = application.ApplicationID
+        application_type = application.ApplicationType
+        submission_plants = get_company_plants(application.SubmissionCompany) if application_type == 'SUBMISSION' else None
         # Get all task definitions for this lane
         task_definitions = cache.get_task_definitions_by_stage(stage_definition['StageId']) #stage_definition['Tasks']
         stage_id = stage_definition['StageId']
@@ -257,11 +259,30 @@ def create_stage_with_tasks(stage_definition: any, application_id: int, started_
                 CreatedDate=datetime.now(),
                 CreatedBy=started_by
             )
+            if application_type == 'SUBMISSION' and task_def['TaskName'] == 'CompanyResolver':
+                task_instance.ResultData = application.SubmissionCompany 
+            elif application_type == 'SUBMISSION' and task_def['TaskName'] == 'PlantResolver':
+                task_instance.ResultData = submission_plants[0] if submission_plants and len(submission_plants) > 0 else None
+
             session.add(task_instance)
             session.flush()  # Get TaskInstanceId
             
             task_instances.append(task_instance)
-            
+            if application_type == 'SUBMISSION' and submission_plants and len(submission_plants) > 1:
+                for plant in submission_plants[1:]:
+                    plant_task_instance = TaskInstance(
+                        TaskDefinitionId=task_def['TaskId'],
+                        ApplicationId=application_id,
+                        StageId=stage_id,
+                        Status=status,
+                        AssignedTo=task_def['AssigneeRole'],
+                        CreatedDate=datetime.now(),
+                        CreatedBy=started_by,
+                        ResultData = plant
+                    )
+                    session.add(plant_task_instance)
+                    session.flush()
+                    task_instances.append(plant_task_instance)
             # Check if this is the START task
             if task_def['TaskType'] == 'START':
                 start_instance_id = task_instance.TaskInstanceId
@@ -291,12 +312,23 @@ def process_stages_batch(stage_definitions, application_id, started_by):
     start_instance_id = None
     total_tasks_created = 0
     failed_stages = []
-    
+
+    application = session.query(WFApplication).filter_by(ApplicationID=application_id).first()
+    app_type = application.ApplicationType if application else "WORKFLOW"
+    #stage_definitions =  list(stage_definitions.keys())[:len(stage_definitions) - 1] if app_type == 'WORKFLOW' else list(stage_definitions.keys())[len(stage_definitions) - 1:]
+    stage_definition_list = {}
+    if app_type == 'SUBMISSION':
+        stage_definition_list[1] = stage_definitions[len(stage_definitions)]
+    else:
+        for stage_def in stage_definitions:
+            if stage_def.StageName == "Preliminary":
+                continue
+            stage_definition_list[len(stage_definition_list) + 1] = stage_def
     try:
         # Process each stage with batched database operations
-        for stage_def in stage_definitions:
+        for stage_def in stage_definition_list:
             try:
-                result = create_stage_with_tasks(stage_definitions.get(stage_def), application_id, started_by)
+                result = create_stage_with_tasks(stage_definition_list.get(stage_def), application, started_by)
                 stage_results.append(result)
                 total_tasks_created += result['tasks_created']
                 
@@ -341,7 +373,24 @@ def process_stages_batch(stage_definitions, application_id, started_by):
         raise e
 
 
-   
+def get_company_plants(company_id: int):
+    jotform = session.query(models.JotFormCompany).filter(models.JotFormCompany.JotFormId == company_id).first() if company_id else None
+    if jotform is None:
+        app_logger.error(f'JotFormCompany with ID: {company_id} not found')
+        return None
+    company_id = jotform.JotFormId
+    company_name = jotform.companyName
+    plants = jotform.JotFormPlantList
+    plant_ids = {}
+    cntr = 0
+    for plant in plants:
+        if plant.plantName == '':
+            continue
+        plant_id = plant.PlantId
+        plant_ids[cntr] = str({'PlantId': plant_id, 'PlantName': plant.plantName})
+        cntr = cntr + 1
+    return plant_ids
+
 def _start_workflow(process_name:str, application_id:int, started_by:str, priority:str):
     """Start a new workflow process.
 
@@ -364,6 +413,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     if not application:
             raise Exception(f'Application not found: {application_id}') 
     # Get ProcessId
+    application_type = 'WORKFLOW' if application.ApplicationType is None else application.ApplicationType
     process_def = ProcessDefinition.query.filter_by(ProcessName=process_name, IsActive=True).first()
     if not process_def:
             raise Exception(f'Process definition not found: {process_name}') 
@@ -406,7 +456,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
                     app_logger.info(f'Created TaskInstance: {task_definition.TaskName}')
                     task_instances.append(task_instance)
-                    if task_instance.TaskDef.TaskType == 'START':
+                    if task_instance.TaskDef.TaskType == 'START' or task_instance.TaskDef.TaskName == 'Prelim Stage start':
                         start_instance_id = task_instance.TaskInstanceId
                    
     if start_instance_id is None:
@@ -414,8 +464,10 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
     _complete_task(start_instance_id, 'Started', started_by, 'Workflow started', access_token)
 
     #from api.api_discovery.assign_role import add_role_assignment
-    add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
-
+    if application_type == 'WORKFLOW':
+        add_role_assignment(application.ApplicationID, "DISPATCH", started_by)
+    else:
+        add_role_assignment(application.ApplicationID, "ADMIN", started_by)
     # Assign the Dispatch Task to the user who started the workflow
     task_definitions = cache.get_task_definitions()
     dispatcher_task_def_id = None

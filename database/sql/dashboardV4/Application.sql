@@ -47,10 +47,8 @@ GO
 CREATE TABLE [dbo].[WF_Applications](
 	[ApplicationID] [int] IDENTITY(1,1) NOT NULL,
 	[ApplicationNumber] [int] NULL, -- Link to existing JotForm Application Number
-	[CompanyID] [int] NULL,
+	[CompanyID] [int] NOT NULL,
 	[PlantID] [int] NULL,
-	[SubmissionRef][int] NULL, -- Parent Ref or External Application
-	[ApplicationType] [nvarchar](10) NULL, -- Default WF Application Type or Exernal Application Type
 	[SubmissionDate] [date] NOT NULL, -- date from JotForm
 	[Status] [nvarchar](50) NOT NULL,
 	[Priority] [nvarchar](20) NULL,

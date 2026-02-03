@@ -391,7 +391,7 @@ if __name__ == "__main__":
     
     # Example 2: Context manager usage
     with ExcelReader('C:\\OUProjects\\Ingredient-Application.xlsx') as reader:
-        sheet_info = reader.get_sheet_info(0)
+        sheet_info = reader.get_sheet_info('Ingredients')
         print(f"Sheet info: {sheet_info}")
         column_names = sheet_info['column_names']
         rows = sheet_info['total_rows']
@@ -399,4 +399,4 @@ if __name__ == "__main__":
         for column in column_names:
             print(f"- {column}")   
             data = reader.read_sheet('Ingredients', columns=[column])
-            print(f"First {rows} rows for column '{column}': {data[:rows]}")
+            print(f"2 {rows} rows for column '{column}': {data[:1]}")

@@ -228,7 +228,7 @@ class WFRole(Base):  # type: ignore
 
     UserRole = Column(Unicode(10), primary_key=True)
     Role = Column(Unicode(50), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -246,7 +246,7 @@ class WFUser(Base):  # type: ignore
     Email = Column(Unicode(255), nullable=False, unique=True)
     FullName = Column(Unicode(200), nullable=False)
     IsActive = Column(Boolean, server_default=text("1"), nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     LastLoginDate = Column(DATETIME2)
     allow_client_generated_ids = True
 
@@ -303,7 +303,11 @@ class WFApplication(Base):  # type: ignore
     ApplicationNumber = Column(Integer, unique=True)
     CompanyID = Column(Integer, nullable=False)
     PlantID = Column(Integer)
-    SubmissionDate = Column(Date, server_default=text("(getdate())"), nullable=False)
+    SubmissionDate = Column(Date, server_default=text("getdate()"), nullable=False)
+    SubmissionCompany = Column(Integer)
+    SubmissionPlant = Column(Integer)
+    SubmissionPlants = Column(Unicode(100))
+    ApplicationType = Column(Unicode(10), server_default=text('WORKFLOW'))
     Status = Column(ForeignKey('WF_ApplicationStatus.StatusCode'), server_default=text("NEW"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"))
     CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
@@ -329,7 +333,7 @@ class WFUSERROLE(Base):  # type: ignore
 
     UserName = Column(ForeignKey('WF_Users.Username'), primary_key=True, nullable=False)
     UserRole = Column(ForeignKey('WF_Roles.UserRole'), primary_key=True, nullable=False)
-    CreatedDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -387,7 +391,7 @@ class WFApplicationMessage(Base):  # type: ignore
     MessageText = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'), nullable=False)
     MessageType = Column(Unicode(50), server_default=text("internal"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"), nullable=False)
-    SentDate = Column(DATETIME2, server_default=text("(getdate())"), nullable=False)
+    SentDate = Column(DATETIME2, server_default=text("getdate()"), nullable=False)
     TaskInstanceId = Column(Integer)
 
     # parent relationships (access parent)
@@ -529,6 +533,201 @@ class WFUserProfile(Base):
 
 
     # child relationships (access children)
+	
+#==========JOTFORM Tables =========================================
+
+
+
+class JotFormCompany(Base):  # type: ignore
+    __tablename__ = 'JotFormCompany'
+    _s_collection_name = 'JotFormCompany'  # type: ignore
+
+    JotFormId = Column(Integer, autoincrement=True, primary_key=True)
+    submission_id = Column(Unicode(50))
+    submission_date = Column(DATETIME, server_default=text("getdate()"))
+    OUcertified = Column(Boolean, server_default=text("0"))
+    everCertified = Column(Boolean, server_default=text("0"))
+    agencyName = Column(Unicode(50))
+    companyName = Column(Unicode(50))
+    companyAddress = Column(Unicode(100))
+    companyAddress2 = Column(Unicode(100))
+    companyCity = Column(Unicode(50))
+    companyCountry = Column(Unicode(10))
+    companyState = Column(Unicode(25))
+    companyRegion = Column(Unicode(50))
+    companyProvince = Column(Unicode(50))
+    companyPhone = Column(Unicode(250))
+    ZipPostalCode = Column(Unicode(15))
+    companyWebsite = Column(Unicode(250))
+    IsPrimaryContact = Column(Boolean, server_default=text("1"))
+    contactFirst = Column(Unicode(100))
+    contactLast = Column(Unicode(100))
+    contactPhone = Column(Unicode(25))
+    contactEmail = Column(Unicode(100))
+    billingContact = Column(Unicode(250))
+    billingContactFirst = Column(Unicode(100))
+    billingContactLast = Column(Unicode(100))
+    billingContactPhone = Column(Unicode(25))
+    billingContactEmail = Column(Unicode(100))
+    jobTitle = Column(Unicode(100))
+    contactFirst1 = Column(Unicode(100))
+    contactLast1 = Column(Unicode(100))
+    contactPhone1 = Column(Unicode(25))
+    contactEmail1 = Column(Unicode(100))
+    jobTitle1 = Column(Unicode(100))
+    whatWould = Column(TEXT(2147483647))
+    whichCategory = Column(Unicode(50))
+    whereDidHear = Column(Unicode(50))
+    pleaseSpecify = Column(TEXT(2147483647))
+    copack = Column(Unicode(10))
+    listInCopack = Column(Boolean, server_default=text("0"))
+    veganCert = Column(Boolean, server_default=text("0"))
+    areThere = Column(Boolean, server_default=text("0"))
+    numberOfPlants = Column(Integer, server_default=text("1"))
+    formName = Column(Unicode(250))
+    language = Column(Unicode(50), server_default=text('en'))
+    status = Column(Unicode(50), server_default=text("New"))
+    kashrusLink = Column(Unicode(250))
+    submissionurl = Column(Unicode(250))
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+    JotFormFileLinkList : Mapped[List["JotFormFileLink"]] = relationship(back_populates="JotForm")
+    JotFormFileList : Mapped[List["JotFormFile"]] = relationship(back_populates="JotForm")
+    JotFormPlantList : Mapped[List["JotFormPlant"]] = relationship(back_populates="JotForm")
+    JotFormRawDatumList : Mapped[List["JotFormRawDatum"]] = relationship(back_populates="JotForm")
+
+
+
+
+class JotFormFileLink(Base):  # type: ignore
+    __tablename__ = 'JotFormFileLinks'
+    _s_collection_name = 'JotFormFileLink'  # type: ignore
+
+    JotFormFileId = Column(Integer, autoincrement=True, primary_key=True)
+    JotFormId = Column(ForeignKey('JotFormCompany.JotFormId'), nullable=False)
+    productFileURL = Column(Unicode(250))
+    ingredientURL = Column(Unicode(250))
+    productFileURL1 = Column(Unicode(250))
+    ingredientURL1 = Column(Unicode(250))
+    productFileURL2 = Column(Unicode(250))
+    ingredientURL2 = Column(Unicode(250))
+    productFileURL3 = Column(Unicode(250))
+    ingredientURL3 = Column(Unicode(250))
+    productFileURL4 = Column(Unicode(250))
+    ingredientURL4 = Column(Unicode(250))
+
+    # parent relationships (access parent)
+    JotForm : Mapped["JotFormCompany"] = relationship(back_populates=("JotFormFileLinkList"))
+
+    # child relationships (access children)
+
+
+
+class JotFormFile(Base):  # type: ignore
+    __tablename__ = 'JotFormFiles'
+    _s_collection_name = 'JotFormFile'  # type: ignore
+
+    JotFormFileId = Column(Integer, autoincrement=True, primary_key=True)
+    JotFormId = Column(ForeignKey('JotFormCompany.JotFormId'), nullable=False)
+    fileName = Column(Unicode(250))
+    fileLURL = Column(Unicode(250))
+    fileType = Column(Unicode(6))
+    fileSize = Column(Integer)
+    uploadDate = Column(DATETIME, server_default=text("(getdate("))
+
+    # parent relationships (access parent)
+    JotForm : Mapped["JotFormCompany"] = relationship(back_populates=("JotFormFileList"))
+
+    # child relationships (access children)
+
+class JotFormIngredient(Base):  # type: ignore
+    __tablename__ = 'JotFormIngredients'
+    _s_collection_name = 'JotFormIngredient'  # type: ignore
+    JotFormIngredientId = Column(Integer, autoincrement=True, primary_key=True)
+    JotPlantId = Column(ForeignKey('JotFormPlant.PlantId'), nullable=False)
+    UKDID = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    rawMaterialCode = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'))
+    ingredientLabelName = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
+    manufacturer = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
+    brandName = Column(Unicode(100, 'SQL_Latin1_General_CP1_CI_AS'))
+    packagedOrBulk = Column(Unicode(15, 'SQL_Latin1_General_CP1_CI_AS'))
+    certifyingAgency = Column(Unicode(25, 'SQL_Latin1_General_CP1_CI_AS'))
+    JotPlant : Mapped["JotFormPlant"] = relationship(back_populates=("JotFormIngredientList"))
+
+class JotFormProduct(Base):  # type: ignore
+    __tablename__ = 'JotFormProducts'
+    _s_collection_name = 'JotFormProduct'  # type: ignore
+    JotFormProductId = Column(Integer, autoincrement=True, primary_key=True)
+    JotPlantId = Column(ForeignKey('JotFormPlant.PlantId'), nullable=False)
+    productName = Column(Unicode(250, 'SQL_Latin1_General_CP1_CI_AS'))
+    Retail = Column(Boolean, server_default=text("((1))"))
+    Industrial = Column(Boolean, server_default=text("((0))"))
+    BrandName = Column(Unicode(250, 'SQL_Latin1_General_CP1_CI_AS'))
+    inHouse = Column(Boolean, server_default=text("((1))"))
+    privateLabel = Column(Boolean, server_default=text("((0))"))
+    privateLabelCo = Column(Unicode(250, 'SQL_Latin1_General_CP1_CI_AS'))
+    JotPlant : Mapped["JotFormPlant"] = relationship(back_populates=("JotFormProductList"))
+
+
+class JotFormPlant(Base):  # type: ignore
+    __tablename__ = 'JotFormPlant'
+    _s_collection_name = 'JotFormPlant'  # type: ignore
+
+    PlantId = Column(Integer, autoincrement=True, primary_key=True)
+    plantNumber = Column(Integer, nullable=False)
+    JotFormId = Column(ForeignKey('JotFormCompany.JotFormId'), nullable=False)
+    plantName = Column(Unicode(250))
+    plantAddress = Column(Unicode(100))
+    plantCity = Column(Unicode(50))
+    plantState = Column(Unicode(250))
+    plantZip = Column(Unicode(50))
+    plantCountry = Column(Unicode(10))
+    plantRegion = Column(Unicode(50))
+    plantProvince = Column(Unicode(50))
+    contactFirst = Column(Unicode(100))
+    contactLast = Column(Unicode(100))
+    contactPhone = Column(Unicode(25))
+    contactEmail = Column(Unicode(100))
+    jobTitle = Column(Unicode(100))
+    contactFirst1 = Column(Unicode(100))
+    contactLast1 = Column(Unicode(100))
+    contactPhone1 = Column(Unicode(25))
+    contactEmail1 = Column(Unicode(100))
+    jobTitle1 = Column(Unicode(100))
+    majorCity = Column(Unicode(100))
+    brieflySummarize = Column(TEXT(2147483647))
+    productDesc = Column(TEXT(2147483647))
+    otherProducts = Column(Boolean, server_default=text("1"))
+    areAny = Column(Boolean, server_default=text("0"))
+    otherProductCompany = Column(TEXT(2147483647))
+
+    # parent relationships (access parent)
+    JotForm : Mapped["JotFormCompany"] = relationship(back_populates=("JotFormPlantList"))
+
+    # child relationships (access children)
+    JotFormIngredientList : Mapped[List["JotFormIngredient"]] = relationship(back_populates="JotPlant")
+    JotFormProductList : Mapped[List["JotFormProduct"]] = relationship(back_populates="JotPlant")
+
+
+class JotFormRawDatum(Base):  # type: ignore
+    __tablename__ = 'JotFormRawData'
+    _s_collection_name = 'JotFormRawDatum'  # type: ignore
+
+    JotFormRawDataId = Column(Integer, autoincrement=True, primary_key=True)
+    JotFormId = Column(ForeignKey('JotFormCompany.JotFormId'), nullable=False)
+    entryorder = Column(Integer, nullable=False)
+    prompt = Column(Unicode(250))
+    name = Column(Unicode(250))
+    control_type = Column(Unicode(50))
+    answer = Column(TEXT(2147483647))
+
+    # parent relationships (access parent)
+    JotForm : Mapped["JotFormCompany"] = relationship(back_populates=("JotFormRawDatumList"))
+
+    # child relationships (access children)
+	
 #======== ou_kash tables===========================================
 
 class CompanyApplication(Base):  # type: ignore
@@ -619,8 +818,8 @@ class COMPANYTB(Base):  # type: ignore
     PrivateLabelPOexpiry = Column(DATETIME2)
     VisitPO = Column(String(75), server_default=text(''))
     VisitPOexpiry = Column(DATETIME2)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     CATEGORY = Column(String(50))
     OLDCOMPANYTYPE = Column(String(50))
@@ -671,8 +870,8 @@ class COMPANYADDRESSTB(Base):  # type: ignore
     COUNTRY = Column(String(25), server_default=text(""))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -700,8 +899,8 @@ class PLANTTB(Base):  # type: ignore
     OtherCertification = Column(String(500))
     PrimaryCompany = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     DesignatedRFR = Column(Integer) #Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     MaxOnSiteVisits = Column(SMALLINT, server_default=text("0"), nullable=False)
     MaxVirtualVisits = Column(SMALLINT, server_default=text("0"), nullable=False)
@@ -764,8 +963,8 @@ class OWNSTB(Base):  # type: ignore
     Override = Column(Boolean, server_default=text("0"), nullable=False)
     VisitPO = Column(String(75), server_default=text(""))
     VisitPOexpiry = Column(DATETIME)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     BoilerplateInvoiceComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     IsCertBillingOverride = Column(Boolean, server_default=text("0"), nullable=False)
@@ -799,8 +998,8 @@ class PLANTADDRESSTB(Base):  # type: ignore
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -845,8 +1044,8 @@ class USEDIN1TB(Base):  # type: ignore
     LocReceivedStatus = Column(Integer)
     InternalCode = Column(String(50))
     LabelID = Column(ForeignKey('label_tb.ID'), index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -906,8 +1105,8 @@ class MERCHTB(Base):  # type: ignore
     TransferredTo = Column(Boolean, server_default=text("0"), nullable=False)
     TransferredMerch = Column(Integer)
     Special_Status = Column(String(255))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
@@ -988,8 +1187,8 @@ class LabelTb(Base):  # type: ignore
     COMMENT = Column(String(1000), server_default=text(""))
     DisplayNewlyCertifiedOnWeb = Column(String(1), server_default=text("N"))
     Status = Column(String(25))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     LastChangeDate = Column(DATETIME)
     LastChangeReason = Column(String(100))
@@ -998,7 +1197,7 @@ class LabelTb(Base):  # type: ignore
     TransferredFromAgencyId = Column(String(50))
     Kitniyot = Column(Boolean)
     IsDairyEquipment = Column(Boolean, server_default=text("0"), nullable=False)
-    NameNum = Column(String(251), Computed("(ltrim(isnull(concat(nullif([Label_Name],''),case when [Label_Name]<>'' AND [Label_Num]<>'' then ' '+[Label_Num] else [Label_Num] end),'')))", persisted=False))
+    NameNum = Column(String(251), Computed("(ltrim(isnull(concat(nullif([Label_Name],''),case when [Label_Name]<>'' AND [Label_Num]<>'' then ' '+[Label_Num] else [Label_Num] end),'')", persisted=False))
 
     # parent relationships (access parent)
     MERCH_TB : Mapped["MERCHTB"] = relationship(back_populates=("LabelTbList"))
@@ -1123,7 +1322,7 @@ class ProducedIn1Tb(Base):  # type: ignore
     __bind_key__ = 'ou'
     
     ID = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    PROC_LINE_ID = Column(Integer, server_default=text("((1))"))
+    PROC_LINE_ID = Column(Integer, server_default=text("1"))
     START_DATE = Column(DATETIME)
     END_DATE = Column(DATETIME)
     REGULAR = Column(String(1), server_default=text(""))
@@ -1148,7 +1347,7 @@ class ProducedIn1Tb(Base):  # type: ignore
     OWNS_ID = Column(ForeignKey('OWNS_TB.ID'), index=True)
     DATE_CERTIFIED = Column(SMALLDATETIME)
     DATE_LAST_REV = Column(SMALLDATETIME)
-    CREATE_DATE = Column(DATETIME, server_default=text("(getdate())"), index=True)
+    CREATE_DATE = Column(DATETIME, server_default=text("getdate()"), index=True)
     CREATED_BY = Column(String(75))
     MODIFIED_DATE = Column(DATETIME)
     MODIFIED_BY = Column(String(75))
@@ -1159,8 +1358,8 @@ class ProducedIn1Tb(Base):  # type: ignore
     FormulaSubmissionPlantID = Column(ForeignKey('FormulaSubmissionPlants.ID'))
     ProductPlantsID = Column(Integer)
     BatchSheetName = Column(String(40))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     LatestPesachSeason = Column(Integer)
 
@@ -1398,8 +1597,8 @@ class INVOICEFEE(Base):  # type: ignore
     DeliveryMethod = Column(String(30), server_default=text(""))
     DeliveryDate = Column(Date)
     OriginalInvoiceAmount = Column(MONEY)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     achPaid = Column(Boolean, server_default=text("0"), nullable=False)
     BatchId = Column(Integer)
@@ -1441,9 +1640,9 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
     REASON = Column(String(50))
     TIMESTAMP = Column(BINARY(8))
     ownsID = Column(Integer)
-    voided = Column(Boolean, server_default=text("((0))"), nullable=False)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'))"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'))"), nullable=False)
+    voided = Column(Boolean, server_default=text("0"), nullable=False)
+    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
     CHANGESET_ID = Column(Integer, index=True)
     allow_client_generated_ids = True
 

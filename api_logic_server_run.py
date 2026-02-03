@@ -91,7 +91,10 @@ else:
 #        MAIN CODE
 # ================================== 
 
-flask_app = Flask("API Logic Server", template_folder='ui/templates')  # templates to load ui/admin/admin.yaml
+flask_app = Flask("API Logic Server", 
+                  template_folder='ui/templates',
+                  static_folder='ui/static',
+                  static_url_path='/static')  # Enable static file serving
 
 CORS(flask_app, resources=[{r"/api/*": {"origins": "*"}},{r"/ontimizeweb/*": {"origins": "*"}}],
      allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials", "Accept"],
@@ -119,6 +122,7 @@ AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = 
 # ============================================
 # SharePoint Integration
 # ============================================
+'''
 try:
     from integration.microsoft.sharepoint_service import add_sharepoint_endpoints
     add_sharepoint_endpoints(flask_app)
@@ -138,7 +142,7 @@ except ImportError as e:
     app_logger.info("⚠️  SharePoint integration not available - run setup_sharepoint_integration.ps1 to configure")
 except Exception as e:
     app_logger.warning(f"⚠️  SharePoint integration setup issue: {e}")
-
+'''
 if __name__ == "__main__":
     msg = f'API Logic Project loaded (not WSGI), version: 15.00.61\n'
     msg += f'.. startup message: {start_up_message}\n'
@@ -212,7 +216,7 @@ if __name__ == "__main__":
         app_logger.info(f"🚀 Starting HTTP server on http://{args.flask_host}:{args.port}")
         flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
-    msg = f'API Logic Project Loaded (WSGI), version 15.00.61\n'
+    msg = f'API Logic Project Loaded (WSGI), version 16.00.04\n'
     msg += f'.. startup message: {start_up_message}\n'
 
     if server_setup.is_docker():
