@@ -30,7 +30,7 @@ def get_jotform_data(api_key: str, team_id: str, form_id: str, base_url: str = "
     }
     
     # Get form info - URL exactly as PowerShell does it
-    form_url = f"{base_url}/API/form/{form_id}?apiKey={api_key}"
+    form_url = f"{base_url}/API/form/{form_id}/submissions?limit=1000&apiKey={api_key}"
     print(f"Request URL: {form_url}")
     print(f"Headers: {headers}")
     form_response = requests.get(form_url, headers=headers)

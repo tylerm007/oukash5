@@ -43,14 +43,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
        
         import time
         start_time = time.time()
-        
+        from database.models import WFApplication
         application_id = request.args.get('applicationId',None, type=int)
         app_logger.info(f'{application_id}')
-        #if not wf_application:
-        #    return jsonify({"error": f"Application for id {application_id} not found"}), 404
+        wf_application = session.query(WFApplication).filter_by(ApplicationID=application_id).first()
+        if not wf_application:
+            return jsonify({"error": f"Application for id {application_id} not found"}), 404
         try:
+            application_type = wf_application.ApplicationType
             params = {"application_id": application_id}
-            sql = get_SQL()
+            sql = get_SUBMISSION_SQL() if application_type == "SUBMISSION" else get_SQL()
             results = session.execute(text(sql), params).fetchall()
             if not results or len(results) == 0:
                 return jsonify({"error": f"Application details for id {application_id} not found"}), 404 
@@ -227,7 +229,137 @@ def get_SQL() ->str:
 
         FOR JSON PATH
     '''
- 
+
+def get_SUBMISSION_SQL() -> str:
+    return '''
+        SELECT  app.ApplicationID as 'appplicationinfo.applicationID',
+          app.CompanyID as 'appplicationinfo.kashrusCompanyId',
+          app.PlantID as 'appplicationinfo.PlantId',
+          'UNKNOWN' as 'appplicationinfo.kashrusStatus',
+          app.Status as 'appplicationinfo.status',
+          app.SubmissionDate as 'appplicationinfo.submissionDate',
+        (
+                select * 
+                from WF_Quotes  
+                where WF_Quotes.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as 'appplicationinfo.quotes',
+        (
+                select * 
+                from WF_Files 
+                where   WF_Files.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as 'appplicationinfo.files',
+        (
+                select * 
+                from WF_ApplicationMessages  
+                where WF_ApplicationMessages.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as 'appplicationinfo.messages',
+        (
+                select co.JotFormId as companyID,
+                        co.whichCategory as category,
+                        co.OUcertified as currentlyCertified,
+                        co.everCertified as everCertified,
+                        co.companyName as name,
+                        co.companyWebsite as website
+                from JotFormCompany co  
+                where co.JotFormId = app.SubmissionCompany
+                FOR JSON AUTO
+        ) as 'appplicationinfo.company',
+        (
+                select coa.companyCity as city,
+                    coa.companyCountry as country,
+                    coa.companyAddress2 as line2,
+                    coa.companyState as state,
+                    coa.companyAddress as street,
+                    'main' as type,
+                    coa.ZipPostalCode as zip
+                from JotFormCompany coa  
+                where coa.JotFormId = app.SubmissionCompany
+                FOR JSON AUTO
+        ) as 'appplicationinfo.companyAddresses',
+        ( 
+            SELECT  
+                    concat(coc.contactFirst, ' ', coc.contactLast) as name,
+                    coc.contactEmail1 as email,
+                    coc.contactPhone as phone,
+                    'Primary' as type,
+                    coc.jobTitle as role
+                FROM JotFormCompany coc  
+                where coc.JotFormId = app.SubmissionCompany
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.companyContacts',
+        (
+                select TOP (1) jfp.plantName as name,
+                        jfp.productDesc as description,
+                        jfp.plantRegion as location,
+                        jfp.PlantId as  plantId
+                from JotFormPlant jfp  
+                where jfp.JotFormId = app.SubmissionCompany
+                FOR JSON AUTO
+        ) as 'appplicationinfo.plants',
+        (
+                select top(1) jfpa.plantCity as city,
+                    jfpa.plantCountry as country,
+                    '' as line2,
+                    jfpa.plantState as state,
+                    jfpa.plantAddress as street,
+                    '' as type,
+                    jfpa.plantZip as zip
+                from JotFormPlant jfpa  
+                where jfpa.JotFormId = app.SubmissionCompany
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.plantAddresses',
+        ( 
+            SELECT TOP (1) 
+                    concat(jfpc.contactFirst, ' ', jfpc.contactLast) as name,
+                    jfpc.contactEmail as email,
+                    jfpc.contactPhone as phone,
+                    'Primary' as type,
+                    jfpc.jobTitle as role,
+                    concat(jfpc.contactFirst1, ' ' , jfpc.contactLast1) as name1,
+                    jfpc.contactPhone1 as phone1,
+                    jfpc.contactEmail1 as email1
+                FROM JotFormPlant jfpc  
+                where jfpc.PlantId = app.SubmissionPlant
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.plantContacts',
+        (
+            SELECT TOP (2000) 
+                [INGREDIENT_NAME] as ingredient
+                ,[MERCHANDISE_ID] as ncrcId
+                ,[BRAND_NAME] as brand
+                ,[SYMBOL] as certification
+                ,[LABEL_COMPANY] as manufacturer
+                ,[BLK] as packaging
+                ,[DateAdded] as addedDate
+                ,[LabelStatus] as status
+                ,[COMPANY_ID] as companyId
+                ,[PLANT_ID] as plantId
+            FROM [ou_kash].[dbo].[INGREDIENT_GRID_JOIN_USEDIN1]
+                    WHERE [COMPANY_ID] = app.CompanyID AND [PLANT_ID] = app.PlantID
+                    FOR JSON AUTO
+        ) as 'appplicationinfo.ingredients', 
+        (
+
+            SELECT TOP (2000)  [PRODUCT_NAME] as labelName,
+                [BRAND_NAME] as brandName,
+                [LABEL_COMPANY] as labelCompany,
+                [INDUSTRIAL] as ConsumerIndustrial,
+                [BLK] as bulkShipped,
+                [Symbol] as certification,
+                [STATUS] as status
+            FROM [ou_kash].[dbo].[PRODUCT_GRID]
+            where [COMPANY_ID] = app.CompanyID and [PLANT_ID] = app.PlantID
+                        FOR JSON AUTO
+        ) as 'appplicationinfo.products'
+        FROM dashboard.[dbo].[WF_Applications] app
+
+        where :application_id = app.ApplicationID
+
+        FOR JSON PATH
+    '''
 
 def get_total_count() -> str:
     return '''

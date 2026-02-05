@@ -88,7 +88,40 @@ def declare_logic():
     from api.system import api_utils
     # api_utils.rules_report()
 
-
+    def create_application(row: object, old_row: object, logic_row: LogicRow) -> bool:
+        #Create an EventAction for the given TaskInstanceId and EventKey
+        company_id = None
+        plant_id = None
+        application = logic_row.row
+        if application.ApplicationType != 'SUBMISSION' and application.Status != 'COMPLETED':
+            return True
+        task_instances = models.TaskInstance.query.filter_by(ApplicationId=application.ApplicationID).all()
+        for task_instance in task_instances:
+            task_def = task_instance.TaskDefinition
+            if task_def.TaskName == 'ResolveCompany':
+                company_id = task_instance.Result
+            if task_def.TaskName == 'ResolvePlant':
+                plant_id = task_instance.Result
+        if company_id is None or plant_id is None:
+            logic_row.log(f"unable to create application - missing company_id: {company_id} or plant_id: {plant_id}")
+        owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+        if not owns: 
+            logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
+            return False
+        import requests
+        from flask import g, request
+        # Try to get token from g first, then fall back to request headers
+        apikey = g.access_token if hasattr(g, 'access_token') else request.headers.get('Authorization', '')
+        # Ensure Bearer prefix if token doesn't already have it
+        if apikey and not apikey.startswith('Bearer '):
+            apikey = f"Bearer {apikey}"
+        headers = {"Authorization": apikey, "Content-Type": "application/json"}
+        # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
+        response = requests.post(f"{request.root_url}createApplication", json={
+            "ownsId": owns.ID
+        }, headers=headers, verify=False)
+        logic_row.log("create_application response: " + str(response.status_code) + " - " + response.text)
+        return True if response.status_code == 200 else False
     
     def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:
         # Find the next TaskInstance in the workflow by TaskName
@@ -164,6 +197,12 @@ def declare_logic():
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"Update application status to {application.Status}", row=application)
+        elif task_def.TaskName == 'Prelim App End' and row.Status == 'COMPLETED':
+            if application is not None:
+                application.CompletedDate = datetime.datetime.now()
+                application.Status = 'COMPL'
+                logic_row.update(reason=f"Update application status to {application.Status}", row=application)
+                #create_application(application, logic_row=logic_row)
         else:
             status = None
             TaskName = task_def.TaskName
@@ -188,3 +227,4 @@ def declare_logic():
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
+    #Rule.after_flush_row_event(on_class=models.WFApplication, calling=create_application)

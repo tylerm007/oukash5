@@ -306,7 +306,6 @@ class WFApplication(Base):  # type: ignore
     SubmissionDate = Column(Date, server_default=text("getdate()"), nullable=False)
     SubmissionCompany = Column(Integer)
     SubmissionPlant = Column(Integer)
-    SubmissionPlants = Column(Unicode(100))
     ApplicationType = Column(Unicode(10), server_default=text('WORKFLOW'))
     Status = Column(ForeignKey('WF_ApplicationStatus.StatusCode'), server_default=text("NEW"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"))

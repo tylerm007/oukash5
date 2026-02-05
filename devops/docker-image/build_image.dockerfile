@@ -27,7 +27,7 @@ RUN apt-get update && \
 
 # Install pyodbc
 RUN pip install --upgrade pip && \
-    pip install pyodbc==5.2.0 boto3 cryptography PyJWT msal schedule openpyxl xlrd
+    pip install pyodbc==5.2.0 boto3 cryptography PyJWT msal schedule openpyxl xlrd pgvector psycopg2-binary langchain langchain_postgres langchain_community sentence-transformers>=2.2.2 langchain-huggingface
 #RUN rmdir -r /home/api_logic_project/ui/app
 # enables docker to write into container, for sqlite
 RUN chown -R api_logic_server /home/api_logic_project

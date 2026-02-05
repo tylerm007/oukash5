@@ -45,22 +45,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         data = request.args if request.args else {}
         limit = int(data.get('page[limit]', 20))
         offset = int(data.get('page[offset]', 0))
-        priority = data.get('priority', None) or data.get('filter[priority]', None)
         name_filter = data.get('name', None) or data.get('filter[name]', None)
-        application_id = data.get('application_id', None) or data.get('filter[applicationId]', None)   
+        external_reference_id = data.get('externalReferenceId', None) or data.get('filter[externalReferenceId]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
         sql = getSQL()
         params = {
-            'application_id': application_id,
+            'application_id': external_reference_id,
             'searchName': name_filter, 
             'status': status, 
-            'priority': priority, 
             'limit': limit, 
             'offset': offset,
             #"when_assigned": whenAssigned
         } 
         print(sql,params)
-        results = session.execute(text(sql), {}).fetchall()
+        results = session.execute(text(sql), params).fetchall()
         
         # SQL Server FOR JSON AUTO returns JSON as a single string column
         # Concatenate all fragments (in case result is large and fragmented)
@@ -82,7 +80,47 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 def getSQL():
     return """
-     SELECT jfc.*,
+     SELECT jfc.companyName,
+        jfc.JotFormId as externalReferenceId,
+        jfc.companyWebsite,
+        jfc.companyPhone,
+        jfc.OUCertified,
+        jfc.everCertified,
+        jfc.submission_date as submissionDate,
+        jfc.whichCategory,
+        jfc.copack,
+        jfc.status,
+        (
+            select jfca.companyAddress,
+                   jfca.companyAddress2,
+                    jfca.companyCity,
+                    jfca.companyState,
+                    jfca.ZipPostalCode,
+                    jfca.companyRegion,
+                    jfca.companyProvince,
+                    jfca.companyCountry
+            from [dashboard].[dbo].[JotFormCompany] jfca
+            where jfc.JotFormId = jfca.JotFormId
+            FOR JSON AUTO
+        ) as companyAdresses,
+        (
+            select jfcc.isPrimaryContact,
+                     jfcc.contactFirst,
+                     jfcc.contactLast,
+                     jfcc.contactEmail,
+                     jfcc.contactPhone,
+                     jfcc.jobTitle,
+                     jfcc.billingContact,
+                     jfcc.billingContactFirst,
+                     jfcc.billingContactLast,
+                     jfcc.billingContactPhone,
+                     jfcc.billingContactEmail
+
+            from [dashboard].[dbo].[JotFormCompany] jfcc
+            where jfc.JotFormId = jfcc.JotFormId
+            FOR JSON AUTO
+        ) as companyContacts,
+
     (
             select jfp.*,
             (
@@ -100,9 +138,12 @@ def getSQL():
             from [dashboard].[dbo].[JotFormPlant] jfp
             where jfc.JotFormId = jfp.JotFormId
            
+
             FOR JSON AUTO
+            
            
       ) as plants,
+     
       (
         select jff.* 
         FROM [dashboard].[dbo].[JotFormFileLinks] jff
@@ -111,6 +152,12 @@ def getSQL():
         FOR JSON AUTO
       ) as filelinks
       FROM [dashboard].[dbo].[JotFormCompany] jfc
-     
+        WHERE 
+            (:application_id IS NULL OR jfc.JotFormId = :application_id) AND
+            (:status IS NULL OR jfc.status = :status) AND
+            (:searchName IS NULL OR jfc.companyName LIKE CONCAT('%', :searchName, '%'))
+        ORDER BY jfc.submission_date DESC   
+        OFFSET :offset ROWS
+        FETCH NEXT :limit ROWS ONLY
        FOR JSON AUTO
     """

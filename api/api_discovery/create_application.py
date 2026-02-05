@@ -35,6 +35,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         company_id = jotform.JotFormId
         company_name = jotform.companyName
         plants = jotform.JotFormPlantList
+        submission_id = jotform.submission_id
         results = {}
         plant_ids = ""
         join = ""
@@ -44,13 +45,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return jsonify({"result": 'createSubmissionCompany requires companyId and plantId parameters'}), 400
             if plant.plantName.strip() == '': #No reason to create an empty plant
                 continue
-            plant_ids += join + str(plant_id) 
-            join = ","
         
-        application_id = create_new_submission_application(int(company_id), plant_ids, user)
-        response = start_workflow(application_id, user, None)
-        results[application_id] = {"Company": company_name, "company_id": company_id, "plant_ids": plant_ids, "workflow_response": response}
-        app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
+            application_id = create_new_submission_application(company_id=int(company_id), plant_id=plant_id, submission_id=submission_id, user=user)
+            response = start_workflow(application_id, user, None)
+            results[application_id] = {"Company": company_name, "company_id": company_id, "plant_ids": plant_ids, "workflow_response": response}
+            app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": f"submission application created successfully {results}"}), 200
     
     @app.route('/createApplication', methods=['GET','OPTIONS'])
@@ -125,7 +124,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
 def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = "admin"):
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
-    applicationNumber = WFApplication.query.count() + 1000
+    applicationNumber = WFApplication.query.count() + 10000
     application = WFApplication(
             Name="New Application",
             Description="Description of the new application",
@@ -145,16 +144,16 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = 
     create_files(application_id)
     return application_id
 
-def create_new_submission_application( company_id: int = 0, plant_id: any = None, user: str = "admin"):
-    applicationNumber = WFApplication.query.count() + 1000
+def create_new_submission_application( company_id: int = 0, plant_id: int = 0, submission_id: str=None,user: str = "admin"):
+    applicationNumber = WFApplication.query.count() + 10000
     application = WFApplication(
             Name="New Application",
-            Description="Description of the new application",
+            Description=f"Submission {submission_id} application",
             Status="NEW",
             CompanyID=0,
             PlantID=0,
             SubmissionCompany=company_id,
-            SubmissionPlants=plant_id,
+            SubmissionPlant=int(plant_id),
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
             CreatedDate=datetime.datetime.now(datetime.timezone.utc),
@@ -164,9 +163,11 @@ def create_new_submission_application( company_id: int = 0, plant_id: any = None
     )
     session.add(application)
     session.commit()
+    create_submission_files(application.ApplicationID)
 
     return application.ApplicationID
-
+def create_submission_files(application_id:int):
+    pass
 def create_files(application_id:int):
     # sample recorfds only
     file= models.WFFile(

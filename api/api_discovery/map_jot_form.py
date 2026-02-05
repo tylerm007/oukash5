@@ -178,9 +178,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         timings = {}
         
         args = request.args
-        submission_id = args.get('submission_id')
-        if not submission_id:   
-            return jsonify({ "error": "submission_id parameter is required" }), 400
+        form_id = args.get('form_id')
+        if not form_id:   
+            return jsonify({ "error": "form_id parameter is required" }), 400
 
         
         if not api_key:
@@ -204,7 +204,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             # Timer: Fetch JotForm data
             fetch_start = time.time()
             print("Fetching JotForm data...")
-            data = get_jotform_data(api_key, team_id, submission_id, base_url)
+            data = get_jotform_data(api_key, team_id, form_id, base_url)
             timings['fetch_api'] = round(time.time() - fetch_start, 3)
             
             # Get first submission
@@ -245,7 +245,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             for key, value in mapped_data['main'].items():
                 print(f"   {key}: {value}")
                 setattr(jotform, key, value)
-            setattr(jotform, 'submission_id', submission_id)
+            setattr(jotform, 'submission_id', form_id)
             session.add(jotform)
             session.flush()
             jot_form_id = jotform.JotFormId

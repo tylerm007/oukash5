@@ -1,4 +1,3 @@
-from ast import Assign
 from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
 from database import models
@@ -247,9 +246,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
         
         for task_def in task_definitions:
             app_logger.debug(f'📋 Creating TaskInstance: {task_def["TaskName"]}')
-
             status = 'PENDING' if task_def['TaskType'] in ['START','STAGESTART','STAGEEND','END','GATEWAY'] else 'NEW'
-
             task_instance = TaskInstance(
                 TaskDefinitionId=task_def['TaskId'],
                 ApplicationId=application_id,
@@ -259,32 +256,12 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
                 CreatedDate=datetime.now(),
                 CreatedBy=started_by
             )
-            if application_type == 'SUBMISSION' and task_def['TaskName'] == 'CompanyResolver':
-                task_instance.ResultData = application.SubmissionCompany 
-            elif application_type == 'SUBMISSION' and task_def['TaskName'] == 'PlantResolver':
-                task_instance.ResultData = submission_plants[0] if submission_plants and len(submission_plants) > 0 else None
 
             session.add(task_instance)
             session.flush()  # Get TaskInstanceId
             
-            task_instances.append(task_instance)
-            if application_type == 'SUBMISSION' and submission_plants and len(submission_plants) > 1:
-                for plant in submission_plants[1:]:
-                    plant_task_instance = TaskInstance(
-                        TaskDefinitionId=task_def['TaskId'],
-                        ApplicationId=application_id,
-                        StageId=stage_id,
-                        Status=status,
-                        AssignedTo=task_def['AssigneeRole'],
-                        CreatedDate=datetime.now(),
-                        CreatedBy=started_by,
-                        ResultData = plant
-                    )
-                    session.add(plant_task_instance)
-                    session.flush()
-                    task_instances.append(plant_task_instance)
             # Check if this is the START task
-            if task_def['TaskType'] == 'START':
+            if task_def['TaskType'] == 'START' or task_def['TaskName'] == 'Prelim Stage start':
                 start_instance_id = task_instance.TaskInstanceId
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
         
@@ -321,9 +298,9 @@ def process_stages_batch(stage_definitions, application_id, started_by):
         stage_definition_list[1] = stage_definitions[len(stage_definitions)]
     else:
         for stage_def in stage_definitions:
-            if stage_def.StageName == "Preliminary":
+            if stage_definitions[stage_def].StageName == "Preliminary":
                 continue
-            stage_definition_list[len(stage_definition_list) + 1] = stage_def
+            stage_definition_list[len(stage_definition_list) + 1] = stage_definitions[stage_def]
     try:
         # Process each stage with batched database operations
         for stage_def in stage_definition_list:
@@ -387,7 +364,16 @@ def get_company_plants(company_id: int):
         if plant.plantName == '':
             continue
         plant_id = plant.PlantId
-        plant_ids[cntr] = str({'PlantId': plant_id, 'PlantName': plant.plantName})
+        plant_data = {
+            'PlantId': plant_id, 
+            'PlantName': plant.plantName,
+            'Address': plant.plantAddress,
+            'City': plant.plantCity,
+            'State': plant.plantState,
+            'Zip': plant.plantZip,
+            'Country': plant.plantCountry
+        }
+        plant_ids[cntr] = str(plant_data)
         cntr = cntr + 1
     return plant_ids
 

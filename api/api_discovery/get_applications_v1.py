@@ -52,7 +52,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application_type = data.get('application_type','WORKFLOW') or data.get('filter[application_type]','WORKFLOW') #or SUBMISSION
         only_my_apps = data.get('onlyMyRoles', 'false') or data.get('filter[onlyMyRoles]', 'false')  
         role_to_use = data.get('role', None) or data.get('filter[role]', None)
-        sql = get_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
+        if application_type == 'WORKFLOW':
+            sql = get_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
+        else:
+            sql = get_SUBMISSION_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
         info = Security.extract_roles_and_delegated(jwt_token=jwt)
         delegated = info.get('delegated', None) if info else None
         roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
@@ -154,6 +157,7 @@ def transform_app(app) -> dict:
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
                 'companyId': app.get("companyId"),
+                "externalReferenceId": app.get("externalReferenceId"),
                 'plantId': app.get("plantId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
@@ -171,7 +175,7 @@ def transform_app(app) -> dict:
                 "stages": app['stages'] if 'stages' in app else {},
                 "application_messages": [],
                 "files": app['files'] if 'files' in app else [],
-                "assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
+                #"assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
             }
     return row
 
@@ -370,8 +374,6 @@ def get_SQL() -> str:
         stages =  ( select  sd.stageName
                             ,sd.stageId
                             ,sd.StageDescription
-                            
-                
                             ,tasks =  ( select 
                                             ti.TaskInstanceId,
                                             ti.TaskDefinitionId,
@@ -427,6 +429,97 @@ def get_SQL() -> str:
         FETCH NEXT :limit ROWS ONLY;
 
     '''
+def get_SUBMISSION_SQL() -> str:
+       return '''
+       select 
+         pl.plantName as "plantName", 
+         co.companyName as "companyName",
+         co.companyAddress,
+         co.companyAddress2,
+         co.companyCity,
+         co.companyState,
+         co.ZipPostalCode,
+         co.companyCountry,
+         co.companyPhone,
+         co.companyRegion,
+         co.companyProvince,
+         co.companyWebsite,
+         co.whichCategory,
+         co.numberOfPlants,
+         app.ApplicationID as applicationId,
+         app.ApplicationNumber,
+         app.CreatedDate,
+         --app.ModifiedDate,
+         app.Status,
+         app.Priority,
+         app.SubmissionCompany as 'externalReferenceId',
+         app.SubmissionPlant as 'plantId',
+        (
+                select role, assignee , IsPrimary
+                from RoleAssigment  
+                where RoleAssigment.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as "assignedRoles",
+        
+        stages =  ( select  sd.stageName
+                            ,sd.stageId
+                            ,sd.StageDescription
+                            
+                
+                            ,tasks =  ( select 
+                                            ti.TaskInstanceId,
+                                            ti.TaskDefinitionId,
+                                            ti.status,
+                                            ti.AssignedTo,
+                                            ti.CompletedBy,
+                                            ti.CompletedCapacity,
+                                            ti.StartedDate,
+                                            ti.CompletedDate,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
+                                                                ELSE NULL
+                                            END as daysPending,
+                                            CASE
+                                                                WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN 
+                                                                    DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
+                                                                ELSE NULL
+                                            END as daysOverdue
+                                        from TaskInstances ti
+                                                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                                            where ti.StageId = sd.StageId 
+                                                            and ti.ApplicationId = app.ApplicationID
+                                                            -- and  (td.AssigneeRole != 'SYSTEM') 
+                                                            FOR JSON AUTO
+                                    )
+                    from TaskInstances ti 
+                    LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                    LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
+                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    group by sd.stageName, sd.stageId, StageDescription
+                    FOR JSON AUTO  
+
+
+
+                    --from StageInstance si            
+                    --where si.ApplicationId = app.ApplicationID 
+                    --                  FOR JSON AUTO        
+                    )
+                
+                            
+        FROM WF_Applications  app
+            LEFT JOIN JotFormPlant pl ON pl.PlantId = app.SubmissionPlant
+            LEFT JOIN JotFormCompany co ON app.SubmissionCompany = co.JotFormId
+        
+        WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
+            (:priority IS NULL OR app.Priority = :priority) and
+            (:status IS NULL OR app.Status = :status) and
+            (:searchName IS NULL OR co.companyName like concat('%',:searchName,'%'))
+            AND (ApplicationType = :application_type)
+
+        ORDER BY app.CreatedDate DESC
+        OFFSET :offset ROWS
+        FETCH NEXT :limit ROWS ONLY;
+        '''
 def getSQLForRoles():
     return '''
      select  pl.Name as "plantName", 

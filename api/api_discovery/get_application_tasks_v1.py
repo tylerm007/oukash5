@@ -116,11 +116,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             LEFT JOIN ou_kash.dbo.plant_tb pl ON ap.plantID = pl.plant_ID
             LEFT JOIN ou_kash.dbo.COMPANY_TB co ON ap.companyId = co.COMPANY_ID
             INNER JOIN roleAssigment ra ON ra.Role = td.AssigneeRole 
-                AND ra.Assignee 
+                AND ra.Assignee = :username
                 AND ra.ApplicationId = ap.ApplicationID
             WHERE 
             ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
-            ap.ApplicationType = :application_type and
+            (ap.ApplicationType = :application_type) and
             ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
@@ -173,14 +173,14 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             WHERE 
             td.AssigneeRole in (select RoleCode from TaskRoles where groupAssignment = 1) AND
-            ap.ApplicationType = :application_type AND
+            (ap.ApplicationType = :application_type) AND
             td.AssigneeRole IN (SELECT value FROM STRING_SPLIT(:roles, ';')) AND
             ap.status not in (SELECT value FROM STRING_SPLIT(:app_status, ';')) and
             ti.status in (SELECT value FROM STRING_SPLIT(:status, ';')) AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
             (:plantName IS NULL OR pl.Name like concat('%',:plantName,'%'))
-            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_dateyes - once the server
+            and (:completion_date IS NULL OR ti.CompletedDate >= :completion_date)
             
             ORDER BY ap.applicationId, ti.taskInstanceId
         '''
@@ -344,7 +344,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             and ra.ApplicationId = ap.ApplicationID
         WHERE 
             ap.status not in ('COMPL', 'WTH') and
-            -- Required filters
+            -- Required filters 
             ti.status = 'PENDING' AND 
             (td.AssigneeRole != 'SYSTEM') AND
             (:applicationId IS NULL OR ap.ApplicationID = :applicationId) and 
