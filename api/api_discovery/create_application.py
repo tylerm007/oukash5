@@ -165,13 +165,11 @@ def create_new_submission_application( company_id: int = 0, plant_id: int = 0, s
     session.commit()
     try:
         create_submission_files(application.ApplicationID)
-        call_company_matcher(company_id)
-        call_plant_matcher(company_id, plant_id)
     except Exception as e:
         app_logger.error(f"Error in submission application and matchers creation: {e}")
 
     return application.ApplicationID
-
+'''
 def call_company_matcher(application_id:int):
     from api.api_discovery.company_matcher import _match_company_async
     company = session.query(models.SubmissionApplication).filter_by(SubmissionAppId=application_id).first()
@@ -231,6 +229,7 @@ def call_plant_matcher(company_id:int,plant_id:int):
     session.commit()
     app_logger.info(f'Plant matcher response for application {plant_id}: {response}')
     return response
+'''
 
 def create_submission_files(application_id:int):
     pass
