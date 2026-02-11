@@ -22,7 +22,7 @@ services:
           - START_BACKGROUND=false
           # COGNITO SETTINGS
           - SECURITY_PROVIDER=COGNITO
-          - APILOGICPROJECT_SECURITY_PROVIDER = COGNITO
+          - APILOGICPROJECT_SECURITY_PROVIDER=COGNITO
           - COGNITO_USER_POOL_ID=us-east-1_d38hiE2QM
           - COGNITO_CLIENT_ID=34sqr8ttgro6ego2117aflg9lr
           #- COGNITO_CLIENT_SECRET=1h57kf5cpq17m0example  NOT USED IN PUBLIC CLIENTS
@@ -31,6 +31,7 @@ services:
           - COGNITO_DOMAIN=https://auth.oudirect-st.ou.org
           ## TODO: verify Database uri's here,
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
+          - APILOGICPROJECT_SQLALCHEMY_DATABASEV1_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboardV1?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_OU_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           # postgresql://postgres:p@postgresql-service/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           #- APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgresql-service/authdb
