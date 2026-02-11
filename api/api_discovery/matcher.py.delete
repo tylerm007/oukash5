@@ -24,12 +24,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
     @app.route('/load_existing_companies', methods=['GET'])
-    def load_companies():
+    def load_existing_companies():
         args = request.args
         company_id = args.get('company_id', default=2539, type=int)
         global EXISTING_COMPANIES
         if EXISTING_COMPANIES is None:
-            EXISTING_COMPANIES = load_existing_companies()
+            EXISTING_COMPANIES = _load_existing_companies()
 
         company = session.query(models.Company).filter_by(company_id=company_id).first()
         if company is None:
@@ -339,7 +339,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # Time SQL execution
         sql_start = time.time()
         if EXISTING_COMPANIES is None:
-            EXISTING_COMPANIES = load_existing_companies()
+            EXISTING_COMPANIES = _load_existing_companies()
         sql_end = time.time()
         timers['sql_processing_ms'] = round((sql_end - sql_start) * 1000, 2)
 
@@ -361,7 +361,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             }
         }), 200
 
-    def load_existing_companies():
+    def _load_existing_companies():
         results = session.execute(text(get_company_sql())).fetchall()
         existing = []
         json_data = []

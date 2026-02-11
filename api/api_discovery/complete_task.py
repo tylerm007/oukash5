@@ -4,7 +4,7 @@ from database.models import ProcessDefinition, TaskDefinition, WFApplication, Ta
 from flask import request, jsonify, session
 import logging
 from datetime import timezone, datetime
-# from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
+from logic.logic_discovery.workflow_engine import call_task_script_engine
 import safrs
 from config.config import Args
 from config.config import Config
@@ -208,12 +208,13 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             task_instance.ResultData = completion_notes
             task_instance.CompletedBy = completed_by
             task_instance.CompletedCapacity = capacity
-        
+        task_instance.ErrorMessage = None
         task_instance.ModifiedDate = datetime.now()
         task_instance.Status = status
         task_instance.Result = result
         session.add(task_instance)
-        
+        session.flush()
+
         # TIMING: Commit and flush
         t5 = time.time()
         try:
@@ -223,26 +224,29 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             
             # TIMING: Call script engine
             t6 = time.time()
-            if status == 'COMPLETED':
-                data = None #call_task_script_engine(task_instance, access_token)
+            if status == 'COMPLETED' and task_def.PostScriptJson is not None and task_def.PostScriptJson != '':
+                data = call_task_script_engine(task_instance, access_token)
                 #task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
-                if data and str(data.Result) != 'DotMap()' and  data.Result == False:
-                    task_instance.ErrorMessage = data.ErrorMessage if 'ErrorMessage' in data else 'TaskInstance script returned False result'
+                if data and str(data.get("Result")) != 'DotMap()' and  data.get("Result") == False:
+                    task_instance.ErrorMessage = data.get('ErrorMessage')  if 'ErrorMessage' in data else 'TaskInstance script returned False result'
                     task_instance.Status = 'IN_PROGRESS' if task_instance.TaskDefinition.TaskType != 'START' else status
                     task_instance.Result = None
                     session.add(task_instance)
                     session.commit()
                     session.flush()
-                    insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
+                    #insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
                     return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id} message: {task_instance.ErrorMessage}'}), 400
+                else:
+                    task_instance.ResultData = data.get('Message') if data and 'Message' in data and data.get("Result") else None
+                    session.add(task_instance)
             timings['script_engine'] = time.time() - t6
+            
                    
         except Exception as e:
             app_logger.error(f'Error completing task {task_instance_id}: {e}')
             session.rollback()
             return jsonify({"status": "error", "message": "Error completing task"}), 500
-
         ## Get the workflow history
         #insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
         

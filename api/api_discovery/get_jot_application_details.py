@@ -29,7 +29,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     pass
 
     @app.route('/get_prelim_application_details', methods=['GET','OPTIONS'])
-    @jwt_required()
+    #@jwt_required()
     def get_prelim_application_details():
         """
         Get Application Details from JotForm API
@@ -41,7 +41,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         import time
         start_time = time.time()
         
-        username = Security.current_user().Username
+        username = None # Security.current_user().Username
         data = request.args if request.args else {}
         limit = int(data.get('page[limit]', 20))
         offset = int(data.get('page[offset]', 0))
@@ -81,7 +81,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 def getSQL():
     return """
      SELECT jfc.companyName,
-        jfc.JotFormId as externalReferenceId,
+        jfc.SubmissionAppId as externalReferenceId,
         jfc.companyWebsite,
         jfc.companyPhone,
         jfc.OUCertified,
@@ -99,8 +99,8 @@ def getSQL():
                     jfca.companyRegion,
                     jfca.companyProvince,
                     jfca.companyCountry
-            from [dashboard].[dbo].[JotFormCompany] jfca
-            where jfc.JotFormId = jfca.JotFormId
+            from [dashboardV1].[dbo].[SubmissionApplication] jfca
+            where jfc.SubmissionAppId = jfca.SubmissionAppId
             FOR JSON AUTO
         ) as companyAdresses,
         (
@@ -116,8 +116,8 @@ def getSQL():
                      jfcc.billingContactPhone,
                      jfcc.billingContactEmail
 
-            from [dashboard].[dbo].[JotFormCompany] jfcc
-            where jfc.JotFormId = jfcc.JotFormId
+            from [dashboardV1].[dbo].[SubmissionApplication] jfcc
+            where jfc.SubmissionAppId = jfcc.SubmissionAppId
             FOR JSON AUTO
         ) as companyContacts,
 
@@ -125,18 +125,18 @@ def getSQL():
             select jfp.*,
             (
                 select jfi.* 
-                from [dashboard].[dbo].[JotFormIngredients] jfi
-                 Where jfi.JotPlantId = jfp.PlantId
+                from [dashboardV1].[dbo].[SubmissionIngredients] jfi
+                 Where jfi.SubmissionPlantId = jfp.PlantId
                 FOR JSON AUTO
             ) as ingredients,
             (
                 select jfi.* 
-                from [dashboard].[dbo].[JotFormProducts] jfi
-                 Where jfi.JotPlantId = jfp.PlantId
+                from [dashboardV1].[dbo].[SubmissionProducts] jfi
+                 Where jfi.SubmissionPlantId = jfp.PlantId
                 FOR JSON AUTO
             ) as products
-            from [dashboard].[dbo].[JotFormPlant] jfp
-            where jfc.JotFormId = jfp.JotFormId
+            from [dashboardV1].[dbo].[SubmissionPlant] jfp
+            where jfc.SubmissionAppId = jfp.SubmissionAppId
            
 
             FOR JSON AUTO
@@ -146,14 +146,14 @@ def getSQL():
      
       (
         select jff.* 
-        FROM [dashboard].[dbo].[JotFormFileLinks] jff
-        where jfc.JotFormId = jff.JotFormId
+        FROM [dashboardV1].[dbo].[SubmissionFileLinks] jff
+        where jfc.SubmissionAppId = jff.SubmissionAppId
 
         FOR JSON AUTO
       ) as filelinks
-      FROM [dashboard].[dbo].[JotFormCompany] jfc
+      FROM [dashboardV1].[dbo].[SubmissionApplication] jfc
         WHERE 
-            (:application_id IS NULL OR jfc.JotFormId = :application_id) AND
+            (:application_id IS NULL OR jfc.SubmissionAppId = :application_id) AND
             (:status IS NULL OR jfc.status = :status) AND
             (:searchName IS NULL OR jfc.companyName LIKE CONCAT('%', :searchName, '%'))
         ORDER BY jfc.submission_date DESC   

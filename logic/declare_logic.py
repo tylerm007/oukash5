@@ -87,14 +87,28 @@ def declare_logic():
     #als rules report
     from api.system import api_utils
     # api_utils.rules_report()
-
-    def create_application(row: object, old_row: object, logic_row: LogicRow) -> bool:
-        #Create an EventAction for the given TaskInstanceId and EventKey
+    def start_workflow(row: models.WFApplication, old_row: models.WFApplication, logic_row: LogicRow):
+        # Start the workflow by creating the first TaskInstance when a new WFApplication is created with Status 'NEW'
+        if logic_row.ins_upd_dlt == 'upd' and row.Status != 'COMPL':
+            if row.ApplicationType == 'WORKFLOW':
+                from flask import request
+                access_token = request.headers.get('Authorization', '').replace('Bearer ', '')
+                started_by = row.CreatedBy if row.CreatedBy else 'SYSTEM' #else Security.current_user().Username
+                from api.api_discovery.start_workflow import _start_workflow_async
+                process_name = "OU Application Init"
+                response = _start_workflow_async(process_name=process_name, application_id=row.ApplicationID, started_by=started_by, priority="NORMAL", access_token=access_token)
+                app_logger.info(f"Workflow started WORKFLOW for ApplicationID {row.ApplicationID} response {response}")
+                
+    def generate_owns(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
+        # Generate OWNS record after ResolveCompany and ResolvePlant tasks are completed
         company_id = None
         plant_id = None
-        application = logic_row.row
-        if application.ApplicationType != 'SUBMISSION' and application.Status != 'COMPLETED':
-            return True
+        task_instance = logic_row.row
+        application_id = task_instance.ApplicationId
+        application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
+        if not application:
+            logic_row.log(f"unable to generate owns - application not found for ApplicationId: {application_id}")
+            return False
         task_instances = models.TaskInstance.query.filter_by(ApplicationId=application.ApplicationID).all()
         for task_instance in task_instances:
             task_def = task_instance.TaskDefinition
@@ -103,25 +117,60 @@ def declare_logic():
             if task_def.TaskName == 'ResolvePlant':
                 plant_id = task_instance.Result
         if company_id is None or plant_id is None:
-            logic_row.log(f"unable to create application - missing company_id: {company_id} or plant_id: {plant_id}")
-        owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
-        if not owns: 
-            logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
+            logic_row.log(f"unable to generate owns - missing company_id: {company_id} or plant_id: {plant_id}")
             return False
-        import requests
-        from flask import g, request
-        # Try to get token from g first, then fall back to request headers
-        apikey = g.access_token if hasattr(g, 'access_token') else request.headers.get('Authorization', '')
-        # Ensure Bearer prefix if token doesn't already have it
-        if apikey and not apikey.startswith('Bearer '):
-            apikey = f"Bearer {apikey}"
-        headers = {"Authorization": apikey, "Content-Type": "application/json"}
-        # https://urllib3.readthedocs.io/en/latest/advanced-usage.html#tls-warnings
-        response = requests.post(f"{request.root_url}createApplication", json={
-            "ownsId": owns.ID
-        }, headers=headers, verify=False)
-        logic_row.log("create_application response: " + str(response.status_code) + " - " + response.text)
-        return True if response.status_code == 200 else False
+        owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+        if not owns:
+            logic_row.log(f"OWNS record does not exist for company_id: {company_id} and plant_id: {plant_id}")
+            return True
+        row.ResultData = f"Create OWNS {owns.ID} record"
+        row.Result = owns.ID if owns else None
+        return True
+    def create_application(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow) -> bool:
+        #Create an EventAction for the given TaskInstanceId and EventKey
+        company_id = None
+        plant_id = None
+        owns_id = None
+        task_instance = logic_row.row
+        application_id = task_instance.ApplicationId
+        application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
+         # Only create new application when submission task is completed
+        if application and application.ApplicationType != 'SUBMISSION' and task_instance.Status != 'COMPLETED':
+            return True
+        task_instances = models.TaskInstance.query.filter_by(ApplicationId=application.ApplicationID).all()
+        owns_task_instance = None
+        for task_instance in task_instances:
+            task_def = task_instance.TaskDefinition
+            if task_def.TaskName == 'ResolveCompany':
+                company_id = task_instance.Result
+            if task_def.TaskName == 'ResolvePlant':
+                plant_id = task_instance.Result
+            if task_def.TaskName == 'CreateOwns':
+                owns_id = task_instance.Result
+                owns_task_instance = task_instance
+       
+        if not owns_id:
+            owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+            if not owns: 
+                logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
+                return False
+            owns_id = owns.ID
+        new_application = models.WFApplication.query.filter_by(ApplicationNumber=owns_id).first()
+        if  not new_application:
+            row.Result = False
+            row.ErrorMessage = f" new WFApplication for OWNS ID {owns_id}, company_id: {company_id} and plant_id: {plant_id} not created"
+            logic_row.log(f" new WFApplication for OWNS ID {owns_id}, company_id: {company_id} and plant_id: {plant_id} not created")
+            return False
+        
+        new_application.SubmissionCompany = application.SubmissionCompany
+        new_application.SubmissionPlant = application.SubmissionPlant
+        # Add to session before insert to avoid SAWarning
+        logic_row.session.add(new_application)
+        logic_row.update(reason="Update Workflow application", row=new_application)
+        logic_row.log("Updated new_application ")
+        row.Result = new_application.ApplicationId
+        row.ResultData = f"Updated new WFApplication with ApplicationId {new_application.ApplicationId} linked to OWNS ID {owns_id}"
+        return True 
     
     def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:
         # Find the next TaskInstance in the workflow by TaskName
@@ -202,7 +251,12 @@ def declare_logic():
                 application.CompletedDate = datetime.datetime.now()
                 application.Status = 'COMPL'
                 logic_row.update(reason=f"Update application status to {application.Status}", row=application)
-                #create_application(application, logic_row=logic_row)
+        elif task_def.TaskName == 'GenerateWFApplication' and row.Status == 'COMPLETED':
+            #create_application(row, old_row, logic_row=logic_row)
+            #lookup new wf application linked to this SubmissionCompany/Plant
+            pass
+        elif task_def.TaskName == 'CreateOwns' and row.Status == 'COMPLETED':
+            generate_owns(row, old_row, logic_row=logic_row)
         else:
             status = None
             TaskName = task_def.TaskName
@@ -227,4 +281,4 @@ def declare_logic():
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
-    #Rule.after_flush_row_event(on_class=models.WFApplication, calling=create_application)
+    #Rule.commit_row_event(on_class=models.WFApplication, calling=start_workflow)

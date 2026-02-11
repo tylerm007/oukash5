@@ -257,14 +257,14 @@ def get_SUBMISSION_SQL() -> str:
                 FOR JSON AUTO
         ) as 'appplicationinfo.messages',
         (
-                select co.JotFormId as companyID,
+                select co.SubmissionAppId as companyID,
                         co.whichCategory as category,
                         co.OUcertified as currentlyCertified,
                         co.everCertified as everCertified,
                         co.companyName as name,
                         co.companyWebsite as website
-                from JotFormCompany co  
-                where co.JotFormId = app.SubmissionCompany
+                from SubmissionApplication co  
+                where co.SubmissionAppId = app.SubmissionCompany
                 FOR JSON AUTO
         ) as 'appplicationinfo.company',
         (
@@ -275,8 +275,8 @@ def get_SUBMISSION_SQL() -> str:
                     coa.companyAddress as street,
                     'main' as type,
                     coa.ZipPostalCode as zip
-                from JotFormCompany coa  
-                where coa.JotFormId = app.SubmissionCompany
+                from SubmissionApplication coa  
+                where coa.SubmissionAppId = app.SubmissionCompany
                 FOR JSON AUTO
         ) as 'appplicationinfo.companyAddresses',
         ( 
@@ -286,8 +286,8 @@ def get_SUBMISSION_SQL() -> str:
                     coc.contactPhone as phone,
                     'Primary' as type,
                     coc.jobTitle as role
-                FROM JotFormCompany coc  
-                where coc.JotFormId = app.SubmissionCompany
+                FROM SubmissionApplication coc  
+                where coc.SubmissionAppId = app.SubmissionCompany
                     FOR JSON AUTO
         ) as 'appplicationinfo.companyContacts',
         (
@@ -295,8 +295,8 @@ def get_SUBMISSION_SQL() -> str:
                         jfp.productDesc as description,
                         jfp.plantRegion as location,
                         jfp.PlantId as  plantId
-                from JotFormPlant jfp  
-                where jfp.JotFormId = app.SubmissionCompany
+                from SubmissionPlant jfp  
+                where jfp.SubmissionAppId = app.SubmissionCompany
                 FOR JSON AUTO
         ) as 'appplicationinfo.plants',
         (
@@ -307,8 +307,8 @@ def get_SUBMISSION_SQL() -> str:
                     jfpa.plantAddress as street,
                     '' as type,
                     jfpa.plantZip as zip
-                from JotFormPlant jfpa  
-                where jfpa.JotFormId = app.SubmissionCompany
+                from SubmissionPlant jfpa  
+                where jfpa.SubmissionAppId = app.SubmissionCompany
                     FOR JSON AUTO
         ) as 'appplicationinfo.plantAddresses',
         ( 
@@ -321,7 +321,7 @@ def get_SUBMISSION_SQL() -> str:
                     concat(jfpc.contactFirst1, ' ' , jfpc.contactLast1) as name1,
                     jfpc.contactPhone1 as phone1,
                     jfpc.contactEmail1 as email1
-                FROM JotFormPlant jfpc  
+                FROM SubmissionPlant jfpc  
                 where jfpc.PlantId = app.SubmissionPlant
                     FOR JSON AUTO
         ) as 'appplicationinfo.plantContacts',

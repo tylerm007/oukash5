@@ -9,6 +9,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
+from database.models import SubmissionMatcher
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -114,9 +115,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             stages = row.get('stages')
             if stages:
                 stages_json = json.loads(stages)
-                row['stages'] = transform_stage_row(stages_json)
+                row['stages'] = transform_stage_row(stages_json, application_type)
                 #row.pop('process', None)
-            result = transform_app(row)
+            result = transform_app(row, application_type=application_type)
             data.append(result)
         #data = [dict(row) for row in result]
         sql_count = get_total_count() 
@@ -139,7 +140,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         processing_time = end_time - start_time
         return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
 
-def transform_app(app) -> dict:
+def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
     """
     Transforms an application row dictionary by mapping status codes and processing stages.
     """
@@ -148,7 +149,7 @@ def transform_app(app) -> dict:
     app_source = company_app.to_dict() if company_app else {}
     created_date = app.get("CreatedDate")
     modified_date = app.get("ModifiedDate")
-    status = _get_app_status(app.get("Status"))
+    status = _get_app_status(app.get("Status"),application_type)
     days_between = _calc_days_between(created_date, None) if app.get("Status") not in ["COMPL","WTH"] else 0
     days_due = 5  #
     row ={
@@ -177,9 +178,35 @@ def transform_app(app) -> dict:
                 "files": app['files'] if 'files' in app else [],
                 #"assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
             }
+    if application_type == 'SUBMISSION':
+        companyFromApplication = json.loads(app.get("companyFromApplication", "{}"))
+        plants = json.loads(app.get("plants", "[]"))
+        for stage in row['stages'].values():
+            for task in stage.get("tasks", []):
+                if task.get("name") == 'ResolveCompany':
+                    matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=app.get("externalReferenceId"), SubmissionType="COMPANY").first()
+                    if companyFromApplication and len(companyFromApplication) > 0:
+                        task['companyFromApplication'] = companyFromApplication[0] 
+                        task['companyMatchList'] = [] if matcher is None else matcher.SubbmissionMatches if matcher and matcher.SubbmissionMatches else []
+                        task['companySelected'] = {
+                            "companyName": companyFromApplication[0].get("companyName", "Unknown Company"),
+                            "ID": task['Result'],
+                            "Address": companyFromApplication[0].get("companyAddress", "Unknown Address"),
+                        }
+                elif task.get("name") == 'ResolvePlant': # Plant#1
+                    if plants and len(plants) > 0:
+                        matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=app.get("externalReferenceId"), SubmissionType="PLANT").first()
+                        task['plantFromApplication'] = plants[0] if plants and len(plants) > 0 else {}
+                        task['plantMatchList'] = [] if matcher is None else matcher.SubbmissionMatches if matcher and matcher.SubbmissionMatches else []
+                        task['plantSelected'] = {
+                                "plantName": plants[0].get("plantName", "Unknown Plant") if len(plants) > 0 else "Unknown Plant",
+                                "Address": plants[0].get("plantAddress", "Unknown Address") if len(plants) > 0 else "Unknown Address",
+                                "PlantID": task['Result'],
+                                "OWNSID": '',
+                                "WFID": ''}
     return row
 
-def transform_stage_row(stage_rows: any) -> list:
+def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> list:
     """
     Transforms a process row dictionary by parsing JSON fields.
     """
@@ -232,9 +259,9 @@ def transform_stage_row(stage_rows: any) -> list:
             "TaskInstanceId": task['TaskInstanceId'],
             "PreScript":taskdef['PreScriptJson'] if "PreScriptJson" in taskdef else None,
             "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
-            "Result": task['Result'] if "Result" in task else None,
-            "ResultData": task['ResultData'] if "ResultData" in task else None,
-            "ErrorMessage": task['ErrorMessage'] if "ErrorMessage" in task else None,
+            "Result": task.get('Result'),
+            "ResultData": task.get('ResultData'),
+            "ErrorMessage": task.get('ErrorMessage'),
             "taskRoles": [{
                 "taskRole": taskdef['AssigneeRole'] if task and taskdef else "Unknown Role"
             }],
@@ -305,14 +332,14 @@ def _calc_days_between(start_date, end_date) -> int:
         return (end_date - start_date).days
     return 0
     
-def _get_app_status(status_code: str) -> str:
+def _get_app_status(status_code: str,application_type:str = 'WORKFLOW') -> str:
     """Get application status from code"""
     status_map = {
         "NEW": "New",
         "INP": "In Progress",
         "HLD": "On Hold",
         "WTH": "Withdrawn",
-        "COMPL": "Certified",
+        "COMPL":"Completed" if application_type != 'WORKFLOW' else "Certified",
         "REJ": "Rejected",
         "REVIEW": "Inspection Report Submitted to IAR",
         "INSPECTION": "Inspection Scheduled",
@@ -383,6 +410,8 @@ def get_SQL() -> str:
                                             ti.CompletedCapacity,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.Result,
+                                            ti.ResultData,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -432,31 +461,49 @@ def get_SQL() -> str:
 def get_SUBMISSION_SQL() -> str:
        return '''
        select 
-         pl.plantName as "plantName", 
-         co.companyName as "companyName",
-         co.companyAddress,
-         co.companyAddress2,
-         co.companyCity,
-         co.companyState,
-         co.ZipPostalCode,
-         co.companyCountry,
-         co.companyPhone,
-         co.companyRegion,
-         co.companyProvince,
-         co.companyWebsite,
-         co.whichCategory,
-         co.numberOfPlants,
+         co.companyName,
          app.ApplicationID as applicationId,
          app.ApplicationNumber,
          app.CreatedDate,
-         --app.ModifiedDate,
+         app.ModifiedDate,
          app.Status,
          app.Priority,
          app.SubmissionCompany as 'externalReferenceId',
-         app.SubmissionPlant as 'plantId',
+         ( select
+             co1.companyName as "companyName",
+             co1.companyAddress,
+             co1.companyAddress2,
+             co1.companyCity,
+             co1.companyState,
+             co1.ZipPostalCode,
+             co1.companyCountry,
+             co1.companyPhone,
+             co1.companyRegion,
+             co1.companyProvince,
+             co1.companyWebsite,
+             co1.whichCategory,
+             co.numberOfPlants
+             from [dashboardV1].[dbo].[SubmissionApplication] co1
+             WHERE co1.SubmissionAppId = co.SubmissionAppId
+             FOR JSON AUTO
+
+         ) as companyFromApplication,
+        ( SELECT 
+            pl.plantName as "plantName", 
+            pl.plantNumber,
+            pl.plantAddress,
+            pl.plantCity,
+            pl.plantState,
+            pl.plantZip,
+            pl.plantRegion,
+            pl.plantCountry
+            FROM [dashboardV1].[dbo].[SubmissionPlant] pl
+            where pl.SubmissionAppId = co.SubmissionAppId
+            FOR JSON AUTO
+        ) as plants,
         (
                 select role, assignee , IsPrimary
-                from RoleAssigment  
+                from [dashboard].[dbo]. RoleAssigment  
                 where RoleAssigment.ApplicationID = app.ApplicationID
                 FOR JSON AUTO
         ) as "assignedRoles",
@@ -475,6 +522,8 @@ def get_SUBMISSION_SQL() -> str:
                                             ti.CompletedCapacity,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.Result,
+                                            ti.ResultData,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -484,31 +533,25 @@ def get_SUBMISSION_SQL() -> str:
                                                                     DATEDIFF(day, dateAdd(day,  (td.[EstimatedDurationMinutes] / 60 /24) , ti.[StartedDate]) ,  getdate())
                                                                 ELSE NULL
                                             END as daysOverdue
-                                        from TaskInstances ti
-                                                INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                                        from  [dashboard].[dbo].TaskInstances ti
+                                                INNER JOIN [dashboard].[dbo]. TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
                                                             where ti.StageId = sd.StageId 
                                                             and ti.ApplicationId = app.ApplicationID
                                                             -- and  (td.AssigneeRole != 'SYSTEM') 
                                                             FOR JSON AUTO
                                     )
-                    from TaskInstances ti 
-                    LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                    LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
-                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
-                    group by sd.stageName, sd.stageId, StageDescription
-                    FOR JSON AUTO  
-
-
-
-                    --from StageInstance si            
-                    --where si.ApplicationId = app.ApplicationID 
-                    --                  FOR JSON AUTO        
+                        from  [dashboard].[dbo].TaskInstances ti 
+                        LEFT JOIN  [dashboard].[dbo].TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
+                        LEFT JOIN  [dashboard].[dbo].StageDefinitions sd ON ti.stageId = sd.StageId
+                        where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                        group by sd.stageName, sd.stageId, StageDescription
+                        FOR JSON AUTO   
                     )
                 
                             
-        FROM WF_Applications  app
-            LEFT JOIN JotFormPlant pl ON pl.PlantId = app.SubmissionPlant
-            LEFT JOIN JotFormCompany co ON app.SubmissionCompany = co.JotFormId
+        FROM [dashboard].[dbo].[WF_Applications]  app
+            LEFT JOIN  [dashboardV1].[dbo].SubmissionPlant pl ON pl.PlantId = app.SubmissionPlant
+            LEFT JOIN [dashboardV1].[dbo].SubmissionApplication co ON app.SubmissionCompany = co.SubmissionAppId
         
         WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
             (:priority IS NULL OR app.Priority = :priority) and
@@ -551,6 +594,8 @@ def getSQLForRoles():
                                             ti.AssignedTo,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.Result,
+                                            ti.ResultData,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -643,6 +688,8 @@ def getSQLForOneRole():
                                             ti.AssignedTo,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.Result,
+                                            ti.ResultData,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL

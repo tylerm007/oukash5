@@ -28,21 +28,21 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         args = request.args
         user = Security.current_user().Username
-        jotform_id = args.get('jotform_id') or args.get('jotFormId') or args.get('filter[jotform_id]') or None
-        jotform = session.query(models.JotFormCompany).filter(models.JotFormCompany.JotFormId == jotform_id).first() if jotform_id else None
-        if jotform is None:
-            return jsonify({"result": f'JotFormCompany with ID: {jotform_id} not found'}), 404 
-        company_id = jotform.JotFormId
-        company_name = jotform.companyName
-        plants = jotform.JotFormPlantList
-        submission_id = jotform.submission_id
+        application_id = args.get('application_id') or args.get('applicationId') or args.get('filter[application_id]') or None
+        application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
+        if application is None:
+            return jsonify({"result": f'SubmissionApplication with application_id: {application_id} not found'}), 404 
+        company_id = application.SubmissionAppId
+        company_name = application.companyName
+        plants = application.SubmissionPlantList
+        submission_id = application.submission_id
         results = {}
         plant_ids = ""
         join = ""
         for plant in plants:
             plant_id = plant.PlantId
             if company_id is None or plant_id is None:
-                return jsonify({"result": 'createSubmissionCompany requires companyId and plantId parameters'}), 400
+                return jsonify({"result": 'create Submission Application requires companyId and plantId parameters'}), 400
             if plant.plantName.strip() == '': #No reason to create an empty plant
                 continue
         
@@ -73,7 +73,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if company_plant:
             return jsonify({"result": f'Application already exists for CompanyID: {companyID} and PlantID: {plant_id}'}), 400   
         access_token = request.headers.get('Authorization', '')
-        application_id = create_new_application(companyID, plant_id, user)
+        application_id = create_new_application(companyID, plant_id, int(owns_id), user)
         response = start_workflow(application_id, user, access_token)
         app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": f"application created successfully {application_id} started"}), 200
@@ -115,16 +115,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if company_plant:
                 continue   
             user = Security.current_user().Username
-            application_id = create_new_application(companyID, plant_id, user)
+            application_id = create_new_application(companyID, plant_id=plant_id, owns_id=owns_id, user=user)
             data.append(application_id)
             access_token = request.headers.get('Authorization', '')
             response = start_workflow(application_id, user, access_token)
             app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": "applications created successfully", "applications": data}), 200
 
-def create_new_application( company_id: int = 0, plant_id: int = 0, user: str = "admin"):
+def create_new_application( company_id: int = 0, plant_id: int = 0,owns_id:int = 0, user: str = "admin"):
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
-    applicationNumber = WFApplication.query.count() + 10000
+    applicationNumber = owns_id if owns_id != 0 else WFApplication.query.count() + 10000
     application = WFApplication(
             Name="New Application",
             Description="Description of the new application",
@@ -163,9 +163,75 @@ def create_new_submission_application( company_id: int = 0, plant_id: int = 0, s
     )
     session.add(application)
     session.commit()
-    create_submission_files(application.ApplicationID)
+    try:
+        create_submission_files(application.ApplicationID)
+        call_company_matcher(company_id)
+        call_plant_matcher(company_id, plant_id)
+    except Exception as e:
+        app_logger.error(f"Error in submission application and matchers creation: {e}")
 
     return application.ApplicationID
+
+def call_company_matcher(application_id:int):
+    from api.api_discovery.company_matcher import _match_company_async
+    company = session.query(models.SubmissionApplication).filter_by(SubmissionAppId=application_id).first()
+    if company is None:
+        app_logger.error({ "error": f"SubmissionApplication {application_id} not found" })
+    email = (company.contactEmail).split('@')[1] if company.contactEmail and "@" in company.contactEmail else None
+    match = {
+        'name': company.companyName,
+        'street': company.companyAddress,
+        'street1': company.companyAddress2,
+        'city': company.companyCity,
+        'state': company.companyState,
+        'postal': company.ZipPostalCode,
+        'phone': company.companyPhone,
+        'country': company.companyCountry,
+        "website": company.companyWebsite if company.companyWebsite else (f"http://www.{email}" if email else None)      
+    }
+    response = _match_company_async(match=match)
+    result = response.get("matches", []) if response.get("matches") and len(response.get("matches")) > 0 else None
+    matcher = models.SubmissionMatcher(
+        SubmissionAppId=application_id,
+        SubmissionType="COMPANY",
+        SubmissionKey = application_id,
+        SubbmissionMatches= result
+    )
+    session.add(matcher)
+    session.commit()
+    app_logger.info(f'Company matcher response for application {application_id}: {response}')
+    return response
+
+def call_plant_matcher(company_id:int,plant_id:int):
+    from api.api_discovery.plant_matcher import _match_plant_async
+    plant = session.query(models.SubmissionPlant).filter_by(PlantId=plant_id).first()
+    if plant is None:
+        return jsonify({ "error": f"SubmissionPlant {plant_id} not found" })
+
+    match = {
+        'name': plant.plantName,
+        'street': plant.plantAddress,
+        'street1': None,
+        'city': plant.plantCity,
+        'state': plant.plantState,
+        'postal': plant.plantZip,
+        'phone': plant.contactPhone,
+        'country': plant.plantCountry,
+        "website": None
+    }
+    response = _match_plant_async(match)
+    result = response.get("matches", []) if response.get("matches") and len(response.get("matches")) > 0 else None
+    matcher = models.SubmissionMatcher(
+        SubmissionAppId=company_id,
+        SubmissionType="PLANT",
+        SubmissionKey = plant_id,
+        SubbmissionMatches= result
+    )
+    session.add(matcher)
+    session.commit()
+    app_logger.info(f'Plant matcher response for application {plant_id}: {response}')
+    return response
+
 def create_submission_files(application_id:int):
     pass
 def create_files(application_id:int):

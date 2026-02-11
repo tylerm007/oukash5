@@ -351,13 +351,13 @@ def process_stages_batch(stage_definitions, application_id, started_by):
 
 
 def get_company_plants(company_id: int):
-    jotform = session.query(models.JotFormCompany).filter(models.JotFormCompany.JotFormId == company_id).first() if company_id else None
-    if jotform is None:
-        app_logger.error(f'JotFormCompany with ID: {company_id} not found')
+    application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == company_id).first() if company_id else None
+    if application is None:
+        app_logger.error(f'SubmissionApplication with SubmissionAppId: {company_id} not found')
         return None
-    company_id = jotform.JotFormId
-    company_name = jotform.companyName
-    plants = jotform.JotFormPlantList
+    company_id = application.SubmissionAppId
+    company_name = application.companyName
+    plants = application.SubmissionPlantList
     plant_ids = {}
     cntr = 0
     for plant in plants:

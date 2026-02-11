@@ -3,13 +3,13 @@ import requests
 import json
 
 class JotFormAPI:
-    def __init__(self, api_key):
+    def __init__(self, api_key, team_id):
         self.api_key = api_key
         self.base_url = "https://ou.jotform.com"
         self.headers = {
-            'apiKey': api_key,
+            'APIKEY': api_key,
             'Content-Type': 'application/json',
-            'jf-team-id': '243646438272058'# '240425799590063'
+            'jf-team-id': team_id # '240425799590063'
         }
     
     def get_user_files(self, limit=20, offset=0):
@@ -159,8 +159,8 @@ class JotFormAPI:
 if __name__ == "__main__":
     # Replace with your actual API key
     API_KEY = "6a43a5bd9eb0000522ee130271621f53"
-    
-    jf = JotFormAPI(API_KEY)
+    TEAM_ID = "243646438272058"
+    jf = JotFormAPI(API_KEY, TEAM_ID)
     
        # Example 3: Get files from specific submission
     # You would need to know the submission ID

@@ -258,3 +258,4 @@ update TaskDeffinitions
 set PreScriptJson = 'api/vSelectRFR,RFR'
 where TaskName = 'Select RFR';
 GO
+

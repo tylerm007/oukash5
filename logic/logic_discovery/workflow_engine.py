@@ -393,9 +393,41 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             process_task_instance(next_task_instance, old_row, logic_row)
             
     return
+def create_wfapplication(task_instance_id, data):
+    #createApplication?owns_id=$1
+    task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+    if not task_instance:
+        data.Result = False
+        data.ErrorMessage = f"No task instance found for TaskInstanceId {task_instance_id}"
+        return data
+    task_instances = models.TaskInstance.query.filter_by(ApplicationId=task_instance.ApplicationId).all()
+    owns_id = None
+    for ti in task_instances:
+        if ti.TaskDefinition.TaskName == "CreateOwns":
+            owns_id = ti.Result
+            break
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    if data.get('access_token'):
+        headers['Authorization'] = data.get('access_token')
+
+    server_uri = get_client_uri()
+    # Use secure request helper for self-signed certificates
+    response = make_secure_request('get', f"{server_uri}/createApplication?owns_id={owns_id}", headers=headers, verify=False)
+    if response.status_code == 200:
+        app_logger.info(f"Create Workflow Application owns_id: {owns_id} succeeded")
+        data['Result'] = True
+        data['Message'] = f"Create Workflow Application owns_id: {owns_id} succeeded. {response.text}"
+    else:
+        data['Result'] = False
+        data['ErrorMessage'] = f"Create Workflow Application owns_id: {owns_id} failed \ncode: {response.status_code} message: {response.text}"
+        app_logger.error(f"Create Workflow Application owns_id: {owns_id} failed \ncode: {response.status_code} message: {response.text}")
+    return data
 
 def call_script_engine_pre(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
-    task_def = row.TaskDef
+    task_def = row.TaskDefinition
     script = task_def.PreScriptJson or ''
     #logic_row.log(f'PreScriptJson: {script}')
     # may want to restrict the content to Python only
@@ -458,7 +490,7 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     task_id = row.TaskInstanceId
     task_instance_id = task_id
     stage_id = row.StageId
-    task_def = row.TaskDef
+    task_def = row.TaskDefinition
     script = task_def.PostScriptJson or None
     if not script or script == '':
         return None
@@ -469,13 +501,13 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
             app_logger.info(f'Inheriting ResultData from parent task {parent_instance.TaskInstanceId}')
             
     # collect prior context from dependent tasks and create a union of ResultData
-    application_id = row.Stage.ProcessInstance.ApplicationId
+    application_id = row.ApplicationId
     
     # OPTIMIZATION: Build lightweight task dict manually instead of expensive to_dict()
     # Only include fields commonly used in scripts to reduce serialization overhead
     task = {
         'TaskInstanceId': row.TaskInstanceId,
-        'TaskId': row.TaskId,
+        'TaskId': row.TaskDefinitionId,
         'StageId': row.StageId,
         'Status': row.Status,
         'Result': row.Result,
@@ -511,6 +543,7 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     
     external_context = {
         "get_application": get_application,
+        "create_wfapplication": create_wfapplication,
         "set_application_attribute": set_application_attribute,
         "set_stage_attribute": set_stage_attribute,     
         "set_task_attribute": set_task_attribute,
