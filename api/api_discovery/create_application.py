@@ -36,21 +36,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         company_name = application.companyName
         plants = application.SubmissionPlantList
         submission_id = application.submission_id
-        results = {}
-        plant_ids = ""
-        join = ""
-        for plant in plants:
-            plant_id = plant.PlantId
-            if company_id is None or plant_id is None:
-                return jsonify({"result": 'create Submission Application requires companyId and plantId parameters'}), 400
-            if plant.plantName.strip() == '': #No reason to create an empty plant
-                continue
         
-            application_id = create_new_submission_application(company_id=int(company_id), plant_id=plant_id, submission_id=submission_id, user=user)
-            response = start_workflow(application_id, user, None)
-            results[application_id] = {"Company": company_name, "company_id": company_id, "plant_ids": plant_ids, "workflow_response": response}
-            app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
-        return jsonify({"status": f"submission application created successfully {results}"}), 200
+        
+        if company_id is None:
+            return jsonify({"result": 'create Submission Application requires companyId parameters'}), 400
+        
+        application_id = create_new_submission_application(company_id=int(company_id), submission_id=submission_id, user=user)
+        response = start_workflow(application_id, user, None)
+        result = {"Company": company_name, "company_id": company_id, "workflow_response": response}
+        app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
+        return jsonify({"status": f"submission application created successfully {result}"}), 200
     
     @app.route('/createApplication', methods=['GET','OPTIONS'])
     @jwt_required()
@@ -144,7 +139,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0,owns_id:int =
     create_files(application_id)
     return application_id
 
-def create_new_submission_application( company_id: int = 0, plant_id: int = 0, submission_id: str=None,user: str = "admin"):
+def create_new_submission_application( company_id: int = 0, submission_id: str=None,user: str = "admin"):
     applicationNumber = WFApplication.query.count() + 10000
     application = WFApplication(
             Name="New Application",
@@ -153,7 +148,7 @@ def create_new_submission_application( company_id: int = 0, plant_id: int = 0, s
             CompanyID=0,
             PlantID=0,
             SubmissionCompany=company_id,
-            SubmissionPlant=int(plant_id),
+            #SubmissionPlant=int(plant_id),
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
             CreatedDate=datetime.datetime.now(datetime.timezone.utc),
@@ -169,70 +164,21 @@ def create_new_submission_application( company_id: int = 0, plant_id: int = 0, s
         app_logger.error(f"Error in submission application and matchers creation: {e}")
 
     return application.ApplicationID
-'''
-def call_company_matcher(application_id:int):
-    from api.api_discovery.company_matcher import _match_company_async
-    company = session.query(models.SubmissionApplication).filter_by(SubmissionAppId=application_id).first()
-    if company is None:
-        app_logger.error({ "error": f"SubmissionApplication {application_id} not found" })
-    email = (company.contactEmail).split('@')[1] if company.contactEmail and "@" in company.contactEmail else None
-    match = {
-        'name': company.companyName,
-        'street': company.companyAddress,
-        'street1': company.companyAddress2,
-        'city': company.companyCity,
-        'state': company.companyState,
-        'postal': company.ZipPostalCode,
-        'phone': company.companyPhone,
-        'country': company.companyCountry,
-        "website": company.companyWebsite if company.companyWebsite else (f"http://www.{email}" if email else None)      
-    }
-    response = _match_company_async(match=match)
-    result = response.get("matches", []) if response.get("matches") and len(response.get("matches")) > 0 else None
-    matcher = models.SubmissionMatcher(
-        SubmissionAppId=application_id,
-        SubmissionType="COMPANY",
-        SubmissionKey = application_id,
-        SubbmissionMatches= result
-    )
-    session.add(matcher)
-    session.commit()
-    app_logger.info(f'Company matcher response for application {application_id}: {response}')
-    return response
-
-def call_plant_matcher(company_id:int,plant_id:int):
-    from api.api_discovery.plant_matcher import _match_plant_async
-    plant = session.query(models.SubmissionPlant).filter_by(PlantId=plant_id).first()
-    if plant is None:
-        return jsonify({ "error": f"SubmissionPlant {plant_id} not found" })
-
-    match = {
-        'name': plant.plantName,
-        'street': plant.plantAddress,
-        'street1': None,
-        'city': plant.plantCity,
-        'state': plant.plantState,
-        'postal': plant.plantZip,
-        'phone': plant.contactPhone,
-        'country': plant.plantCountry,
-        "website": None
-    }
-    response = _match_plant_async(match)
-    result = response.get("matches", []) if response.get("matches") and len(response.get("matches")) > 0 else None
-    matcher = models.SubmissionMatcher(
-        SubmissionAppId=company_id,
-        SubmissionType="PLANT",
-        SubmissionKey = plant_id,
-        SubbmissionMatches= result
-    )
-    session.add(matcher)
-    session.commit()
-    app_logger.info(f'Plant matcher response for application {plant_id}: {response}')
-    return response
-'''
 
 def create_submission_files(application_id:int):
-    pass
+    # TODO use actual SubmissionFiles
+    file= models.WFFile(
+        ApplicationID=application_id,
+        FileName="Application.pdf",
+        FileType="PDF",
+        UploadedBy="system",
+        UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
+        Description="Test Document for Application",
+        FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/6295465435286943843.pdf?csf=1&web=1&e=Xgiwjd"
+    )
+    session.add(file)
+    session.commit()
+
 def create_files(application_id:int):
     # sample recorfds only
     file= models.WFFile(

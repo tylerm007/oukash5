@@ -234,16 +234,14 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
         app_logger.info(f'🏊 Creating Stage from StageDefinition: {stage_definition["StageName"]}')
         application_id = application.ApplicationID
         application_type = application.ApplicationType
-        submission_plants = get_company_plants(application.SubmissionCompany) if application_type == 'SUBMISSION' else None
         # Get all task definitions for this lane
         task_definitions = cache.get_task_definitions_by_stage(stage_definition['StageId']) #stage_definition['Tasks']
         stage_id = stage_definition['StageId']
         
         # Batch create task instances and workflow history
         task_instances = []
-        workflow_histories = []
+        resolve_tasks = []
         start_instance_id = None
-        
         for task_def in task_definitions:
             app_logger.debug(f'📋 Creating TaskInstance: {task_def["TaskName"]}')
             status = 'PENDING' if task_def['TaskType'] in ['START','STAGESTART','STAGEEND','END','GATEWAY'] else 'NEW'
@@ -259,12 +257,29 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
 
             session.add(task_instance)
             session.flush()  # Get TaskInstanceId
-            
+            if application_type == 'SUBMISSION' and 'ResolvePlant' in task_def['TaskName']:
+                # Skip ResolvePlant tasks here - they will be created separately with plant data
+                resolve_tasks.append(task_instance)
             # Check if this is the START task
             if task_def['TaskType'] == 'START' or task_def['TaskName'] == 'Prelim Stage start':
                 start_instance_id = task_instance.TaskInstanceId
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
-        
+
+        if application_type == 'SUBMISSION':
+            submission_plants = get_company_plants(application.SubmissionCompany)
+            for task_instance in resolve_tasks:
+                task_def = task_instance.TaskDefinition
+                plant_index = int(getattr(task_def,'TaskName')[-1]) - 1  # Assuming task names end with a number like ResolvePlant1, ResolvePlant2, etc.
+                if submission_plants and plant_index < len(submission_plants):
+                    plant_data = submission_plants[plant_index]
+                    task_instance.ResultData = plant_data  # Store plant data in PreScriptJson field
+                     # Get TaskInstanceId
+                    app_logger.debug(f'Created TaskInstance for {getattr(task_def,"TaskName")} with plant data: {plant_data}')
+                else:
+                    task_instance.Status = 'COMPLETED'  # Mark as completed if no plant data available
+                    app_logger.warning(f'No plant data available for {getattr(task_def,"TaskName")}, Set task to COMPLETED')
+                session.add(task_instance)
+                session.commit()
         return {
             'Stage_Name': stage_definition['StageName'],
             'stage_id': stage_id,
@@ -366,6 +381,7 @@ def get_company_plants(company_id: int):
         plant_id = plant.PlantId
         plant_data = {
             'PlantId': plant_id, 
+            "PlantNumber": plant.plantNumber,
             'PlantName': plant.plantName,
             'Address': plant.plantAddress,
             'City': plant.plantCity,

@@ -3,13 +3,14 @@ from database.models import CompanyApplication, StageDefinition
 from flask import app, request, jsonify, session
 import logging
 import jwt
+from openai import models
 import safrs
 from sqlalchemy import false, text, or_, and_
 from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
-from database.models import SubmissionMatcher
+from database.models import SubmissionMatcher, SubmissionPlant
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -180,30 +181,38 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
             }
     if application_type == 'SUBMISSION':
         companyFromApplication = json.loads(app.get("companyFromApplication", "{}"))
-        plants = json.loads(app.get("plants", "[]"))
+        plants = session.query(SubmissionPlant).filter_by(SubmissionAppId=app.get("externalReferenceId")).all()
+        #json.loads(app.get("plants", "[]"))
         for stage in row['stages'].values():
             for task in stage.get("tasks", []):
                 if task.get("name") == 'ResolveCompany':
-                    matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=app.get("externalReferenceId"), SubmissionType="COMPANY").first()
+                    matcher = session.query(SubmissionMatcher).filter_by(SubmissionAppId=app.get("externalReferenceId"), SubmissionType="COMPANY").first()
                     if companyFromApplication and len(companyFromApplication) > 0:
                         task['companyFromApplication'] = companyFromApplication[0] 
-                        task['companyMatchList'] = [] if matcher is None else matcher.SubbmissionMatches if matcher and matcher.SubbmissionMatches else []
-                        task['companySelected'] = {
+                        task['companyMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
+                        task['companySelected'] = {} if task['Result'] is None or task['Result'] == '' else {
                             "companyName": companyFromApplication[0].get("companyName", "Unknown Company"),
                             "ID": task['Result'],
                             "Address": companyFromApplication[0].get("companyAddress", "Unknown Address"),
                         }
                 elif task.get("name") == 'ResolvePlant': # Plant#1
                     if plants and len(plants) > 0:
-                        matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=app.get("externalReferenceId"), SubmissionType="PLANT").first()
-                        task['plantFromApplication'] = plants[0] if plants and len(plants) > 0 else {}
-                        task['plantMatchList'] = [] if matcher is None else matcher.SubbmissionMatches if matcher and matcher.SubbmissionMatches else []
-                        task['plantSelected'] = {
-                                "plantName": plants[0].get("plantName", "Unknown Plant") if len(plants) > 0 else "Unknown Plant",
-                                "Address": plants[0].get("plantAddress", "Unknown Address") if len(plants) > 0 else "Unknown Address",
+                        plant1 =  {
+                                "plantName": plants[0].plantName if len(plants) > 0 else "Unknown Plant",
+                                "Address": f'{plants[0].plantAddress}, {plants[0].plantCity} {plants[0].plantState} {plants[0].plantZip} {plants[0].plantCountry}' if len(plants) > 0 else "",
+                                "plantID": plants[0].PlantId if len(plants) > 0 else "Unknown PlantId",
+                                "plantNumber": plants[0].plantNumber if len(plants) > 0 else "1",
+                        }
+                        matcher = session.query(SubmissionMatcher).filter_by(SubmissionAppId=app.get("externalReferenceId"), SubmissionType="PLANT").first()
+                        task['plantFromApplication'] = plant1
+                        task['plantMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
+                        task['plantSelected'] = {} if task['Result'] is None or task['Result'] == '' else {
+                                "plantName": plants[0].plantName if len(plants) > 0 else "Unknown Plant",
+                                "Address": f'{plants[0].plantAddress}, {plants[0].plantCity} {plants[0].plantState} {plants[0].plantZip} {plants[0].plantCountry}' if len(plants) > 0 else "",
                                 "PlantID": task['Result'],
-                                "OWNSID": '',
-                                "WFID": ''}
+                                "OWNSID": task['Result'], #TODO
+                                "WFID": 'TODO'
+                            }
     return row
 
 def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> list:
