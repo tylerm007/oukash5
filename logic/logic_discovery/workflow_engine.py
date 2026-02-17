@@ -150,121 +150,12 @@ def create_invoice(task_instance_id, data: DotMap):
         app_logger.info(f"EventAction created for TaskInstanceId {task_instance_id} with EventKey {event_key}")
    
     try:
-        set_application_attribute(application_id, "Status", "PAYPEND", data)
+       # set_application_attribute(application_id, "Status", "PAYPEND", data)
+       pass
     except Exception as e:
         app_logger.error(f"Error setting application attribute: {e}")
     
     data.Result = True
-    return data
-
-def set_application_attribute(application_id, name, value, data: DotMap) -> DotMap:
-    ''' Set an attribute of the WFApplication to a new value
-        The simple setattr does not work and we cannot commit()
-        will try PATCH
-    '''
-    application = get_application(application_id)
-    if not application:
-        data.Result = False
-        data.ErrorMessage = f"No application found with ApplicationID {application_id}"
-        return data
-    if application[0]["Status"] == 'WTH':
-        data.Result = False
-        data.ErrorMessage = f"Cannot modify application {application_id} because it is Withdrawn (WTH)"
-        return data
-    payload = {
-        "data": {
-            "attributes": {
-                f"{name}": f"{value}"
-            },
-            "type": "WFApplication",
-            "id": f"{application_id}"
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json'
-    }
-
-    if data.access_token:
-        headers['Authorization'] = data.access_token
-
-    server_uri = get_client_uri()
-    # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/WFApplication/{application_id}", json=payload, headers=headers, verify=False)
-    if response.status_code == 200:
-        app_logger.info(f"Application {application_id} attribute {name} set to {value}")
-        data.Result = True
-        data.Message = f"Application {application_id} attribute {name} set to {value}"
-    else:
-        data.Result = False
-        data.ErrorMessage = f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
-        app_logger.error(f"Application {application_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
-    return data
-
-def set_task_attribute(task_instance_id, name, value, data: DotMap) -> bool:
-    ''' Set an attribute of the TaskInstance to a new value
-        The simple setattr does not work and we cannot commit()
-        will try PATCH
-    '''
-    payload = {
-        "data": {
-            "attributes": {
-                f"{name}": f"{value}"
-            },
-            "type": "TaskInstance",
-            "id": f"{task_instance_id}"
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    if data.access_token:
-        headers['Authorization'] = data.access_token
-   
-    server_uri = get_client_uri()
-    # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/TaskInstance/{task_instance_id}", json=payload, headers=headers, verify=False)
-    if response.status_code == 200:
-        app_logger.info(f"TaskInstance {task_instance_id} attribute {name} set to {value}")
-        data.Result = True
-        data.Message = f"TaskInstance {task_instance_id} attribute {name} set to {value}"
-    else:
-        data.Result = False
-        data.ErrorMessage = f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
-        app_logger.error(f"TaskInstance {task_instance_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
-    return data
-
-
-def set_stage_attribute(stage_id, name, value, data:DotMap) -> DotMap:
-    ''' Set an attribute of the StageInstance to a new value
-        The simple setattr does not work and we cannot commit()
-        will try PATCH
-    '''
-    payload = {
-        "data": {
-            "attributes": {
-                f"{name}": f"{value}"
-            },
-            "type": "StageInstance",
-            "id": f"{stage_id}"
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json'
-    }
-    if data.access_token:
-        headers['Authorization'] = data.access_token
-    
-    server_uri = get_client_uri()
-    # Use secure request helper for self-signed certificates
-    response = make_secure_request('patch', f"{server_uri}/api/StageInstance/{stage_id}", json=payload, headers=headers, verify=False)
-    if response.status_code == 200:
-        app_logger.info(f"StageInstance {stage_id} attribute {name} set to {value}")
-        data.Result = True
-        data.Message = f"StageInstance {stage_id} attribute {name} set to {value}"
-    else:
-        data.Result = False
-        data.ErrorMessage = f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}"
-        app_logger.error(f"StageInstance {stage_id} attribute {name} set to {value} \ncode: {response.status_code} message: {response.text}")
     return data
 
 
@@ -393,7 +284,7 @@ def update_next_task(row: models.TaskInstance, old_row: models.TaskInstance, log
             process_task_instance(next_task_instance, old_row, logic_row)
             
     return
-def create_wfapplication(task_instance_id, data):
+def create_wfapplication(task_instance_id:int, data):
     #createApplication?owns_id=$1
     task_instance = models.TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
     if not task_instance:
@@ -402,6 +293,7 @@ def create_wfapplication(task_instance_id, data):
         return data
     task_instances = models.TaskInstance.query.filter_by(ApplicationId=task_instance.ApplicationId).all()
     owns_id = None
+    #"CreateOwns" First
     for ti in task_instances:
         if ti.TaskDefinition.TaskName == "CreateOwns":
             owns_id = ti.Result
@@ -487,6 +379,38 @@ def call_script_engine(row: models.TaskInstance, old_row: models.TaskInstance, l
             app_logger.warning(f'No task found with task_id {task_id}') 
 
 def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_instance: models.TaskInstance = None):
+    """
+    Execute PostScriptJson for a TaskInstance synchronously.
+    
+    This function executes the task's PostScriptJson in the current thread/request.
+    For long-running scripts (>30 seconds), consider using the async version via the API:
+    
+    Async Execution (Recommended for long-running tasks):
+        POST /complete_task_async
+        - Returns immediately with task_id
+        - Script runs in background thread
+        - Poll status with GET /task_script_status/{task_id}
+        - See docs/background_task_execution_guide.md
+    
+    Args:
+        row: TaskInstance to execute script for
+        access_token: Authorization token for API calls within script
+        parent_instance: Optional parent task to inherit ResultData from
+        
+    Returns:
+        dict: Result data from script execution including:
+            - Result: bool indicating success/failure
+            - Message: Optional message/output
+            - ErrorMessage: Error details if Result is False
+            
+    Example:
+        # Synchronous (current thread)
+        result = call_task_script_engine(task_instance, "Bearer token123")
+        
+        # Asynchronous (background thread) - via API
+        POST /complete_task_async with {"task_instance_id": 454}
+        # Returns: {"task_id": "uuid", "check_status_url": "/task_script_status/uuid"}
+    """
     task_id = row.TaskInstanceId
     task_instance_id = task_id
     stage_id = row.StageId
@@ -543,15 +467,15 @@ def call_task_script_engine(row: models.TaskInstance, access_token:str, parent_i
     
     external_context = {
         "get_application": get_application,
-        "create_wfapplication": create_wfapplication,
-        "set_application_attribute": set_application_attribute,
-        "set_stage_attribute": set_stage_attribute,     
-        "set_task_attribute": set_task_attribute,
+        #"create_wfapplication": create_wfapplication,
+        #"set_application_attribute": set_application_attribute,
+        #"set_stage_attribute": set_stage_attribute,     
+        #"set_task_attribute": set_task_attribute,
         "create_invoice": create_invoice,
         "models": models,
         "app_logger": app_logger,
-        "datetime": datetime,
-        "Decimal": Decimal
+        #"datetime": datetime,
+        #"Decimal": Decimal
     }
     
     # OPTIMIZATION: Reuse cached script engine instance instead of creating new one

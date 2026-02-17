@@ -82,6 +82,7 @@ CREATE TABLE [dbo].[TaskInstances](
 	[CompletedDate] [datetime2](7) NULL,
 	[DurationMinutes]  AS (datediff(minute,[StartedDate],[CompletedDate])),
 	[Result] [nvarchar](50) NULL,
+	[IsVisible] [bit] NOT NULL DEFAULT 1,
 	[ResultData] [nvarchar](max) NULL,
 	[ErrorMessage] [nvarchar](1000) NULL,
 	[RetryCount] [int] NULL,

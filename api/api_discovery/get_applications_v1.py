@@ -181,6 +181,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
             }
     if application_type == 'SUBMISSION':
         companyFromApplication = json.loads(app.get("companyFromApplication", "{}"))
+        companyContacts = json.loads(app.get("companyContacts", "{}"))
         plants = session.query(SubmissionPlant).filter_by(SubmissionAppId=app.get("externalReferenceId")).all()
         #json.loads(app.get("plants", "[]"))
         for stage in row['stages'].values():
@@ -189,30 +190,41 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                     matcher = session.query(SubmissionMatcher).filter_by(SubmissionAppId=app.get("externalReferenceId"), SubmissionType="COMPANY").first()
                     if companyFromApplication and len(companyFromApplication) > 0:
                         task['companyFromApplication'] = companyFromApplication[0] 
+                        task['companyFromApplication']['companyContacts'] = companyContacts if companyContacts else {}
                         task['companyMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
                         task['companySelected'] = {} if task['Result'] is None or task['Result'] == '' else {
                             "companyName": companyFromApplication[0].get("companyName", "Unknown Company"),
                             "ID": task['Result'],
                             "Address": companyFromApplication[0].get("companyAddress", "Unknown Address"),
                         }
-                elif task.get("name") == 'ResolvePlant': # Plant#1
-                    if plants and len(plants) > 0:
-                        plant1 =  {
-                                "plantName": plants[0].plantName if len(plants) > 0 else "Unknown Plant",
-                                "Address": f'{plants[0].plantAddress}, {plants[0].plantCity} {plants[0].plantState} {plants[0].plantZip} {plants[0].plantCountry}' if len(plants) > 0 else "",
-                                "plantID": plants[0].PlantId if len(plants) > 0 else "Unknown PlantId",
-                                "plantNumber": plants[0].plantNumber if len(plants) > 0 else "1",
+                elif 'ResolvePlant' in task.get("name", ""): # Plant#1 - 5
+                    resultData = task.get("ResultData") or {}
+                    #plantContacts = json.loads(app.get("plantContacts") or "{}")
+                    plantInfo = json.loads(resultData.replace("'",'"',1000)) if isinstance(resultData, str) and resultData.startswith('{') else {}
+                    plantId = plantInfo.get("PlantId") if plantInfo else None
+                    task['name'] = 'ResolvePlant'
+                    for plant in plants:
+                        if plantId and str(plant.PlantId) != str(plantId):
+                            continue
+                        
+                        task['plantFromApplication'] = {
+                                "plantName": plant.plantName if len(plants) > 0 else "Unknown Plant",
+                                "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
+                                "plantID": plant.PlantId,
+                                "plantNumber": plant.plantNumber,
+                                "brieflySummarize": plant.brieflySummarize,
+                                "plantContacts":json.loads(app.get('plants'))[int( plant.plantNumber) - 1].get('plantContacts') if app.get('plants') else []
                         }
-                        matcher = session.query(SubmissionMatcher).filter_by(SubmissionAppId=app.get("externalReferenceId"), SubmissionType="PLANT").first()
-                        task['plantFromApplication'] = plant1
+                        matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=plantId, SubmissionType="PLANT").first()
                         task['plantMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
                         task['plantSelected'] = {} if task['Result'] is None or task['Result'] == '' else {
-                                "plantName": plants[0].plantName if len(plants) > 0 else "Unknown Plant",
-                                "Address": f'{plants[0].plantAddress}, {plants[0].plantCity} {plants[0].plantState} {plants[0].plantZip} {plants[0].plantCountry}' if len(plants) > 0 else "",
+                                "plantName": plant.plantName ,
+                                "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
                                 "PlantID": task['Result'],
-                                "OWNSID": task['Result'], #TODO
-                                "WFID": 'TODO'
+                                "OWNSID": plantInfo.get("OwnsId"),
+                                "WFID": plantInfo.get("WFID","")
                             }
+                        
     return row
 
 def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> list:
@@ -251,6 +263,8 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
             #days_due = int(taskdef['EstimatedDurationMinutes'] / (60 * 24)) if taskdef and 'EstimatedDurationMinutes' in taskdef else 1
             days_pending = task['daysPending'] if 'daysPending' in task else 0
             days_overdue = task['daysOverdue'] if 'daysOverdue' in task else 0
+            if application_type == 'SUBMISSION' and taskdef and 'ResolvePlant' in taskdef['TaskName'] and task.get("IsVisible") == 0:
+                continue
             tasks.append({
             "name": taskdef['TaskName'] if task and taskdef else "Unknown Task Name",
             "status": task['status'] if 'status' in task else "UNKNOWN",
@@ -421,6 +435,7 @@ def get_SQL() -> str:
                                             ti.CompletedDate,
                                             ti.Result,
                                             ti.ResultData,
+                                            ti.IsVisible,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -491,12 +506,34 @@ def get_SUBMISSION_SQL() -> str:
              co1.companyProvince,
              co1.companyWebsite,
              co1.whichCategory,
-             co.numberOfPlants
+             co1.numberOfPlants,
+             co1.copack   
              from [dashboardV1].[dbo].[SubmissionApplication] co1
              WHERE co1.SubmissionAppId = co.SubmissionAppId
              FOR JSON AUTO
 
          ) as companyFromApplication,
+         (
+            SELECT 
+            co2.IsPrimaryContact,
+             co2.contactFirst,
+             co2.contactLast,
+             co2.contactEmail,
+             co2.contactPhone,
+             co2.billingContact,
+             co2.billingContactFirst,
+             co2.billingContactLast,
+             co2.billingContactEmail,             
+             co2.billingContactPhone,
+             co2.jobTitle1,
+             co2.contactFirst1,
+             co2.contactLast1,
+             co2.contactEmail1,
+             co2.contactPhone1      
+             from [dashboardV1].[dbo].[SubmissionApplication] co2
+             where co2.SubmissionAppId = co.SubmissionAppId
+             FOR JSON AUTO
+         ) as companyContacts,
         ( SELECT 
             pl.plantName as "plantName", 
             pl.plantNumber,
@@ -505,7 +542,22 @@ def get_SUBMISSION_SQL() -> str:
             pl.plantState,
             pl.plantZip,
             pl.plantRegion,
-            pl.plantCountry
+            pl.plantCountry,
+            (  SELECT
+                pc.contactFirst, 
+                pc.contactLast,
+                pc.contactEmail,
+                pc.contactPhone,
+                pc.jobTitle,
+                pc.contactFirst1 ,
+                pc.contactLast1,
+                pc.contactEmail1,
+                pc.contactPhone1,   
+                pc.jobTitle1
+                from [dashboardV1].[dbo]. SubmissionPlant pc
+                where pc.PlantId = pl.PlantId
+                FOR JSON AUTO  
+            ) as plantContacts
             FROM [dashboardV1].[dbo].[SubmissionPlant] pl
             where pl.SubmissionAppId = co.SubmissionAppId
             FOR JSON AUTO
@@ -533,6 +585,7 @@ def get_SUBMISSION_SQL() -> str:
                                             ti.CompletedDate,
                                             ti.Result,
                                             ti.ResultData,
+                                            ti.IsVisible,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -605,6 +658,7 @@ def getSQLForRoles():
                                             ti.CompletedDate,
                                             ti.Result,
                                             ti.ResultData,
+                                            ti.IsVisible,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL
@@ -699,6 +753,7 @@ def getSQLForOneRole():
                                             ti.CompletedDate,
                                             ti.Result,
                                             ti.ResultData,
+                                            ti.IsVisible,
                                             CASE
                                                                 WHEN ti.status = 'PENDING' and  ti.[CompletedDate] is NULL THEN DATEDIFF(day,  ti.[StartedDate], getdate() ) 
                                                                 ELSE NULL

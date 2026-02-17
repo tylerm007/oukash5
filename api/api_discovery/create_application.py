@@ -1,3 +1,4 @@
+from unittest import result
 from flask_jwt_extended import get_jwt, jwt_required  
 import datetime
 from database.models import WFApplication
@@ -7,6 +8,7 @@ import logging
 import safrs
 from sqlalchemy.sql import text
 import time
+import json
 from security.system.authorization import Security
 
 """
@@ -61,14 +63,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
         if not owns_instance:
             return jsonify({"result": f'Owns instance with ID: {owns_id} not found'}), 404
-    
+        
+        submission_id = args.get('submission_id') or args.get('submissionId') or None
         companyID = owns_instance.COMPANY_ID
         plant_id = owns_instance.PLANT_ID
         company_plant = session.query(models.WFApplication).filter(models.WFApplication.CompanyID == companyID, models.WFApplication.PlantID == plant_id).first()
         if company_plant:
             return jsonify({"result": f'Application already exists for CompanyID: {companyID} and PlantID: {plant_id}'}), 400   
         access_token = request.headers.get('Authorization', '')
-        application_id = create_new_application(companyID, plant_id, int(owns_id), user)
+        application_id = create_new_application(companyID, plant_id, int(owns_id), submission_id, user)
         response = start_workflow(application_id, user, access_token)
         app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": f"application created successfully {application_id} started"}), 200
@@ -117,7 +120,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": "applications created successfully", "applications": data}), 200
 
-def create_new_application( company_id: int = 0, plant_id: int = 0,owns_id:int = 0, user: str = "admin"):
+def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int = 0, submission_id: str=None, user: str = "admin"):
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
     applicationNumber = owns_id if owns_id != 0 else WFApplication.query.count() + 10000
     application = WFApplication(
@@ -132,10 +135,12 @@ def create_new_application( company_id: int = 0, plant_id: int = 0,owns_id:int =
             Priority="NORMAL",
             ApplicationType="WORKFLOW",
             ApplicationNumber=applicationNumber,
+            SubmissionCompany=submission_id
     )
     session.add(application)
     session.commit()
     application_id = application.ApplicationID
+    link_submission_to_application(application_id, company_id, plant_id, owns_id, submission_id)
     create_files(application_id)
     return application_id
 
@@ -268,3 +273,29 @@ def get_application_sql(num_of_apps: int = 10, offset: int = 0) -> str:
         FETCH NEXT {num_of_apps} ROWS ONLY
     """
     return sql
+
+def link_submission_to_application(application_id:int, company_id:int, plant_id:int,owns_id: int,  submission_id: str):
+    if submission_id is None:
+        return
+    submission_application = session.query(models.WFApplication).filter(models.WFApplication.SubmissionCompany == submission_id, models.WFApplication.ApplicationType == 'SUBMISSION').first()
+    if submission_application:
+        submission_application.CompanyID = company_id
+        session.add(submission_application)
+        session.commit()
+        task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.ApplicationId == submission_id).all()
+        for task_instance in task_instances:
+            task_def = task_instance.task_definition
+            if "ResolvePlant" in task_def['TaskName'] and task_instance.Result == submission_id:
+                result_data = task_instance.ResultData
+                if isinstance(result_data, str) and result_data.startswith('{'):
+                    result_data = json.loads(result_data.replace("'", '"',1000))
+                    result_data['CompanyID'] = company_id
+                    result_data['PlantID'] = plant_id
+                    result_data['OwnsID'] = owns_id
+                    result_data['WFID'] = application_id
+                    task_instance.ResultData = json.dumps(result_data)
+                    session.add(task_instance)
+                    session.commit()
+                    return
+
+        

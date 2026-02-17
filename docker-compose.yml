@@ -10,7 +10,7 @@ services:
           - APILOGICPROJECT_IS_DOCKER=true
           - APILOGICPROJECT_SECURITY_ENABLED=true
           - APILOGICPROJECT_SWAGGER_HOST=172.30.3.133
-          - APILOGICPROJECT_HTTP_SCHEME=http
+          - APILOGICPROJECT_HTTP_SCHEME=https
           #- SECURITY_PROVIDER=OKTA
           #- APILOGICPROJECT_SECURITY_PROVIDER = OKTA
           - OKTA_DOMAIN=https://ou.okta.com
@@ -18,7 +18,7 @@ services:
           - OKTA_CLIENT_SECRET=eVdobSwZgx8ANVRwPTxX6lce24t4e5ZBuAQSn_QPopvi69Xa36SWoyPjH4WcjAI7
           - OKTA_REDIRECT_URI=http://172.30.3.133:5656/auth/callback
           # if HTTPS is used, set FLASK_USE_SSL=true
-          - FLASK_USE_SSL=false
+          - FLASK_USE_SSL=true
           - START_BACKGROUND=false
           # COGNITO SETTINGS
           - SECURITY_PROVIDER=COGNITO
@@ -33,10 +33,6 @@ services:
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboard?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           - APILOGICPROJECT_SQLALCHEMY_DATABASEV1_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/dashboardV1?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_OU_URI=mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@172.30.2.246:1433/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
-          # postgresql://postgres:p@postgresql-service/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
-          #- APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgresql-service/authdb
-          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/ou_kash?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no
-          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
         volumes:
            - /home/tyler.band/oukash5:/home/api_logic_project
            - /security/ssl:/security/ssl:ro

@@ -11,6 +11,9 @@ from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required
 from security.system.authorization import Security
 from database.cache_service import DatabaseCacheService
+import threading
+import uuid
+import json
 
 cache = DatabaseCacheService.get_instance()
 
@@ -18,10 +21,21 @@ app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
 session = db.session 
 _project_dir = None
+_flask_app = None  # Store Flask app for background tasks
+
+# Background task tracking for long-running script executions
+background_script_tasks = {}
+
+class BackgroundTaskStatus:
+    PENDING = "pending"
+    RUNNING = "running" 
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
-    global _project_dir
+    global _project_dir, _flask_app
     _project_dir = project_dir
+    _flask_app = app  # Store Flask app reference for background tasks
     pass
 
     # ==================================================
@@ -128,6 +142,126 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_logger.info(f'All TaskFlows are valid for process: {process_name}')
         return jsonify({"status": "ok", "message": "All TaskFlows are valid"}), 200
 
+    @app.route('/complete_task_async', methods=['POST','OPTIONS'])
+    @jwt_required()
+    def complete_task_async():
+        """
+        Complete a task in the background for long-running script executions.
+        Returns immediately with a task_id to check status later.
+
+        Example PowerShell command:
+        $body = @{
+            task_instance_id = 454
+            result = "Approved"
+            completed_by = "tband"
+            capacity = "ADMIN"
+            completion_notes = "Task completed successfully"
+        } | ConvertTo-Json
+
+        Invoke-RestMethod -Uri "http://localhost:5656/complete_task_async" -Method POST -Body $body -ContentType "application/json"
+        
+        Returns:
+            202 Accepted with task_id to check status at /task_script_status/{task_id}
+        """
+        if request.method == 'OPTIONS':
+            return jsonify({"status": "ok"}), 200
+        
+        data = request.get_json()
+        task_instance_id = data.get("task_instance_id")
+        
+        if not task_instance_id:
+            return jsonify({"status": "error", "message": "task_instance_id is required"}), 400
+        status = data.get("status", 'COMPLETED')
+        if not status:
+            return jsonify({"status": "error", "message": "status is required"}), 400
+        user = Security.current_user().Username
+        
+        completed_by = data.get("completed_by", user)
+        capacity = data.get("capacity", None)
+        completion_notes = data.get("completion_notes", 'Complete Task via API (Async)')
+        result = data.get("result", None)
+        access_token = request.headers.get("Authorization")
+        
+        task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+        if not task_instance:
+            return jsonify({"status": "error", "message": f"Task instance {task_instance_id} not found"}), 404
+        if task_instance.Status == 'COMPLETED':
+            return jsonify({"status": "error", "message": f"Task instance {task_instance_id} is already completed"}), 400
+        if status.upper() in ['PENDING', 'IN_PROGRESS', 'IN PROGRESS']:
+            task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
+            task_instance.ModifiedDate = datetime.now()
+            #task_instance.CompletedBy = completed_by
+            session.add(task_instance)
+            session.commit()
+            return jsonify({"status": "success", "message": f"Task {task_instance_id} status updated to {status} successfully"}), 200
+        
+        # Generate unique background task ID
+        bg_task_id = str(uuid.uuid4())
+        
+        # Initialize background task status
+        background_script_tasks[bg_task_id] = {
+            'status': BackgroundTaskStatus.PENDING,
+            'created_at': datetime.now(),
+            'task_instance_id': task_instance_id,
+            'completed_by': completed_by,
+            'result': None,
+            'error': None
+        }
+        
+        # Start background thread
+        thread = threading.Thread(
+            target=_complete_task_background,
+            args=(bg_task_id, task_instance_id, result, completed_by, completion_notes, access_token, capacity)
+        )
+        thread.daemon = True
+        thread.start()
+        
+        app_logger.info(f'Started background task completion: {bg_task_id} for TaskInstance: {task_instance_id}')
+        return jsonify({
+            "status": "accepted",
+            "task_id": bg_task_id,
+            "task_instance_id": task_instance_id,
+            "message": "Task completion started in background",
+            "check_status_url": f"/task_script_status/{bg_task_id}"
+        }), 202
+
+    @app.route('/task_script_status/<task_id>', methods=['GET'])
+    @jwt_required()
+    def get_task_script_status(task_id):
+        """
+        Check the status of a background task script execution.
+        
+        Usage: GET /task_script_status/{task_id}
+        
+        Returns:
+            JSON with status: pending, running, completed, or failed
+        """
+        if task_id not in background_script_tasks:
+            return jsonify({"status": "error", "message": "Task not found"}), 404
+        
+        task = background_script_tasks[task_id]
+        response = {
+            "task_id": task_id,
+            "status": task['status'],
+            "created_at": task['created_at'].isoformat(),
+            "task_instance_id": task['task_instance_id'],
+            "completed_by": task['completed_by']
+        }
+        
+        if 'started_at' in task:
+            response['started_at'] = task['started_at'].isoformat()
+        
+        if task['status'] == BackgroundTaskStatus.COMPLETED:
+            response['result'] = task['result']
+            if 'completed_at' in task:
+                response['completed_at'] = task['completed_at'].isoformat()
+                response['duration_seconds'] = (task['completed_at'] - task['created_at']).total_seconds()
+        elif task['status'] == BackgroundTaskStatus.FAILED:
+            response['error'] = task['error']
+            if 'failed_at' in task:
+                response['failed_at'] = task['failed_at'].isoformat()
+        
+        return jsonify(response)
 
         # ==================================================
         #        END WORKFLOW ENDPOINTS (Flask)
@@ -199,13 +333,16 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         timings['check_prior_tasks'] = time.time() - t4
         
         # Complete the task
-        if depth > 0 and task_def.TaskType == 'CONDITION' and result is None:
+        result_data = task_instance.ResultData
+        result_data = json.loads(result_data.replace("'", '"',1000)) if isinstance(result_data, str) and result_data.startswith('{') else {}   
+        if depth > 0 and task_def.TaskType == 'CONDITION' and result is None and task_instance.IsVisible == 1:
             status = 'PENDING'
             task_instance.TaskRole = task_def['AssigneeRole']
         else:
+            result_data['notes'] = completion_notes
             status = "COMPLETED"
             task_instance.CompletedDate = datetime.now()
-            task_instance.ResultData = completion_notes
+            task_instance.ResultData = json.dumps(result_data)
             task_instance.CompletedBy = completed_by
             task_instance.CompletedCapacity = capacity
         task_instance.ErrorMessage = None
@@ -225,7 +362,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             # TIMING: Call script engine
             t6 = time.time()
             if status == 'COMPLETED' and task_def.PostScriptJson is not None and task_def.PostScriptJson != '':
-                data = call_task_script_engine(task_instance, access_token)
+                data = None # call_task_script_engine(task_instance, access_token)
                 #task_instance.ResultData = data.Message if data and 'Message' in data and data.Result else None
                 if data and str(data.get("Result")) != 'DotMap()' and  data.get("Result") == False:
                     task_instance.ErrorMessage = data.get('ErrorMessage')  if 'ErrorMessage' in data else 'TaskInstance script returned False result'
@@ -238,7 +375,10 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
                     return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id} message: {task_instance.ErrorMessage}'}), 400
                 else:
-                    task_instance.ResultData = data.get('Message') if data and 'Message' in data and data.get("Result") else None
+                    message = data.get('Message') if data and 'Message' in data and data.get("Result") else None
+                    if message:
+                        result_data['message'] = message
+                        task_instance.ResultData = json.dumps(result_data)
                     session.add(task_instance)
             timings['script_engine'] = time.time() - t6
             
@@ -361,4 +501,162 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
     '''
     application_id = task_instance.ApplicationId
     app_logger.info(f'Inserted workflow message for Application ID: {application_id}')
+
+
+# ============================================
+# BACKGROUND TASK EXECUTION
+# ============================================
+
+def _complete_task_background(bg_task_id: str, task_instance_id: int, result: str, completed_by: str, 
+                              completion_notes: str, access_token: str, capacity: str):
+    """
+    Execute task completion in background thread.
+    This allows long-running script executions to not block the API response.
+    
+    Args:
+        bg_task_id: Unique ID for tracking this background task
+        task_instance_id: The TaskInstance to complete
+        result: Task result value
+        completed_by: User completing the task
+        completion_notes: Notes about completion
+        access_token: Authorization token for API calls
+        capacity: User's capacity (ADMIN, MEMBER, DESIGNATED)
+    """
+    # CRITICAL: Push Flask application context for database access
+    if not _flask_app:
+        app_logger.error(f'[BACKGROUND] Flask app not available for background task {bg_task_id}')
+        background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.FAILED
+        background_script_tasks[bg_task_id]['error'] = 'Flask app context not available'
+        return
+    
+    with _flask_app.app_context():
+        try:
+            # Update status to running
+            background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.RUNNING
+            background_script_tasks[bg_task_id]['started_at'] = datetime.now()
+            
+            app_logger.info(f'[BACKGROUND] Starting task completion: {task_instance_id} (bg_task: {bg_task_id})')
+            
+            # Execute the actual task completion
+            response = _complete_task(
+                task_instance_id=task_instance_id,
+                result=result,
+                completed_by=completed_by,
+                completion_notes=completion_notes,
+                access_token=access_token,
+                capacity=capacity,
+                depth=0
+            )
+            
+            # Check if response is a tuple (response, status_code)
+            if isinstance(response, tuple):
+                response_data, status_code = response
+                response_json = response_data.get_json() if hasattr(response_data, 'get_json') else response_data
+            else:
+                response_json = response.get_json() if hasattr(response, 'get_json') else response
+                status_code = 200
+            
+            # Update task status based on result
+            if status_code >= 200 and status_code < 300:
+                background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.COMPLETED
+                background_script_tasks[bg_task_id]['result'] = response_json
+                background_script_tasks[bg_task_id]['completed_at'] = datetime.now()
+                app_logger.info(f'[BACKGROUND] Task completion succeeded: {task_instance_id} (bg_task: {bg_task_id})')
+            else:
+                background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.FAILED
+                background_script_tasks[bg_task_id]['error'] = response_json.get('message', 'Unknown error')
+                background_script_tasks[bg_task_id]['failed_at'] = datetime.now()
+                app_logger.error(f'[BACKGROUND] Task completion failed: {task_instance_id} (bg_task: {bg_task_id})')
+                
+        except Exception as e:
+            app_logger.error(f'[BACKGROUND] Critical error in task completion: {task_instance_id} (bg_task: {bg_task_id}): {e}')
+            background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.FAILED
+            background_script_tasks[bg_task_id]['error'] = f'Critical error: {str(e)}'
+            background_script_tasks[bg_task_id]['failed_at'] = datetime.now()
+    
+
+def call_task_script_engine_async(task_instance_id: int, access_token: str) -> str:
+    """
+    Wrapper to call task script engine in background and return a task_id for status checking.
+    
+    Args:
+        task_instance_id: The TaskInstance ID
+        access_token: Authorization token
+        
+    Returns:
+        task_id: UUID string to check background task status
+    """
+    # Validate that task instance exists (in current context)
+    task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+    if not task_instance:
+        raise ValueError(f"TaskInstance {task_instance_id} not found")
+    
+    # Generate unique background task ID
+    bg_task_id = str(uuid.uuid4())
+    
+    # Initialize background task status
+    background_script_tasks[bg_task_id] = {
+        'status': BackgroundTaskStatus.PENDING,
+        'created_at': datetime.now(),
+        'task_instance_id': task_instance_id,
+        'result': None,
+        'error': None
+    }
+    
+    # Start background thread - pass task_instance_id instead of object
+    thread = threading.Thread(
+        target=_execute_script_background,
+        args=(bg_task_id, task_instance_id, access_token)  # Pass ID, not object
+    )
+    thread.daemon = True
+    thread.start()
+    
+    app_logger.info(f'Started background script execution: {bg_task_id} for TaskInstance: {task_instance_id}')
+    return bg_task_id
+
+
+def _execute_script_background(bg_task_id: str, task_instance_id: int, access_token: str):
+    """
+    Execute task script engine in background thread.
+    
+    Args:
+        bg_task_id: Unique ID for tracking this background task
+        task_instance_id: The TaskInstance ID (will be queried within app context)
+        access_token: Authorization token for API calls
+    """
+    # CRITICAL: Push Flask application context for database access
+    if not _flask_app:
+        app_logger.error(f'[BACKGROUND] Flask app not available for background task {bg_task_id}')
+        background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.FAILED
+        background_script_tasks[bg_task_id]['error'] = 'Flask app context not available'
+        return
+    
+    with _flask_app.app_context():
+        try:
+            # Query task instance within app context
+            task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
+            if not task_instance:
+                raise ValueError(f"TaskInstance {task_instance_id} not found")
+            
+            # Update status to running
+            background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.RUNNING
+            background_script_tasks[bg_task_id]['started_at'] = datetime.now()
+            
+            app_logger.info(f'[BACKGROUND] Starting script execution for TaskInstance: {task_instance_id} (bg_task: {bg_task_id})')
+            
+            # Execute the script
+            result = call_task_script_engine(task_instance, access_token)
+            
+            # Update task status
+            background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.COMPLETED
+            background_script_tasks[bg_task_id]['result'] = result
+            background_script_tasks[bg_task_id]['completed_at'] = datetime.now()
+            
+            app_logger.info(f'[BACKGROUND] Script execution completed for TaskInstance: {task_instance_id} (bg_task: {bg_task_id})')
+            
+        except Exception as e:
+            app_logger.error(f'[BACKGROUND] Script execution failed for TaskInstance: {task_instance_id} (bg_task: {bg_task_id}): {e}')
+            background_script_tasks[bg_task_id]['status'] = BackgroundTaskStatus.FAILED
+            background_script_tasks[bg_task_id]['error'] = str(e)
+            background_script_tasks[bg_task_id]['failed_at'] = datetime.now()
     

@@ -276,6 +276,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
                      # Get TaskInstanceId
                     app_logger.debug(f'Created TaskInstance for {getattr(task_def,"TaskName")} with plant data: {plant_data}')
                 else:
+                    task_instance.IsVisible = False
                     task_instance.Status = 'COMPLETED'  # Mark as completed if no plant data available
                     app_logger.warning(f'No plant data available for {getattr(task_def,"TaskName")}, Set task to COMPLETED')
                 session.add(task_instance)
@@ -380,14 +381,14 @@ def get_company_plants(company_id: int):
             continue
         plant_id = plant.PlantId
         plant_data = {
-            'PlantId': plant_id, 
+            "PlantId": plant_id, 
             "PlantNumber": plant.plantNumber,
-            'PlantName': plant.plantName,
-            'Address': plant.plantAddress,
-            'City': plant.plantCity,
-            'State': plant.plantState,
-            'Zip': plant.plantZip,
-            'Country': plant.plantCountry
+            "PlantName": plant.plantName,
+            "Address": plant.plantAddress or "",
+            "City": plant.plantCity or "",
+            "State": plant.plantState or "",
+            "Zip": plant.plantZip or "",
+            "Country": plant.plantCountry or ""
         }
         plant_ids[cntr] = str(plant_data)
         cntr = cntr + 1
