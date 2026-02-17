@@ -10,7 +10,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
-from database.models import SubmissionMatcher, SubmissionPlant, WFApplication
+from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -207,14 +207,14 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                         if plantId and str(plant.PlantId) != str(plantId):
                             continue
                         workflow_app_id = ""
-                        
-                        linked_app = session.query(WFApplication).filter_by(PlantID=task['Result'],ApplicationType='WORKFLOW').first()
-                        if linked_app:
-                            workflow_app_id = linked_app.ApplicationID
-                        owns_id = plantInfo.get("OWNSID")
-                        if not owns_id:
-                            owns_record = session.query(models.OWNSTB).filter_by(PLANT_ID=task['Result']).first()
-                            owns_id = owns_record.ID if owns_record else None
+                        if task['Result'] != '':
+                            linked_app = session.query(WFApplication).filter_by(PlantID=task['Result'],ApplicationType='WORKFLOW').first()
+                            if linked_app:
+                                workflow_app_id = linked_app.ApplicationID
+                            owns_id = plantInfo.get("OWNSID") or ""
+                            if not owns_id:
+                                owns_record = session.query(OWNSTB).filter_by(PLANT_ID=task['Result']).first()
+                                owns_id = owns_record.ID if owns_record else ""
                         task['plantFromApplication'] = {
                                 "plantName": plant.plantName if len(plants) > 0 else "Unknown Plant",
                                 "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
