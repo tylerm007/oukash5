@@ -62,9 +62,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         # SQL Server's FOR JSON AUTO returns a single row with JSON string
         if len(results) == 0:
             return jsonify({"message": "Plant not found", "plant_id": plant_id}), 404
-        
+        json_string = ''
+        for row in results:
+            if row and row[0]:  # First column contains JSON fragment
+                json_string += row[0]
         # Extract the JSON string from the first column of the first row
-        json_string = results[0][0] if results[0] else None
+        #json_string = results[0][0] if results[0] else None
         
         if json_string:
             # Parse the JSON string to proper Python dict/list
@@ -90,9 +93,11 @@ def get_company_details_sql(company_id: int) -> str:
 
         ) as companyAddresses,
         (
-        select *
-        from [ou_kash].[dbo].[companycontacts_tb] cc
-        WHERE cc.COMPANY_ID = co.COMPANY_ID
+        select c.*
+        from [ou_kash].[dbo].[companycontacts_tb] cc,
+        [ou_kash].[dbo].[Contacts] c
+        WHERE cc.ContactID = c.ID
+        AND cc.COMPANY_ID = co.COMPANY_ID
         FOR JSON AUTO
 
         ) as companyContacts
@@ -118,9 +123,13 @@ def get_plant_details_sql(plant_id: int) -> str:
             FOR JSON AUTO
         ) as plantAddresses,
         (
-            select *
-            from [ou_kash].[dbo].[plantContacts_TB] pc
-            WHERE pc.pcID = pl.PLANT_ID
+            select c.*
+            from [ou_kash].[dbo].[plantContacts_TB] pc,
+             [ou_kash].[dbo].[Contacts] c,
+             [ou_kash].[dbo].[OWNS_TB] o
+            WHERE pc.pcID = c.ID
+            AND o.PLANT_ID = pl.PLANT_ID
+            and pc.OWNS_ID = o.ID
             FOR JSON AUTO
         ) as plantContacts
         FROM [ou_kash].[dbo].PLANT_TB pl

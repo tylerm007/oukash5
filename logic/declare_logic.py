@@ -180,7 +180,7 @@ def declare_logic():
         company_row = get_resolve_company(row)
         # If both Company and Plant are in Result - lookup OWNS record and add OwnsId to ResultData
         if result is not None and company_row is not None:
-            #result_data = json.loads(row.ResultData.replace("'",'"',1000)) if row.ResultData and isinstance(row.ResultData, str) else {}
+            result_data = json.loads(row.ResultData.replace("'",'"',1000)) if row.ResultData and isinstance(row.ResultData, str) else {}
             plant_id = int(result) if isinstance(result, int) or (isinstance(result, str) and result.isdigit()) else None
             company_id = getattr(company_row ,'Result') if company_row else None
             ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
@@ -193,7 +193,7 @@ def declare_logic():
         owns_id = None
         if ownstb:
             owns_id = getattr(ownstb,'ID')
-            #result_data["OwnsId"] = owns_id
+            result_data["OWNSID"] = owns_id
         else:
             owns = models.OWNSTB(
                 COMPANY_ID=company_id,
@@ -205,7 +205,7 @@ def declare_logic():
             try:
                 logic_row.insert(reason="Create OWNS record", row=owns)
                 owns_id = owns.ID
-                #result_data["OwnsId"] = owns_id
+                result_data["OWNSID"] = owns_id
             except Exception as e:
                 app_logger.error(f"Error creating OWNS record: {e}")
             
@@ -226,7 +226,7 @@ def declare_logic():
                 data = create_wfapplication(new_application, owns_id=owns_id, logic_row=logic_row)
                 print(data)
         row.Result = plant_id
-        #row.ResultData = json.dumps(result_data)
+        row.ResultData = json.dumps(result_data)
 
     def get_resolve_company(row: models.TaskInstance):
         # Helper function to get the related ResolveCompany task result for the same application

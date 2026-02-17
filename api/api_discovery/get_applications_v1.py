@@ -10,7 +10,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
-from database.models import SubmissionMatcher, SubmissionPlant
+from database.models import SubmissionMatcher, SubmissionPlant, WFApplication
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -206,7 +206,15 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                     for plant in plants:
                         if plantId and str(plant.PlantId) != str(plantId):
                             continue
+                        workflow_app_id = ""
                         
+                        linked_app = session.query(WFApplication).filter_by(PlantID=task['Result'],ApplicationType='WORKFLOW').first()
+                        if linked_app:
+                            workflow_app_id = linked_app.ApplicationID
+                        owns_id = plantInfo.get("OWNSID")
+                        if not owns_id:
+                            owns_record = session.query(models.OWNSTB).filter_by(PLANT_ID=task['Result']).first()
+                            owns_id = owns_record.ID if owns_record else None
                         task['plantFromApplication'] = {
                                 "plantName": plant.plantName if len(plants) > 0 else "Unknown Plant",
                                 "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
@@ -221,8 +229,8 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                                 "plantName": plant.plantName ,
                                 "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
                                 "PlantID": task['Result'],
-                                "OWNSID": plantInfo.get("OwnsId"),
-                                "WFID": plantInfo.get("WFID","")
+                                "OWNSID": owns_id,
+                                "WFID": workflow_app_id
                             }
                         
     return row

@@ -388,7 +388,9 @@ def get_company_plants(company_id: int):
             "City": plant.plantCity or "",
             "State": plant.plantState or "",
             "Zip": plant.plantZip or "",
-            "Country": plant.plantCountry or ""
+            "Country": plant.plantCountry or "",
+            "OWNSID": "",
+            "WFID": ""
         }
         plant_ids[cntr] = str(plant_data)
         cntr = cntr + 1
