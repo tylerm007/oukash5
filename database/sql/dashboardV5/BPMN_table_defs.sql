@@ -273,5 +273,5 @@ VALUES
 ('Products', 'Product evaluation and PLA processing', 5, 'system'),
 ('Contract', 'Contract review and certification agreement', 3, 'system'),
 ('Certification', 'Final certification and invoice processing', 2, 'system'),
-('Preliminary', 'Preliminary application review', 1, 'system');
+('Intake', 'Int application review', 1, 'system');
 GO

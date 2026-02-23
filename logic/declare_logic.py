@@ -411,7 +411,7 @@ def declare_logic():
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"Update application status to {application.Status}", row=application)
-        elif task_def.TaskName == 'Prelim App End' and row.Status == 'COMPLETED':
+        elif task_def.TaskName == 'Intake App End' and row.Status == 'COMPLETED':
             if application is not None:
                 application.CompletedDate = datetime.datetime.now()
                 application.Status = 'COMPL'

@@ -10,7 +10,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
-from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB
+from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB, SubmissionApplication
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -153,13 +153,20 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
     status = _get_app_status(app.get("Status"),application_type)
     days_between = _calc_days_between(created_date, None) if app.get("Status") not in ["COMPL","WTH"] else 0
     days_due = 5  #
+    external_refid = app.get("externalReferenceId") 
+    if application_type == 'WORKFLOW':
+        applicationId = app.get("applicationId")
+        application = session.query(WFApplication).filter_by(ApplicationID=applicationId).first()
+        if application:
+            submission = session.query(WFApplication).filter_by(SubmissionCompany=application.SubmissionCompany).first()
+            external_refid = submission.ApplicationID if submission else None
     row ={
                 #id": app.get("ApplicationID"),
                 "company": app.get("companyName", "Unknown Company"),
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
                 'companyId': app.get("companyId"),
-                "externalReferenceId": app.get("externalReferenceId"),
+                "externalReferenceId": external_refid,
                 'plantId': app.get("plantId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
@@ -253,7 +260,7 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
         for task in stage_tasks:
             taskdef_id = task.get('TaskDefinitionId')
             taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
-            if len(taskdef) == 0:
+            if len(taskdef) == 0 or taskdef.get('TaskName') == 'AssignNCRC':
                 continue
             if task.get('AssigneeRole') == 'SYSTEM':
                 continue

@@ -261,7 +261,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
                 # Skip ResolvePlant tasks here - they will be created separately with plant data
                 resolve_tasks.append(task_instance)
             # Check if this is the START task
-            if task_def['TaskType'] == 'START' or task_def['TaskName'] == 'Prelim Stage start':
+            if task_def['TaskType'] == 'START' or task_def['TaskName'] == 'Intake Stage start':
                 start_instance_id = task_instance.TaskInstanceId
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
 
@@ -314,7 +314,7 @@ def process_stages_batch(stage_definitions, application_id, started_by):
         stage_definition_list[1] = stage_definitions[len(stage_definitions)]
     else:
         for stage_def in stage_definitions:
-            if stage_definitions[stage_def].StageName == "Preliminary":
+            if stage_definitions[stage_def].StageName.upper() == "INTAKE":
                 continue
             stage_definition_list[len(stage_definition_list) + 1] = stage_definitions[stage_def]
     try:
@@ -461,7 +461,7 @@ def _start_workflow(process_name:str, application_id:int, started_by:str, priori
                     session.commit()
                     app_logger.info(f'Created TaskInstance: {task_definition.TaskName}')
                     task_instances.append(task_instance)
-                    if task_instance.TaskDef.TaskType == 'START' or task_instance.TaskDef.TaskName == 'Prelim Stage start':
+                    if task_instance.TaskDef.TaskType == 'START' or task_instance.TaskDef.TaskName == 'Intake Stage start':
                         start_instance_id = task_instance.TaskInstanceId
                    
     if start_instance_id is None:

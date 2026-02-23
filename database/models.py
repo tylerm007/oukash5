@@ -467,12 +467,12 @@ class TaskInstance(Base):  # type: ignore
     CompletedCapacity = Column(Unicode(100))
     StartedDate = Column(DATETIME2)
     CompletedDate = Column(DATETIME2)
+    IsVisible = Column(Boolean, server_default=text("1"), nullable=False)
     #_DurationMinutes = Column('#DurationMinutes', Integer, Computed('(datediff(minute,[StartedDate],[CompletedDate]))', persisted=False))
     Result = Column(Unicode(50))
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))
     RetryCount = Column(Integer, server_default=text("0"))
-    IsVisible = Column(Boolean, server_default=text("1"), nullable=False)   
 
     # parent relationships (access parent)
     Stage : Mapped["StageDefinition"] = relationship(foreign_keys=[StageId])
@@ -812,7 +812,8 @@ class COMPANYTB(Base):  # type: ignore
     _s_collection_name = 'COMPANYTB'  # type: ignore
     __table_args__ = (
         Index('idxRC', 'STATUS', 'ACTIVE', 'COMPANY_ID'),
-        Index('CompStatus', 'STATUS', 'ACTIVE', 'AcquiredFrom')
+        Index('CompStatus', 'STATUS', 'ACTIVE', 'AcquiredFrom'),
+        {"implicit_returning": False}  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -848,9 +849,9 @@ class COMPANYTB(Base):  # type: ignore
     PrivateLabelPOexpiry = Column(DATETIME2)
     VisitPO = Column(String(75), server_default=text(''))
     VisitPOexpiry = Column(DATETIME2)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
     CATEGORY = Column(String(50))
     OLDCOMPANYTYPE = Column(String(50))
     BoilerplateInvoiceComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
@@ -862,7 +863,6 @@ class COMPANYTB(Base):  # type: ignore
     On3rdPartyBilling = Column(Boolean, server_default=text("0"), nullable=False)
     IsTest = Column(Boolean, server_default=text("0"), nullable=False)
     ChometzEmailSentDate = Column(DATETIME2)
-    allow_client_generated_ids = True
 
     # parent relationships (access parent)
 
@@ -883,6 +883,7 @@ class COMPANYADDRESSTB(Base):  # type: ignore
     _s_collection_name = 'COMPANYADDRESSTB'  # type: ignore
     __table_args__ = (
         Index('compaddress2', 'COMPANY_ID', 'ADDRESS_SEQ_NUM', 'ACTIVE'),
+        {"implicit_returning": False}  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -900,9 +901,9 @@ class COMPANYADDRESSTB(Base):  # type: ignore
     COUNTRY = Column(String(25), server_default=text(""))
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("COMPANYADDRESSTBList"))
@@ -911,6 +912,7 @@ class COMPANYADDRESSTB(Base):  # type: ignore
 class PLANTTB(Base):  # type: ignore
     __tablename__ = 'PLANT_TB'
     _s_collection_name = 'PLANTTB'  # type: ignore
+    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     __bind_key__ = 'ou'
 
     PLANT_ID = Column(Integer, primary_key=True, index=True)
@@ -929,13 +931,13 @@ class PLANTTB(Base):  # type: ignore
     OtherCertification = Column(String(500))
     PrimaryCompany = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
     DesignatedRFR = Column(Integer) #Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
     MaxOnSiteVisits = Column(SMALLINT, server_default=text("0"), nullable=False)
     MaxVirtualVisits = Column(SMALLINT, server_default=text("0"), nullable=False)
     IsDaily = Column(Boolean, server_default=text("0"), nullable=False)
-    allow_client_generated_ids = True
+    
 
      # parent relationships (access parent)
     #PERSON_JOB_TB : Mapped["PERSONJOBTB"] = relationship(foreign_keys='[PLANTTB.DesignatedRFR]', back_populates=("PLANTTBList"))
@@ -957,7 +959,8 @@ class OWNSTB(Base):  # type: ignore
     __table_args__ = (
         Index('setupby', 'STATUS', 'ACTIVE'),
         Index('XOWNS', 'PLANT_ID', 'STATUS', 'ID', 'ACTIVE', 'Setup_By'),
-        Index('idxCompID', 'COMPANY_ID', 'ACTIVE', 'PLANT_ID', unique=True)
+        Index('idxCompID', 'COMPANY_ID', 'ACTIVE', 'PLANT_ID', unique=True),
+        {"implicit_returning": False}  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -993,9 +996,9 @@ class OWNSTB(Base):  # type: ignore
     Override = Column(Boolean, server_default=text("0"), nullable=False)
     VisitPO = Column(String(75), server_default=text(""))
     VisitPOexpiry = Column(DATETIME)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
     BoilerplateInvoiceComment = Column(String(collation='SQL_Latin1_General_CP1_CI_AS'))
     IsCertBillingOverride = Column(Boolean, server_default=text("0"), nullable=False)
 
@@ -1011,6 +1014,7 @@ class OWNSTB(Base):  # type: ignore
 class PLANTADDRESSTB(Base):  # type: ignore
     __tablename__ = 'PLANT_ADDRESS_TB'
     _s_collection_name = 'PLANTADDRESSTB'  # type: ignore
+    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     __bind_key__ = 'ou'
 
     ID = Column(Integer, autoincrement=True, primary_key=True)
@@ -1028,9 +1032,9 @@ class PLANTADDRESSTB(Base):  # type: ignore
     TIMESTAMP = Column(BINARY(8))
     ACTIVE = Column(Integer)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("PLANTADDRESSTBList"))
@@ -1046,7 +1050,8 @@ class USEDIN1TB(Base):  # type: ignore
         Index('IdxUsedInLabelIdOwnsIdUidActive', 'LabelID', 'OWNS_ID', 'ID', 'ACTIVE'),
         Index('idxLabelID', 'LabelID', 'OWNS_ID'),
         Index('ix_USED_IN1_TB_ACTIVE_LineItem_includes', 'ACTIVE', 'LineItem'),
-        Index('idxSubmissionDetail', 'JobID', 'LineItem', 'ACTIVE')
+        Index('idxSubmissionDetail', 'JobID', 'LineItem', 'ACTIVE'),
+        {"implicit_returning": False}  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -1074,9 +1079,9 @@ class USEDIN1TB(Base):  # type: ignore
     LocReceivedStatus = Column(Integer)
     InternalCode = Column(String(50))
     LabelID = Column(ForeignKey('label_tb.ID'), index=True)
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
     COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("USEDIN1TBList"))
@@ -1093,7 +1098,8 @@ class MERCHTB(Base):  # type: ignore
     __table_args__ = (
         Index('ix_MERCH_TB_ACTIVE_Reviewed_includes', 'ACTIVE', 'Reviewed'),
         Index('idx_MerchandiseID_Active', 'MERCHANDISE_ID', 'ACTIVE', unique=True),
-        Index('idxSymbol', 'Symbol', 'MERCHANDISE_ID', 'ACTIVE')
+        Index('idxSymbol', 'Symbol', 'MERCHANDISE_ID', 'ACTIVE'),
+        {"implicit_returning": False}  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -1135,9 +1141,9 @@ class MERCHTB(Base):  # type: ignore
     TransferredTo = Column(Boolean, server_default=text("0"), nullable=False)
     TransferredMerch = Column(Integer)
     Special_Status = Column(String(255))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
 
     # parent relationships (access parent)
 
@@ -1150,6 +1156,7 @@ class MERCHTB(Base):  # type: ignore
 class FormulaProduct(Base):  # type: ignore
     __tablename__ = 'FormulaProduct'
     _s_collection_name = 'FormulaProduct'  # type: ignore
+    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     __bind_key__ = 'ou'
 
     ID = Column(Integer, server_default=text("0"), primary_key=True)
@@ -1180,7 +1187,8 @@ class LabelTb(Base):  # type: ignore
         Index('ix_label_tb_LOChold_ACTIVE_AgencyID_LOCholdDate', 'LOChold', 'ACTIVE', 'AgencyID', 'LOCholdDate'),
         Index('IDX_NUM', 'LABEL_NUM', 'MERCHANDISE_ID', 'LABEL_SEQ_NUM', 'SRC_MAR_ID', 'LABEL_TYPE', 'LOChold'),
         Index('IX_Label_OrderAndFilter', 'LABEL_NAME', 'BRAND_NAME', 'LABEL_SEQ_NUM'),
-        Index('ix_label_tb_ACTIVE_BRAND_NAME_includes', 'ACTIVE', 'BRAND_NAME')
+        Index('ix_label_tb_ACTIVE_BRAND_NAME_includes', 'ACTIVE', 'BRAND_NAME'),
+        {"implicit_returning": False},  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     )
     __bind_key__ = 'ou'
 
@@ -1217,9 +1225,9 @@ class LabelTb(Base):  # type: ignore
     COMMENT = Column(String(1000), server_default=text(""))
     DisplayNewlyCertifiedOnWeb = Column(String(1), server_default=text("N"))
     Status = Column(String(25))
-    ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
-    ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
-    CHANGESET_ID = Column(Integer, index=True)
+    #ValidFromTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'1900-01-01 00:00:00'"), nullable=False)
+    #ValidToTime = Column(DATETIME2, server_default=text("(CONVERT([datetime2](7),'9999-12-31 23:59:59.9999999'"), nullable=False)
+    #CHANGESET_ID = Column(Integer, index=True)
     LastChangeDate = Column(DATETIME)
     LastChangeReason = Column(String(100))
     LastChangeType = Column(String(100))
@@ -1712,6 +1720,7 @@ class INVOICEFEESDETAIL(Base):  # type: ignore
 class PERSONJOBTB(Base):  # type: ignore
     __tablename__ = 'PERSON_JOB_TB'
     _s_collection_name = 'PERSONJOBTB'  # type: ignore
+    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     __bind_key__ = 'ou'
 
     PERSON_JOB_ID = Column(Integer, autoincrement=True, primary_key=True)
@@ -1737,6 +1746,7 @@ class PERSONJOBTB(Base):  # type: ignore
 class PERSONTB(Base):
     __tablename__ = 'PERSON_TB'
     _s_collection_name = 'person_tb'  # type: ignore
+    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     _bind_key__ = 'ou'
 
     PERSON_ID = Column(Integer, autoincrement=True, primary_key=True)
@@ -1764,9 +1774,9 @@ class PERSONTB(Base):
     Password = Column(String(30), nullable=True)
     PasswordQuestion = Column(String(500), nullable=True)
     PasswordAnswer = Column(String(500), nullable=True)
-    ValidFromTime = Column(DATETIME2, nullable=False)
-    ValidToTime = Column(DATETIME2, nullable=False)
-    CHANGESET_ID = Column(Integer, nullable=True)
+    #ValidFromTime = Column(DATETIME2, nullable=False)
+    #ValidToTime = Column(DATETIME2, nullable=False)
+    #CHANGESET_ID = Column(Integer, nullable=True)
     IncludeInIngWFAssignmentList = Column(Boolean, nullable=True)
     TempRfr = Column(Boolean, nullable=False)
     IsBillForMileageDifferential = Column(Boolean, nullable=False)
@@ -1779,6 +1789,7 @@ class PERSONTB(Base):
 class PersonContact(Base):
     __tablename__ = 'PersonContacts'
     _s_collection_name = 'PersonContacts'  # type: ignore
+    #__table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
     __bind_key__ = 'ou'
 
     ID = Column(Integer, autoincrement=True, primary_key=True)
