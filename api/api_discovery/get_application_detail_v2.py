@@ -264,7 +264,7 @@ def get_SUBMISSION_SQL() -> str:
                         co.companyName as name,
                         co.companyWebsite as website
                 from SubmissionApplication co  
-                where co.SubmissionAppId = app.SubmissionCompany
+                where co.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.company',
         (
@@ -276,7 +276,7 @@ def get_SUBMISSION_SQL() -> str:
                     'main' as type,
                     coa.ZipPostalCode as zip
                 from SubmissionApplication coa  
-                where coa.SubmissionAppId = app.SubmissionCompany
+                where coa.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.companyAddresses',
         ( 
@@ -287,7 +287,7 @@ def get_SUBMISSION_SQL() -> str:
                     'Primary' as type,
                     coc.jobTitle as role
                 FROM SubmissionApplication coc  
-                where coc.SubmissionAppId = app.SubmissionCompany
+                where coc.SubmissionAppId = app.ExternalAppRef
                     FOR JSON AUTO
         ) as 'appplicationinfo.companyContacts',
         (
@@ -296,7 +296,7 @@ def get_SUBMISSION_SQL() -> str:
                         jfp.plantRegion as location,
                         jfp.PlantId as  plantId
                 from SubmissionPlant jfp  
-                where jfp.SubmissionAppId = app.SubmissionCompany
+                where jfp.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.plants',
         (
@@ -308,7 +308,7 @@ def get_SUBMISSION_SQL() -> str:
                     '' as type,
                     jfpa.plantZip as zip
                 from SubmissionPlant jfpa  
-                where jfpa.SubmissionAppId = app.SubmissionCompany
+                where jfpa.SubmissionAppId = app.ExternalAppRef
                     FOR JSON AUTO
         ) as 'appplicationinfo.plantAddresses',
         ( 

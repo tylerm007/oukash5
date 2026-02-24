@@ -266,7 +266,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
 
         if application_type == 'SUBMISSION':
-            submission_plants = get_company_plants(application.SubmissionCompany)
+            submission_plants = get_company_plants(application.ExternalAppRef)
             for task_instance in resolve_tasks:
                 task_def = task_instance.TaskDefinition
                 plant_index = int(getattr(task_def,'TaskName')[-1]) - 1  # Assuming task names end with a number like ResolvePlant1, ResolvePlant2, etc.

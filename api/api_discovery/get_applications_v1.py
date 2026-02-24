@@ -158,7 +158,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
         applicationId = app.get("applicationId")
         application = session.query(WFApplication).filter_by(ApplicationID=applicationId).first()
         if application:
-            submission = session.query(WFApplication).filter_by(SubmissionCompany=application.SubmissionCompany).first()
+            submission = session.query(WFApplication).filter_by(ExternalAppRef=application.ExternalAppRef).first()
             external_refid = submission.ApplicationID if submission else None
     row ={
                 #id": app.get("ApplicationID"),
@@ -507,7 +507,7 @@ def get_SUBMISSION_SQL() -> str:
          app.ModifiedDate,
          app.Status,
          app.Priority,
-         app.SubmissionCompany as 'externalReferenceId',
+         app.ExternalAppRef as 'externalReferenceId',
          ( select
              co1.companyName as "companyName",
              co1.companyAddress,
@@ -627,8 +627,8 @@ def get_SUBMISSION_SQL() -> str:
                 
                             
         FROM [dashboard].[dbo].[WF_Applications]  app
-            LEFT JOIN  [dashboardV1].[dbo].SubmissionPlant pl ON pl.PlantId = app.SubmissionPlant
-            LEFT JOIN [dashboardV1].[dbo].SubmissionApplication co ON app.SubmissionCompany = co.SubmissionAppId
+            LEFT JOIN  [dashboardV1].[dbo].SubmissionPlant pl ON pl.SubmissionAppId = app.ExternalAppRef
+            LEFT JOIN [dashboardV1].[dbo].SubmissionApplication co ON app.ExternalAppRef = co.SubmissionAppId
         
         WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
             (:priority IS NULL OR app.Priority = :priority) and

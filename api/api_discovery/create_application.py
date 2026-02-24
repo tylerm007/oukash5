@@ -123,6 +123,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int = 0, submission_id: str=None, user: str = "admin"):
     #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
     applicationNumber = owns_id if owns_id != 0 else WFApplication.query.count() + 10000
+    # ExternalAppRef is INT - safely convert submission_id string to int, or None
+    try:
+        external_ref = int(submission_id) if submission_id is not None else None
+    except (ValueError, TypeError):
+        external_ref = None
     application = WFApplication(
             Name="New Application",
             Description="Description of the new application",
@@ -135,7 +140,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
             Priority="NORMAL",
             ApplicationType="WORKFLOW",
             ApplicationNumber=applicationNumber,
-            SubmissionCompany=submission_id
+            ExternalAppRef=external_ref
     )
     session.add(application)
     session.commit()
@@ -145,15 +150,17 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
     return application_id
 
 def create_new_submission_application( company_id: int = 0, submission_id: str=None,user: str = "admin"):
-    applicationNumber = WFApplication.query.count() + 10000
+    # ApplicationNumber is INT - never assign submission_id (string) directly as it causes arithmetic overflow
+    # submission_id is stored in ExternalAppRef if it's a valid int, otherwise use count-based number
+    applicationNumber =  WFApplication.query.count() + 10000
     application = WFApplication(
             Name="New Application",
             Description=f"Submission {submission_id} application",
             Status="NEW",
             CompanyID=0,
             PlantID=0,
-            SubmissionCompany=company_id,
-            #SubmissionPlant=int(plant_id),
+            ExternalAppRef=company_id,
+            WFLinkedApp=0,
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
             CreatedDate=datetime.datetime.now(datetime.timezone.utc),
@@ -277,7 +284,7 @@ def get_application_sql(num_of_apps: int = 10, offset: int = 0) -> str:
 def link_submission_to_application(application_id:int, company_id:int, plant_id:int,owns_id: int,  submission_id: str):
     if submission_id is None:
         return
-    submission_application = session.query(models.WFApplication).filter(models.WFApplication.SubmissionCompany == submission_id, models.WFApplication.ApplicationType == 'SUBMISSION').first()
+    submission_application = session.query(models.WFApplication).filter(models.WFApplication.ExternalAppRef == submission_id, models.WFApplication.ApplicationType == 'SUBMISSION').first()
     if submission_application:
         submission_application.CompanyID = company_id
         session.add(submission_application)

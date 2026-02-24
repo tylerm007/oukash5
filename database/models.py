@@ -304,8 +304,8 @@ class WFApplication(Base):  # type: ignore
     CompanyID = Column(Integer, nullable=False)
     PlantID = Column(Integer)
     SubmissionDate = Column(Date, server_default=text("getdate()"), nullable=False)
-    SubmissionCompany = Column(Integer)
-    SubmissionPlant = Column(Integer)
+    ExternalAppRef = Column(Integer)
+    WFLinkedApp = Column(Integer)
     ApplicationType = Column(Unicode(10), server_default=text('WORKFLOW'))
     Status = Column(ForeignKey('WF_ApplicationStatus.StatusCode'), server_default=text("NEW"), nullable=False)
     Priority = Column(ForeignKey('WF_Priorities.PriorityCode'), server_default=text("NORMAL"))
@@ -880,6 +880,7 @@ class COMPANYTB(Base):  # type: ignore
     LabelTbList : Mapped[List["LabelTb"]] = relationship(foreign_keys='[LabelTb.SRC_MAR_ID]', back_populates="COMPANY_TB")
     #INVOICEFEEList : Mapped[List["INVOICEFEE"]] = relationship(back_populates="COMPANY_TB")
     PERSON_JOB_TBList : Mapped[List["PERSONJOBTB"]] = relationship(back_populates="COMPANY_TB") 
+    CompanyContactList: Mapped[List["CompanyContacts"]] = relationship(back_populates="COMPANY_TB")
     
 class COMPANYADDRESSTB(Base):  # type: ignore
     __tablename__ = 'COMPANY_ADDRESS_TB'
@@ -915,10 +916,13 @@ class COMPANYADDRESSTB(Base):  # type: ignore
 class PLANTTB(Base):  # type: ignore
     __tablename__ = 'PLANT_TB'
     _s_collection_name = 'PLANTTB'  # type: ignore
-    __table_args__ =  ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
+    __table_args__ = (
+        {"implicit_returning": False},  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause
+    )
     __bind_key__ = 'ou'
+    allow_client_generated_ids = True  # PLANT_ID has no IDENTITY - client must supply the PK
 
-    PLANT_ID = Column(Integer, autoincrement=True, primary_key=True, index=True)
+    PLANT_ID = Column(Integer, primary_key=True, index=True, autoincrement=False)
     NAME = Column(String(80), nullable=False, index=True)
     GP_NOTIFY = Column(Boolean)
     MULTILINES = Column(String(1))
@@ -967,6 +971,7 @@ class OWNSTB(Base):  # type: ignore
     )
     __bind_key__ = 'ou'
 
+    ID = Column(Integer, autoincrement=True, primary_key=True, unique=True)
     COMPANY_ID = Column(ForeignKey('COMPANY_TB.COMPANY_ID'), nullable=False)
     PLANT_ID = Column(ForeignKey('PLANT_TB.PLANT_ID'), nullable=False)
     START_DATE = Column(DATETIME)
@@ -980,7 +985,6 @@ class OWNSTB(Base):  # type: ignore
     ROYALTIES = Column(String(1))
     SPECIAL_TICKET = Column(String(1))
     STATUS = Column(String(40))
-    ID = Column(Integer, server_default=text("0"), primary_key=True, unique=True)
     ACTIVE = Column(Integer)
     Setup_By = Column(ForeignKey('PERSON_JOB_TB.PERSON_JOB_ID'))
     AcquiredFrom = Column(String(50))
@@ -1848,3 +1852,84 @@ class vSelectNCRC(Base):
     fullName = Column(String(200))
     pct_of_total_apps = Column(DECIMAL(5,2))
     pct_of_total_apps_at_work = Column(DECIMAL(5,2))
+
+class Contacts(Base):
+    __tablename__ = 'contacts'
+    _s_collection_name = 'Contacts'  # type: ignore
+    __table_args__ = ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause  
+    __bind_key__ = 'ou'
+
+    ID = Column(Integer, autoincrement=True, primary_key=True)
+    Title = Column(String(50), nullable=True)
+    FirstName = Column(String(50), nullable=True)
+    LastName = Column(String(50), nullable=True)
+    Voice = Column(String(50), nullable=True)
+    Fax = Column(String(50), nullable=True)
+    Email = Column(String(100), nullable=True)
+    Cell = Column(String(50), nullable=True)
+    EnteredBy = Column(String(50), nullable=True)
+    DateEntered = Column(DATETIME, nullable=True)
+    ModifiedBy = Column(String(50), nullable=True)
+    DateModified = Column(DATETIME, nullable=True)
+    Active = Column(Integer, nullable=True)
+    OtherInfo = Column(String(100), nullable=True)
+
+class CompanyContacts(Base):
+    __tablename__ = 'companycontacts_tb'
+    _s_collection_name = 'CompanyContacts'  # type: ignore
+    __table_args__ = ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause  
+    __bind_key__ = 'ou'
+
+    ccID = Column(Integer, autoincrement=True, primary_key=True)
+    Company_ID = Column(Integer, ForeignKey('COMPANY_TB.COMPANY_ID'), index=True, nullable=False)
+    CompanyTitle = Column(String(50))
+    PrimaryCT = Column(String(1), nullable=False)
+    BillingCT = Column(String(1), nullable=False)
+    WebCT = Column(String(1), nullable=False)
+    OtherCT = Column(String(1), nullable=False)
+    EnteredBy = Column(String(50))
+    DateEntered = Column(SMALLDATETIME)
+    ModifiedBy = Column(String(50))
+    DateModified = Column(DATETIME)
+    Active = Column(SMALLINT)
+    StatementType = Column(String(1), nullable=False)
+    InvoiceType = Column(String(1), nullable=False)
+    UserVendorID = Column(String(200))
+    UsedInComment = Column(String(500))
+    ContactID = Column(Integer, nullable=False)
+    LOAtype = Column(String(1))
+    EIREmail = Column(String(1))
+    ScheduleBEmail = Column(String(1))
+    FormulaEmail = Column(String(1))
+    PoCT = Column(Boolean, nullable=False)
+    CopackerCT = Column(Boolean, nullable=False)
+    # Parent Relationships
+    COMPANY_TB : Mapped["COMPANYTB"] = relationship(back_populates=("CompanyContactList"))
+    #Contacts : Mapped["Contacts"] = relationship(back_populates=("CompanyContactList"))
+
+class PlantContacts(Base):
+    __tablename__ = 'plantcontacts_tb'
+    _s_collection_name = 'PlantContacts'  # type: ignore
+    __table_args__ = ({"implicit_returning": False},)  # MSSQL: table has triggers, cannot use OUTPUT inserted. clause  
+    __bind_key__ = 'ou'
+
+    pcID = Column(Integer, autoincrement=True, primary_key=True)
+    Owns_ID = Column(Integer)
+    CompanyTitle = Column(String(50))
+    PrimaryCT = Column(String(1), nullable=False)
+    BillingCT = Column(String(1), nullable=False)
+    WebCT = Column(String(1), nullable=False)
+    OtherCT = Column(String(1), nullable=False)
+    EnteredBy = Column(String(50))
+    DateEntered = Column(SMALLDATETIME)
+    ModifiedBy = Column(String(50))
+    DateModified = Column(DATETIME)
+    Active = Column(SMALLINT, nullable=False)
+    InvoiceType = Column(String(1), nullable=False)
+    ContactID = Column(Integer, nullable=False)
+    LOAtype = Column(String(1))
+    GPC = Column(String(1))
+    EIREmail = Column(String(1))
+    ScheduleBEmail = Column(String(1))
+    FormulaEmail = Column(String(1))
+    PoCT = Column(Boolean, nullable=False)

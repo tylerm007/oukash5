@@ -117,7 +117,7 @@ def declare_logic():
 
     def create_wfapplication(row: models.WFApplication, owns_id:int, logic_row: LogicRow):
         '''
-        Create a new Workflow application by calling the KASH API with the OWNS ID and SubmissionCompany.
+        Create a new Workflow application by calling the KASH API with the OWNS ID and ExternalAppRef.
         
         This function fires off a background thread and returns immediately (fire and forget).
         The actual API call happens asynchronously to avoid blocking the main logic flow.
@@ -143,7 +143,7 @@ def declare_logic():
             elif request.headers.get('access_token'):
                 headers['Authorization'] = request.headers.get('access_token')
         
-        submission_id = row.SubmissionCompany
+        submission_id = row.ExternalAppRef
         
         # Start background thread (fire and forget)
         thread = threading.Thread(
@@ -195,38 +195,23 @@ def declare_logic():
             owns_id = getattr(ownstb,'ID')
             result_data["OWNSID"] = owns_id
         else:
-            owns = models.OWNSTB(
-                COMPANY_ID=company_id,
-                PLANT_ID=plant_id,
-                START_DATE=datetime.datetime.now(),
-                Status='PENDING',
-                ACTIVE=1
-            )
+            owns = models.OWNSTB()
+            setattr(owns, 'COMPANY_ID', int(company_id))
+            setattr(owns, 'PLANT_ID', int(plant_id))
+            setattr(owns, 'START_DATE', datetime.datetime.now())
+            setattr(owns, 'Status', 'PENDING')
+            setattr(owns, 'ACTIVE', 1)
+            
             try:
+                logic_row.session.add(owns)
                 logic_row.insert(reason="Create OWNS record", row=owns)
                 owns_id = owns.ID
                 result_data["OWNSID"] = owns_id
+                row.ResultData = json.dumps(result_data)
+                logic_row.log(f"Created OWNS record with ID {owns_id} for company_id: {company_id} and plant_id: {plant_id}")
             except Exception as e:
                 app_logger.error(f"Error creating OWNS record: {e}")
-            
-        if owns_id:
-            app_logger.info(f"Created OWNS record with ID {owns_id} for company_id {company_id} and plant_id {plant_id}")   
-            # Call the API endpoint to create the application
-            #create_application_from_owns(owns_id=owns.ID, logic_row=logic_row)
-            application = models.WFApplication.query.filter_by(ApplicationID=row.ApplicationId).first()
-            if application:
-                new_application = models.WFApplication(
-                    ApplicationNumber=owns_id,
-                    CompanyID=company_id,
-                    PlantID=plant_id,
-                    ApplicationType='WORKFLOW',
-                    Status='NEW',
-                    SubmissionCompany=application.SubmissionCompany,
-                )
-                data = create_wfapplication(new_application, owns_id=owns_id, logic_row=logic_row)
-                print(data)
-        row.Result = plant_id
-        row.ResultData = json.dumps(result_data)
+                return
 
     def get_resolve_company(row: models.TaskInstance):
         # Helper function to get the related ResolveCompany task result for the same application
@@ -289,54 +274,59 @@ def declare_logic():
             logic_row.log(f"OWNS record does not exist for company_id: {company_id} and plant_id: {plant_id}")
             return True
         row.ResultData = f"Create OWNS {owns.ID} record"
-        row.Result = owns.ID if owns else None
+        #row.Result = owns.ID if owns else None
         return True
     
     def create_application(row: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow) -> bool:
         #Create an EventAction for the given TaskInstanceId and EventKey
+        if logic_row.ins_upd_dlt == 'upd' and old_row and row.Status == old_row.Status and row.Status == 'COMPLETED':
+            return True  # Only create application on new OWNS record
+        result_data = json.loads(row.ResultData.replace("'",'"',1000)) if row.ResultData and isinstance(row.ResultData, str) else {}
         company_id = None
         plant_id = None
         owns_id = None
         task_instance = logic_row.row
-        application_id = task_instance.ApplicationId
-        application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
-         # Only create new application when submission task is completed
-        if application and application.ApplicationType != 'SUBMISSION' and task_instance.Status != 'COMPLETED':
-            return True
-        task_instances = models.TaskInstance.query.filter_by(ApplicationId=application.ApplicationID).all()
-        owns_task_instance = None
-        for task_instance in task_instances:
-            task_def = task_instance.TaskDefinition
-            if task_def.TaskName == 'ResolveCompany':
-                company_id = task_instance.Result
-            if task_def.TaskName == 'ResolvePlant':
-                plant_id = task_instance.Result
-            if task_def.TaskName == 'CreateOwns':
-                owns_id = task_instance.Result
-                owns_task_instance = task_instance
+        task_def = task_instance.TaskDefinition
+        if 'ResolvePlant' in task_def.TaskName :
+            plant_id = row.Result if row.Result is not None else None
+            application_id = task_instance.ApplicationId
+            application = models.WFApplication.query.filter_by(ApplicationID=application_id).first()    
+            # Only create new application when submission task is completed
+            if application and application.ApplicationType != 'SUBMISSION' and task_instance.Status != 'COMPLETED':
+                return True
+            task_instances = models.TaskInstance.query.filter_by(ApplicationId=application.ApplicationID).all()
+            owns_task_instance = None
+            for task_instance in task_instances:
+                task_def = task_instance.TaskDefinition
+                if task_def.TaskName == 'ResolveCompany':
+                    company_id = task_instance.Result
        
-        if not owns_id:
-            owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
-            if not owns: 
-                logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
-                return False
-            owns_id = owns.ID
-        new_application = models.WFApplication.query.filter_by(ApplicationNumber=owns_id).first()
-        if  not new_application:
-            row.Result = False
-            row.ErrorMessage = f" new WFApplication for OWNS ID {owns_id}, company_id: {company_id} and plant_id: {plant_id} not created"
-            logic_row.log(f" new WFApplication for OWNS ID {owns_id}, company_id: {company_id} and plant_id: {plant_id} not created")
-            return False
-        
-        new_application.SubmissionCompany = application.SubmissionCompany
-        new_application.SubmissionPlant = application.SubmissionPlant
-        # Add to session before insert to avoid SAWarning
-        logic_row.session.add(new_application)
-        logic_row.update(reason="Update Workflow application", row=new_application)
-        logic_row.log("Updated new_application ")
-        row.Result = new_application.ApplicationId
-        row.ResultData = f"Updated new WFApplication with ApplicationId {new_application.ApplicationId} linked to OWNS ID {owns_id}"
-        return True 
+            if not owns_id:
+                owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+                if not owns: 
+                    logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
+                    return False
+                owns_id = owns.ID
+            if owns_id and owns_id  != 0:
+                app_logger.info(f"Created OWNS record with ID {owns_id} for company_id {company_id} and plant_id {plant_id}")   
+                # Call the API endpoint to create the application
+                #create_application_from_owns(owns_id=owns.ID, logic_row=logic_row)
+                application = models.WFApplication.query.filter_by(ApplicationID=row.ApplicationId).first()
+                if application:
+                    new_application = models.WFApplication(
+                        ApplicationNumber=owns_id,
+                        CompanyID=company_id,
+                        PlantID=plant_id,
+                        ApplicationType='WORKFLOW',
+                        Status='NEW',
+                        ExternalAppRef=application.ExternalAppRef,
+                        WFLinkedApp=application.ApplicationID,
+                    )
+                    wfapp = create_wfapplication(new_application, owns_id=owns_id, logic_row=logic_row)
+                    print(wfapp)
+                    result_data["WFID"] = wfapp.get("ApplicationID") if wfapp else None
+                    result_data['OWNSID'] = owns_id
+                row.ResultData = json.dumps(result_data)
     
     def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:
         # Find the next TaskInstance in the workflow by TaskName
@@ -418,7 +408,7 @@ def declare_logic():
                 logic_row.update(reason=f"Update application status to {application.Status}", row=application)
         elif task_def.TaskName == 'GenerateWFApplication' and row.Status == 'COMPLETED':
             #create_application(row, old_row, logic_row=logic_row)
-            #lookup new wf application linked to this SubmissionCompany/Plant
+            #lookup new wf application linked to this ExternalAppRef/Plant
             pass
         else:
             status = None
@@ -444,3 +434,13 @@ def declare_logic():
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
+    def generate_primary_key(row: models.PLANTTB, old_row: models.PLANTTB, logic_row: LogicRow):
+        # This is an example of an early row event to generate a primary key value for PLANTTB
+        # In practice, you would typically use an IDENTITY column or a database sequence for this purpose
+        if logic_row.ins_upd_dlt == 'ins' and (row.PLANT_ID is None or row.PLANT_ID == 0):
+            max_id = logic_row.session.query(models.PLANTTB).order_by(models.PLANTTB.PLANT_ID.desc()).first()
+            row.PLANT_ID = (max_id.PLANT_ID + 1) if max_id and max_id.PLANT_ID else 1
+            logic_row.log(f"Generated PLANT_ID {row.PLANT_ID} for new PLANTTB record")
+    Rule.early_row_event(models.PLANTTB, calling=generate_primary_key)
+
+    Rule.after_flush_row_event(on_class=models.TaskInstance, calling=create_application)

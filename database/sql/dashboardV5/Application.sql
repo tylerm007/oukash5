@@ -49,8 +49,8 @@ CREATE TABLE [dbo].[WF_Applications](
 	[ApplicationNumber] [int] NULL, -- Link to existing JotForm Application Number
 	[CompanyID] [int] NOT NULL DEFAULT 0, -- CompanyTB
 	[PlantID] [int] NULL, -- PlantTB
-	[SubmissionCompany][int] NULL, -- Parent Ref JotFormCompany
-	[SubmissionPlant] [int] NULL, -- ParentRef JotFormPlant
+	[ExternalAppRef][int] NULL, -- Parent Ref SubmissionApplcation
+	[WFLinkedApp] [int] NULL, -- Link to either submission or workflow application
 	[ApplicationType] [nvarchar](10) NULL, -- Default WORKFLOW or SUBMISSION
 	[SubmissionDate] [date] NOT NULL, -- date from JotForm
 	[Status] [nvarchar](50) NOT NULL,
@@ -72,8 +72,8 @@ UNIQUE NONCLUSTERED
 
 GO
 
---ALTER TABLE [dbo].[WF_Applications] ADD  [SubmissionCompany] [int] NULL
---ALTER TABLE [dbo].[WF_Applications] ADD  [SubmissionPlant] [int] NULL
+--ALTER TABLE [dbo].[WF_Applications] ADD  [ExternalAppRef] [int] NULL
+--ALTER TABLE [dbo].[WF_Applications] ADD  [WFLnkedApp] [int] NULL
 --GO
 --ALTER TABLE [dbo].[WF_Applications] ADD  [ApplicationType] [nvarchar](10) NULL
 --GO
