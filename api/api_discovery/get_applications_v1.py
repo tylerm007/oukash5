@@ -51,9 +51,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         name_filter = data.get('name', None) or data.get('filter[name]', None)
         application_id = data.get('application_id', None) or data.get('filter[applicationId]', None)   
         status = data.get('status', None) or data.get('filter[status]', None)
-        application_type = data.get('application_type','WORKFLOW') or data.get('filter[application_type]','WORKFLOW') #or SUBMISSION
-        only_my_apps = data.get('onlyMyRoles', 'false') or data.get('filter[onlyMyRoles]', 'false')  
-        role_to_use = data.get('role', None) or data.get('filter[role]', None)
+        application_type = data.get('application_type','WORKFLOW') #or SUBMISSION
+        only_my_apps = data.get('filter[OnlyMyRoles]', 'false')  
+        role_to_use = data.get('filter[role]', None)
         if application_type == 'WORKFLOW':
             sql = get_SQL() if only_my_apps.lower() == 'false' else getSQLForRoles()
         else:
@@ -61,14 +61,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         info = Security.extract_roles_and_delegated(jwt_token=jwt)
         delegated = info.get('delegated', None) if info else None
         roles = ';'.join([f'{role.role_name}' for role in Security.current_user().UserRoleList])
+        application_matching_sql = update_application_matching_sql()
+        session.execute(text(application_matching_sql))
+        session.commit()
         admin_users = None
         if delegated is not None:
             admin_users = ";".join(d for d in delegated)
             #admin_users += f";{username}"
-        if only_my_apps.lower() == 'true' and role_to_use:
-            if role_to_use not in roles:
-                raise Exception(f"User {username} does not have role: {role_to_use} to filter applications")
-            roles = role_to_use
+        if only_my_apps.lower() == 'true':
+            #if role_to_use not in roles:
+            #    raise Exception(f"User {username} does not have role: {role_to_use} to filter applications")
+            roles = role_to_use if role_to_use and role_to_use in roles else roles
             sql = getSQLForOneRole()
             admin_users = admin_users if role_to_use == 'Administrative Assistant' else None
         params = {
@@ -153,20 +156,14 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
     status = _get_app_status(app.get("Status"),application_type)
     days_between = _calc_days_between(created_date, None) if app.get("Status") not in ["COMPL","WTH"] else 0
     days_due = 5  #
-    external_refid = app.get("externalReferenceId") 
-    if application_type == 'WORKFLOW':
-        applicationId = app.get("applicationId")
-        application = session.query(WFApplication).filter_by(ApplicationID=applicationId).first()
-        if application:
-            submission = session.query(WFApplication).filter_by(ExternalAppRef=application.ExternalAppRef).first()
-            external_refid = submission.ApplicationID if submission else None
     row ={
                 #id": app.get("ApplicationID"),
                 "company": app.get("companyName", "Unknown Company"),
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
                 'companyId': app.get("companyId"),
-                "externalReferenceId": external_refid,
+                "externalReferenceId": app.get("externalReferenceId"),
+                "WFID": app.get("WFLinkedApp"),
                 'plantId': app.get("plantId"),
                 "status": status,
                 "priority": app.get("Priority", "Normal"),
@@ -214,10 +211,11 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                         if plantId and str(plant.PlantId) != str(plantId):
                             continue
                         workflow_app_id = ""
+                        owns_id = ""
                         if task['Result'] != '':
                             linked_app = session.query(WFApplication).filter_by(PlantID=task['Result'],ApplicationType='WORKFLOW').first()
                             if linked_app:
-                                workflow_app_id = linked_app.ApplicationID
+                                workflow_app_id = linked_app.ApplicationID 
                             owns_id = plantInfo.get("OWNSID") or ""
                             if not owns_id:
                                 owns_record = session.query(OWNSTB).filter_by(PLANT_ID=task['Result']).first()
@@ -261,6 +259,8 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
             taskdef_id = task.get('TaskDefinitionId')
             taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
             if len(taskdef) == 0 or taskdef.get('TaskName') == 'AssignNCRC':
+                task_cnt += 1
+                completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
                 continue
             if task.get('AssigneeRole') == 'SYSTEM':
                 continue
@@ -421,6 +421,8 @@ def get_SQL() -> str:
          co.Name as "companyName",
          app.ApplicationID as applicationId,
          app.ApplicationNumber,
+         app.ExternalAppRef as 'externalReferenceId',
+         app.WFLinkedApp as 'WFID',
          app.CreatedDate,
          --app.ModifiedDate,
          app.Status,
@@ -508,6 +510,7 @@ def get_SUBMISSION_SQL() -> str:
          app.Status,
          app.Priority,
          app.ExternalAppRef as 'externalReferenceId',
+         app.WFLinkedApp as 'WFID',
          ( select
              co1.companyName as "companyName",
              co1.companyAddress,
@@ -646,6 +649,8 @@ def getSQLForRoles():
          co.Name as "companyName",
          app.ApplicationID as applicationId,
          app.ApplicationNumber,
+         app.ExternalAppRef as 'externalReferenceId',
+         app.WFLinkedApp as 'WFID',
          app.CreatedDate,
          app.ModifiedDate,
          app.Status,
@@ -691,7 +696,8 @@ def getSQLForRoles():
                     from TaskInstances ti 
                     LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
                     LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
-                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    where ti.ApplicationId = app.ApplicationID  
+                    -- and td.AssigneeRole != 'SYSTEM'
                     group by sd.stageName, sd.stageId, StageDescription
                     FOR JSON AUTO   
                     )     
@@ -780,13 +786,15 @@ def getSQLForOneRole():
                                             END as daysOverdue
                                         from TaskInstances ti
                                                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            where ti.StageId = sd.StageId 
+                                                            --and  (td.AssigneeRole != 'SYSTEM') 
                                                             FOR JSON AUTO
                                     )
                     from TaskInstances ti 
                     LEFT JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
                     LEFT JOIN StageDefinitions sd ON ti.stageId = sd.StageId
-                    where ti.ApplicationId = app.ApplicationID  and td.AssigneeRole != 'SYSTEM'
+                    where ti.ApplicationId = app.ApplicationID  
+                     -- td.AssigneeRole != 'SYSTEM'
                     group by sd.stageName, sd.stageId, StageDescription
                     FOR JSON AUTO   
                     )     
@@ -806,7 +814,7 @@ def getSQLForOneRole():
             select distinct(app.ApplicationID)  from WF_Applications  app
                                         INNER JOIN roleAssigment ra ON ra.ApplicationId = app.ApplicationID  
                                         AND ra.Assignee = :userName
-                                        and  ra.Role = :userRoles
+                                        and  ra.Role IN (SELECT value FROM STRING_SPLIT(:userRoles, ';'))
             -- admin
             union
             select distinct(app.ApplicationID)  from WF_Applications  app
@@ -862,5 +870,28 @@ def get_total_count_for_one_role() -> str:
             
           
 
+
+    '''
+def update_application_matching_sql() -> str:
+    # Link SUBMISSION rows to their matching WORKFLOW counterpart (by ExternalAppRef)
+    return '''
+        UPDATE s
+        SET s.[WFLinkedApp] = w.[ApplicationID]
+        FROM [dbo].[WF_Applications] s
+        JOIN [dbo].[WF_Applications] w
+            ON  w.[ExternalAppRef] = s.[ExternalAppRef]
+            AND w.[ApplicationType] = 'WORKFLOW'
+        WHERE s.[ApplicationType] = 'SUBMISSION'
+        and  s.[WFLinkedApp] = 0;
+
+        -- Link WORKFLOW rows to their matching SUBMISSION counterpart (by ExternalAppRef)
+        UPDATE w
+        SET w.[WFLinkedApp] = s.[ApplicationID]
+        FROM [dbo].[WF_Applications] w
+        JOIN [dbo].[WF_Applications] s
+            ON  s.[ExternalAppRef] = w.[ExternalAppRef]
+            AND s.[ApplicationType] = 'SUBMISSION'
+        WHERE w.[ApplicationType] = 'WORKFLOW'
+        and w.[WFLinkedApp] = 0;
 
     '''
