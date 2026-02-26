@@ -377,18 +377,18 @@ def get_company_plants(company_id: int):
     plant_ids = {}
     cntr = 0
     for plant in plants:
-        if plant.plantName == '':
+        if plant.plantName is None or plant.plantName == '':
             continue
         plant_id = plant.PlantId
         plant_data = {
             "PlantId": plant_id, 
             "PlantNumber": plant.plantNumber,
-            "PlantName": plant.plantName,
-            "Address": plant.plantAddress or "",
-            "City": plant.plantCity or "",
-            "State": plant.plantState or "",
-            "Zip": plant.plantZip or "",
-            "Country": plant.plantCountry or "",
+            #"PlantName": plant.plantName,
+            #"Address": plant.plantAddress or "",
+            #"City": plant.plantCity or "",
+            #"State": plant.plantState or "",
+            #"Zip": plant.plantZip or "",
+            #"Country": plant.plantCountry or "",
             "OWNSID": "",
             "WFID": ""
         }

@@ -195,7 +195,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                     if companyFromApplication and len(companyFromApplication) > 0:
                         task['companyFromApplication'] = companyFromApplication[0] 
                         task['companyFromApplication']['companyContacts'] = companyContacts if companyContacts else {}
-                        task['companyMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
+                        task['companyMatchList'] = [] if matcher is None else parse_sqlserver_json(matcher.SubbmissionMatches) if matcher and matcher.SubbmissionMatches else []
                         task['companySelected'] = {} if task['Result'] is None or task['Result'] == '' else {
                             "companyName": companyFromApplication[0].get("companyName", "Unknown Company"),
                             "ID": task['Result'],
@@ -204,7 +204,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                 elif 'ResolvePlant' in task.get("name", ""): # Plant#1 - 5
                     resultData = task.get("ResultData") or {}
                     #plantContacts = json.loads(app.get("plantContacts") or "{}")
-                    plantInfo = json.loads(resultData.replace("'",'"',1000)) if isinstance(resultData, str) and resultData.startswith('{') else {}
+                    plantInfo = parse_sqlserver_json(resultData)[0] if isinstance(resultData, str) and resultData.startswith('{') else {}
                     plantId = plantInfo.get("PlantId") if plantInfo else None
                     task['name'] = 'ResolvePlant'
                     for plant in plants:
@@ -229,7 +229,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                                 "plantContacts":json.loads(app.get('plants'))[int( plant.plantNumber) - 1].get('plantContacts') if app.get('plants') else []
                         }
                         matcher = session.query(SubmissionMatcher).filter_by(SubmissionKey=plantId, SubmissionType="PLANT").first()
-                        task['plantMatchList'] = [] if matcher is None else json.loads(matcher.SubbmissionMatches.replace("'",'"',1000)) if matcher and matcher.SubbmissionMatches else []
+                        task['plantMatchList'] = [] if matcher is None else parse_sqlserver_json(matcher.SubbmissionMatches) if matcher and matcher.SubbmissionMatches else []
                         task['plantSelected'] = {} if task['Result'] is None or task['Result'] == '' else {
                                 "plantName": plant.plantName ,
                                 "Address": f'{plant.plantAddress}, {plant.plantCity} {plant.plantState} {plant.plantZip} {plant.plantCountry}' if len(plants) > 0 else "",
@@ -872,6 +872,47 @@ def get_total_count_for_one_role() -> str:
 
 
     '''
+def parse_sqlserver_json(raw: str) -> list:
+    """
+    Safely parse SubbmissionMatches which is stored as a Python repr/str() of a
+    list of dicts, e.g.:
+        [{'companyName': "JP's Delights", 'Id': 1434742, ...}, ...]
+
+    Keys always use single quotes; values that contain a single quote are wrapped
+    in double quotes by Python's repr – so a naive s.replace("'", '"') destroys
+    those values.  ast.literal_eval handles this format natively.
+
+    Strategy:
+      1. json.loads()        – data already stored as proper JSON
+      2. ast.literal_eval()  – Python repr format (the common case here)
+      3. Warning + []        – nothing worked, return empty list safely
+    """
+    import ast
+
+    if not raw:
+        return []
+
+    # --- attempt 1: already valid JSON -----------------------------------------
+    try:
+        return json.loads(raw)
+    except (json.JSONDecodeError, ValueError):
+        pass
+
+    # --- attempt 2: Python repr / str() format ---------------------------------
+    try:
+        result = ast.literal_eval(raw)
+        if isinstance(result, list):
+            return result
+        if isinstance(result, dict):
+            return [result]
+    except (ValueError, SyntaxError):
+        pass
+
+    # --- attempt 3: give up cleanly --------------------------------------------
+    app_logger.warning("parse_sqlserver_json: could not parse SubbmissionMatches: %s", raw[:200])
+    return []
+
+
 def update_application_matching_sql() -> str:
     # Link SUBMISSION rows to their matching WORKFLOW counterpart (by ExternalAppRef)
     return '''
