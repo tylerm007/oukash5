@@ -259,3 +259,8 @@ set PreScriptJson = 'api/vSelectRFR,RFR'
 where TaskName = 'Select RFR';
 GO
 
+
+- Stage: Certification (ID: 8)
+INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
+VALUES
+(1, 'Cancel Application', 'CONDITION', 'APPROVAL', 1, 8, 'NCRC', 15, 'Cancel application process', 0, 'system');

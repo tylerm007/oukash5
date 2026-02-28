@@ -473,6 +473,7 @@ class TaskInstance(Base):  # type: ignore
     ResultData = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
     ErrorMessage = Column(Unicode(1000))
     RetryCount = Column(Integer, server_default=text("0"))
+    ActiveStartDate = Column(DATETIME2)
 
     # parent relationships (access parent)
     Stage : Mapped["StageDefinition"] = relationship(foreign_keys=[StageId])

@@ -245,6 +245,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
         for task_def in task_definitions:
             app_logger.debug(f'📋 Creating TaskInstance: {task_def["TaskName"]}')
             status = 'PENDING' if task_def['TaskType'] in ['START','STAGESTART','STAGEEND','END','GATEWAY'] else 'NEW'
+            status = 'PENDING'  if task_def['TaskName'].upper() == 'CANCEL APPLICATION' else status
             task_instance = TaskInstance(
                 TaskDefinitionId=task_def['TaskId'],
                 ApplicationId=application_id,
@@ -311,7 +312,9 @@ def process_stages_batch(stage_definitions, application_id, started_by):
     #stage_definitions =  list(stage_definitions.keys())[:len(stage_definitions) - 1] if app_type == 'WORKFLOW' else list(stage_definitions.keys())[len(stage_definitions) - 1:]
     stage_definition_list = {}
     if app_type == 'SUBMISSION':
-        stage_definition_list[1] = stage_definitions[len(stage_definitions)]
+        for stage_def in stage_definitions:
+            if stage_definitions[stage_def].StageName.upper() == "INTAKE" or stage_definitions[stage_def].StageName.upper() == 'GLOBAL':
+                stage_definition_list[len(stage_definition_list) + 1] = stage_definitions[stage_def]
     else:
         for stage_def in stage_definitions:
             if stage_definitions[stage_def].StageName.upper() == "INTAKE":

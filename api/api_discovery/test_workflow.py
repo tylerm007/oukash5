@@ -165,7 +165,7 @@ def result_scenario(task_name, scenario: int = 1) -> str:
     else:
         result = 'NO' if "to Withdrawn Y/N" in task_name else None
     result = 'NO' if "Withdraw Application" in task_name else result
-    result = 'YES' if "Needs NDA" in task_name else result
+    result = 'YES' if "Company requires NDA" in task_name else result
     result = 'YES' if "Is Inspection Needed" in task_name else result
     result = '2025-11-01' if "Schedule" in task_name else result
     result = 1000 if "Assign Invoice Amount" in task_name else result

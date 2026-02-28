@@ -11,6 +11,7 @@ import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
 from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB, SubmissionApplication
+from database.utils import parse_sqlserver_json
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB 
@@ -178,14 +179,14 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                 "lastUpdate": modified_date,
                 #"assignedRC": "Unassigned",
                 "assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
-                "stages": app['stages'] if 'stages' in app else {},
+                "stages": app['stages'] if 'stages' in app and app['stages'] is not None else {},
                 "application_messages": [],
                 "files": app['files'] if 'files' in app else [],
                 #"assignedRoles": app['assignedRoles'] if 'assignedRoles' in app else [],
             }
     if application_type == 'SUBMISSION':
-        companyFromApplication = json.loads(app.get("companyFromApplication", "{}"))
-        companyContacts = json.loads(app.get("companyContacts", "{}"))
+        companyFromApplication = parse_sqlserver_json(app.get("companyFromApplication", "{}"))
+        companyContacts = parse_sqlserver_json(app.get("companyContacts", "{}"))
         plants = session.query(SubmissionPlant).filter_by(SubmissionAppId=app.get("externalReferenceId")).all()
         #json.loads(app.get("plants", "[]"))
         for stage in row['stages'].values():
@@ -204,7 +205,8 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                 elif 'ResolvePlant' in task.get("name", ""): # Plant#1 - 5
                     resultData = task.get("ResultData") or {}
                     #plantContacts = json.loads(app.get("plantContacts") or "{}")
-                    plantInfo = parse_sqlserver_json(resultData)[0] if isinstance(resultData, str) and resultData.startswith('{') else {}
+                    result_data = parse_sqlserver_json(resultData) if isinstance(resultData, str) and resultData.startswith('{') else {}
+                    plantInfo = result_data[0] if result_data and isinstance(result_data, list) and len(result_data) > 0 else result_data
                     plantId = plantInfo.get("PlantId") if plantInfo else None
                     task['name'] = 'ResolvePlant'
                     for plant in plants:
@@ -258,10 +260,7 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
         for task in stage_tasks:
             taskdef_id = task.get('TaskDefinitionId')
             taskdef = task_definitions.get(taskdef_id).to_dict() if taskdef_id in task_definitions else {}
-            if len(taskdef) == 0 or taskdef.get('TaskName') == 'AssignNCRC':
-                task_cnt += 1
-                completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
-                continue
+            
             if task.get('AssigneeRole') == 'SYSTEM':
                 continue
             #print(taskdef["TaskName"])
@@ -272,6 +271,8 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
             task_cnt += 1
             completed_cnt += 1 if task['status'] == 'COMPLETED' else 0
 
+            if len(taskdef) == 0 or taskdef.get('TaskName') == 'AssignNCRC':
+                continue
             #created_date = task['StartedDate'] if "StartedDate" in task else None
             #modified_date = datetime.now() if task['Status'] != 'COMPLETED' else task['CompletedDate']
             #days_between = _calc_days_between(created_date, modified_date)
@@ -297,6 +298,7 @@ def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> l
             "TaskInstanceId": task['TaskInstanceId'],
             "PreScript":taskdef['PreScriptJson'] if "PreScriptJson" in taskdef else None,
             "CompletedDate": task['CompletedDate'] if "CompletedDate" in task else None,
+            'activeStartDate': task['ActiveStartDate'] if "ActiveStartDate" in task else None,
             "Result": task.get('Result'),
             "ResultData": task.get('ResultData'),
             "ErrorMessage": task.get('ErrorMessage'),
@@ -373,8 +375,8 @@ def _calc_days_between(start_date, end_date) -> int:
 def _get_app_status(status_code: str,application_type:str = 'WORKFLOW') -> str:
     """Get application status from code"""
     status_map = {
-        "NEW": "New",
-        "INP": "In Progress",
+        "NEW": "Not Ready",
+        "INP": "Active",
         "HLD": "On Hold",
         "WTH": "Withdrawn",
         "COMPL":"Completed" if application_type != 'WORKFLOW' else "Certified",
@@ -450,6 +452,7 @@ def get_SQL() -> str:
                                             ti.CompletedCapacity,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.ActiveStartDate,
                                             ti.Result,
                                             ti.ResultData,
                                             ti.IsVisible,
@@ -527,7 +530,7 @@ def get_SUBMISSION_SQL() -> str:
              co1.numberOfPlants,
              co1.copack   
              from [dashboardV1].[dbo].[SubmissionApplication] co1
-             WHERE co1.SubmissionAppId = co.SubmissionAppId
+             WHERE co1.SubmissionAppId = app.ExternalAppRef
              FOR JSON AUTO
 
          ) as companyFromApplication,
@@ -549,7 +552,7 @@ def get_SUBMISSION_SQL() -> str:
              co2.contactEmail1,
              co2.contactPhone1      
              from [dashboardV1].[dbo].[SubmissionApplication] co2
-             where co2.SubmissionAppId = co.SubmissionAppId
+             where co2.SubmissionAppId = app.ExternalAppRef
              FOR JSON AUTO
          ) as companyContacts,
         ( SELECT 
@@ -577,7 +580,7 @@ def get_SUBMISSION_SQL() -> str:
                 FOR JSON AUTO  
             ) as plantContacts
             FROM [dashboardV1].[dbo].[SubmissionPlant] pl
-            where pl.SubmissionAppId = co.SubmissionAppId
+            where pl.SubmissionAppId = app.ExternalAppRef
             FOR JSON AUTO
         ) as plants,
         (
@@ -601,6 +604,7 @@ def get_SUBMISSION_SQL() -> str:
                                             ti.CompletedCapacity,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.ActiveStartDate,
                                             ti.Result,
                                             ti.ResultData,
                                             ti.IsVisible,
@@ -630,7 +634,6 @@ def get_SUBMISSION_SQL() -> str:
                 
                             
         FROM [dashboard].[dbo].[WF_Applications]  app
-            LEFT JOIN  [dashboardV1].[dbo].SubmissionPlant pl ON pl.SubmissionAppId = app.ExternalAppRef
             LEFT JOIN [dashboardV1].[dbo].SubmissionApplication co ON app.ExternalAppRef = co.SubmissionAppId
         
         WHERE (:application_id IS NULL OR app.ApplicationID = :application_id)  and 
@@ -676,6 +679,7 @@ def getSQLForRoles():
                                             ti.AssignedTo,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.ActiveStartDate,
                                             ti.Result,
                                             ti.ResultData,
                                             ti.IsVisible,
@@ -690,7 +694,9 @@ def getSQLForRoles():
                                             END as daysOverdue
                                         from TaskInstances ti
                                                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
-                                                            where ti.StageId = sd.StageId and  (td.AssigneeRole != 'SYSTEM') 
+                                                            where ti.StageId = sd.StageId 
+                                                            --and  (td.AssigneeRole != 'SYSTEM')
+                                                            and ti.ApplicationId = app.ApplicationID 
                                                             FOR JSON AUTO
                                     )
                     from TaskInstances ti 
@@ -772,6 +778,7 @@ def getSQLForOneRole():
                                             ti.AssignedTo,
                                             ti.StartedDate,
                                             ti.CompletedDate,
+                                            ti.ActiveStartDate,
                                             ti.Result,
                                             ti.ResultData,
                                             ti.IsVisible,
@@ -787,6 +794,7 @@ def getSQLForOneRole():
                                         from TaskInstances ti
                                                 INNER JOIN TaskDefinitions td ON ti.TaskDefinitionId = td.TaskId
                                                             where ti.StageId = sd.StageId 
+                                                            and ti.ApplicationId = app.ApplicationID
                                                             --and  (td.AssigneeRole != 'SYSTEM') 
                                                             FOR JSON AUTO
                                     )
@@ -872,46 +880,6 @@ def get_total_count_for_one_role() -> str:
 
 
     '''
-def parse_sqlserver_json(raw: str) -> list:
-    """
-    Safely parse SubbmissionMatches which is stored as a Python repr/str() of a
-    list of dicts, e.g.:
-        [{'companyName': "JP's Delights", 'Id': 1434742, ...}, ...]
-
-    Keys always use single quotes; values that contain a single quote are wrapped
-    in double quotes by Python's repr – so a naive s.replace("'", '"') destroys
-    those values.  ast.literal_eval handles this format natively.
-
-    Strategy:
-      1. json.loads()        – data already stored as proper JSON
-      2. ast.literal_eval()  – Python repr format (the common case here)
-      3. Warning + []        – nothing worked, return empty list safely
-    """
-    import ast
-
-    if not raw:
-        return []
-
-    # --- attempt 1: already valid JSON -----------------------------------------
-    try:
-        return json.loads(raw)
-    except (json.JSONDecodeError, ValueError):
-        pass
-
-    # --- attempt 2: Python repr / str() format ---------------------------------
-    try:
-        result = ast.literal_eval(raw)
-        if isinstance(result, list):
-            return result
-        if isinstance(result, dict):
-            return [result]
-    except (ValueError, SyntaxError):
-        pass
-
-    # --- attempt 3: give up cleanly --------------------------------------------
-    app_logger.warning("parse_sqlserver_json: could not parse SubbmissionMatches: %s", raw[:200])
-    return []
-
 
 def update_application_matching_sql() -> str:
     # Link SUBMISSION rows to their matching WORKFLOW counterpart (by ExternalAppRef)

@@ -10,6 +10,7 @@ import integration.kafka.kafka_producer as kafka_producer
 import logging
 import json
 import threading
+from database.utils import parse_sqlserver_json
 
 app_logger = logging.getLogger(__name__)
 
@@ -180,7 +181,7 @@ def declare_logic():
         company_row = get_resolve_company(row)
         # If both Company and Plant are in Result - lookup OWNS record and add OwnsId to ResultData
         if result is not None and company_row is not None:
-            result_data = json.loads(row.ResultData.replace("'",'"',1000)) if row.ResultData and isinstance(row.ResultData, str) else {}
+            result_data = parse_sqlserver_json(row.ResultData) if row.ResultData and isinstance(row.ResultData, str) else {}
             plant_id = int(result) if isinstance(result, int) or (isinstance(result, str) and result.isdigit()) else None
             company_id = getattr(company_row ,'Result') if company_row else None
             ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
@@ -236,10 +237,10 @@ def declare_logic():
                 if company:
                     company_details = {
                         "CompanyId": company.COMPANY_ID,
-                        "CompanyName": company.NAME,
-                        "Copacker": company.COPACKER,
-                        "Status": company.STATUS,
-                        "Active": company.ACTIVE,
+                        #"CompanyName": company.NAME,
+                        #"Copacker": company.COPACKER,
+                        #"Status": company.STATUS,
+                        #"Active": company.ACTIVE,
                         # Add other relevant fields as needed
                     }
                 else:
@@ -281,7 +282,7 @@ def declare_logic():
         #Create an EventAction for the given TaskInstanceId and EventKey
         if logic_row.ins_upd_dlt == 'upd' and old_row and row.Status == old_row.Status and row.Status == 'COMPLETED':
             return True  # Only create application on new OWNS record
-        result_data = json.loads(row.ResultData.replace("'",'"',1000)) if row.ResultData and isinstance(row.ResultData, str) else {}
+        result_data = parse_sqlserver_json(row.ResultData) if row.ResultData and isinstance(row.ResultData, str) else {}
         company_id = None
         plant_id = None
         owns_id = None
@@ -380,7 +381,7 @@ def declare_logic():
             return
         if old_row and row.Status == old_row.Status:
             return  # Status didn't change, nothing to do
-
+        row.ActiveStartDate = datetime.datetime.now() if row.Status == 'PENDING' and old_row.Status == 'NEW' else None
         application_id = row.ApplicationId
         application = models.WFApplication.query.filter_by(ApplicationID=application_id).one_or_none()
         task_def = row.TaskDefinition
