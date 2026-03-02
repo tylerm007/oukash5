@@ -1,6 +1,7 @@
  use dashboardv1;
 
 -- Drop child tables first (tables with foreign keys)
+DROP TABLE IF EXISTS SubmissionRequest;
 DROP TABLE IF EXISTS SubmissionRawData;
 DROP TABLE IF EXISTS SubmissionIngredients;
 DROP TABLE IF EXISTS SubmissionProducts;
@@ -207,4 +208,16 @@ CREATE TABLE SubmissionRawData (
 	[SubmissionRawDataId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+CREATE TABLE SubmissionRequest (
+    SubmissionRequestId INT IDENTITY(1,1) PRIMARY KEY,
+    SubmissionAppId INT NOT NULL,
+    SubmissionStatus VARCHAR(50) NOT NULL DEFAULT 'NEW', -- NEW, IN_PROGRESS, COMPLETED, FAILED
+    ApplicationId VARCHAR(255) NULL,
+    SubmissionMessage TEXT NULL,
+    created_date DATETIME2 DEFAULT CURRENT_TIMESTAMP,
+    updated_date DATETIME2 NULL,
+    FOREIGN KEY (SubmissionAppId) REFERENCES SubmissionApplication(SubmissionAppId)
+);
 GO

@@ -5,6 +5,8 @@ import logging
 import flask
 #from logic.logic_discovery.workflow_engine import call_script_engine_post, call_task_script_engine
 import safrs
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from config.config import Args
 from config.config import Config
 from flask_jwt_extended import get_jwt, jwt_required
@@ -113,7 +115,7 @@ def resolve_paid_invoices(access_token: str = None, user: str = 'system', app: f
                     payload = {"username": "admin", "password": "p"}
                     # Fix the URL (was missing one colon)
                     url = f'{Args.instance.http_scheme}://{Args.instance.swagger_host}:{Args.instance.swagger_port}/api/auth/login'
-                    r = requests.post(url, json=payload)
+                    r = requests.post(url, json=payload, verify=False)
                     if r.status_code == 200:
                         access_token = r.json().get("access_token")
                         user = 'system'

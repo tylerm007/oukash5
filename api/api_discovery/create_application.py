@@ -1,4 +1,6 @@
+from re import sub
 from unittest import result
+import flask
 from flask_jwt_extended import get_jwt, jwt_required  
 import datetime
 from database.models import WFApplication
@@ -148,6 +150,53 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
     link_submission_to_application(application_id, company_id, plant_id, owns_id, submission_id)
     create_files(application_id)
     return application_id
+
+def submsisson_request_process( app: flask = None):
+    # Placeholder for any specific processing needed for submission applications before linking to main application
+    from flask import current_app, has_request_context
+
+    if not app:
+        try:
+            app = current_app._get_current_object()
+        except RuntimeError:
+            app_logger.error("❌ No Flask app context available for submsisson_request_process - background task may fail")
+            return
+
+    with app.app_context():
+        submission_requests = session.query(models.SubmissionRequest).filter(models.SubmissionRequest.ApplicationId == None).all()
+        for submission_request in submission_requests:
+            submission_id = submission_request.SubmissionAppId
+            submission_application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == submission_id).first()
+
+            if not submission_application:
+                submission_request.SubmissionStatus= 'Failed'
+                submission_request.SubmissionMessage = f"No SubmissionApplication found for SubmissionAppId: {submission_id}"
+                submission_request.update_date = datetime.datetime.now(datetime.timezone.utc)
+                session.add(submission_request)
+                session.commit()
+            else:
+                try:
+                    submission_request.SubmissionStatus= 'Processed'
+                    company_id = submission_application.SubmissionAppId
+                    submission_id = submission_application.submission_id
+                    application_id = create_new_submission_application(company_id=company_id, submission_id=submission_id, user="system")
+                    submission_request.ApplicationId = application_id
+                    session.add(submission_request)
+                    session.commit()
+                    session.flush()
+                    from api.api_discovery.start_workflow import _start_workflow_async
+                    process_name = "OU Application Init"
+                    response = _start_workflow_async(process_name=process_name, application_id=int(application_id), started_by='system', priority="NORMAL", access_token=None)
+                    submission_request.update_date = datetime.datetime.now(datetime.timezone.utc)
+                    submission_request.SubmissionMessage = f"SubmissionApplication with ID: {submission_application.SubmissionAppId} found for SubmissionAppId: {submission_id} created WFApplication with ID: {application_id} Start Workflow respomse: {response}"
+                    session.add(submission_request)
+                    session.commit()
+                except Exception as e:
+                    submission_request.SubmissionStatus = 'Failed'
+                    submission_request.SubmissionMessage = f"Error creating submission application: {e}"
+                    session.add(submission_request)
+                    session.commit()
+    
 
 def create_new_submission_application( company_id: int = 0, submission_id: str=None,user: str = "admin"):
     # ApplicationNumber is INT - never assign submission_id (string) directly as it causes arithmetic overflow

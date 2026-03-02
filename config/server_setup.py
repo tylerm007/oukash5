@@ -460,13 +460,13 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         #app_logger.info("\n📦 Initializing database cache service...")
         try:
             from database.cache_service import get_cache
-            #cache = get_cache()
-            #cache.load(flask_app)
-            #stats = cache.get_stats()
-            #app_logger.info(f"✅ Database cache loaded successfully:")
-            #app_logger.info(f"   - TaskDefinitions: {stats['task_definitions_count']}")
-            #app_logger.info(f"   - StageDefinitions: {stats['stage_definitions_count']}")
-            #app_logger.info(f"   - TaskFlows: {stats['task_flows_count']}")
+            cache = get_cache()
+            cache.load(flask_app)
+            stats = cache.get_stats()
+            app_logger.info(f"✅ Database cache loaded successfully:")
+            app_logger.info(f"   - TaskDefinitions: {stats['task_definitions_count']}")
+            app_logger.info(f"   - StageDefinitions: {stats['stage_definitions_count']}")
+            app_logger.info(f"   - TaskFlows: {stats['task_flows_count']}")
         except Exception as e:
             app_logger.error(f"❌ Database cache initialization failed: {str(e)}")
             import traceback

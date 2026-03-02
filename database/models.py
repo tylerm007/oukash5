@@ -592,7 +592,7 @@ class SubmissionApplication(Base):  # type: ignore
     SubmissionMatcherList : Mapped[List["SubmissionMatcher"]] = relationship(back_populates="SubmissionApp")
     SubmissionPlantList : Mapped[List["SubmissionPlant"]] = relationship(back_populates="SubmissionApp")
     SubmissionRawDatumList : Mapped[List["SubmissionRawDatum"]] = relationship(back_populates="SubmissionApp")
-	
+    SubmissionRequestList : Mapped[List["SubmissionRequest"]] = relationship(back_populates="SubmissionApp")
 	
 
 
@@ -746,6 +746,23 @@ class SubmissionFileLink(Base):  # type: ignore
 
     # child relationships (access children)
 
+class SubmissionRequest(Base):  # type: ignore
+    __tablename__ = 'SubmissionRequest'
+    _s_collection_name = 'SubmissionRequest'  # type: ignore
+    __bind_key__ = 'submission'
+
+    SubmissionRequestId = Column(Integer, autoincrement=True, primary_key=True)
+    SubmissionAppId = Column(ForeignKey('SubmissionApplication.SubmissionAppId'), nullable=False)
+    SubmissionStatus = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text('NEW'))  # NEW, IN_PROGRESS, COMPLETED, FAILED
+    ApplicationId = Column(Unicode(255, 'SQL_Latin1_General_CP1_CI_AS'), nullable=True)
+    SubmissionMessage = Column(TEXT(2147483647, 'SQL_Latin1_General_CP1_CI_AS'))
+    created_date = Column(DATETIME2, server_default=text("getdate()"))
+    updated_date = Column(DATETIME2, nullable=True)
+
+    # parent relationships (access parent)
+    SubmissionApp : Mapped["SubmissionApplication"] = relationship(back_populates=("SubmissionRequestList"))
+
+    # child relationships (access children))
 
 class SubmissionMatcher(Base):  # type: ignore
     __tablename__ = 'SubmissionMatcher'

@@ -375,8 +375,8 @@ def _calc_days_between(start_date, end_date) -> int:
 def _get_app_status(status_code: str,application_type:str = 'WORKFLOW') -> str:
     """Get application status from code"""
     status_map = {
-        "NEW": "Not Ready",
-        "INP": "Active",
+        "NEW": "New",
+        "INP": "In Progress",
         "HLD": "On Hold",
         "WTH": "Withdrawn",
         "COMPL":"Completed" if application_type != 'WORKFLOW' else "Certified",

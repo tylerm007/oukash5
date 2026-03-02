@@ -201,6 +201,21 @@ class BackgroundScheduler:
             job_name="Find Paid Invoices"
         )
 
+        from api.api_discovery.create_application import submsisson_request_process
+
+        def create_submission_application_wrapper():
+            try:
+                logger.info("🔄 Starting Create Submission Application job")
+                submsisson_request_process(app=self.flask_app)
+                logger.info("✅ Create Submission Application job completed")
+            except Exception as e:
+                logger.error(f"❌ Create Submission Application job failed: {e}")
+
+        self.add_job_every_minute(
+            create_submission_application_wrapper,      
+            job_name="Create Submission Application"
+        )
+
     def add_background_endpoints(self, app: Flask):
         """Add background scheduler management endpoints to Flask app"""
         

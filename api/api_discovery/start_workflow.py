@@ -563,7 +563,12 @@ def _start_workflow_async(process_name: str, application_id: int, started_by: st
         start_instance_id = stage_results['start_instance_id']
         
         # Step 7: Complete the start task
-        access_token = request.headers.get('Authorization') if access_token is None else access_token
+        if access_token is None:
+            try:
+                from flask import has_request_context
+                access_token = request.headers.get('Authorization') if has_request_context() else None
+            except Exception:
+                access_token = None
         _complete_task(start_instance_id, result='Started', completed_by=started_by, completion_notes='Workflow started', access_token=access_token, depth=0)
         
         # Step 8: Add role assignment
