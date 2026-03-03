@@ -163,7 +163,7 @@ def submsisson_request_process( app: flask = None):
             return
 
     with app.app_context():
-        submission_requests = session.query(models.SubmissionRequest).filter(models.SubmissionRequest.ApplicationId == None).all()
+        submission_requests = session.query(models.SubmissionRequest).filter(models.SubmissionRequest.ApplicationId == None, models.SubmissionRequest.SubmissionType=='INTAKE').all()
         for submission_request in submission_requests:
             submission_id = submission_request.SubmissionAppId
             submission_application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == submission_id).first()

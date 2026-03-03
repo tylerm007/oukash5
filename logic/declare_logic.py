@@ -423,6 +423,7 @@ def declare_logic():
             elif TaskName == 'Notify Customer': status = 'COMPL'
             elif TaskName == 'to Withdrawn Y/N' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Withdraw Application' and row.Result == 'YES': status = 'WTH'
+            elif TaskName == 'Cancel Application' and row.Result == 'YES': status = 'WTH'
             elif TaskName == 'Send Contract' and row.Result == 'YES': status = 'CONTRACT' 
             elif TaskName == 'Inspection Report Submitted to IAR': status = 'REVIEW'
             elif TaskName == 'Schedule Inspection': status = 'INSPECTION'

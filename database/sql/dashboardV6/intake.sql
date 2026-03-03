@@ -52,25 +52,25 @@ GO
 
 update TaskDefinitions
 set PreScriptJson = 'Plant1 Resolver'
-where TaskName = 'ResolvePlant';
+where TaskName = 'ResolvePlant1';
 GO
 
 update TaskDefinitions
 set PreScriptJson = 'Plant2 Resolver'
-where TaskName = 'ResolvePlant';
+where TaskName = 'ResolvePlant2';
 GO
 
 update TaskDefinitions
 set PreScriptJson = 'Plant3 Resolver'
-where TaskName = 'ResolvePlant';
+where TaskName = 'ResolvePlant3';
 GO
 
 update TaskDefinitions
 set PreScriptJson = 'Plant4 Resolver'
-where TaskName = 'ResolvePlant';
+where TaskName = 'ResolvePlant4';
 GO
 
 update TaskDefinitions
 set PreScriptJson = 'Plant5 Resolver'
-where TaskName = 'ResolvePlant';
+where TaskName = 'ResolvePlant5';
 GO

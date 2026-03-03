@@ -1,0 +1,133 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Dialog overall sizing */
+app-file-upload-dialog,
+.file-upload-dialog {
+  display: block;
+  min-width: 480px;
+
+  h2[mat-dialog-title] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.25rem;
+
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+}
+
+/* Drag & Drop zone */
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #90a4ae;
+  border-radius: 8px;
+  padding: 32px 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  background-color: #fafafa;
+
+  &:hover {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+  }
+
+  &--active {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+  }
+
+  &--has-file {
+    border-color: #388e3c;
+    background-color: #f1f8e9;
+
+    .drop-icon {
+      color: #388e3c;
+    }
+  }
+}
+
+.drop-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #90a4ae;
+  margin-bottom: 8px;
+}
+
+.drop-text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #546e7a;
+  text-align: center;
+
+  &--file {
+    font-weight: 600;
+    color: #388e3c;
+    word-break: break-all;
+  }
+}
+
+.drop-link {
+  color: #1976d2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.drop-size {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #78909c;
+}
+
+/* URL section */
+.url-section {
+  margin-top: 8px;
+
+  mat-divider {
+    margin-bottom: 12px;
+  }
+}
+
+.url-label {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #78909c;
+  text-align: center;
+}
+
+/* Error message */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #d32f2f;
+  font-size: 0.88rem;
+  margin: 4px 0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Progress */
+.progress-section {
+  margin-top: 12px;
+  text-align: center;
+
+  p {
+    margin: 8px 0 0;
+    font-size: 0.9rem;
+    color: #546e7a;
+  }
+}

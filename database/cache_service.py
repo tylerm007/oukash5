@@ -250,7 +250,21 @@ class DatabaseCacheService:
         with self._lock:
             app_logger.info("🔄 Reloading database cache...")
             self._loaded = False
-            self.load(flask_app)
+            
+            # Call internal load methods directly to avoid deadlock
+            # (we already hold the lock)
+            if flask_app:
+                with flask_app.app_context():
+                    self._load_task_definitions()
+                    self._load_stage_definitions()
+                    self._load_task_flows()
+            else:
+                self._load_task_definitions()
+                self._load_stage_definitions()
+                self._load_task_flows()
+                
+            self._loaded = True
+            app_logger.info("✅ Database cache reloaded successfully")
     
     def ensure_loaded(self):
         """Ensure cache is loaded (lazy loading)"""

@@ -249,6 +249,7 @@ INSERT INTO TaskCategories (TaskCategoryCode, TaskCategoryDescription) VALUES
 ('SELECTOR', 'Selection and Decision Making'),
 ('SUBPROCESS','Internal processing only'),
 ('PROGRESS_TASK', 'Subprocess Progress'),
+('UPLOAD', 'Document Upload Task'),
 ('VERIFICATION', 'Data and Status Verification');
 GO
 

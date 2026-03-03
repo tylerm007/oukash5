@@ -1,0 +1,78 @@
+<h2 mat-dialog-title>
+  <mat-icon>upload_file</mat-icon>
+  Upload File
+</h2>
+
+<mat-dialog-content>
+
+  <!-- Description Field -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Description</mat-label>
+    <input matInput [(ngModel)]="description" placeholder="Enter file description" />
+  </mat-form-field>
+
+  <!-- App ID Field (pre-filled, optionally editable) -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Application ID</mat-label>
+    <input matInput [(ngModel)]="appId" type="number" placeholder="Application ID" />
+  </mat-form-field>
+
+  <!-- Drag & Drop Zone -->
+  <div
+    class="drop-zone"
+    [class.drop-zone--active]="isDragging"
+    [class.drop-zone--has-file]="selectedFile"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()"
+  >
+    <mat-icon class="drop-icon">{{ selectedFile ? 'check_circle' : 'cloud_upload' }}</mat-icon>
+    <ng-container *ngIf="!selectedFile">
+      <p class="drop-text">Drag &amp; drop a file here, or <span class="drop-link">click to browse</span></p>
+    </ng-container>
+    <ng-container *ngIf="selectedFile">
+      <p class="drop-text drop-text--file">{{ selectedFile.name }}</p>
+      <p class="drop-size">{{ formatFileSize(selectedFile.size) }}</p>
+    </ng-container>
+  </div>
+
+  <!-- Hidden native file input (browse) -->
+  <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
+
+  <!-- File URL / link input -->
+  <div class="url-section">
+    <mat-divider></mat-divider>
+    <p class="url-label">Or provide a file URL</p>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>File URL</mat-label>
+      <input matInput [(ngModel)]="fileUrl" (ngModelChange)="onUrlChange()" placeholder="https://..." />
+      <mat-icon matSuffix>link</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Error message -->
+  <p *ngIf="errorMessage" class="error-message">
+    <mat-icon>error_outline</mat-icon>{{ errorMessage }}
+  </p>
+
+  <!-- Upload progress -->
+  <div *ngIf="isUploading" class="progress-section">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>Uploading, please wait…</p>
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isUploading">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="isUploading || (!selectedFile && !fileUrl.trim())"
+  >
+    <mat-icon>upload</mat-icon>
+    Upload
+  </button>
+</mat-dialog-actions>

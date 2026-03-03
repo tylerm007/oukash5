@@ -213,8 +213,9 @@ GO
 CREATE TABLE SubmissionRequest (
     SubmissionRequestId INT IDENTITY(1,1) PRIMARY KEY,
     SubmissionAppId INT NOT NULL,
-    SubmissionStatus VARCHAR(50) NOT NULL DEFAULT 'NEW', -- NEW, IN_PROGRESS, COMPLETED, FAILED
-    ApplicationId VARCHAR(255) NULL,
+    SubmissionStatus NVARCHAR(50) NOT NULL DEFAULT 'NEW', -- NEW, IN_PROGRESS, COMPLETED, FAILED
+    SubmissionType NVARCHAR(50) NOT NULL, -- e.g., 'Initial Review', 'Follow-up', etc.
+    ApplicationId NVARCHAR(255) NULL,
     SubmissionMessage TEXT NULL,
     created_date DATETIME2 DEFAULT CURRENT_TIMESTAMP,
     updated_date DATETIME2 NULL,

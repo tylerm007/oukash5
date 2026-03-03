@@ -106,8 +106,8 @@ VALUES
 (1, 'Start_Application_Submitted', 'START', 'COMPLETION', 1, 1, 'SYSTEM', NULL, 'Application submitted and ready for admin review', 1, 'system'),
 (1, 'Init Stage start', 'STAGESTART', 'COMPLETION', 1, 1, 'SYSTEM', 0, 'Stage Start new application', 1, 'system'),
 (1, 'AssignNCRC', 'ACTION', 'ASSIGNMENT', 2, 1, 'DISPATCH', 2880, 'NCRC Dispatcher Select NCRC Admin', 0, 'system'),
-(1, 'All Verified Gateway', 'GATEWAY', 'ESCALATION', 8, 1, 'SYSTEM', NULL, 'All verifications completed', 1, 'system'),
-(1, 'to Withdrawn Y/N', 'CONDITION', 'APPROVAL', 9, 1, 'NCRC', 2880, 'Withdrawn Application Y/N', 0, 'system'),
+--(1, 'All Verified Gateway', 'GATEWAY', 'ESCALATION', 8, 1, 'SYSTEM', NULL, 'All verifications completed', 1, 'system'),
+--(1, 'to Withdrawn Y/N', 'CONDITION', 'APPROVAL', 9, 1, 'NCRC', 2880, 'Withdrawn Application Y/N', 0, 'system'),
 (1, 'Assign Product', 'CONFIRM', 'CONFIRMATION', 10, 1, 'NCRC', 2880, 'Assign to Product', 0, 'system'),
 (1, 'Assign Ingredients', 'CONFIRM', 'CONFIRMATION', 11, 1, 'NCRC', 2880, 'Assign to Ingredients', 0, 'system'),
 (1, 'Contact Customer', 'PROGRESS', 'PROGRESS_TASK', 12, 1, 'NCRC', 2880, 'Contact Customer', 0, 'system'),
@@ -119,12 +119,14 @@ GO
 
 EXEC sp_add_flow @from_name = 'Start_Application_Submitted', @to_name = 'Init Stage Start', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Init Stage Start', @to_name = 'AssignNCRC', @condition = 'None';
-EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'All Verified Gateway', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'All Verified Gateway', @to_name = 'to Withdrawn Y/N', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'END', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Product', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Ingredients', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Contact Customer', @condition = 'NO'; 
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Assign Product', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Assign Ingredients', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Contact Customer', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'All Verified Gateway', @to_name = 'to Withdrawn Y/N', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'END', @condition = 'YES'; 
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Product', @condition = 'NO'; 
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Assign Ingredients', @condition = 'NO'; 
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Contact Customer', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Assign Product', @to_name = 'Initial Collector', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Assign Ingredients', @to_name = 'Initial Collector', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Contact Customer', @to_name = 'Initial Collector', @condition = 'None'; 
@@ -135,18 +137,23 @@ INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCatego
 VALUES
 (1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'SYSTEM', 15, 'Start NDA stage', 1, 'system'),
 (1, 'Company requires NDA', 'CONDITION', 'APPROVAL', 2, 2, 'NCRC', 15, 'Company requires NDA?', 0, 'system'),
-(1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 3, 2, 'LEGAL', 30, 'Send/Recieve non-disclosure agreement to customer', 0, 'system'), -- ALERT
-(1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 4, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),
-(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 15, 'Mark NDA process as completed', 0, 'system'),
-(1, 'NDA End', 'STAGEEND', 'COMPLETION', 6, 2, 'SYSTEM', 15, 'NDA completed', 1, 'system');
+(1, 'Upload NDA from Company', 'CONDITION', 'UPLOAD', 3, 2, 'LEGAL', 30, 'Upload non-disclosure agreement', 0, 'system'), -- ALERT
+(1, 'Legal Review', 'PROGRESS', 'PROGRESS_TASK', 4, 2, 'LEGAL', 30, 'Legal review of NDA', 0, 'system'), -- ALERT
+(1, 'Send NDA to Company', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 30, 'Send non-disclosure agreement to customer', 0, 'system'), -- ALERT
+(1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),
+(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 'LEGAL', 15, 'Mark NDA process as completed', 0, 'system'),
+(1, 'NDA End', 'STAGEEND', 'COMPLETION', 8, 2, 'SYSTEM', 15, 'NDA completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Start NDA', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Company requires NDA', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'Send NDA', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'Upload NDA from Company', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'NDA End', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES'; 
-EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'NONE'; 
+EXEC sp_add_flow @from_name = 'Upload NDA from Company', @to_name = 'Legal Review', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Legal Review', @to_name = 'Send NDA to Company', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Send NDA to Company', @to_name = 'NDA Executed by Legal', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';
 
@@ -163,11 +170,12 @@ VALUES
 (1, 'Mark Invoice Paid', 'CONFIRM', 'CONFIRMATION', 7, 3, 'NCRC', 2880 * 3, 'Payment Received by Finance', 0, 'system'), -- ALERT
 (1, 'Schedule Inspection', 'ACTION', 'SCHEDULING', 9, 3, 'RFR', 60, 'Schedule inspection with RFR and customer', 0, 'system'),
 (1, 'Inspection Report Submitted to IAR', 'CONFIRM', 'CONFIRMATION', 11, 3, 'RFR', 240, 'Inspection report submitted to the ingredient team (IAR)', 0, 'system'),
-(1, 'Withdraw Application', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 5, 'Withdraw ApplicationY/N', 0, 'system'),
+--(1, 'Withdraw Application', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 5, 'Withdraw ApplicationY/N', 0, 'system'),
 (1, 'End Inspection', 'STAGEEND', 'COMPLETION', 13, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
 GO
 
-EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Inspection', @condition = 'NO';
+--EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Inspection', @condition = 'NO';
+EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Inspection', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Is Inspection Needed', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
@@ -177,9 +185,9 @@ EXEC sp_add_flow @from_name = 'Assign Invoice Amount', @to_name = 'Generated Inv
 EXEC sp_add_flow @from_name = 'Generated Invoice and Send', @to_name = 'Mark Invoice Paid', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Schedule Inspection', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Report Submitted to IAR', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'Withdraw Application', @condition = 'None';
-EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'End Inspection', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'END', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'End Inspection', @condition = 'None';
+--EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'End Inspection', @condition = 'NO'; 
+--EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Stage Collector', @condition = 'None';
 GO
 -- Stage: Ingredients (ID: 4)
@@ -202,7 +210,7 @@ GO
 INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Start Products Stage', 'STAGESTART', 'COMPLETION', 1, 5, 'SYSTEM', 15, 'Start Products stage', 1, 'system'),
-(1, 'Upload Product to KASH DB', 'PROGRSS', 'PROGRESS_TASK', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
+(1, 'Upload Product to KASH DB', 'PROGRESS', 'PROGRESS_TASK', 2, 5, 'PROD', 15, 'Upload product data to KASH database', 0, 'system'),
 (1, 'Verify Products in DB', 'CONFIRM', 'CONFIRMATION', 3, 5, 'PROD', 15, 'Verify if all product reviews are complete', 0, 'system'),
 (1, 'End Products', 'STAGEEND', 'COMPLETION', 4, 5, 'SYSTEM', 15, 'Products stage completed', 1, 'system');
 
@@ -249,12 +257,12 @@ EXEC sp_add_flow @from_name = 'End Certification', @to_name = 'END', @condition 
 GO
 
 
-update TaskDeffinitions
+update TaskDefinitions
 set PreScriptJson = 'api/vSelectNCRC,NCRC'
 where TaskName = 'AssignNCRC';
 GO
 
-update TaskDeffinitions
+update TaskDefinitions
 set PreScriptJson = 'api/vSelectRFR,RFR'
 where TaskName = 'Select RFR';
 GO

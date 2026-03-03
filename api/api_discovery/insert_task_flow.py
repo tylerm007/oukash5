@@ -184,7 +184,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             result += "\n"
             app_logger.info(f"Stage: {stage.StageName} (ID: {stage.StageId})")   
             result += f"-- Stage: {stage.StageName}\n\n"
-            task_defs = TaskDefinition.query.filter_by(LaneId=stage.StageId).order_by(TaskDefinition.TaskId).all()
+            task_defs = TaskDefinition.query.filter_by(StageDefinitionId=stage.StageId).order_by(TaskDefinition.TaskId).all()
             for task in task_defs:
                 #app_logger.info(f"Lane:{lane.LaneName}  Task: {task.TaskName} (ID: {task.TaskId}, Type: {task.TaskType})")
                 flows = TaskFlow.query.filter((TaskFlow.FromTaskId == task.TaskId)).all() #| (TaskFlow.ToTaskId == task.TaskId

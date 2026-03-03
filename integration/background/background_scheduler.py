@@ -196,8 +196,9 @@ class BackgroundScheduler:
             except Exception as e:
                 logger.error(f"❌ Find Paid Invoices job failed: {e}")
 
-        self.add_job_every_minute(
+        self.add_job_every_n_minutes(
             resolve_paid_invoices_wrapper,
+            minutes=10,  # Run every 10 minutes
             job_name="Find Paid Invoices"
         )
 
@@ -211,8 +212,9 @@ class BackgroundScheduler:
             except Exception as e:
                 logger.error(f"❌ Create Submission Application job failed: {e}")
 
-        self.add_job_every_minute(
-            create_submission_application_wrapper,      
+        self.add_job_every_n_minutes(
+            create_submission_application_wrapper, 
+            minutes=5,     
             job_name="Create Submission Application"
         )
 

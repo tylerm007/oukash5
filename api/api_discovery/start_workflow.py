@@ -262,7 +262,7 @@ def create_stage_with_tasks(stage_definition: any, application: WFApplication, s
                 # Skip ResolvePlant tasks here - they will be created separately with plant data
                 resolve_tasks.append(task_instance)
             # Check if this is the START task
-            if task_def['TaskType'] == 'START' or task_def['TaskName'] == 'Intake Stage start':
+            if task_def['TaskType'] == 'START' or task_def['TaskName'].upper() == 'INTAKE STAGE START':
                 start_instance_id = task_instance.TaskInstanceId
                 app_logger.info(f'🚀 Found START task instance: {start_instance_id}')
 

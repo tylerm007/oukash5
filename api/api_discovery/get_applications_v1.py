@@ -1,4 +1,5 @@
 from datetime import datetime
+from api.api_discovery.test_workflow import find_task_flow
 from database.models import CompanyApplication, StageDefinition
 from flask import app, request, jsonify, session
 import logging
@@ -10,7 +11,7 @@ from flask_jwt_extended import get_jwt, jwt_required
 import json
 from database.cache_service import DatabaseCacheService
 from security.system.authorization import Security
-from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB, SubmissionApplication
+from database.models import SubmissionMatcher, SubmissionPlant, WFApplication, OWNSTB, SubmissionApplication, TaskInstance
 from database.utils import parse_sqlserver_json
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -157,11 +158,15 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
     status = _get_app_status(app.get("Status"),application_type)
     days_between = _calc_days_between(created_date, None) if app.get("Status") not in ["COMPL","WTH"] else 0
     days_due = 5  #
+    withdrawn_reason = None
+    if app.get('Status') == 'WTH':
+        withdrawn_reason = find_withdrawn_reason(app.get("applicationId"))
     row ={
                 #id": app.get("ApplicationID"),
                 "company": app.get("companyName", "Unknown Company"),
                 "plant": app.get("plantName", "Unknown Plant"),
                 "applicationId": app.get("applicationId"),
+                "withdrawn_reason": withdrawn_reason,
                 'companyId': app.get("companyId"),
                 "externalReferenceId": app.get("externalReferenceId"),
                 "WFID": app.get("WFLinkedApp"),
@@ -241,6 +246,16 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
                             }
                         
     return row
+def find_withdrawn_reason(app_id:int):
+    reason = None
+    task_instances = session.query(TaskInstance).filter_by(ApplicationId=app_id, Status='COMPLETED').all()
+    for task_instance in task_instances:
+        task_def = task_instance.TaskDefinition
+        if task_def and task_def.TaskName.upper() == 'CANCEL APPLICATION':
+            resultData = parse_sqlserver_json(task_instance.ResultData) if task_instance.ResultData else None
+            return resultData.get("notes") if resultData and isinstance(resultData, dict) and "notes" in resultData else None
+
+    return reason
 
 def transform_stage_row(stage_rows: any, application_type:str = 'WORKFLOW') -> list:
     """

@@ -754,6 +754,7 @@ class SubmissionRequest(Base):  # type: ignore
     SubmissionRequestId = Column(Integer, autoincrement=True, primary_key=True)
     SubmissionAppId = Column(ForeignKey('SubmissionApplication.SubmissionAppId'), nullable=False)
     SubmissionStatus = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'), server_default=text('NEW'))  # NEW, IN_PROGRESS, COMPLETED, FAILED
+    SubmissionType = Column(Unicode(50, 'SQL_Latin1_General_CP1_CI_AS'))
     ApplicationId = Column(Unicode(255, 'SQL_Latin1_General_CP1_CI_AS'), nullable=True)
     SubmissionMessage = Column(TEXT(2147483647, 'SQL_Latin1_General_CP1_CI_AS'))
     created_date = Column(DATETIME2, server_default=text("getdate()"))

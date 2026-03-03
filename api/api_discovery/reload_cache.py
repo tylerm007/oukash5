@@ -27,7 +27,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         try:
             # Call the stored procedure to reload the cache
             from database.cache_service import DatabaseCacheService
-            DatabaseCacheService.get_instance().reload_cache()  
+            DatabaseCacheService.get_instance().reload()  
             return jsonify({"msg": "Cache reloaded successfully"}), 200
         except Exception as e:
             app_logger.error(f"Error reloading cache: {str(e)}")

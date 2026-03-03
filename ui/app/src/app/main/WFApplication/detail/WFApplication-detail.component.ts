@@ -1,6 +1,8 @@
 import { Injector, ViewChild, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OFormComponent, OntimizeService, SnackBarService, OSnackBarConfig, DialogService } from 'ontimize-web-ngx';
+import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../../environments/environment';
+import { FileUploadDialogComponent } from '../../../shared/file-upload-dialog/file-upload-dialog.component';
 
 @Component({
   selector: 'WFApplication-detail',
@@ -16,7 +18,8 @@ export class WFApplicationDetailComponent implements OnInit  {
   @ViewChild('oDetailForm') form: OFormComponent;
   
   constructor(protected injector: Injector,
-    protected dialogService: DialogService)
+    protected dialogService: DialogService,
+    protected matDialog: MatDialog)
   {
     this.service = this.injector.get(OntimizeService);
     this.snackBarService = this.injector.get(SnackBarService);
@@ -79,5 +82,28 @@ export class WFApplicationDetailComponent implements OnInit  {
       this.dialogService.info('Workflow Started',
         'The workflow has been started successfully',);
     }
+  }
+
+  openUploadDialog(): void {
+    const dialogRef = this.matDialog.open(FileUploadDialogComponent, {
+      width: '560px',
+      disableClose: false,
+      data: {
+        appId: this.data?.ApplicationID ?? '',
+        description: ''
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        const config: OSnackBarConfig = {
+          action: 'Ok',
+          milliseconds: 6000,
+          icon: 'check_circle',
+          iconPosition: 'left'
+        };
+        this.snackBarService.open('File uploaded successfully.', config);
+      }
+    });
   }
 }
