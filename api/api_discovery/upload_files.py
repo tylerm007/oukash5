@@ -40,10 +40,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if not task_instance_id:
                 return jsonify({"error": "Missing required parameter: task_instance_id"}), 400
             
-            task_instance = session.query(TaskInstance).filter_by(TaskInstanceID=task_instance_id).first()
+            task_instance = session.query(TaskInstance).filter_by(TaskInstanceId=task_instance_id).first()
             if not task_instance:
                 return jsonify({"error": f"No TaskInstance found with ID {task_instance_id}"}), 404
             
+            user = Security.current_user().Username
             temp_dir = Path("temp_uploads")
             temp_dir.mkdir(exist_ok=True)
 
@@ -72,28 +73,36 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
             app_logger.info(f"File uploaded successfully: {temp_file_path}")
             application_id = task_instance.ApplicationId
+            file_type = filename.split('.')[-1] if '.' in filename else 'txt'
             wf_file = WFFile(
                 FileName    = filename,
                 FilePath    = str(temp_file_path),
-                FileType    = content_type,
+                FileType    = file_type,
                 FileSize    = content_length,
                 UploadedDate= datetime.now(),
                 ApplicationID = application_id,
                 Tag         = description or None,
-                CreatedBy   = 'SYSTEM'  # TODO: replace with authenticated user
+                CreatedBy   = user
             )
-            session.add(wf_file)
+            
 
-            user = Security.current_user().Username
+           
             completed_by = request.form.get("completed_by",user)
             capacity = request.form.get("capacity", None) # "S/B ADMIN, MEMBER, DESIGNATED"
             completion_notes = f"File uploaded: {filename}"
             result = request.form.get("result", None)
             access_token = request.headers.get("Authorization")
+            
+            #done = write_to_s3(temp_file_path, Args.S3_BUCKET_NAME, f"uploads/{application_id}/{filename}")
+            #wf_file.FilePath = f"s3://{Args.S3_BUCKET_NAME}/uploads/{application_id}/{filename}"
+            session.add(wf_file)
+            #if done:
+                #temp_file_path.unlink(missing_ok=True)
 
             from api.api_discovery.complete_task import _complete_task
             _complete_task(task_instance_id, result=result,  completed_by= completed_by, completion_notes= completion_notes, access_token=access_token, capacity= capacity, depth=0)
             session.commit()
+
 
             return jsonify({
                 "message"  : "File uploaded successfully",
