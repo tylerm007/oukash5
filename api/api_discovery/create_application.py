@@ -287,8 +287,8 @@ def do_cleanup(application: models.WFApplication):
         DELETE FROM EventAction where [TaskInstanceId] IN (
             SELECT TaskInstanceId FROM TaskInstances where ApplicationId = {application_id}
         );
-       
-      
+        DELETE FROM TaskEvents where [ApplicationId] = {application_id};
+        
     """))
     session.commit()
 

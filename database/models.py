@@ -324,6 +324,7 @@ class WFApplication(Base):  # type: ignore
     WFApplicationMessageList : Mapped[List["WFApplicationMessage"]] = relationship(back_populates="Application")
     WFFileList : Mapped[List["WFFile"]] = relationship(back_populates="Application")
     WFQuoteList : Mapped[List["WFQuote"]] = relationship(back_populates="Application")
+    TaskEventList : Mapped[List["TaskEvent"]] = relationship(back_populates="ApplicationInstance")
 
 """
 class WFUSERROLE(Base):  # type: ignore
@@ -410,12 +411,12 @@ class WFFile(Base):  # type: ignore
     FileName = Column(Unicode(500), nullable=False)
     FileType = Column(ForeignKey('WF_FileTypes.FileType'), nullable=False)
     FileSize = Column(Unicode(20))
-    UploadedDate = Column(Date, nullable=False)
+    UploadedDate = Column(DATETIME2, nullable=False)
     Tag = Column(Unicode(200))
     IsProcessed = Column(Boolean, server_default=text("0"), nullable=False)
     RecordCount = Column(Integer)
     FilePath = Column(Unicode(1000))
-    CCreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    CreatedDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
     CreatedBy = Column(Unicode(100), server_default=text("System"), nullable=False)
     ModifiedDate = Column(DATETIME2)
     ModifiedBy = Column(Unicode(100))
@@ -482,7 +483,7 @@ class TaskInstance(Base):  # type: ignore
 
     # child relationships (access children)
     EventActionList : Mapped[List["EventAction"]] = relationship(back_populates="TaskInstance")
-
+    TaskEventList : Mapped[List["TaskEvent"]] = relationship(back_populates="TaskInstance")
 
 
 class WFQuoteItem(Base):  # type: ignore
@@ -531,6 +532,29 @@ class WFUserProfile(Base):
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
+
+
+class TaskEvent(Base):
+    __tablename__ = 'TaskEvents'
+    _s_collection_name = 'TaskEvent'  # type: ignore
+
+    TaskEventId = Column(Integer, autoincrement=True, primary_key=True)
+    ApplicationId = Column(ForeignKey('WF_Applications.ApplicationID'), nullable=False)
+    TaskInstanceId = Column(ForeignKey('TaskInstances.TaskInstanceId'), nullable=False)
+    Action = Column(Unicode(100), nullable=False)
+    PreviousStatus = Column(Unicode(50))
+    NewStatus = Column(Unicode(50))
+    ActionBy = Column(Unicode(100), nullable=False)
+    ActionDate = Column(DATETIME2, server_default=text("getutcdate()"), nullable=False)
+    ActionReason = Column(Unicode(250))
+    Details = Column(Unicode(collation='SQL_Latin1_General_CP1_CI_AS'))
+
+    # parent relationships (access parent)
+    TaskInstance : Mapped["TaskInstance"] = relationship(back_populates=("TaskEventList"))
+    ApplicationInstance : Mapped['WFApplication'] = relationship(back_populates=("TaskEventList"))
+
+    # child relationships (access children)
+
 #============SUBMISSION Tables ===================================
 class SubmissionApplication(Base):  # type: ignore
     __tablename__ = 'SubmissionApplication'

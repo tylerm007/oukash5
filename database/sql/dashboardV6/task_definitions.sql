@@ -137,7 +137,7 @@ INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCatego
 VALUES
 (1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'SYSTEM', 15, 'Start NDA stage', 1, 'system'),
 (1, 'Company requires NDA', 'CONDITION', 'APPROVAL', 2, 2, 'NCRC', 15, 'Company requires NDA?', 0, 'system'),
-(1, 'Upload NDA from Company', 'CONDITION', 'UPLOAD', 3, 2, 'LEGAL', 30, 'Upload non-disclosure agreement', 0, 'system'), -- ALERT
+(1, 'Upload NDA from Company', 'CONDITION', 'UPLOAD', 3, 2, 'NCRC', 30, 'Upload non-disclosure agreement', 0, 'system'), -- ALERT
 (1, 'Legal Review', 'PROGRESS', 'PROGRESS_TASK', 4, 2, 'LEGAL', 30, 'Legal review of NDA', 0, 'system'), -- ALERT
 (1, 'Send NDA to Company', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 30, 'Send non-disclosure agreement to customer', 0, 'system'), -- ALERT
 (1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),

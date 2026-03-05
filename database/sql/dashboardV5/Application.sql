@@ -125,12 +125,12 @@ CREATE TABLE [dbo].[WF_Files](
 	[FileName] [nvarchar](500) NOT NULL,
 	[FileType] [nvarchar](5) NOT NULL,
 	[FileSize] [nvarchar](20) NULL,
-	[UploadedDate] [date] NOT NULL,
+	[UploadedDate] [datetime2](7) NOT NULL,
 	[Tag] [nvarchar](200) NULL,
 	[IsProcessed] [bit] NOT NULL,
 	[RecordCount] [int] NULL,
 	[FilePath] [nvarchar](1000) NULL,
-	[CCreatedDate] [datetime2](7) NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](100) NOT NULL,
 	[ModifiedDate] [datetime2](7) NULL,
 	[ModifiedBy] [nvarchar](100) NULL,
@@ -144,7 +144,7 @@ GO
 ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT 0 FOR [IsProcessed]
 GO
 
-ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT getutcdate() FOR [CCreatedDate]
+ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT getutcdate() FOR [CreatedDate]
 GO
 
 ALTER TABLE [dbo].[WF_Files] ADD  DEFAULT 'System' FOR [CreatedBy]

@@ -371,7 +371,15 @@ def declare_logic():
             app_logger.info(f"EventAction created for TaskInstanceId {task_instance.TaskInstanceId} with EventKey {event_key}")
     
         return True
-    
+    def restart_nda_task(task_instance: models.TaskInstance, old_row: models.TaskInstance, logic_row: LogicRow):
+        prior_task = find_next_task_by_name(task_instance, "Upload NDA from Company")
+        if prior_task and prior_task.Status == "COMPLETED":
+            prior_task.Status = "PENDING"
+            prior_task.Result = None
+            prior_task.ResultData = None
+            prior_task.CompletedDate = None
+            logic_row.update(reason="RestartUpload NDA from Company task due to Legal Review changes", row=prior_task)
+            app_logger.info(f"Restarted 'Upload NDA from Company' task (TaskInstanceId: {prior_task.TaskInstanceId}) due to changes in Legal Review task (TaskInstanceId: {task_instance.TaskInstanceId})")
     def update_stages(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
         """
         Update the status of the workflow application
@@ -396,7 +404,8 @@ def declare_logic():
             resolve_company(row, old_row, logic_row=logic_row)
         elif 'CreateOwns' in task_def.TaskName and row.Status == 'COMPLETED' and old_row.Status != 'COMPLETED':
             generate_owns(row, old_row, logic_row=logic_row)
-
+        elif "Legal Review" in task_def.TaskName and row.Status == "IN_PROGRESS":
+            restart_nda_task(task_instance=row, old_row=old_row, logic_row=logic_row)
         elif task_def.TaskName == 'End Certification' and row.Status == 'COMPLETED':
             if application is not None:
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'

@@ -1,6 +1,6 @@
 from datetime import datetime
 from database import models
-from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, TaskFlow 
+from database.models import ProcessDefinition, TaskDefinition, WFApplication, TaskInstance, TaskFlow, TaskEvent
 from flask import request, jsonify, session
 import logging
 from datetime import timezone, datetime
@@ -80,13 +80,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             task_instance = TaskInstance.query.filter_by(TaskInstanceId=task_instance_id).first()
             if not task_instance:
                 return jsonify({"status": "error", "message": "Task instance not found"}), 404
-            if task_instance.Status == 'COMPLETED':
+            task_def = task_instance.TaskDefinition
+            if task_instance.Status == 'COMPLETED' and task_def.TaskName != 'Legal Review':  # Allow re-completing Legal Review tasks to handle restarts
                 return jsonify({"status": "error", "message": "Task is already completed"}), 400
+            priorStatus = task_instance.Status
             task_instance.Status = 'IN_PROGRESS' if status.upper() == 'IN PROGRESS' else status.upper()
             task_instance.ModifiedDate = datetime.now()
             #task_instance.CompletedBy = completed_by
             session.add(task_instance)
             session.commit()
+            insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance {task_instance.TaskInstanceId} updated', priorStatus=priorStatus, details=task_instance.ResultData)  
+                    
             return jsonify({"status": "success", "message": f"Task {task_instance_id} status updated to {status} successfully"}), 200
         
         return _complete_task(task_instance_id=task_instance_id, result=result, completed_by=completed_by, completion_notes=completion_notes, access_token=access_token, capacity=capactity, depth=0)
@@ -371,7 +375,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
                     session.add(task_instance)
                     session.commit()
                     session.flush()
-                    #insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED')  
+                    insert_workflow_history(task_instance, status=task_instance.Status, result=result, completed_by=completed_by, completion_notes=f'TaskInstance script returned false error: {task_instance.ErrorMessage}', priorStatus='COMPLETED', details=task_instance.ErrorMessage)  
                     app_logger.error(f'TaskInstance script returned false result for task {task_name} - {task_instance_id}')
                     return jsonify({"status": "error", "message": f'TaskInstance script returned false result for task {task_name} - {task_instance_id} message: {task_instance.ErrorMessage}'}), 400
                 else:
@@ -388,7 +392,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             session.rollback()
             return jsonify({"status": "error", "message": "Error completing task"}), 500
         ## Get the workflow history
-        #insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED')
+        insert_workflow_history(task_instance, status=status, result=result, completed_by=completed_by, completion_notes=completion_notes, priorStatus='PENDING' if depth == 0 else 'COMPLETED', details=task_instance.ResultData)
         
         # TIMING: Process next tasks
         t7 = time.time()
@@ -470,7 +474,7 @@ def validate_prior_tasks(taskDef: TaskDefinition, application_id: int, result: s
         return True
 
 
-def insert_workflow_history(task_instance: TaskInstance, status: str, result: str, completed_by: str, completion_notes: str, priorStatus: str = None) -> dict:
+def insert_workflow_history(task_instance: TaskInstance, status: str, result: str, completed_by: str, completion_notes: str, priorStatus: str = None, details: str = None) -> dict:
     '''
     Insert a message for a workflow application.
 
@@ -483,23 +487,24 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
 
     Returns:
         A dictionary containing the result of the operation.
-    
+    '''
     task_name = task_instance.TaskDefinition.TaskName if task_instance and task_instance.TaskDefinition else 'N/A'
-    
-    wf_history = WorkflowHistory(
-            InstanceId= task_instance.Stage.ProcessInstance.InstanceId,
+    application_id = task_instance.ApplicationId if task_instance else None
+    wf_history = TaskEvent(
             TaskInstanceId=task_instance.TaskInstanceId,
+            ApplicationId=application_id,
             Action=f'{task_name} changed to {status} with result: {result}' if result else f'{task_name} {status}',
             NewStatus=status,
             PreviousStatus=priorStatus,
             ActionBy=completed_by,
-            ActionReason=completion_notes
+            ActionReason=completion_notes,
+            Details=details
         )
     session.add(wf_history)
     session.commit()
     session.flush()
-    '''
-    application_id = task_instance.ApplicationId
+    
+    
     app_logger.info(f'Inserted workflow message for Application ID: {application_id}')
 
 

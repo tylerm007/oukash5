@@ -135,7 +135,7 @@ INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCatego
 VALUES
 (1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'SYSTEM', 15, 'Start NDA stage', 1, 'system'),
 (1, 'Company requires NDA', 'CONDITION', 'APPROVAL', 2, 2, 'NCRC', 15, 'Company requires NDA?', 0, 'system'),
-(1, 'Send NDA', 'CONFIRM', 'CONFIRMATION', 3, 2, 'LEGAL', 30, 'Send/Recieve non-disclosure agreement to customer', 0, 'system'), -- ALERT
+(1, 'Legal Review', 'CONFIRM', 'UPLOAD', 3, 2, 'LEGAL', 30, 'Send/Recieve non-disclosure agreement to customer', 0, 'system'), -- ALERT
 (1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 4, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),
 (1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 15, 'Mark NDA process as completed', 0, 'system'),
 (1, 'NDA End', 'STAGEEND', 'COMPLETION', 6, 2, 'SYSTEM', 15, 'NDA completed', 1, 'system');
@@ -143,9 +143,9 @@ GO
 
 EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start NDA', @condition = 'NO';
 EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Company requires NDA', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'Send NDA', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'Legal Review', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'NDA End', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Send NDA', @to_name = 'NDA Executed by Legal', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Legal Review', @to_name = 'NDA Executed by Legal', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'NONE'; 
 EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';

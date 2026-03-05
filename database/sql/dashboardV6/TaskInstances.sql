@@ -9,7 +9,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 -- Drop existing tables if they exist (in reverse dependency order)
-IF OBJECT_ID('dbo.WorkflowHistory', 'U') IS NOT NULL DROP TABLE dbo.WorkflowHistory;
+IF OBJECT_ID('dbo.TaskEvents', 'U') IS NOT NULL DROP TABLE dbo.TaskEvents;
 IF OBJECT_ID('dbo.TaskInstances', 'U') IS NOT NULL DROP TABLE dbo.TaskInstances;
 IF OBJECT_ID('dbo.TaskStatus', 'U') IS NOT NULL DROP TABLE dbo.TaskStatus;
 IF OBJECT_ID('dbo.StageInstance', 'U') IS NOT NULL DROP TABLE dbo.StageInstance; -- REMOVED IN THIS REVISION
@@ -162,4 +162,37 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Ta
 BEGIN
     ALTER TABLE [dbo].[TaskInstances] ADD [CompletedCapacity] nvarchar(100) NULL;
 END
+GO
+
+-- TaskEvents History Table may not be needed if we use the temporal feature - it is an AUdit table of state change
+CREATE TABLE [dbo].[TaskEvents](
+	[TaskEventId] [int] IDENTITY(1,1) NOT NULL,
+	[ApplicationId] [int] NOT NULL,
+	[TaskInstanceId] [int] NOT NULL,
+	[Action] [nvarchar](100) NOT NULL,
+	[PreviousStatus] [nvarchar](50) NULL,
+	[NewStatus] [nvarchar](50) NULL,
+	[ActionBy] [nvarchar](100) NOT NULL,
+	[ActionDate] [datetime2](7) NOT NULL,
+	[ActionReason] [nvarchar](250) NULL,
+	[Details] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED
+(
+	[TaskEventId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[TaskEvents] ADD  DEFAULT (getutcdate()) FOR [ActionDate]
+GO
+
+ALTER TABLE [dbo].[TaskEvents] ADD  DEFAULT 'SYSTEM' FOR [ActionBy]
+GO
+
+ALTER TABLE [dbo].[TaskEvents]  WITH CHECK ADD FOREIGN KEY(ApplicationId)
+REFERENCES [dbo].WF_Applications (ApplicationID)
+GO
+
+ALTER TABLE [dbo].[TaskEvents]  WITH CHECK ADD FOREIGN KEY([TaskInstanceId])
+REFERENCES [dbo].[TaskInstances] ([TaskInstanceId])
 GO

@@ -127,7 +127,7 @@ export class FileUploadDialogComponent implements OnInit {
     }
 
     if (this.appId !== '' && this.appId !== null && this.appId !== undefined) {
-      formData.append('application_id', String(this.appId));
+      formData.append('task_instance_id', String(this.appId));
     }
 
     if (this.description.trim()) {
