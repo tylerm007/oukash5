@@ -2,8 +2,8 @@
   "servers": [
     {
       "name": "API Logic Server: basic_demo",
-      "base_url": "https://devvm01.nyc.ou.org:5656/api",
-      "schema_url": "https://devvm01.nyc.ou.org:5656/.well-known/mcp.json"
+      "base_url": "http://localhost:5656",
+      "schema_url": "http://localhost:5656/.well-known/mcp.json"
     }
   ]
 }

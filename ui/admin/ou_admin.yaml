@@ -1,0 +1,864 @@
+about:
+  date: March 07, 2026 11:36:39
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 25
+  number_tables: 28
+info_toggle_checked: true
+resources:
+  ou-DeletedJotFormCompany:
+    attributes:
+    - label: ' agency Name*'
+      name: agencyName
+      search: true
+      sort: true
+    - name: submission_date
+      type: DATETIME
+    - name: companyName
+    - name: companyAddress
+    - name: companyAddress2
+    - name: companyCity
+    - name: companyCountry
+    - name: companyState
+    - name: companyRegion
+    - name: companyProvince
+    - name: companyPhone
+    - name: ZipPostalCode
+    - name: companyWebsite
+    - name: IsPrimaryContact
+      type: Boolean
+    - name: contactFirst
+    - name: contactLast
+    - name: contactPhone
+    - name: contactEmail
+    - name: billingContact
+    - name: billingContactFirst
+    - name: billingContactLast
+    - name: billingContactPhone
+    - name: billingContactEmail
+    - name: jobTitle
+    - name: contactFirst1
+    - name: contactLast1
+    - name: contactPhone1
+    - name: contactEmail1
+    - name: jobTitle1
+    - name: whichCategory
+    - name: whereDidHear
+    - name: pleaseSpecify
+    - name: copack
+    - name: listInCopack
+      type: Boolean
+    - name: veganCert
+      type: Boolean
+    - name: areThere
+      type: Boolean
+    - name: numberOfPlants
+    - name: formName
+    - name: language
+    - name: status
+    - name: kashrusLink
+    - name: submissionurl
+    - name: JotFormId
+    - name: submission_id
+    - name: OUcertified
+      type: Boolean
+    - name: everCertified
+      type: Boolean
+    - name: whatWould
+    type: ou-DeletedJotFormCompany
+    user_key: agencyName
+  ou-DeletedWFRole:
+    attributes:
+    - label: ' User Role*'
+      name: UserRole
+      required: true
+      search: true
+      sort: true
+    - name: Role
+      required: true
+    - name: CreatedDate
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - UserRole
+      name: DeletedWFUSERROLEList
+      resource: ou-DeletedWFUSERROLE
+    type: ou-DeletedWFRole
+    user_key: UserRole
+  ou-DeletedWFUSERROLE:
+    attributes:
+    - label: ' User Name*'
+      name: UserName
+      required: true
+      search: true
+      sort: true
+    - name: UserName
+      required: true
+    - name: UserRole
+      required: true
+    - name: CreatedDate
+      required: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - UserName
+      name: deleted_WF_User
+      resource: ou-DeletedWFUser
+    - direction: toone
+      fks:
+      - UserRole
+      name: deleted_WF_Role
+      resource: ou-DeletedWFRole
+    type: ou-DeletedWFUSERROLE
+    user_key: UserName
+  ou-DeletedWFUser:
+    attributes:
+    - label: ' Username*'
+      name: Username
+      required: true
+      search: true
+      sort: true
+    - name: Email
+      required: true
+    - name: FullName
+      required: true
+    - name: IsActive
+      required: true
+      type: Boolean
+    - name: CreatedDate
+      required: true
+    - name: LastLoginDate
+    tab_groups:
+    - direction: tomany
+      fks:
+      - UserName
+      name: DeletedWFUSERROLEList
+      resource: ou-DeletedWFUSERROLE
+    type: ou-DeletedWFUser
+    user_key: Username
+  ou-EventAction:
+    attributes:
+    - label: ' Event Id*'
+      name: EventId
+      search: true
+      sort: true
+    - name: TaskInstanceId
+      required: true
+    - name: EventKey
+      required: true
+    - name: EventStatus
+      required: true
+    - name: EventType
+      required: true
+    - name: EventMessage
+      required: true
+    - name: StartDate
+      required: true
+    - name: DueDate
+    - name: ResolvedDate
+    - name: IsResolved
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - TaskInstanceId
+      name: TaskInstance
+      resource: ou-TaskInstance
+    type: ou-EventAction
+    user_key: EventId
+  ou-ProcessDefinition:
+    attributes:
+    - label: ' Process Name*'
+      name: ProcessName
+      required: true
+      search: true
+      sort: true
+    - name: ProcessVersion
+      required: true
+    - name: Description
+    - name: IsActive
+      required: true
+      type: Boolean
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: ProcessId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ProcessDefinitionId
+      name: TaskDefinitionList
+      resource: ou-TaskDefinition
+    type: ou-ProcessDefinition
+    user_key: ProcessName
+  ou-RoleAssigment:
+    attributes:
+    - label: ' Role Assigment I D*'
+      name: RoleAssigmentID
+      search: true
+      sort: true
+    - name: ApplicationId
+      required: true
+    - name: Role
+      required: true
+    - name: Assignee
+      required: true
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: IsPrimary
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: ou-WFApplication
+    type: ou-RoleAssigment
+    user_key: RoleAssigmentID
+  ou-StageDefinition:
+    attributes:
+    - label: ' Stage Name*'
+      name: StageName
+      required: true
+      search: true
+      sort: true
+    - name: StageDescription
+    - name: EstimatedDurationDays
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: StageId
+    tab_groups:
+    - direction: tomany
+      fks:
+      - StageDefinitionId
+      name: TaskDefinitionList
+      resource: ou-TaskDefinition
+    - direction: tomany
+      fks:
+      - StageId
+      name: TaskInstanceList
+      resource: ou-TaskInstance
+    type: ou-StageDefinition
+    user_key: StageName
+  ou-StageStatus:
+    attributes:
+    - label: ' Status Description*'
+      name: StatusDescription
+      required: true
+      search: true
+      sort: true
+    - name: StatusCode
+      required: true
+    type: ou-StageStatus
+    user_key: StatusDescription
+  ou-Sysdiagram:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: version
+    - name: definition
+    - name: principal_id
+      required: true
+    - name: diagram_id
+    type: ou-Sysdiagram
+    user_key: name
+  ou-TaskCategory:
+    attributes:
+    - label: ' Task Category Description*'
+      name: TaskCategoryDescription
+      required: true
+      search: true
+      sort: true
+    - name: TaskCategoryCode
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - TaskCategory
+      name: TaskDefinitionList
+      resource: ou-TaskDefinition
+    type: ou-TaskCategory
+    user_key: TaskCategoryDescription
+  ou-TaskDefinition:
+    attributes:
+    - label: ' Task Name*'
+      name: TaskName
+      required: true
+      search: true
+      sort: true
+    - name: ProcessDefinitionId
+      required: true
+    - name: StageDefinitionId
+      required: true
+    - name: TaskCategory
+    - name: TaskType
+      required: true
+    - name: Sequence
+      required: true
+    - name: IsParallel
+      required: true
+      type: Boolean
+    - name: AssigneeRole
+    - name: EstimatedDurationMinutes
+    - name: AutoComplete
+      required: true
+      type: Boolean
+    - name: Description
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: PreScriptJson
+    - name: PostScriptJson
+    - name: TaskId
+    - name: IsRequired
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: tomany
+      fks:
+      - FromTaskId
+      name: TaskFlowList
+      resource: ou-TaskFlow
+    - direction: tomany
+      fks:
+      - ToTaskId
+      name: ToTaskTaskFlowList
+      resource: ou-TaskFlow
+    - direction: tomany
+      fks:
+      - TaskDefinitionId
+      name: TaskInstanceList
+      resource: ou-TaskInstance
+    - direction: toone
+      fks:
+      - ProcessDefinitionId
+      name: ProcessDefinition
+      resource: ou-ProcessDefinition
+    - direction: toone
+      fks:
+      - StageDefinitionId
+      name: StageDefinition
+      resource: ou-StageDefinition
+    - direction: toone
+      fks:
+      - TaskCategory
+      name: TaskCategory1
+      resource: ou-TaskCategory
+    - direction: toone
+      fks:
+      - TaskType
+      name: TaskType1
+      resource: ou-TaskType
+    type: ou-TaskDefinition
+    user_key: TaskName
+  ou-TaskEvent:
+    attributes:
+    - label: ' Task Event Id*'
+      name: TaskEventId
+      search: true
+      sort: true
+    - name: ApplicationId
+      required: true
+    - name: TaskInstanceId
+      required: true
+    - name: Action
+      required: true
+    - name: PreviousStatus
+    - name: NewStatus
+    - name: ActionBy
+      required: true
+    - name: ActionDate
+      required: true
+    - name: ActionReason
+    - name: Details
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: ou-WFApplication
+    - direction: toone
+      fks:
+      - TaskInstanceId
+      name: TaskInstance
+      resource: ou-TaskInstance
+    type: ou-TaskEvent
+    user_key: TaskEventId
+  ou-TaskFlow:
+    attributes:
+    - label: ' Flow Id*'
+      name: FlowId
+      search: true
+      sort: true
+    - name: FromTaskId
+    - name: ToTaskId
+      required: true
+    - name: Condition
+    - name: IsDefault
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - FromTaskId
+      name: FromTask
+      resource: ou-TaskDefinition
+    - direction: toone
+      fks:
+      - ToTaskId
+      name: ToTask
+      resource: ou-TaskDefinition
+    type: ou-TaskFlow
+    user_key: FlowId
+  ou-TaskInstance:
+    attributes:
+    - label: ' Task Instance Id*'
+      name: TaskInstanceId
+      search: true
+      sort: true
+    - name: ApplicationId
+      required: true
+    - name: StageId
+      required: true
+    - name: Status
+      required: true
+    - name: TaskDefinitionId
+      required: true
+    - name: AssignedTo
+    - name: StartedDate
+    - name: CompletedDate
+    - name: DurationMinutes
+    - name: Result
+    - name: ResultData
+    - name: ErrorMessage
+    - name: RetryCount
+    - name: ModifiedDate
+    - name: CompletedBy
+    - name: CompletedCapacity
+    - name: IsVisible
+      type: Boolean
+    - name: ActiveStartDate
+    tab_groups:
+    - direction: tomany
+      fks:
+      - TaskInstanceId
+      name: EventActionList
+      resource: ou-EventAction
+    - direction: tomany
+      fks:
+      - TaskInstanceId
+      name: TaskEventList
+      resource: ou-TaskEvent
+    - direction: toone
+      fks:
+      - ApplicationId
+      name: Application
+      resource: ou-WFApplication
+    - direction: toone
+      fks:
+      - StageId
+      name: Stage
+      resource: ou-StageDefinition
+    - direction: toone
+      fks:
+      - Status
+      name: TaskStatu
+      resource: ou-TaskStatus
+    - direction: toone
+      fks:
+      - TaskDefinitionId
+      name: TaskDefinition
+      resource: ou-TaskDefinition
+    type: ou-TaskInstance
+    user_key: TaskInstanceId
+  ou-TaskRole:
+    attributes:
+    - label: ' Role Description*'
+      name: RoleDescription
+      required: true
+      search: true
+      sort: true
+    - name: RoleCode
+      required: true
+    - name: groupAssignment
+      type: Boolean
+    type: ou-TaskRole
+    user_key: RoleDescription
+  ou-TaskStatus:
+    attributes:
+    - label: ' Status Description*'
+      name: StatusDescription
+      required: true
+      search: true
+      sort: true
+    - name: StatusCode
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Status
+      name: TaskInstanceList
+      resource: ou-TaskInstance
+    type: ou-TaskStatus
+    user_key: StatusDescription
+  ou-TaskType:
+    attributes:
+    - label: ' Task Type Description*'
+      name: TaskTypeDescription
+      required: true
+      search: true
+      sort: true
+    - name: TaskTypeCode
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - TaskType
+      name: TaskDefinitionList
+      resource: ou-TaskDefinition
+    type: ou-TaskType
+    user_key: TaskTypeDescription
+  ou-WFApplication:
+    attributes:
+    - label: ' Application I D*'
+      name: ApplicationID
+      search: true
+      sort: true
+    - name: Priority
+    - name: Status
+      required: true
+    - name: ApplicationNumber
+    - name: SubmissionDate
+      required: true
+      type: DATE
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: ApplicationType
+    - name: ExternalAppRef
+    - name: WFLinkedApp
+    - name: CompanyID
+      required: true
+    - name: PlantID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: RoleAssigmentList
+      resource: ou-RoleAssigment
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: TaskEventList
+      resource: ou-TaskEvent
+    - direction: tomany
+      fks:
+      - ApplicationId
+      name: TaskInstanceList
+      resource: ou-TaskInstance
+    - direction: tomany
+      fks:
+      - ApplicationID
+      name: WFApplicationMessageList
+      resource: ou-WFApplicationMessage
+    - direction: tomany
+      fks:
+      - ApplicationID
+      name: WFFileList
+      resource: ou-WFFile
+    - direction: tomany
+      fks:
+      - ApplicationID
+      name: WFQuoteList
+      resource: ou-WFQuote
+    - direction: toone
+      fks:
+      - Priority
+      name: WF_Priority
+      resource: ou-WFPriority
+    - direction: toone
+      fks:
+      - Status
+      name: WF_ApplicationStatu
+      resource: ou-WFApplicationStatus
+    type: ou-WFApplication
+    user_key: ApplicationID
+  ou-WFApplicationMessage:
+    attributes:
+    - label: ' Message I D*'
+      name: MessageID
+      search: true
+      sort: true
+    - name: ApplicationID
+      required: true
+    - name: Priority
+      required: true
+    - name: FromUser
+      required: true
+    - name: ToUser
+    - name: MessageText
+      required: true
+    - name: MessageType
+      required: true
+    - name: SentDate
+      required: true
+    - name: TaskInstanceId
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationID
+      name: Application
+      resource: ou-WFApplication
+    - direction: toone
+      fks:
+      - Priority
+      name: WF_Priority
+      resource: ou-WFPriority
+    type: ou-WFApplicationMessage
+    user_key: MessageID
+  ou-WFApplicationStatus:
+    attributes:
+    - label: ' Status Description*'
+      name: StatusDescription
+      required: true
+      search: true
+      sort: true
+    - name: StatusCode
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Status
+      name: WFApplicationList
+      resource: ou-WFApplication
+    type: ou-WFApplicationStatus
+    user_key: StatusDescription
+  ou-WFFile:
+    attributes:
+    - label: ' File Name*'
+      name: FileName
+      required: true
+      search: true
+      sort: true
+    - name: ApplicationID
+      required: true
+    - name: FileType
+      required: true
+    - name: FileSize
+    - name: UploadedDate
+      required: true
+    - name: Tag
+    - name: RecordCount
+    - name: FilePath
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    - name: FileID
+    - name: IsProcessed
+      required: true
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - ApplicationID
+      name: Application
+      resource: ou-WFApplication
+    - direction: toone
+      fks:
+      - FileType
+      name: WF_FileType
+      resource: ou-WFFileType
+    type: ou-WFFile
+    user_key: FileName
+  ou-WFFileType:
+    attributes:
+    - label: ' File Type Name*'
+      name: FileTypeName
+      required: true
+      search: true
+      sort: true
+    - name: FileType
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - FileType
+      name: WFFileList
+      resource: ou-WFFile
+    type: ou-WFFileType
+    user_key: FileTypeName
+  ou-WFPriority:
+    attributes:
+    - label: ' Priority Description*'
+      name: PriorityDescription
+      required: true
+      search: true
+      sort: true
+    - name: PriorityCode
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Priority
+      name: WFApplicationList
+      resource: ou-WFApplication
+    - direction: tomany
+      fks:
+      - Priority
+      name: WFApplicationMessageList
+      resource: ou-WFApplicationMessage
+    type: ou-WFPriority
+    user_key: PriorityDescription
+  ou-WFQuote:
+    attributes:
+    - label: ' Quote I D*'
+      name: QuoteID
+      search: true
+      sort: true
+    - name: ApplicationID
+      required: true
+    - name: Status
+      required: true
+    - name: QuoteNumber
+      required: true
+    - name: TotalAmount
+      required: true
+    - name: ValidUntil
+      required: true
+      type: DATE
+    - name: LastUpdatedDate
+      required: true
+      type: DATE
+    - name: CreatedDate
+      required: true
+    - name: CreatedBy
+      required: true
+    - name: ModifiedDate
+    - name: ModifiedBy
+    tab_groups:
+    - direction: tomany
+      fks:
+      - QuoteID
+      name: WFQuoteItemList
+      resource: ou-WFQuoteItem
+    - direction: toone
+      fks:
+      - ApplicationID
+      name: Application
+      resource: ou-WFApplication
+    - direction: toone
+      fks:
+      - Status
+      name: WF_QuoteStatu
+      resource: ou-WFQuoteStatus
+    type: ou-WFQuote
+    user_key: QuoteID
+  ou-WFQuoteItem:
+    attributes:
+    - label: ' Description*'
+      name: Description
+      required: true
+      search: true
+      sort: true
+    - name: QuoteID
+      required: true
+    - name: Amount
+      required: true
+    - name: SortOrder
+      required: true
+    - name: QuoteItemID
+    tab_groups:
+    - direction: toone
+      fks:
+      - QuoteID
+      name: Quote
+      resource: ou-WFQuote
+    type: ou-WFQuoteItem
+    user_key: Description
+  ou-WFQuoteStatus:
+    attributes:
+    - label: ' Status Code*'
+      name: StatusCode
+      required: true
+      search: true
+      sort: true
+    - name: StatusDesc
+    tab_groups:
+    - direction: tomany
+      fks:
+      - Status
+      name: WFQuoteList
+      resource: ou-WFQuote
+    type: ou-WFQuoteStatus
+    user_key: StatusCode
+  ou-WFUserProfile:
+    attributes:
+    - label: ' Username*'
+      name: Username
+      required: true
+      search: true
+      sort: true
+    - name: Profile
+    - name: CreatedDate
+      required: true
+    - name: LastModDate
+    type: ou-WFUserProfile
+    user_key: Username
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

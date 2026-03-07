@@ -18,6 +18,7 @@
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.envFile": "${workspaceFolder}/.env",
+    "workbench.startupEditor": "readme",
     "python.analysis.autoImportCompletions": true,
     "python.analysis.extraPaths": ["C:\\genai-logic\\venv\\lib\\site-packages"],
     "terminal.integrated.profiles.osx": {

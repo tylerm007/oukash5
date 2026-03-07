@@ -41,7 +41,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         app_logger.info(f'{application_id}')
 
        
-        from database.models import CompanyApplication, WFApplication, COMPANYTB, OWNSTB, PLANTTB, PLANTADDRESSTB, LabelTb, MERCHTB, USEDIN1TB
+        #from database.models import CompanyApplication, WFApplication, COMPANYTB, OWNSTB, PLANTTB, PLANTADDRESSTB, LabelTb, MERCHTB, USEDIN1TB
         #wf_application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         #if not wf_application:
         #    return jsonify({"error": f"Application for id {application_id} not found"}), 404

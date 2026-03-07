@@ -112,8 +112,7 @@ def server_log(request, jsonify):
     if test is not None and test != "None":
         if test == "None":
             print(f'None for msg: {msg}')
-        logic_logger = logging.getLogger('logic_logger')  # for debugging user logic
-        # logic_logger.info("\n\nLOGIC LOGGER HERE\n")
+        logic_logger.setLevel(logging.DEBUG)  # Ensure logger level allows INFO messages
         use_relative = True
         if use_relative:
             api_utils_path = Path(__file__)
@@ -124,11 +123,12 @@ def server_log(request, jsonify):
         else:
             dir = request.args.get('dir')
             add_file_handler(logic_logger, test, Path(os.getcwd()).joinpath(dir))
+    
     if msg == "Rules Report":
         rules_report()
         logic_logger.info(f'Logic Bank - {rule_count} rules loaded')
     else:
-        app_logger.info(f'{msg}')
+        logic_logger.info(f'{msg}')  # Write to logic log (was app_logger before)
         if "Server Log: Behave Run Successfully Completed" in msg:
             logic_logger.info(f'\n\n*** {msg}\n\n***\n\n')
     return jsonify({"result": f'ok'})

@@ -2,6 +2,77 @@
 // Or, https://databasediagram.com/app
 // Or, view in VSCode with extension: "DBML Live Preview"
 
+Table DeletedJotFormCompany {
+    JotFormId INTEGER [primary key]
+    submission_id VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    submission_date DATETIME 
+    OUcertified BOOLEAN 
+    everCertified BOOLEAN 
+    agencyName VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyName VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyAddress VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyAddress2 VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyCity VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyCountry VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyState VARCHAR(25) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyRegion VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyProvince VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyPhone VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ZipPostalCode VARCHAR(15) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    companyWebsite VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsPrimaryContact BOOLEAN 
+    contactFirst VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactLast VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactPhone VARCHAR(25) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactEmail VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    billingContact VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    billingContactFirst VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    billingContactLast VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    billingContactPhone VARCHAR(25) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    billingContactEmail VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    jobTitle VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactFirst1 VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactLast1 VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactPhone1 VARCHAR(25) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    contactEmail1 VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    jobTitle1 VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    whatWould TEXT(2147483647) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    whichCategory VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    whereDidHear VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    pleaseSpecify TEXT(2147483647) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    copack VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    listInCopack BOOLEAN 
+    veganCert BOOLEAN 
+    areThere BOOLEAN 
+    numberOfPlants INTEGER 
+    formName VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    language VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    status VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    kashrusLink VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    submissionurl VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    }
+
+Table DeletedWFRole {
+    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    Role VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CreatedDate DATETIME2 
+    }
+
+Table DeletedWFUSERROLE {
+    UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CreatedDate DATETIME2 
+    }
+
+Table DeletedWFUser {
+    Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
+    Email VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsActive BOOLEAN 
+    CreatedDate DATETIME2 
+    LastLoginDate DATETIME2 
+    }
+
 Table EventAction {
     EventId INTEGER [primary key]
     EventKey VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
@@ -30,6 +101,10 @@ Table TaskInstance {
     ErrorMessage VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     RetryCount INTEGER 
     ModifiedDate DATETIME2 
+    CompletedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    CompletedCapacity VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsVisible BOOLEAN 
+    ActiveStartDate DATETIME2 
     }
 
 Table ProcessDefinition {
@@ -51,6 +126,7 @@ Table RoleAssigment {
     Assignee VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     CreatedDate DATETIME2 
     CreatedBy VARCHAR(32) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    IsPrimary BOOLEAN 
     }
 
 Table WFApplication {
@@ -65,6 +141,9 @@ Table WFApplication {
     CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ApplicationType NCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ExternalAppRef INTEGER 
+    WFLinkedApp INTEGER 
     }
 
 Table StageDefinition {
@@ -123,6 +202,19 @@ Table TaskType {
     TaskTypeDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     }
 
+Table TaskEvent {
+    TaskEventId INTEGER [primary key]
+    ApplicationId INTEGER 
+    TaskInstanceId INTEGER 
+    Action VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    PreviousStatus VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    NewStatus VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ActionBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    ActionDate DATETIME2 
+    ActionReason VARCHAR(250) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    Details VARCHAR COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    }
+
 Table TaskFlow {
     FlowId INTEGER [primary key]
     FromTaskId INTEGER 
@@ -139,6 +231,7 @@ Table TaskStatus {
 Table TaskRole {
     RoleCode VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
     RoleDescription VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
+    groupAssignment BOOLEAN 
     }
 
 Table WFPriority {
@@ -169,12 +262,12 @@ Table WFFile {
     FileName VARCHAR(500) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     FileType VARCHAR(5) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     FileSize VARCHAR(20) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    UploadedDate DATE 
+    UploadedDate DATETIME2 
     Tag VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     IsProcessed BOOLEAN 
     RecordCount INTEGER 
     FilePath VARCHAR(1000) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CCreatedDate DATETIME2 
+    CreatedDate DATETIME2 
     CreatedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     ModifiedDate DATETIME2 
     ModifiedBy VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
@@ -212,37 +305,18 @@ Table WFQuoteItem {
     SortOrder INTEGER 
     }
 
-Table WFRole {
-    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    Role VARCHAR(50) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
-    }
-
-Table WFUSERADMIN {
-    UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    AdminUserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    IsPrimary BOOLEAN 
-    CreatedDate DATETIME2 
-    }
-
-Table WFUser {
+Table WFUserProfile {
     Username VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    Email VARCHAR(255) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    FullName VARCHAR(200) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    IsActive BOOLEAN 
+    Profile TEXT(2147483647) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
     CreatedDate DATETIME2 
-    LastLoginDate DATETIME2 
-    }
-
-Table WFUSERROLE {
-    UserName VARCHAR(100) COLLATE "SQL_Latin1_General_CP1_CI_AS" [primary key]
-    UserRole VARCHAR(10) COLLATE "SQL_Latin1_General_CP1_CI_AS" 
-    CreatedDate DATETIME2 
+    LastModDate DATETIME2 
     }
 
 
 
 // Relationships
+    Ref: DeletedWFUSERROLE.(UserName) > DeletedWFUser.(Username)
+    Ref: DeletedWFUSERROLE.(UserRole) > DeletedWFRole.(UserRole)
     Ref: EventAction.(TaskInstanceId) > TaskInstance.(TaskInstanceId)
     Ref: TaskInstance.(ApplicationId) > WFApplication.(ApplicationID)
     Ref: TaskInstance.(StageId) > StageDefinition.(StageId)
@@ -255,6 +329,8 @@ Table WFUSERROLE {
     Ref: TaskDefinition.(StageDefinitionId) > StageDefinition.(StageId)
     Ref: TaskDefinition.(TaskCategory) > TaskCategory.(TaskCategoryCode)
     Ref: TaskDefinition.(TaskType) > TaskType.(TaskTypeCode)
+    Ref: TaskEvent.(ApplicationId) > WFApplication.(ApplicationID)
+    Ref: TaskEvent.(TaskInstanceId) > TaskInstance.(TaskInstanceId)
     Ref: TaskFlow.(FromTaskId) > TaskDefinition.(TaskId)
     Ref: TaskFlow.(ToTaskId) > TaskDefinition.(TaskId)
     Ref: WFApplicationMessage.(ApplicationID) > WFApplication.(ApplicationID)
@@ -264,7 +340,3 @@ Table WFUSERROLE {
     Ref: WFQuote.(ApplicationID) > WFApplication.(ApplicationID)
     Ref: WFQuote.(Status) > WFQuoteStatus.(StatusCode)
     Ref: WFQuoteItem.(QuoteID) > WFQuote.(QuoteID)
-    Ref: WFUSERADMIN.(AdminUserName) > WFUser.(Username)
-    Ref: WFUSERADMIN.(UserName) > WFUser.(Username)
-    Ref: WFUSERROLE.(UserName) > WFUser.(Username)
-    Ref: WFUSERROLE.(UserRole) > WFRole.(UserRole)

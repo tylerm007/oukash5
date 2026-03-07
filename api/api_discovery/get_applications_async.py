@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
-from database.models import COMPANYTB, PLANTTB, TaskInstance , WFApplication, TaskInstance, CompanyApplication
+from database.models import TaskInstance , WFApplication, TaskInstance
+from database.oukash_models import COMPANYTB, PLANTTB, CompanyApplication
 from flask import app, request, jsonify, session
 import logging
 import safrs

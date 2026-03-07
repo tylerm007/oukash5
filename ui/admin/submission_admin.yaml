@@ -1,5 +1,5 @@
 about:
-  date: March 07, 2026 11:35:15
+  date: March 06, 2026 20:26:30
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -9,7 +9,7 @@ info:
   number_tables: 11
 info_toggle_checked: true
 resources:
-  SubmissionApplication:
+  submission-SubmissionApplication:
     attributes:
     - label: ' agency Name*'
       name: agencyName
@@ -75,40 +75,40 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionFileList
-      resource: SubmissionFile
+      resource: submission-SubmissionFile
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionFileLinkList
-      resource: SubmissionFileLink
+      resource: submission-SubmissionFileLink
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionMatcherList
-      resource: SubmissionMatcher
+      resource: submission-SubmissionMatcher
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionPlantList
-      resource: SubmissionPlant
+      resource: submission-SubmissionPlant
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionRawDatumList
-      resource: SubmissionRawDatum
+      resource: submission-SubmissionRawDatum
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionRequestList
-      resource: SubmissionRequest
+      resource: submission-SubmissionRequest
     - direction: tomany
       fks:
       - SubmissionAppId
       name: SubmissionValidationList
-      resource: SubmissionValidation
-    type: SubmissionApplication
+      resource: submission-SubmissionValidation
+    type: submission-SubmissionApplication
     user_key: agencyName
-  SubmissionFile:
+  submission-SubmissionFile:
     attributes:
     - label: ' file Name*'
       name: fileName
@@ -128,10 +128,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionFile
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionFile
     user_key: fileName
-  SubmissionFileLink:
+  submission-SubmissionFileLink:
     attributes:
     - label: ' File Link Id*'
       name: FileLinkId
@@ -154,10 +154,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionFileLink
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionFileLink
     user_key: FileLinkId
-  SubmissionIngredient:
+  submission-SubmissionIngredient:
     attributes:
     - label: ' ingredient Label Name*'
       name: ingredientLabelName
@@ -177,10 +177,10 @@ resources:
       fks:
       - SubmissionPlantId
       name: SubmissionPlant
-      resource: SubmissionPlant
-    type: SubmissionIngredient
+      resource: submission-SubmissionPlant
+    type: submission-SubmissionIngredient
     user_key: ingredientLabelName
-  SubmissionMatcher:
+  submission-SubmissionMatcher:
     attributes:
     - label: ' Submission Matcher Id*'
       name: SubmissionMatcherId
@@ -197,10 +197,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionMatcher
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionMatcher
     user_key: SubmissionMatcherId
-  SubmissionPlant:
+  submission-SubmissionPlant:
     attributes:
     - label: ' plant Name*'
       name: plantName
@@ -243,20 +243,20 @@ resources:
       fks:
       - SubmissionPlantId
       name: SubmissionIngredientList
-      resource: SubmissionIngredient
+      resource: submission-SubmissionIngredient
     - direction: tomany
       fks:
       - SubmissionPlantId
       name: SubmissionProductList
-      resource: SubmissionProduct
+      resource: submission-SubmissionProduct
     - direction: toone
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionPlant
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionPlant
     user_key: plantName
-  SubmissionProduct:
+  submission-SubmissionProduct:
     attributes:
     - label: ' product Name*'
       name: productName
@@ -280,10 +280,10 @@ resources:
       fks:
       - SubmissionPlantId
       name: SubmissionPlant
-      resource: SubmissionPlant
-    type: SubmissionProduct
+      resource: submission-SubmissionPlant
+    type: submission-SubmissionProduct
     user_key: productName
-  SubmissionRawDatum:
+  submission-SubmissionRawDatum:
     attributes:
     - label: ' name*'
       name: name
@@ -302,10 +302,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionRawDatum
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionRawDatum
     user_key: name
-  SubmissionRequest:
+  submission-SubmissionRequest:
     attributes:
     - label: ' Submission Request Id*'
       name: SubmissionRequestId
@@ -325,10 +325,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionRequest
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionRequest
     user_key: SubmissionRequestId
-  SubmissionValidation:
+  submission-SubmissionValidation:
     attributes:
     - label: ' Validation Id*'
       name: ValidationId
@@ -345,10 +345,10 @@ resources:
       fks:
       - SubmissionAppId
       name: SubmissionApp
-      resource: SubmissionApplication
-    type: SubmissionValidation
+      resource: submission-SubmissionApplication
+    type: submission-SubmissionValidation
     user_key: ValidationId
-  Sysdiagram:
+  submission-Sysdiagram:
     attributes:
     - label: ' name*'
       name: name
@@ -360,7 +360,7 @@ resources:
     - name: principal_id
       required: true
     - name: diagram_id
-    type: Sysdiagram
+    type: submission-Sysdiagram
     user_key: name
 settings:
   HomeJS: /admin-app/home.js

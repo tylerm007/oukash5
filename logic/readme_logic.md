@@ -1,12 +1,12 @@
 This describes how to use Logic; for more information, [see here](https://apilogicserver.github.io/Docs/Logic-Why).
 
-> What is Logic: Multi-table Derivation and Constraint Rules, Extensible with Python 
-<br>Rules are:
-<br>1. **Declared** in your IDE - 40X more concise
-<br>2. **Activated** on server start
-<br>3. **Executed** - *automatically* -  on updates (using SQLAlchemy events)
-<br>4. **Debugged** in your IDE, and with the console log
-<br>For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
+> What is Logic: Multi-table Derivation and Constraint Rules, Extensible with Python
+> <br>Rules are:
+> <br>1. **Declared** in your IDE - 40X more concise
+> <br>2. **Activated** on server start
+> <br>3. **Executed** - *automatically* -  on updates (using SQLAlchemy events)
+> <br>4. **Debugged** in your IDE, and with the console log
+> <br>For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
 
 &nbsp;
 
@@ -15,7 +15,7 @@ This describes how to use Logic; for more information, [see here](https://apilog
 You can provide prompts like this to CoPilot.  This is a good approach for new users:
 
 ```text title="Declare Logic in Natural Language"
-Create Business Logic for Use Case = Check Credit:  
+Create Business Logic for on Placing Orders, Check Credit:  
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
@@ -27,11 +27,13 @@ Use case: App Integration
 ```
 
 Basic process:
+
 1. Create a file such as `logic/logic_discovery/check_credit.py` (e.g., copy from `use_case.py`).
-2. Paste the prompt above into CoPilot - use `docs/training` to generate logic
+2. Paste the prompt above into CoPilot - it uses `docs/training` to generate logic
 3. Paste the generated logic into `logic/logic_discovery/check_credit.py`
 
 From the Natural Language, Copilot will create Python rules (you can also create these directly using code completion):
+
 ```python
     if os.environ.get("WG_PROJECT"):
         # Inside WG: Load rules from docs/expprt/export.json
@@ -109,7 +111,7 @@ It means the rule engine **watches** for these changes:
 * Order inserted/deleted, or
 * AmountTotal or ShippedDate or CustomerID changes
 
-Iff changes are detected, the engine **reacts** by *adjusting* the Customer.Balance.  SQLs are [optimized](#declarative-logic-important-notes).
+Iff changes are detected, the engine **reacts** by *adjusting* the Customer.Balance.  SQLs are [optimized - see Important Notes, below](#declarative-logic-important-notes).
 
 This would **chain** to check the Customers' Constraint rule, described below.
 
@@ -242,8 +244,14 @@ This installs the rule engine as a SQLAlchemy event listener (`before_flush`).  
 
 Rules plug into SQLAlchemy events, and execute as follows:
 
-| Logic Phase | Why It Matters |
-|:-----------------------------|:---------------------|
-| **Watch** for changes at the attribute level | Performance - Automatic Attribute-level Pruning |
-| **React** by recomputing value | Ensures Reuse - Invocation is automatic<br>Derivations are optimized (e.g. *adjustment updates* - not aggregate queries) |
-| **Chain** to other referencing data | Simplifies Maintenance - ordering is automatic<br>Multi-table logic automation |
+
+| Logic Phase                                  | Why It Matters                                                                                                           |
+| :--------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| **Watch** for changes at the attribute level | Performance - Automatic Attribute-level Pruning                                                                          |
+| **React** by recomputing value               | Ensures Reuse - Invocation is automatic<br>Derivations are optimized (e.g. *adjustment updates* - not aggregate queries) |
+| **Chain** to other referencing data          | Simplifies Maintenance - ordering is automatic<br>Multi-table logic automation                                           |
+
+This pattern is sometimes called Reactive Dependency Propagation.  Automatic dependency management accounts is why 5 *declarative* lines represent the same logic as 200 lines of *declarative* Python
+
+1. To view a AI procedural/declarative comparison, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/declarative-vs-procedural-comparison.md)
+2. Rules typically automate over 95% of your logic, so the results can be significant.  Consider a 100 table system: 1,000 rules vs. 40,000 lines of code

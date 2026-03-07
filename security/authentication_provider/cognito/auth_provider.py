@@ -1,6 +1,6 @@
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
-import database.database_discovery.authentication_models as authentication_models
+#import database.database_discovery.authentication_models as authentication_models
 from flask import Flask
 import safrs
 from safrs.errors import JsonapiError
@@ -26,7 +26,7 @@ import hmac
 import hashlib
 import urllib.parse
 import ssl
-from database.models import vUserRole
+#from database.oukash_models import vUserRole
 import threading
 
 # **********************

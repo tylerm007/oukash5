@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from datetime import datetime
-from database.models import COMPANYADDRESSTB, PLANTADDRESSTB, WFApplicationMessage, WFFile
+from database.models import  WFApplicationMessage, WFFile
+from database.oukash_models import COMPANYADDRESSTB, PLANTADDRESSTB, PLANTTB
 from flask import request, jsonify, session
 import logging
 import safrs
@@ -39,7 +40,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """
         application_id = request.args.get('applicationId',None, type=int)
         app_logger.info(f'{application_id}')
-        from database.models import CompanyApplication, WFApplication, COMPANYTB, OWNSTB, PLANTTB
+        from database.models import WFApplication
+        from database.oukash_models import COMPANYTB, OWNSTB, PLANTTB, CompanyApplication
         wf_application = WFApplication.query.filter_by(ApplicationID=application_id).first()
         if not wf_application:
             return jsonify({"error": f"Application for id {application_id} not found"}), 404

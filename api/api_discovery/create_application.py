@@ -3,8 +3,10 @@ from unittest import result
 import flask
 from flask_jwt_extended import get_jwt, jwt_required  
 import datetime
-from database.models import WFApplication
 import database.models as models
+from database.models import WFApplication
+import database.oukash_models as oukash_models
+import database.submission_models as submission_models
 from flask import request, jsonify
 import logging
 import safrs
@@ -33,7 +35,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         args = request.args
         user = Security.current_user().Username
         application_id = args.get('application_id') or args.get('applicationId') or args.get('filter[application_id]') or None
-        application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
+        application = session.query(submission_models.SubmissionApplication).filter(submission_models.SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
         if application is None:
             return jsonify({"result": f'SubmissionApplication with application_id: {application_id} not found'}), 404 
         company_id = application.SubmissionAppId
@@ -62,7 +64,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         owns_id = args.get('owns_id') or args.get('ownsId') or None
         if owns_id is None:
             return jsonify({"result": 'ownsId parameter is required'}), 400
-        owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
+        owns_instance = oukash_models.OWNSTB.query.filter(oukash_models.OWNSTB.ID == owns_id).first()
         if not owns_instance:
             return jsonify({"result": f'Owns instance with ID: {owns_id} not found'}), 404
         
@@ -106,7 +108,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         results = session.execute(text(sql)).fetchall()
         for result in results:
             owns_id = result.ID
-            owns_instance = models.OWNSTB.query.filter(models.OWNSTB.ID == owns_id).first()
+            owns_instance = oukash_models.OWNSTB.query.filter(oukash_models.OWNSTB.ID == owns_id).first()
             if not owns_instance:
                 continue
             companyID = owns_instance.COMPANY_ID
@@ -123,7 +125,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return jsonify({"status": "applications created successfully", "applications": data}), 200
 
 def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int = 0, submission_id: str=None, user: str = "admin"):
-    #TODO should we validate CompaniID in COMPANYTB and PlantID in PLANTTB (and perhaps OWNSTB)?
     applicationNumber = owns_id if owns_id != 0 else WFApplication.query.count() + 10000
     # ExternalAppRef is INT - safely convert submission_id string to int, or None
     try:
@@ -148,7 +149,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
     session.commit()
     application_id = application.ApplicationID
     link_submission_to_application(application_id, company_id, plant_id, owns_id, submission_id)
-    create_files(application_id)
+    #create_files(application_id)
     return application_id
 
 def submsisson_request_process( app: flask = None):
@@ -163,10 +164,10 @@ def submsisson_request_process( app: flask = None):
             return
 
     with app.app_context():
-        submission_requests = session.query(models.SubmissionRequest).filter(models.SubmissionRequest.ApplicationId == None, models.SubmissionRequest.SubmissionType=='INTAKE').all()
+        submission_requests = session.query(submission_models.SubmissionRequest).filter(submission_models.SubmissionRequest.SubmissionStatus == 'New', submission_models.SubmissionRequest.SubmissionType=='INTAKE').all()
         for submission_request in submission_requests:
-            submission_id = submission_request.SubmissionAppId
-            submission_application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == submission_id).first()
+            submission_app_id = submission_request.SubmissionAppId
+            submission_application = session.query(submission_models.SubmissionApplication).filter(submission_models.SubmissionApplication.SubmissionAppId == submission_app_id).first()
 
             if not submission_application:
                 submission_request.SubmissionStatus= 'Failed'
@@ -228,16 +229,37 @@ def create_new_submission_application( company_id: int = 0, submission_id: str=N
 
 def create_submission_files(application_id:int):
     # TODO use actual SubmissionFiles
-    file= models.WFFile(
-        ApplicationID=application_id,
-        FileName="Application.pdf",
-        FileType="PDF",
-        UploadedBy="system",
-        UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
-        Description="Test Document for Application",
-        FilePath="https://uojca.sharepoint.com/:b:/r/teams/NewAPITeam/Shared%20Documents/NewAPI/dashboard_files/6295465435286943843.pdf?csf=1&web=1&e=Xgiwjd"
-    )
-    session.add(file)
+    file_links = session.query(SubmissionFileLink).filter(SubmissionFileLLink.SubmissionAppId == application_id).all()
+    for file_link in file_links:
+        productFileURL = file_link.productFileURL
+        ingredientFileURL = file_link.ingredientFileURL
+        if productFileURL:
+            filename = productFileURL.split("/")[-1]
+            filetype = filename.split(".")[-1].upper()
+            file= models.WFFile(
+                ApplicationID=application_id,
+                FileName=filename,
+                FileType=filetype,
+                UploadedBy="system",
+                UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
+                Description="Customer Provided",
+                FilePath=productFileURL
+            )
+            session.add(file)
+        if ingredientFileURL:
+            filename = ingredientFileURL.split("/")[-1]
+            filetype = filename.split(".")[-1].upper()
+            file= models.WFFile(
+                ApplicationID=application_id,
+                FileName=filename,
+                FileType=filetype,
+                UploadedBy="system",
+                UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
+                Description="Customer Provided",
+                FilePath=ingredientFileURL
+            )
+            session.add(file)
+        
     session.commit()
 
 def create_files(application_id:int):

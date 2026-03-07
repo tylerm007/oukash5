@@ -3,6 +3,8 @@ from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 import database.models as models
+import database.oukash_models as oukash_models
+import database.submission_models as submission_models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
 from logic.load_verify_rules import load_verify_rules
@@ -184,10 +186,10 @@ def declare_logic():
             result_data = parse_sqlserver_json(row.ResultData) if row.ResultData and isinstance(row.ResultData, str) else {}
             plant_id = int(result) if isinstance(result, int) or (isinstance(result, str) and result.isdigit()) else None
             company_id = getattr(company_row ,'Result') if company_row else None
-            ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+            ownstb = oukash_models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
         else:
             pass
-            plant = models.PLANTTB(
+            plant = oukash_models.PLANTTB(
                 NAME=f"Plant for {row.ApplicationId}",
             ) #TODO
             # We do not have a plant match - we need to create and add to OWNS_TB and link to company and plant in ResultData for downstream tasks to use   
@@ -196,7 +198,7 @@ def declare_logic():
             owns_id = getattr(ownstb,'ID')
             result_data["OWNSID"] = owns_id
         else:
-            owns = models.OWNSTB()
+            owns = oukash_models.OWNSTB()
             setattr(owns, 'COMPANY_ID', int(company_id))
             setattr(owns, 'PLANT_ID', int(plant_id))
             setattr(owns, 'START_DATE', datetime.datetime.now())
@@ -233,7 +235,7 @@ def declare_logic():
             company_id = int(result) if isinstance(result, int) or (isinstance(result, str) and result.isdigit()) else None
             if company_id:
                 # Call KASH API to get company details and store in ResultData
-                company = models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
+                company = oukash_models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
                 if company:
                     company_details = {
                         "CompanyId": company.COMPANY_ID,
@@ -270,7 +272,7 @@ def declare_logic():
         if company_id is None or plant_id is None:
             logic_row.log(f"unable to generate owns - missing company_id: {company_id} or plant_id: {plant_id}")
             return False
-        owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+        owns = oukash_models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
         if not owns:
             logic_row.log(f"OWNS record does not exist for company_id: {company_id} and plant_id: {plant_id}")
             return True
@@ -303,7 +305,7 @@ def declare_logic():
                     company_id = task_instance.Result
        
             if not owns_id:
-                owns = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+                owns = oukash_models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
                 if not owns: 
                     logic_row.log(f"unable to create application - no OWNS record for company_id: {company_id} and plant_id: {plant_id}")
                     return False
@@ -380,6 +382,7 @@ def declare_logic():
             prior_task.CompletedDate = None
             logic_row.update(reason="RestartUpload NDA from Company task due to Legal Review changes", row=prior_task)
             app_logger.info(f"Restarted 'Upload NDA from Company' task (TaskInstanceId: {prior_task.TaskInstanceId}) due to changes in Legal Review task (TaskInstanceId: {task_instance.TaskInstanceId})")
+            task_instance.Status = "NEW"
     def update_stages(row: models.TaskInstance, old_row: models.TaskInstance , logic_row:LogicRow):
         """
         Update the status of the workflow application
@@ -445,13 +448,13 @@ def declare_logic():
     Rule.sum(derive=models.WFQuote.TotalAmount, as_sum_of=models.WFQuoteItem.Amount, where=None)
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
-    def generate_primary_key(row: models.PLANTTB, old_row: models.PLANTTB, logic_row: LogicRow):
+    def generate_primary_key(row: oukash_models.PLANTTB, old_row: oukash_models.PLANTTB, logic_row: LogicRow):
         # This is an example of an early row event to generate a primary key value for PLANTTB
         # In practice, you would typically use an IDENTITY column or a database sequence for this purpose
         if logic_row.ins_upd_dlt == 'ins' and (row.PLANT_ID is None or row.PLANT_ID == 0):
-            max_id = logic_row.session.query(models.PLANTTB).order_by(models.PLANTTB.PLANT_ID.desc()).first()
+            max_id = logic_row.session.query(oukash_models.PLANTTB).order_by(oukash_models.PLANTTB.PLANT_ID.desc()).first()
             row.PLANT_ID = (max_id.PLANT_ID + 1) if max_id and max_id.PLANT_ID else 1
             logic_row.log(f"Generated PLANT_ID {row.PLANT_ID} for new PLANTTB record")
-    Rule.early_row_event(models.PLANTTB, calling=generate_primary_key)
+    Rule.early_row_event(oukash_models.PLANTTB, calling=generate_primary_key)
 
     Rule.after_flush_row_event(on_class=models.TaskInstance, calling=create_application)

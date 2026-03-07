@@ -83,6 +83,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 app_logger.warning(f"File rejected [{filename}]: {validation_error}")
                 return jsonify({"error": f"File rejected: {validation_error}"}), 400
 
+            taskName = task_instance.TaskDefinition.TaskName if task_instance and task_instance.TaskDefinition else 'N/A'
             app_logger.info(f"File uploaded successfully: {temp_file_path}")
             application_id = task_instance.ApplicationId
             file_type = filename.split('.')[-1] if '.' in filename else 'txt'
@@ -93,7 +94,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 FileSize    = content_length,
                 UploadedDate= datetime.now(),    # Ensure timezone-aware timestamp  
                 ApplicationID = application_id,
-                Tag         = description or None,
+                Tag         = description or r'{taskName: ' + taskName + '}',
                 CreatedBy   = user
             )
                        
@@ -101,16 +102,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 s3_key = f"uploads/{application_id}/{filename}"
                 done = write_to_s3(temp_file_path, S3_BUCKET_NAME, s3_key)
                 wf_file.FilePath = f"s3://{S3_BUCKET_NAME}/{s3_key}" if done else str(temp_file_path)
+                expires = int(request.args.get('expires', 3600))
+                app_logger.info(f"Presigned URL request: bucket={S3_BUCKET_NAME} key={s3_key} (raw FilePath={wf_file.FilePath!r})")
+                #url = generate_presigned_url(S3_BUCKET_NAME, s3_key, expires)
+                #wf_file.FileURL = url if url else wf_file.FilePath
                 session.add(wf_file)
                 session.flush()  # Get FileID before commit
                 if done:
                     temp_file_path.unlink(missing_ok=True)
                 task_instance.Result = str(wf_file.FileID)
-                task_instance.ResultData = json.dumps({"Filename": filename, "FileId": wf_file.FileID, "filePath": wf_file.FilePath, "Tag": wf_file.Tag})
+                task_instance.ResultData = json.dumps({"Filename": filename, "FileId": wf_file.FileID, "filePath": wf_file.FilePath, "Tag": wf_file.Tag, "url": url})
                 session.add(task_instance)
                 session.commit()
-            
-                return jsonify({"message": f"File uploaded and task completed successfully", "file_path": str(temp_file_path)}), 200
+               
+                return jsonify({"message": f"File uploaded and task completed successfully", "file_path": str( wf_file.FilePath), "presigned_url": url}), 200
             except Exception as e:
                 app_logger.error(f"Error completing task after file upload: {e}")
                 return jsonify({"error": f"File uploaded but an error occurred while completing the task: {str(e)}"}), 500
@@ -125,10 +130,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @jwt_required()
     def download_file(file_id):
         """
-        Stream a file stored in S3 (or local temp_uploads) directly to the caller.
+        Stream a file stored in S3 (or local temp_uploads) to the caller.
         The file record is looked up by WFFile.FileID.
 
         Query params:
+          inline    (bool, default false) – serve inline so the browser renders it
+                                            (PDF viewer, image, text).  When false
+                                            the browser downloads the file.
           presigned (bool, default false) – return a JSON presigned URL instead of
                                             streaming the bytes.
           expires   (int,  default 3600)  – presigned URL expiry in seconds.
@@ -145,7 +153,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         mime_type: str = _mime_from_extension(filename)
 
         use_presigned = request.args.get('presigned', 'false').lower() in ('1', 'true', 'yes')
-        expires = int(request.args.get('expires', 3600))
+        inline        = request.args.get('inline',    'false').lower() in ('1', 'true', 'yes')
+        expires       = int(request.args.get('expires', 3600))
+        as_attachment = not inline
 
         # ── S3 path ────────────────────────────────────────────────────────────
         if file_path.startswith('s3://'):
@@ -160,18 +170,21 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 file_bytes = download_from_s3(bucket, s3_key)
                 if file_bytes is None:
                     return jsonify({"error": "Could not retrieve file from S3", "bucket": bucket, "key": s3_key}), 500
-                return send_file(
+                response = send_file(
                     io.BytesIO(file_bytes),
                     mimetype=mime_type,
-                    as_attachment=True,
+                    as_attachment=as_attachment,
                     download_name=filename
                 )
+                # Allow Angular / browser to read the response cross-origin
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
 
         # ── Local path fallback ────────────────────────────────────────────────
         local_path = Path(file_path)
         if not local_path.exists():
             return jsonify({"error": f"File not found at path: {file_path}"}), 404
-        return send_file(local_path, mimetype=mime_type, as_attachment=True, download_name=filename)
+        return send_file(local_path, mimetype=mime_type, as_attachment=as_attachment, download_name=filename)
 
     # ── /file_url/<file_id> ────────────────────────────────────────────────────
     @app.route('/file_url/<int:file_id>', methods=['GET', 'OPTIONS'])

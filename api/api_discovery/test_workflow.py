@@ -2,7 +2,8 @@
 from flask_jwt_extended import get_jwt, jwt_required
 from api.api_discovery.assign_role import _assign_role   
 import datetime
-from database.models import CompanyApplication, WFApplication, TaskInstance
+from database.models import WFApplication, TaskInstance
+from database.oukash_models import CompanyApplication
 import database.models as models
 from flask import request, jsonify
 import logging

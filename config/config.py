@@ -233,7 +233,16 @@ class Config:
     if landing_db_path.exists():
         app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_LANDING: {SQLALCHEMY_DATABASE_URI_LANDING}\n')
 
-    # End Multi-Database URLs (from ApiLogicServer add-db...)
+
+    SQLALCHEMY_DATABASE_URI_SUBMISSION = 'mssql+pyodbc://apilogic:2Rtrzc8iLovpU!Hv8gG*@kash-sql-st.nyc.ou.org/dashboardV1?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no&Encrypt=no'
+    app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_SUBMISSION: {SQLALCHEMY_DATABASE_URI_SUBMISSION}\n')
+
+    # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
+    if os.getenv('SQLALCHEMY_DATABASE_URI_SUBMISSION'):
+        SQLALCHEMY_DATABASE_URI_SUBMISSION = os.getenv('SQLALCHEMY_DATABASE_URI_SUBMISSION')  # type: ignore # type: str
+        app_logger.debug(f'.. overridden from env variable: SQLALCHEMY_DATABASE_URI_SUBMISSION')
+
+        # End Multi-Database URLs (from ApiLogicServer add-db...)
 
     # SQLALCHEMY_ECHO = environ.get("SQLALCHEMY_ECHO")
     SQLALCHEMY_TRACK_MODIFICATIONS = False

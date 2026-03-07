@@ -188,6 +188,7 @@ class BackgroundScheduler:
         from api.api_discovery.event_action import resolve_paid_invoices
 
         # Create a wrapper function that calls resolve_paid_invoices with the Flask app
+        '''
         def resolve_paid_invoices_wrapper():
             try:
                 logger.info("🔄 Starting Find Paid Invoices job")
@@ -201,7 +202,7 @@ class BackgroundScheduler:
             minutes=10,  # Run every 10 minutes
             job_name="Find Paid Invoices"
         )
-
+        '''
         from api.api_discovery.create_application import submsisson_request_process
 
         def create_submission_application_wrapper():

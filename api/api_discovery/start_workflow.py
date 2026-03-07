@@ -1,6 +1,6 @@
 from datetime import datetime
 from api.api_discovery.complete_task import _complete_task
-from database import models
+from database.submission_models import SubmissionApplication
 from database.models import ProcessDefinition, TaskDefinition, TaskRole, WFApplication, TaskInstance, StageDefinition
 from flask import request, jsonify, session
 import logging
@@ -369,12 +369,12 @@ def process_stages_batch(stage_definitions, application_id, started_by):
         raise e
 
 
-def get_company_plants(company_id: int):
-    application = session.query(models.SubmissionApplication).filter(models.SubmissionApplication.SubmissionAppId == company_id).first() if company_id else None
+def get_company_plants(submission_app_id: int):
+    application = session.query(SubmissionApplication).filter(SubmissionApplication.SubmissionAppId == submission_app_id).first() if submission_app_id else None
     if application is None:
-        app_logger.error(f'SubmissionApplication with SubmissionAppId: {company_id} not found')
+        app_logger.error(f'SubmissionApplication with SubmissionAppId: {submission_app_id} not found')
         return None
-    company_id = application.SubmissionAppId
+    submission_app_id = application.SubmissionAppId
     company_name = application.companyName
     plants = application.SubmissionPlantList
     plant_ids = {}

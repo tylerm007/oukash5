@@ -1,6 +1,9 @@
 from safrs import SAFRSAPI
 import logging as logging  # additional per-database imports
 
+# TODO remove from api import submission_expose_api_models
+from database import submission_models
+        
 app_logger = logging.getLogger("api_logic_server_app")
 
 '''

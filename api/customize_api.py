@@ -2,8 +2,8 @@ import logging
 import api.system.api_utils as api_utils
 import safrs
 from flask import request, jsonify
-from safrs import jsonapi_rpc
-from database import models
+from safrs import jsonapi_rpc 
+from database.oukash_models import OWNSTB, PLANTTB, PLANTADDRESSTB
 from sqlalchemy import text
 import json
 
@@ -42,18 +42,17 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         Returns:
             json: response
         """
-        from database import models
         plant_id = request.args.get('plant_id',2539001)
         
         #Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
         if plant_id is None:
             return jsonify('plant_id is required'), 400
-        plant = models.PLANTTB.query.filter(models.PLANTTB.PLANT_ID == plant_id).first()
+        plant = PLANTTB.query.filter(PLANTTB.PLANT_ID == plant_id).first()
         if plant is None:
             return jsonify(f'Plant not found for plant_id {plant_id}'), 400
         
-        address = models.PLANTADDRESSTB.query.filter(models.PLANTADDRESSTB.PLANT_ID == plant_id).first()
-        owns = models.OWNSTB.query.filter(models.OWNSTB.PLANT_ID == plant_id).all()
+        address = PLANTADDRESSTB.query.filter(PLANTADDRESSTB.PLANT_ID == plant_id).first()
+        owns = OWNSTB.query.filter(OWNSTB.PLANT_ID == plant_id).all()
         for own in owns:
             usedin_list = own.USEDIN1TBList
             produced_in_list = own.ProducedIn1TbList
@@ -83,7 +82,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         msg = request.args.get('msg')
         app_logger.info(f'\nStopped server: {msg}\n')
 
-        os.kill(os.getpid(), signal.SIGINT)
+        #os.kill(os.getpid(), signal.SIGINT)
         return jsonify({ "success": True, "message": "Server is shutting down..." })
 
     @app.route('/update_task_script', methods=['POST'], strict_slashes=False)

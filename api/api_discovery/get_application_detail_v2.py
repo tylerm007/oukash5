@@ -113,6 +113,12 @@ def get_SQL() ->str:
                 FOR JSON AUTO
         ) as 'appplicationinfo.files',
         (
+                select *
+                from TaskEvents
+                where TaskEvents.ApplicationID = app.ApplicationID
+                FOR JSON AUTO
+        ) as 'appplicationinfo.taskEvents',
+        (
                 select * 
                 from WF_ApplicationMessages  
                 where WF_ApplicationMessages.ApplicationID = app.ApplicationID
@@ -263,7 +269,7 @@ def get_SUBMISSION_SQL() -> str:
                         co.everCertified as everCertified,
                         co.companyName as name,
                         co.companyWebsite as website
-                from SubmissionApplication co  
+                from dashboardV1.dbo.SubmissionApplication co  
                 where co.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.company',
@@ -275,7 +281,7 @@ def get_SUBMISSION_SQL() -> str:
                     coa.companyAddress as street,
                     'main' as type,
                     coa.ZipPostalCode as zip
-                from SubmissionApplication coa  
+                from dashboardV1.dbo.SubmissionApplication coa  
                 where coa.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.companyAddresses',
@@ -286,42 +292,25 @@ def get_SUBMISSION_SQL() -> str:
                     coc.contactPhone as phone,
                     'Primary' as type,
                     coc.jobTitle as role
-                FROM SubmissionApplication coc  
+                FROM dashboardV1.dbo.SubmissionApplication coc  
                 where coc.SubmissionAppId = app.ExternalAppRef
                     FOR JSON AUTO
         ) as 'appplicationinfo.companyContacts',
         (
-                select TOP (1) jfp.plantName as name,
-                        jfp.productDesc as description,
-                        jfp.plantRegion as location,
-                        jfp.PlantId as  plantId
-                from SubmissionPlant jfp  
+                select jfp.*
+                from dashboardV1.dbo.SubmissionPlant jfp  
                 where jfp.SubmissionAppId = app.ExternalAppRef
                 FOR JSON AUTO
         ) as 'appplicationinfo.plants',
         (
-                select top(1) jfpa.plantCity as city,
-                    jfpa.plantCountry as country,
-                    '' as line2,
-                    jfpa.plantState as state,
-                    jfpa.plantAddress as street,
-                    '' as type,
-                    jfpa.plantZip as zip
-                from SubmissionPlant jfpa  
+                select jfpa.*
+                from dashboardV1.dbo.SubmissionPlant jfpa  
                 where jfpa.SubmissionAppId = app.ExternalAppRef
                     FOR JSON AUTO
         ) as 'appplicationinfo.plantAddresses',
         ( 
-            SELECT TOP (1) 
-                    concat(jfpc.contactFirst, ' ', jfpc.contactLast) as name,
-                    jfpc.contactEmail as email,
-                    jfpc.contactPhone as phone,
-                    'Primary' as type,
-                    jfpc.jobTitle as role,
-                    concat(jfpc.contactFirst1, ' ' , jfpc.contactLast1) as name1,
-                    jfpc.contactPhone1 as phone1,
-                    jfpc.contactEmail1 as email1
-                FROM SubmissionPlant jfpc  
+            SELECT jfpc.*
+                FROM dashboardV1.dbo.SubmissionPlant jfpc  
                 where jfpc.PlantId = app.SubmissionPlant
                     FOR JSON AUTO
         ) as 'appplicationinfo.plantContacts',

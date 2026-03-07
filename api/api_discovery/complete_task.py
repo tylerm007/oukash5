@@ -489,6 +489,9 @@ def insert_workflow_history(task_instance: TaskInstance, status: str, result: st
         A dictionary containing the result of the operation.
     '''
     task_name = task_instance.TaskDefinition.TaskName if task_instance and task_instance.TaskDefinition else 'N/A'
+    if task_instance.TaskDefinition.AssigneeRole.upper() == 'SYSTEM' or task_instance.TaskDefinition.AutoComplete == 1 or task_instance.IsVisible == 0:
+        app_logger.info(f'Skipping workflow history for system task {task_name} - {task_instance.TaskInstanceId}')
+        return 
     application_id = task_instance.ApplicationId if task_instance else None
     wf_history = TaskEvent(
             TaskInstanceId=task_instance.TaskInstanceId,

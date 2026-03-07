@@ -11,16 +11,16 @@ pyodbc==5.3.0
 pandas
 openpyxl
 xlrd
-
+pyodbc
 # Vector Store / Embeddings
-pgvector
-psycopg2-binary
-langchain_postgres
-langchain_community
+#pgvector
+#psycopg2-binary
+#langchain_postgres
+#langchain_community
 #Installing collected packages: zstandard, uuid-utils, tenacity, requests, python-dotenv, propcache, orjson, mypy-extensions, multidict, marshmallow, jsonpointer, httpx-sse, frozenlist, attrs, aiohappyeyeballs, yarl, typing-inspect, requests-toolbelt, jsonpatch, aiosignal, pydantic-settings, langsmith, dataclasses-json, aiohttp, langchain-core, langchain-text-splitters, langchain-classic, langchain_community
-sentence-transformers>=2.2.2
+#sentence-transformers>=2.2.2
 #Installing collected packages: tokenizers, safetensors, transformers, sentence-transformers
 #Successfully installed safetensors-0.4.3 sentence-transformers
-langchain-huggingface
-langchain
+#langchain-huggingface
+#langchain
 #Installing collected packages: xxhash, ormsgpack, langgraph-sdk, langgraph-checkpoint, langgraph-prebuilt, langgraph, langchain

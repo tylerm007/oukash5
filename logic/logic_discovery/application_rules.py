@@ -12,6 +12,7 @@ from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 import database.models as models
+import database.oukash_models as oukash_models
 
 app_logger = logging.getLogger("api_logic_server_app")
 db = safrs.DB
@@ -43,19 +44,19 @@ def verify_requests(row: models.WFApplication, old_row: models.WFApplication, lo
             if company_id is None:
                 return append_message(row, logic_row,"CompanyID is required for verification.")
                 # COMPANYTB has CompanyID
-            company = models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
+            company = oukash_models.COMPANYTB.query.filter_by(COMPANY_ID=company_id).first()
             if not company:
                 return append_message(row, logic_row,f"Company with ID {company_id} does not exist in Company Table.")
         if row.verify_plant == 1 and old_row.verify_plant == 0:
             if plant_id is None:
                 return append_message(row, logic_row,"PlantID is required for verification.")
             # PLANTTB has PlantID - should check OWNSTB Company-Plant
-            plant = models.PLANTTB.query.filter_by(PLANT_ID=plant_id).first()
+            plant = oukash_models.PLANTTB.query.filter_by(PLANT_ID=plant_id).first()
             if not plant:
                 return append_message(row, logic_row,f"Plant with ID {plant_id} does not exist in Plant Table.")
             # Check OWNSTB for CompanyID and PlantID combination
             if company_id is not None and plant_id is not None:
-                ownstb = models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
+                ownstb = oukash_models.OWNSTB.query.filter_by(COMPANY_ID=company_id, PLANT_ID=plant_id).first()
                 if not ownstb:
                     return append_message(row, logic_row,f"Company ID {company_id} does not own Plant ID {plant_id} in OWNSTB.")
     return True

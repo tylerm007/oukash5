@@ -32,8 +32,8 @@
 #
 ###############################################################################
 
-api_logic_server__version = '15.00.61'
-api_logic_server_created__on = 'July 28, 2025 14:48:19'
+api_logic_server__version = '16.02.03'
+api_logic_server_created__on = 'March 07, 2026 11:35:15'
 api_logic_server__host = 'localhost'
 api_logic_server__port = '5656'
 
@@ -78,7 +78,6 @@ from flask import Flask, redirect, send_from_directory, send_file
 from flask_cors import CORS
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
-import oracledb
 
 if os.getenv("EXPERIMENT") == '+':
     app_logger = logging.getLogger("api_logic_server_app")
@@ -179,31 +178,34 @@ if __name__ == "__main__":
     ssl_context = None
     if args.use_ssl:
         try:
-            import os
             import ssl
-            
+
+            # Resolve cert/key paths relative to project_dir to handle relative paths
+            def _resolve_ssl_path(p: str) -> str:
+                return p if os.path.isabs(p) else os.path.join(project_dir, p)
+
+            ssl_cert = _resolve_ssl_path(args.ssl_cert_path)
+            ssl_key  = _resolve_ssl_path(args.ssl_key_path)
+            ssl_pfx  = _resolve_ssl_path(args.ssl_pfx_path)
+
             # Check if SSL files exist
-            if os.path.exists(args.ssl_cert_path) and os.path.exists(args.ssl_key_path):
+            if os.path.exists(ssl_cert) and os.path.exists(ssl_key):
                 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                ssl_context.load_cert_chain(args.ssl_cert_path, args.ssl_key_path)
-                app_logger.info(f"🔒 SSL enabled using certificate: {args.ssl_cert_path}")
-                
-            elif os.path.exists(args.ssl_pfx_path):
-                # For PFX files (Windows), we need to extract cert and key
-                app_logger.info(f"🔒 SSL enabled using PFX file: {args.ssl_pfx_path}")
+                ssl_context.load_cert_chain(ssl_cert, ssl_key)
+                app_logger.info(f"🔒 SSL enabled using certificate: {ssl_cert}")
+
+            elif os.path.exists(ssl_pfx):
+                app_logger.info(f"🔒 SSL enabled using PFX file: {ssl_pfx}")
                 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-                # Note: PFX support requires additional handling - using adhoc for development
-                ssl_context = 'adhoc'
-                
+                ssl_context = 'adhoc'  # PFX requires pyOpenSSL extraction
+
             else:
-                app_logger.warning("⚠️  SSL enabled but certificate files not found. Using adhoc certificate.")
-                app_logger.warning(f"   Expected cert: {args.ssl_cert_path}")
-                app_logger.warning(f"   Expected key: {args.ssl_key_path}")
-                ssl_context = 'adhoc'  # Flask will generate a temporary certificate
-                
-        except ImportError:
-            app_logger.error("❌ SSL support requires pyOpenSSL. Install with: pip install pyOpenSSL")
-            ssl_context = None
+                app_logger.error(f"❌ SSL enabled but certificate files not found:")
+                app_logger.error(f"   Expected cert: {ssl_cert}")
+                app_logger.error(f"   Expected key:  {ssl_key}")
+                app_logger.error(f"   Server will NOT start with SSL - fix cert paths or disable FLASK_USE_SSL")
+                ssl_context = None
+
         except Exception as e:
             app_logger.error(f"❌ SSL configuration error: {e}")
             ssl_context = None
@@ -216,7 +218,7 @@ if __name__ == "__main__":
         app_logger.info(f"🚀 Starting HTTP server on http://{args.flask_host}:{args.port}")
         flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
-    msg = f'API Logic Project Loaded (WSGI), version 16.00.04\n'
+    msg = f'API Logic Project Loaded (WSGI), version 16.02.03\n'
     msg += f'.. startup message: {start_up_message}\n'
 
     if server_setup.is_docker():
