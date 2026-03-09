@@ -111,11 +111,11 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 if done:
                     temp_file_path.unlink(missing_ok=True)
                 task_instance.Result = str(wf_file.FileID)
-                task_instance.ResultData = json.dumps({"Filename": filename, "FileId": wf_file.FileID, "filePath": wf_file.FilePath, "Tag": wf_file.Tag, "url": wf_file.FileURL})
+                task_instance.ResultData = json.dumps({"Filename": filename, "FileId": wf_file.FileID, "filePath": wf_file.FilePath, "Tag": wf_file.Tag})
                 session.add(task_instance)
                 session.commit()
                
-                return jsonify({"message": f"File uploaded and task completed successfully", "file_path": str( wf_file.FilePath), "presigned_url": wf_file.FileURL}), 200
+                return jsonify({"message": f"File uploaded and task completed successfully", "file_path": str( wf_file.FilePath)}), 200
             except Exception as e:
                 app_logger.error(f"Error completing task after file upload: {e}")
                 return jsonify({"error": f"File uploaded but an error occurred while completing the task: {str(e)}"}), 500
