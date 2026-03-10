@@ -405,6 +405,9 @@ def declare_logic():
             resolve_plant(row, old_row, logic_row=logic_row)
         elif 'ResolveCompany' in task_def.TaskName and row.Status == 'COMPLETED' and old_row.Status != 'COMPLETED':
             resolve_company(row, old_row, logic_row=logic_row)
+            application.Status =  'INP' if application.Status == 'NEW' else application.Status
+            application.CompletedDate = datetime.datetime.now()
+            logic_row.update(reason=f"Update application status to {application.Status}", row=application)
         elif 'CreateOwns' in task_def.TaskName and row.Status == 'COMPLETED' and old_row.Status != 'COMPLETED':
             generate_owns(row, old_row, logic_row=logic_row)
         elif "Legal Review" in task_def.TaskName and row.Status == "IN_PROGRESS":
@@ -414,7 +417,7 @@ def declare_logic():
                 application.Status = 'WTH' if application.Status == 'WTH' else 'COMPL'
                 application.CompletedDate = datetime.datetime.now()
                 logic_row.update(reason=f"Update application status to {application.Status}", row=application)
-        elif task_def.TaskName == 'Intake App End' and row.Status == 'COMPLETED':
+        elif task_def.TaskName.upper() == 'INTAKE APP END' and row.Status == 'COMPLETED':
             if application is not None:
                 application.CompletedDate = datetime.datetime.now()
                 application.Status = 'COMPL'

@@ -69,7 +69,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if delegated is not None:
             admin_users = ";".join(d for d in delegated)
             #admin_users += f";{username}"
-        if only_my_apps.lower() == 'true':
+        if only_my_apps.lower() == 'true' and application_type == 'WORKFLOW':
             #if role_to_use not in roles:
             #    raise Exception(f"User {username} does not have role: {role_to_use} to filter applications")
             roles = role_to_use if role_to_use and role_to_use in roles else roles
@@ -122,7 +122,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 stages_json = json.loads(stages)
                 row['stages'] = transform_stage_row(stages_json, application_type)
                 #row.pop('process', None)
-            result = transform_app(row, application_type=application_type)
+            result = transform_app(row, roles, username, application_type=application_type)
             data.append(result)
         #data = [dict(row) for row in result]
         sql_count = get_total_count() 
@@ -145,7 +145,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         processing_time = end_time - start_time
         return jsonify({"status": "ok", "data": data, "meta": {"total_count": total_count, "count": len(data), "limit": limit,"offset":offset, "processing_time": processing_time, "async_enabled": True}}), 200
 
-def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
+def transform_app(app, roles: list, username: str, application_type:str = 'WORKFLOW') -> dict:
     """
     Transforms an application row dictionary by mapping status codes and processing stages.
     """
@@ -192,6 +192,7 @@ def transform_app(app, application_type:str = 'WORKFLOW') -> dict:
         companyFromApplication = parse_sqlserver_json(app.get("companyFromApplication", "{}"))
         companyContacts = parse_sqlserver_json(app.get("companyContacts", "{}"))
         plants = session.query(SubmissionPlant).filter_by(SubmissionAppId=app.get("externalReferenceId")).all()
+        row['assignedRoles']= [{ f"'{rolename}'": username, 'isPrimary': True} for rolename in roles.split(";")] if roles else []
         #json.loads(app.get("plants", "[]"))
         for stage in row['stages'].values():
             for task in stage.get("tasks", []):

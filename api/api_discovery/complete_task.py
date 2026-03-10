@@ -339,6 +339,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
         # Complete the task
         result_data = task_instance.ResultData
         result_data = json.loads(result_data.replace("'", '"',1000)) if isinstance(result_data, str) and result_data.startswith('{') else {}   
+        
         if depth > 0 and task_def.TaskType == 'CONDITION' and result is None and task_instance.IsVisible == 1:
             status = 'PENDING'
             task_instance.TaskRole = task_def['AssigneeRole']
@@ -407,7 +408,7 @@ def _complete_task(task_instance_id: int, result: str = None, completed_by: str 
             if condition and result and condition != 'None' and condition.lower() != result.lower():
                 app_logger.info(f"Skipping dependency check for task {task_def.TaskName} because condition '{condition}' does not match result '{result}'.")
                 continue  # Skip this dependency as the condition does not match the result
-            elif next_task_instance and validate_prior_tasks(task_def, application_id, result):
+            elif next_task_instance and next_task_instance.IsVisible == 1 and validate_prior_tasks(task_def, application_id, result):
                 next_task_instance.Status = 'PENDING'
                 next_task_instance.TaskRole = task_def.AssigneeRole
                 next_task_instance.StartedDate = datetime.now()

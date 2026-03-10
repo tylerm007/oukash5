@@ -137,11 +137,11 @@ INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCatego
 VALUES
 (1, 'Start NDA', 'STAGESTART', 'COMPLETION', 1, 2, 'SYSTEM', 15, 'Start NDA stage', 1, 'system'),
 (1, 'Company requires NDA', 'CONDITION', 'APPROVAL', 2, 2, 'NCRC', 15, 'Company requires NDA?', 0, 'system'),
-(1, 'Upload NDA from Company', 'CONDITION', 'UPLOAD', 3, 2, 'NCRC', 30, 'Upload non-disclosure agreement', 0, 'system'), -- ALERT
-(1, 'Legal Review', 'PROGRESS', 'PROGRESS_TASK', 4, 2, 'LEGAL', 30, 'Legal review of NDA', 0, 'system'), -- ALERT
-(1, 'Send NDA to Company', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 30, 'Send non-disclosure agreement to customer', 0, 'system'), -- ALERT
-(1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),
-(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 'LEGAL', 15, 'Mark NDA process as completed', 0, 'system'),
+(1, 'Upload NDA from Company', 'UPLOAD', 'UPLOAD', 3, 2, 'NCRC', 30, 'Upload non-disclosure agreement', 0, 'system'), -- ALERT
+(1, 'Legal Review', 'ACTION', 'UPLOAD', 4, 2, 'LEGAL', 30, 'Legal review of NDA', 0, 'system'), -- ALERT
+--(1, 'Send NDA to Company', 'CONFIRM', 'CONFIRMATION', 5, 2, 'LEGAL', 30, 'Send non-disclosure agreement to customer', 0, 'system'), -- ALERT
+--(1, 'NDA Executed by Legal', 'CONFIRM', 'CONFIRMATION', 6, 2, 'LEGAL', 480, 'Legal review and execution of NDA', 0, 'system'),
+--(1, 'NDA Completed', 'CONFIRM', 'CONFIRMATION', 7, 2, 'LEGAL', 15, 'Mark NDA process as completed', 0, 'system'),
 (1, 'NDA End', 'STAGEEND', 'COMPLETION', 8, 2, 'SYSTEM', 15, 'NDA completed', 1, 'system');
 GO
 
@@ -151,10 +151,10 @@ EXEC sp_add_flow @from_name = 'Start NDA', @to_name = 'Company requires NDA', @c
 EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'Upload NDA from Company', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Company requires NDA', @to_name = 'NDA End', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Upload NDA from Company', @to_name = 'Legal Review', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Legal Review', @to_name = 'Send NDA to Company', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Send NDA to Company', @to_name = 'NDA Executed by Legal', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
+EXEC sp_add_flow @from_name = 'Legal Review', @to_name = 'NDA End', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'Send NDA to Company', @to_name = 'NDA Executed by Legal', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'NDA Executed by Legal', @to_name = 'NDA Completed', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'NDA Completed', @to_name = 'NDA End', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'NDA End', @to_name = 'Stage Collector', @condition = 'None';
 
 GO
@@ -175,7 +175,8 @@ VALUES
 GO
 
 --EXEC sp_add_flow @from_name = 'to Withdrawn Y/N', @to_name = 'Start Inspection', @condition = 'NO';
-EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Inspection', @condition = 'None';
+EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Start Inspection', @condition = 'None'; 
+--EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Inspection', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Is Inspection Needed', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
@@ -268,7 +269,8 @@ where TaskName = 'Select RFR';
 GO
 
 
-- Stage: Certification (ID: 8)
+-- Stage: Certification (ID: 8)
 INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCategory, Sequence, StageDefinitionId, AssigneeRole, EstimatedDurationMinutes, Description, AutoComplete, CreatedBy)
 VALUES
 (1, 'Cancel Application', 'CONDITION', 'APPROVAL', 1, 8, 'NCRC', 15, 'Cancel application process', 0, 'system');
+GO

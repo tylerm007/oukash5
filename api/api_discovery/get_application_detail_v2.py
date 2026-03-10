@@ -1,3 +1,4 @@
+from database.models import WFFile
 from flask import request, jsonify
 from datetime import datetime
 from flask import request, jsonify, session
@@ -43,7 +44,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
        
         import time
         start_time = time.time()
-        from database.models import WFApplication
+        from database.models import WFApplication, WFFile
+        from api.api_discovery.upload_files import _parse_s3_path, generate_presigned_url
         application_id = request.args.get('applicationId',None, type=int)
         app_logger.info(f'{application_id}')
         wf_application = session.query(WFApplication).filter_by(ApplicationID=application_id).first()
@@ -78,6 +80,19 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if isinstance(application_data, list) and len(application_data) > 0:
                 application_info = application_data[0]
                 status = application_data[0]['appplicationinfo']['status']
+                files = application_data[0]['appplicationinfo']['files'] if 'files' in application_data[0]['appplicationinfo'] else []
+                for _file in files:
+                    file = session.query(WFFile).filter_by(FileID=_file['FileID']).first()
+                    if file is None:
+                        app_logger.warning(f"File with ID {_file['FileID']} not found in database")
+                        continue
+                    expires = 3600  # URL expiration time in seconds
+                    file_path = getattr(file, 'FilePath', None)
+                    if file_path and  file_path.startswith('s3://'):
+                        bucket, s3_key = _parse_s3_path(file_path)
+                        app_logger.info(f"Presigned URL request: bucket={bucket} key={s3_key} (raw FilePath={file_path!r})")
+                        url = generate_presigned_url(bucket, s3_key, expires)
+                        _file['FilePath'] = url
                 application_data[0]['appplicationinfo']['status'] = get_app_status(status)
             else:
                 application_info = application_data

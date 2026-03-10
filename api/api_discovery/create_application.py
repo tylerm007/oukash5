@@ -6,7 +6,7 @@ import datetime
 import database.models as models
 from database.models import WFApplication
 import database.oukash_models as oukash_models
-import database.submission_models as submission_models
+from database.submission_models import SubmissionApplication, SubmissionFileLink, SubmissionRequest
 from flask import request, jsonify
 import logging
 import safrs
@@ -35,7 +35,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         args = request.args
         user = Security.current_user().Username
         application_id = args.get('application_id') or args.get('applicationId') or args.get('filter[application_id]') or None
-        application = session.query(submission_models.SubmissionApplication).filter(submission_models.SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
+        application = session.query(SubmissionApplication).filter(SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
         if application is None:
             return jsonify({"result": f'SubmissionApplication with application_id: {application_id} not found'}), 404 
         company_id = application.SubmissionAppId
@@ -164,10 +164,10 @@ def submsisson_request_process( app: flask = None):
             return
 
     with app.app_context():
-        submission_requests = session.query(submission_models.SubmissionRequest).filter(submission_models.SubmissionRequest.SubmissionStatus == 'New', submission_models.SubmissionRequest.SubmissionType=='INTAKE').all()
+        submission_requests = session.query(SubmissionRequest).filter(SubmissionRequest.SubmissionStatus == 'New', SubmissionRequest.SubmissionType=='INTAKE').all()
         for submission_request in submission_requests:
             submission_app_id = submission_request.SubmissionAppId
-            submission_application = session.query(submission_models.SubmissionApplication).filter(submission_models.SubmissionApplication.SubmissionAppId == submission_app_id).first()
+            submission_application = session.query(SubmissionApplication).filter(SubmissionApplication.SubmissionAppId == submission_app_id).first()
 
             if not submission_application:
                 submission_request.SubmissionStatus= 'Failed'

@@ -35,15 +35,15 @@ EXEC sp_add_flow @from_name = 'ResolveCompany', @to_name = 'ResolvePlant2', @con
 EXEC sp_add_flow @from_name = 'ResolveCompany', @to_name = 'ResolvePlant3', @condition = 'None';
 EXEC sp_add_flow @from_name = 'ResolveCompany', @to_name = 'ResolvePlant4', @condition = 'None';
 EXEC sp_add_flow @from_name = 'ResolveCompany', @to_name = 'ResolvePlant5', @condition = 'None';
-EXEC sp_add_flow @from_name = 'ResolvePlant1', @to_name = 'Prelim App End', @condition = 'None';
-EXEC sp_add_flow @from_name = 'ResolvePlant2', @to_name = 'INTAKE App End', @condition = 'None';
-EXEC sp_add_flow @from_name = 'ResolvePlant3', @to_name = 'INTAKE App End', @condition = 'None';
-EXEC sp_add_flow @from_name = 'ResolvePlant4', @to_name = 'INTAKE App End', @condition = 'None';
-EXEC sp_add_flow @from_name = 'ResolvePlant5', @to_name = 'INTAKE App End', @condition = 'None';
+EXEC sp_add_flow @from_name = 'ResolvePlant1', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
+EXEC sp_add_flow @from_name = 'ResolvePlant2', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
+EXEC sp_add_flow @from_name = 'ResolvePlant3', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
+EXEC sp_add_flow @from_name = 'ResolvePlant4', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
+EXEC sp_add_flow @from_name = 'ResolvePlant5', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
 --EXEC sp_add_flow @from_name = 'CreateOwns', @to_name = 'GenerateWFApplication', @condition = 'None';
 --EXEC sp_add_flow @from_name = 'GenerateWFApplication', @to_name = 'INTAKE Verified Gateway', @condition = 'None';
---EXEC sp_add_flow @from_name = 'INTAKE Verified Gateway', @to_name = 'INTAKE App End', @condition = 'None';
-EXEC sp_add_flow @from_name = 'INTAKE App End', @to_name = 'INTAKE End', @condition = 'None';
+EXEC sp_add_flow @from_name = 'INTAKE Verified Gateway', @to_name = 'INTAKE App End', @condition = 'None';
+--EXEC sp_add_flow @from_name = 'INTAKE App End', @to_name = 'INTAKE End', @condition = 'None';
 
 update TaskDefinitions
 set PreScriptJson = 'Company Resolver'
