@@ -221,6 +221,42 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             "expires_in": expires
         }), 200
 
+    # ── /file_proxy/<file_id> ──────────────────────────────────────────────────
+    @app.route('/file_proxy/<int:file_id>', methods=['GET', 'OPTIONS'])
+    @jwt_required()
+    def file_proxy(file_id):
+        """
+        Stream the S3 file content through the Flask server so the browser
+        never contacts S3 directly (avoids S3 CORS restrictions).
+        The response uses Content-Disposition: inline so the browser displays
+        the file instead of downloading it.
+        """
+        if request.method == 'OPTIONS':
+            return jsonify({"message": "CORS preflight check successful"}), 200
+
+        wf_file = session.query(WFFile).filter_by(FileID=file_id).first()
+        if not wf_file:
+            return jsonify({"error": f"No file record found with FileID {file_id}"}), 404
+
+        file_path: str = wf_file.FilePath or ''
+        if not file_path.startswith('s3://'):
+            return jsonify({"error": "File is not stored in S3"}), 400
+
+        bucket, s3_key = _parse_s3_path(file_path)
+        filename = wf_file.FileName or s3_key.split('/')[-1]
+        mime_type = _mime_from_extension(filename)
+
+        data = download_from_s3(bucket, s3_key)
+        if data is None:
+            return jsonify({"error": "Could not retrieve file from S3"}), 500
+
+        return send_file(
+            io.BytesIO(data),
+            mimetype=mime_type,
+            as_attachment=False,          # inline display, not download
+            download_name=filename
+        )
+
     # ── /debug_file/<file_id> ──────────────────────────────────────────────────
     @app.route('/debug_file/<int:file_id>', methods=['GET', 'OPTIONS'])
     @jwt_required()
@@ -343,7 +379,7 @@ def write_to_s3(file_path: Path, bucket_name: str, s3_key: str) -> bool:
 _ALLOWED_EXTENSIONS = {
     'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
     'txt', 'csv', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff',
-    'zip', 'msg', 'eml', 'rtf', 'odt', 'ods'
+    'zip', 'msg', 'eml', 'rtf', 'odt', 'ods' , 'html', 'htm', 'xml'
 }
 
 # Dangerous extensions that must never be accepted regardless of content

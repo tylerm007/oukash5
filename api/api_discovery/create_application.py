@@ -1,5 +1,6 @@
 from re import sub
 from unittest import result
+from database.utils import parse_sqlserver_json
 import flask
 from flask_jwt_extended import get_jwt, jwt_required  
 import datetime
@@ -38,18 +39,18 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application = session.query(SubmissionApplication).filter(SubmissionApplication.SubmissionAppId == application_id).first() if application_id else None
         if application is None:
             return jsonify({"result": f'SubmissionApplication with application_id: {application_id} not found'}), 404 
-        company_id = application.SubmissionAppId
+        submission_app_id = application.SubmissionAppId
         company_name = application.companyName
         plants = application.SubmissionPlantList
         submission_id = application.submission_id
         
         
-        if company_id is None:
-            return jsonify({"result": 'create Submission Application requires companyId parameters'}), 400
+        if submission_app_id is None:
+            return jsonify({"result": 'create Submission Application requires submissionAppId parameters'}), 400
         
-        application_id = create_new_submission_application(company_id=int(company_id), submission_id=submission_id, user=user)
+        application_id = create_new_submission_application(submission_app_id=int(submission_app_id), submission_id=submission_id, user=user)
         response = start_workflow(application_id, user, None)
-        result = {"Company": company_name, "company_id": company_id, "workflow_response": response}
+        result = {"Company": company_name, "submission_app_id": submission_app_id, "workflow_response": response}
         app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": f"submission application created successfully {result}"}), 200
     
@@ -78,7 +79,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         application_id = create_new_application(companyID, plant_id, int(owns_id), submission_id, user)
         response = start_workflow(application_id, user, access_token)
         app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
-        return jsonify({"status": f"application created successfully {application_id} started"}), 200
+        return jsonify({"status": "application created successfully started","application_id": application_id}), 200
     
     @app.route('/deleteApplication', methods=['GET','OPTIONS'])
     @jwt_required()
@@ -124,7 +125,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             app_logger.info(f'Application {application_id} created and workflow started with response: {response}')
         return jsonify({"status": "applications created successfully", "applications": data}), 200
 
-def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int = 0, submission_id: str=None, user: str = "admin"):
+def create_new_application( submission_app_id: int = 0, plant_id: int = 0, owns_id:int = 0, submission_id: str=None, user: str = "admin"):
     applicationNumber = owns_id if owns_id != 0 else WFApplication.query.count() + 10000
     # ExternalAppRef is INT - safely convert submission_id string to int, or None
     try:
@@ -135,7 +136,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
             Name="New Application",
             Description="Description of the new application",
             Status="NEW",
-            CompanyID=company_id,
+            CompanyID=submission_app_id,
             PlantID=plant_id,
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
@@ -148,7 +149,7 @@ def create_new_application( company_id: int = 0, plant_id: int = 0, owns_id:int 
     session.add(application)
     session.commit()
     application_id = application.ApplicationID
-    link_submission_to_application(application_id, company_id, plant_id, owns_id, submission_id)
+    link_submission_to_application(application_id, submission_app_id, plant_id, owns_id, submission_id)
     #create_files(application_id)
     return application_id
 
@@ -199,7 +200,7 @@ def submsisson_request_process( app: flask = None):
                     session.commit()
     
 
-def create_new_submission_application( company_id: int = 0, submission_id: str=None,user: str = "admin"):
+def create_new_submission_application( submission_app_id: int = 0, submission_id: str=None,user: str = "admin"):
     # ApplicationNumber is INT - never assign submission_id (string) directly as it causes arithmetic overflow
     # submission_id is stored in ExternalAppRef if it's a valid int, otherwise use count-based number
     applicationNumber =  WFApplication.query.count() + 10000
@@ -209,7 +210,7 @@ def create_new_submission_application( company_id: int = 0, submission_id: str=N
             Status="NEW",
             CompanyID=0,
             PlantID=0,
-            ExternalAppRef=company_id,
+            ExternalAppRef=submission_app_id,
             WFLinkedApp=0,
             SubmissionDate=datetime.datetime.now(datetime.timezone.utc),
             CreatedBy=user,
@@ -221,18 +222,19 @@ def create_new_submission_application( company_id: int = 0, submission_id: str=N
     session.add(application)
     session.commit()
     try:
-        create_submission_files(application.ApplicationID)
+        create_submission_files(application.ApplicationID, submission_app_id)
     except Exception as e:
         app_logger.error(f"Error in submission application and matchers creation: {e}")
 
     return application.ApplicationID
 
-def create_submission_files(application_id:int):
+def create_submission_files(application_id, submission_app_id:int):
     # TODO use actual SubmissionFiles
-    file_links = session.query(SubmissionFileLink).filter(SubmissionFileLLink.SubmissionAppId == application_id).all()
+    file_links = session.query(SubmissionFileLink).filter(SubmissionFileLink.SubmissionAppId == submission_app_id).all()
     for file_link in file_links:
         productFileURL = file_link.productFileURL
-        ingredientFileURL = file_link.ingredientFileURL
+        productFileURL1 = file_link.productFileURL1
+        ingredientFileURL = file_link.ingredientURL
         if productFileURL:
             filename = productFileURL.split("/")[-1]
             filetype = filename.split(".")[-1].upper()
@@ -242,8 +244,21 @@ def create_submission_files(application_id:int):
                 FileType=filetype,
                 UploadedBy="system",
                 UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
-                Description="Customer Provided",
+                Description="Customer Provided Product",
                 FilePath=productFileURL
+            )
+            session.add(file)
+        if productFileURL1:
+            filename = productFileURL1.split("/")[-1]
+            filetype = filename.split(".")[-1].upper()
+            file= models.WFFile(
+                ApplicationID=application_id,
+                FileName=filename,
+                FileType=filetype,
+                UploadedBy="system",
+                UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
+                Description="Customer Provided Product1",
+                FilePath=productFileURL1
             )
             session.add(file)
         if ingredientFileURL:
@@ -255,7 +270,7 @@ def create_submission_files(application_id:int):
                 FileType=filetype,
                 UploadedBy="system",
                 UploadedDate=datetime.datetime.now(datetime.timezone.utc).date(),
-                Description="Customer Provided",
+                Description="Customer Provided Ingredient",
                 FilePath=ingredientFileURL
             )
             session.add(file)
@@ -360,13 +375,31 @@ def link_submission_to_application(application_id:int, company_id:int, plant_id:
         submission_application.CompanyID = company_id
         session.add(submission_application)
         session.commit()
+        print(f"find and link WFFIles for submission application { submission_application.ApplicationID} to main application {application_id}")
+        wf_files = session.query(models.WFFile).filter(models.WFFile.ApplicationID == submission_application.ApplicationID).all()
+        for wf_file in wf_files:
+            print(f"Linking file {wf_file.FileName} to application {application_id}")
+            new_wf_file= models.WFFile( # make a copy of the file row to update
+                FileName = wf_file.FileName,
+                FileType = wf_file.FileType,
+                FileSize = wf_file.FileSize,
+                FilePath = wf_file.FilePath,
+                CreatedDate = wf_file.CreatedDate,
+                ModifiedDate = wf_file.ModifiedDate,
+                ModifiedBy = wf_file.ModifiedBy,
+                UploadedDate = wf_file.UploadedDate,
+                ApplicationID = application_id,
+                Tag = wf_file.Tag
+            )
+            session.add(new_wf_file)
+            session.commit()
         task_instances = session.query(models.TaskInstance).filter(models.TaskInstance.ApplicationId == submission_id).all()
         for task_instance in task_instances:
             task_def = task_instance.task_definition
-            if "ResolvePlant" in task_def['TaskName'] and task_instance.Result == submission_id:
+            if "ResolvePlant" in task_def['TaskName'] and task_instance.Result == str(submission_application.PlantID):
                 result_data = task_instance.ResultData
                 if isinstance(result_data, str) and result_data.startswith('{'):
-                    result_data = json.loads(result_data.replace("'", '"',1000))
+                    result_data = parse_sqlserver_json(result_data.replace("'", '"',1000))
                     result_data['CompanyID'] = company_id
                     result_data['PlantID'] = plant_id
                     result_data['OwnsID'] = owns_id
@@ -374,6 +407,5 @@ def link_submission_to_application(application_id:int, company_id:int, plant_id:
                     task_instance.ResultData = json.dumps(result_data)
                     session.add(task_instance)
                     session.commit()
-                    return
-
-        
+                
+                return

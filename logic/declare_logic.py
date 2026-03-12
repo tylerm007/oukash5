@@ -87,7 +87,7 @@ def declare_logic():
                 logic_row.log("early_row_event_all_classes - handle_all did stamping")     
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
-    def _create_wfapplication_background(owns_id: int, submission_id: str, headers: dict):
+    def _create_wfapplication_background(owns_id: int, application_id: int,  submission_id: str, headers: dict, logic_row: LogicRow = None):
         '''
         Background worker to create WFApplication via API call.
         Runs in separate thread to avoid blocking main logic flow.
@@ -151,7 +151,7 @@ def declare_logic():
         # Start background thread (fire and forget)
         thread = threading.Thread(
             target=_create_wfapplication_background,
-            args=(owns_id, submission_id, headers),
+            args=(owns_id, row.ApplicationID, submission_id, headers, logic_row),
             daemon=True  # Daemon thread exits when main program exits
         )
         thread.start()
@@ -328,7 +328,7 @@ def declare_logic():
                     wfapp = create_wfapplication(new_application, owns_id=owns_id, logic_row=logic_row)
                     print(wfapp)
                     result_data["WFID"] = wfapp.get("ApplicationID") if wfapp else None
-                    result_data['OWNSID'] = owns_id
+                    result_data['OWNSID'] = owns_id     
                 row.ResultData = json.dumps(result_data)
     
     def find_next_task_by_name(task_instance:models.TaskInstance, task_name:str) -> models.TaskInstance:

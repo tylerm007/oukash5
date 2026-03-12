@@ -64,6 +64,12 @@
       
       <o-text-input #FilePath attr="FilePath" label="FilePath" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
       
+      <div fxFlex="auto" fxLayoutAlign="start center" style="padding-top: 16px;">
+        <button mat-raised-button color="primary" (click)="openFileUrl()" title="Open file URL in new tab">
+          <mat-icon>open_in_new</mat-icon> Open File URL
+        </button>
+      </div>
+      
       <o-date-input #CCreatedDate attr="CCreatedDate" value-type="string" label="CCreatedDate" editable="no" required="yes" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
       
       <o-text-input #CreatedBy attr="CreatedBy" label="CreatedBy" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>

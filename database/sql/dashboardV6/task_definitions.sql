@@ -163,13 +163,16 @@ INSERT INTO TaskDefinitions (ProcessDefinitionId, TaskName, TaskType, TaskCatego
 VALUES
 (1, 'Start Inspection', 'STAGESTART', 'COMPLETION', 1, 3, 'SYSTEM', 15, 'Start Inspection stage', 1, 'system'),
 (1, 'Is Inspection Needed', 'CONDITION', 'APPROVAL', 2, 3, 'NCRC', 15, 'Is Inspection needed?', 0, 'system'),
-(1, 'Assign Fee Structure', 'ACTION', 'SELECTOR', 3, 3, 'NCRC', 60, 'Calculate and set inspection fees', 0, 'system'),
-(1, 'Select RFR', 'ACTION', 'ASSIGNMENT', 4, 3, 'NCRC', 30, 'Assign RFR', 0, 'system'),
-(1, 'Assign Invoice Amount', 'ACTION', 'INPUT', 5, 3, 'NCRC', 30, 'Assign Kosher Inspection and Monitoring (KIM) invoice amount', 0, 'system'),
-(1, 'Generated Invoice and Send', 'CONFIRM', 'CONFIRMATION', 6, 3, 'NCRC', 2880 * 3, 'Send KIM invoice to customer', 0, 'system'), -- ALERT
-(1, 'Mark Invoice Paid', 'CONFIRM', 'CONFIRMATION', 7, 3, 'NCRC', 2880 * 3, 'Payment Received by Finance', 0, 'system'), -- ALERT
+(1, 'Is Fee Required', 'CONDITION', 'APPROVAL', 3, 3, 'NCRC', 15, 'Is Fee Required?', 0, 'system'),
+(1, 'Assign Fee Structure', 'ACTION', 'SELECTOR', 4, 3, 'NCRC', 60, 'Calculate and set inspection fees', 0, 'system'),
+(1, 'Select RFR', 'ACTION', 'ASSIGNMENT', 5, 3, 'NCRC', 30, 'Assign RFR', 0, 'system'),
+(1, 'Assign Invoice Amount', 'ACTION', 'INPUT', 6, 3, 'NCRC', 30, 'Assign Kosher Inspection and Monitoring (KIM) invoice amount', 0, 'system'),
+(1, 'Generated Invoice and Send', 'CONFIRM', 'CONFIRMATION', 7, 3, 'NCRC', 2880 * 3, 'Send KIM invoice to customer', 0, 'system'), -- ALERT
+(1, 'Mark Invoice Paid', 'CONFIRM', 'CONFIRMATION', 8, 3, 'NCRC', 2880 * 3, 'Payment Received by Finance', 0, 'system'), -- ALERT
 (1, 'Schedule Inspection', 'ACTION', 'SCHEDULING', 9, 3, 'RFR', 60, 'Schedule inspection with RFR and customer', 0, 'system'),
-(1, 'Inspection Report Submitted to IAR', 'CONFIRM', 'CONFIRMATION', 11, 3, 'RFR', 240, 'Inspection report submitted to the ingredient team (IAR)', 0, 'system'),
+(1, 'Inspection Report Submitted to IAR', 'UPLOAD', 'UPLOAD', 10, 3, 'RFR', 240, 'Inspection report submitted to the ingredient team (IAR)', 0, 'system'),
+(1, 'IAR Rabbinic Review', 'UPLOAD', 'UPLOAD', 11, 3, 'RFR', 240, 'Inspection report reviewed by IAR', 0, 'system'),
+(1, 'Report Review & IAR', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 15, 'Approval of inspection report by IAR', 0, 'system'),
 --(1, 'Withdraw Application', 'CONDITION', 'APPROVAL', 12, 3, 'NCRC', 5, 'Withdraw ApplicationY/N', 0, 'system'),
 (1, 'End Inspection', 'STAGEEND', 'COMPLETION', 13, 3, 'SYSTEM', 15, 'Inspection stage completed', 1, 'system');
 GO
@@ -179,14 +182,17 @@ EXEC sp_add_flow @from_name = 'AssignNCRC', @to_name = 'Start Inspection', @cond
 --EXEC sp_add_flow @from_name = 'Stage Collector', @to_name = 'Start Inspection', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Start Inspection', @to_name = 'Is Inspection Needed', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'End Inspection', @condition = 'NO'; 
-EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Is Inspection Needed', @to_name = 'Is Fee Required', @condition = 'YES'; 
+EXEC sp_add_flow @from_name = 'Is Fee Required', @to_name = 'Assign Fee Structure', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Assign Fee Structure', @to_name = 'Select RFR', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Select RFR', @to_name = 'Assign Invoice Amount', @condition = 'None';
 EXEC sp_add_flow @from_name = 'Assign Invoice Amount', @to_name = 'Generated Invoice and Send', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Generated Invoice and Send', @to_name = 'Mark Invoice Paid', @condition = 'None'; 
 EXEC sp_add_flow @from_name = 'Mark Invoice Paid', @to_name = 'Schedule Inspection', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'Schedule Inspection', @to_name = 'Inspection Report Submitted to IAR', @condition = 'None'; 
-EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'End Inspection', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Inspection Report Submitted to IAR', @to_name = 'IAR Rabbinic Review', @condition = 'None';
+EXEC sp_add_flow @from_name = 'IAR Rabbinic Review', @to_name = 'Report Review & IAR', @condition = 'None';
+EXEC sp_add_flow @from_name = 'Report Review & IAR', @to_name = 'End Inspection', @condition = 'None';
 --EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'End Inspection', @condition = 'NO'; 
 --EXEC sp_add_flow @from_name = 'Withdraw Application', @to_name = 'END', @condition = 'YES'; 
 EXEC sp_add_flow @from_name = 'End Inspection', @to_name = 'Stage Collector', @condition = 'None';
